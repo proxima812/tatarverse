@@ -1,0 +1,43 @@
+---
+import { worldCountriesRu } from "@/data/worldCountries";
+
+const words = worldCountriesRu;
+---
+
+<h1 class="relative select-none overflow-hidden">
+	<div class="absolute bg-linear-to-br z-50 from-white/10 to-transparent w-full h-full"></div>
+	<div
+		class="flex flex-col *:tracking-tight *:md:tracking-[-3.8px] *:font-bold *:text-4xl *:sm:text-5xl *:md:text-6xl *:lg:text-7xl *:uppercase"
+	>
+		<div class="text-zinc-600">
+			<span class="blur-[0.5px]">везде <i class="text-3xl sm:text-5xl">&</i> повсюду</span>
+		</div>
+		<span class="rotating-word-wrapper inline-block overflow-hidden align-bottom">
+			<span id="rotating-word" class="text-black tracking-normal font-black inline-block"
+			></span>
+		</span>
+	</div>
+</h1>
+
+<script define:vars={{ words }} is:inline>
+	let current = 0;
+	const el = document.getElementById("rotating-word");
+
+	function showWord(word) {
+		if (!el) return;
+		el.style.transition = "opacity 250ms ease, filter 250ms ease";
+		el.style.opacity = "0";
+		el.style.filter = "blur(4px)";
+		setTimeout(() => {
+			el.textContent = word;
+			el.style.opacity = "1";
+			el.style.filter = "blur(0px)";
+		}, 280);
+	}
+
+	showWord(words[current]);
+	setInterval(() => {
+		current = (current + 1) % words.length;
+		showWord(words[current]);
+	}, 2500);
+</script>

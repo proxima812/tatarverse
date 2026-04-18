@@ -1,0 +1,69 @@
+---
+import Container from "@/components/partials/Container.astro";
+import SEO from "@/components/partials/SEO.astro";
+
+import "@/styles/tailwind.css";
+import { cn } from "@/utils/libs/cn";
+
+interface Props {
+	title?: string;
+	description?: string;
+	type?: "article" | "website";
+	ogImage?: string | URL;
+	keywords?: string | string[];
+	indexRobots?: boolean;
+	datePublished?: string | Date;
+	dateModified?: string | Date;
+	centered?: boolean;
+}
+
+const {
+	datePublished,
+	dateModified,
+	indexRobots,
+	title,
+	type,
+	description,
+	ogImage,
+	keywords,
+	centered,
+} = Astro.props as Props;
+---
+
+<html lang="ru" class="scroll-smooth subpixel-antialiased">
+	<head>
+		<SEO
+			title={title}
+			description={description}
+			indexRobots={indexRobots}
+			ogImage={ogImage}
+			type={type}
+			keywords={keywords}
+			datePublished={datePublished}
+			dateModified={dateModified}
+		/>
+		{
+			import.meta.env.DEV && (
+				<script is:inline>
+					{`if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+						window.addEventListener("load", async () => {
+							const registrations = await navigator.serviceWorker.getRegistrations();
+							await Promise.all(registrations.map((registration) => registration.unregister()));
+							if ("caches" in window) {
+								const cacheKeys = await caches.keys();
+								await Promise.all(cacheKeys.map((key) => caches.delete(key)));
+							}
+						});
+					}`}
+				</script>
+			)
+		}
+	</head>
+	<body class="flex min-h-screen flex-col text-zinc-900 bg-[#fafafa]">
+		<Container container class="py-22">
+			<div class={cn("flex flex-col gap-12", centered ? "items-center" : null)}>
+				<slot />
+			</div>
+		</Container>
+	</body>
+</html>

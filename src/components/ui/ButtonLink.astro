@@ -1,0 +1,49 @@
+---
+import { cn } from "@/utils/libs/cn";
+import { Icon } from "astro-icon/components";
+
+const {
+	class: className,
+	variant = "default",
+	size = "default",
+	label = "label",
+	href = "#",
+	icon,
+	...props
+} = Astro.props;
+
+const baseClass =
+	"inline-flex shrink-0 max-w-fit items-center gap-1.5 rounded-2xl corner-squircle font-medium transition";
+
+const variants = {
+	default: "bg-primary text-primary-foreground hover:bg-primary/80",
+	outline: "bg-transparent text-primary/80 ring ring-primary/10 ring-inset hover:bg-primary/5",
+	ghost: "bg-transparent text-primary hover:bg-primary/5",
+	disabled: "bg-zinc-100 text-zinc-600",
+};
+
+const sizes = {
+	default: "px-4 py-2 text-sm",
+	xs: "px-2 py-1 text-xs sm:px-3 sm:py-1.5",
+};
+
+const isDisabled = variant === "disabled";
+const classes = cn(
+	baseClass,
+	variants[variant] ?? variants.default,
+	sizes[size] ?? sizes.default,
+	isDisabled && "pointer-events-none cursor-not-allowed opacity-50",
+	className,
+);
+---
+
+<a
+	href={isDisabled ? undefined : href}
+	aria-disabled={isDisabled || undefined}
+	tabindex={isDisabled ? -1 : undefined}
+	class={classes}
+	{...props}
+>
+	{icon ? <Icon name={icon} class="w-4 h-4" /> : null}
+	<span>{label} {variant === "disabled" && <i class="text-xs opacity-40">cкоро...</i>}</span>
+</a>

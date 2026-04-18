@@ -1,0 +1,29 @@
+---
+import AllLang from "@/components/AllLang.astro";
+import LinksNav from "@/components/LinksNav.astro";
+import MainText from "@/components/MainText.astro";
+import Layout from "@/layouts/Layout.astro";
+import { getCollection } from "astro:content";
+const centers = (await getCollection("centers")).length;
+---
+
+<Layout title="" description="">
+	<main class="space-y-12">
+		<MainText />
+		<LinksNav />
+		<p class="text-primary/50 text-xs">
+			Представляем
+			<a
+				href="/list"
+				class="font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-4 transition hover:decoration-zinc-900 dark:text-zinc-100 dark:decoration-zinc-600 dark:hover:decoration-zinc-300"
+			>
+				список из {centers} центров
+			</a>
+			где можно будет узнать больше о культуре и языках. Найти друзей и родственников в других городах
+			и странах.
+		</p>
+		<AllLang />
+	</main>
+
+	<!-- <QList /> -->
+</Layout>

@@ -1,0 +1,7 @@
+---
+import ButtonLink from "../ui/ButtonLink.astro";
+
+const { ...props } = Astro.props; // { href, label, variant } = Astro.props;
+---
+
+<ButtonLink {...props} icon="tabler:arrow-back-up" />

@@ -1,0 +1,213 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	cardsCount: number;
+	countries: [string, number][];
+	countryFlags: Map<string, string>;
+	regions: [string, number][];
+}
+
+const { cardsCount, countries, countryFlags, regions } = Astro.props;
+---
+
+<section class="flex flex-wrap items-start gap-3">
+	<label class="relative min-w-45 flex-1">
+		<Icon
+			name="mdi:search"
+			class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
+		/>
+		<input
+			data-toolbar-search
+			type="search"
+			placeholder="Поиск по названию, городу, стране или региону"
+			class="w-full rounded-2xl corner-squircle bg-white py-2.5 pl-9 pr-4 text-sm outline-none placeholder:text-zinc-300 focus:ring-2 focus:ring-primary/20"
+		/>
+	</label>
+</section>
+
+<section class="flex flex-col gap-2">
+	<p class="text-xs font-medium tracking-wide text-zinc-400 uppercase">Страны</p>
+	<div class="flex flex-wrap gap-2" role="group" aria-label="Фильтр по странам">
+		<button
+			type="button"
+			data-country-chip="all"
+			data-active=""
+			class="group inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-2xl corner-squircle bg-zinc-100 px-2 py-1 text-sm font-medium text-zinc-600 transition hover:bg-zinc-200 data-[active]:bg-primary data-[active]:text-primary-foreground sm:px-3 sm:py-1.5"
+		>
+			<Icon name="mdi:align-horizontal-left" />
+			<span>Все</span>
+			<span
+				class="rounded-lg corner-squircle bg-zinc-200 px-1.5 py-0.5 text-xs tabular-nums text-zinc-500 group-data-[active]:bg-[color-mix(in_oklch,white_15%,transparent)] group-data-[active]:text-primary-foreground"
+			>
+				{cardsCount}
+			</span>
+		</button>
+
+		{
+			countries.map(([country, count]) => (
+				<button
+					type="button"
+					data-country-chip={country}
+					class="group inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-2xl corner-squircle bg-zinc-100 px-2 py-1 text-sm font-medium text-zinc-600 transition hover:bg-zinc-200 data-[active]:bg-primary data-[active]:text-primary-foreground sm:px-3 sm:py-1.5"
+				>
+					{countryFlags.get(country) && (
+						<span class="text-sm leading-none">{countryFlags.get(country)}</span>
+					)}
+					<span>{country}</span>
+					<span class="grid h-4 place-content-center rounded-full bg-zinc-200 px-1 text-[10px] tabular-nums text-zinc-500 group-data-[active]:bg-[color-mix(in_oklch,white_15%,transparent)] group-data-[active]:text-primary-foreground">
+						{count}
+					</span>
+				</button>
+			))
+		}
+	</div>
+</section>
+
+{
+	regions.length > 0 && (
+		<div data-region-filter-wrap class="hidden flex-col gap-2">
+			<p class="text-xs font-medium tracking-wide text-zinc-400 uppercase">Регионы</p>
+			<div class="flex flex-wrap gap-2" role="group" aria-label="Фильтр по регионам">
+				<button
+					type="button"
+					data-region-chip="all"
+					data-active=""
+					class="group inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-2xl corner-squircle bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 transition hover:bg-zinc-200 data-[active]:bg-zinc-700 data-[active]:text-white sm:px-3 sm:py-1.5"
+				>
+					<span>Все регионы</span>
+				</button>
+
+				{regions.map(([region, count]) => (
+					<button
+						type="button"
+						data-region-chip={region}
+						class="group inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-2xl corner-squircle bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 transition hover:bg-zinc-200 data-[active]:bg-zinc-700 data-[active]:text-white sm:px-3 sm:py-1.5"
+					>
+						<span>{region}</span>
+						<span class="rounded-lg corner-squircle bg-zinc-200 px-1.5 py-0.5 text-xs tabular-nums text-zinc-500 group-data-[active]:bg-[color-mix(in_oklch,white_15%,transparent)] group-data-[active]:text-white">
+							{count}
+						</span>
+					</button>
+				))}
+			</div>
+		</div>
+	)
+}
+
+<script>
+	function initCardsToolbar() {
+		let activeCountry = "all";
+		let activeRegion = "all";
+		let searchQuery = "";
+		let searchTimer = 0;
+
+		const cardsGrid = document.getElementById("cards-grid");
+		const noResults = document.getElementById("no-results");
+		const searchInput = document.querySelector<HTMLInputElement>("[data-toolbar-search]");
+		const regionFilterWrap = document.querySelector<HTMLElement>("[data-region-filter-wrap]");
+		const countryChips = document.querySelectorAll<HTMLElement>("[data-country-chip]");
+		const regionChips = document.querySelectorAll<HTMLElement>("[data-region-chip]");
+		const viewButtons = document.querySelectorAll<HTMLElement>("[data-view-btn]");
+
+		if (!cardsGrid || !noResults || !searchInput || countryChips.length === 0) {
+			return;
+		}
+
+		function applyFilters() {
+			const cards = document.querySelectorAll<HTMLElement>("#cards-grid > a");
+			const query = searchQuery.trim().toLowerCase();
+			let visible = 0;
+
+			cards.forEach((card) => {
+				const country = card.dataset.country ?? "";
+				const region = card.dataset.region ?? "";
+				const title = (card.dataset.title ?? "").toLowerCase();
+				const summary = (card.dataset.summary ?? "").toLowerCase();
+				const city = (card.dataset.city ?? "").toLowerCase();
+
+				const matchesCountry = activeCountry === "all" || country === activeCountry;
+				const matchesRegion =
+					activeCountry !== "Россия" || activeRegion === "all" || region === activeRegion;
+				const matchesSearch =
+					!query ||
+					title.includes(query) ||
+					summary.includes(query) ||
+					city.includes(query) ||
+					country.toLowerCase().includes(query) ||
+					region.toLowerCase().includes(query);
+
+				const show = matchesCountry && matchesRegion && matchesSearch;
+				card.style.display = show ? "" : "none";
+
+				if (show) {
+					visible += 1;
+				}
+			});
+
+			noResults.hidden = visible > 0;
+		}
+
+		function resetRegions() {
+			activeRegion = "all";
+			regionChips.forEach((chip) => chip.removeAttribute("data-active"));
+			document
+				.querySelector<HTMLElement>('[data-region-chip="all"]')
+				?.setAttribute("data-active", "");
+		}
+
+		countryChips.forEach((chip) => {
+			chip.addEventListener("click", () => {
+				countryChips.forEach((item) => item.removeAttribute("data-active"));
+				chip.setAttribute("data-active", "");
+				activeCountry = chip.dataset.countryChip ?? "all";
+
+				if (regionFilterWrap) {
+					if (activeCountry === "Россия") {
+						regionFilterWrap.classList.remove("hidden");
+						regionFilterWrap.classList.add("flex");
+					} else {
+						regionFilterWrap.classList.add("hidden");
+						regionFilterWrap.classList.remove("flex");
+						resetRegions();
+					}
+				}
+
+				applyFilters();
+			});
+		});
+
+		regionChips.forEach((chip) => {
+			chip.addEventListener("click", () => {
+				regionChips.forEach((item) => item.removeAttribute("data-active"));
+				chip.setAttribute("data-active", "");
+				activeRegion = chip.dataset.regionChip ?? "all";
+				applyFilters();
+			});
+		});
+
+		searchInput.addEventListener("input", (event) => {
+			window.clearTimeout(searchTimer);
+			searchTimer = window.setTimeout(() => {
+				searchQuery = (event.target as HTMLInputElement).value;
+				applyFilters();
+			}, 150);
+		});
+
+		viewButtons.forEach((button) => {
+			button.addEventListener("click", () => {
+				viewButtons.forEach((item) => item.removeAttribute("data-active"));
+				button.setAttribute("data-active", "");
+				cardsGrid.dataset.view = button.dataset.viewBtn ?? "4";
+			});
+		});
+
+		applyFilters();
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initCardsToolbar, { once: true });
+	} else {
+		initCardsToolbar();
+	}
+</script>

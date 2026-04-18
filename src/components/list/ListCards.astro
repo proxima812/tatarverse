@@ -1,0 +1,52 @@
+---
+import GridCards from "@/components/list/GridCards.astro";
+import Toolbar from "@/components/list/Toolbar.astro";
+import { getCollection } from "astro:content";
+import BackButton from "../partials/BackButton.astro";
+
+const allCards = await getCollection("centers");
+
+const cards = allCards.sort((a, b) => {
+	return (
+		(b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0) -
+		(a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0)
+	);
+});
+
+const countryCounts = new Map<string, number>();
+const countryFlags = new Map<string, string>();
+
+for (const card of cards) {
+	const country = card.data.location?.country ?? "Прочее";
+	const flag = card.data.location?.flag;
+	countryCounts.set(country, (countryCounts.get(country) ?? 0) + 1);
+	if (flag && !countryFlags.has(country)) {
+		countryFlags.set(country, flag);
+	}
+}
+
+const countries = [...countryCounts.entries()].sort((a, b) => b[1] - a[1]);
+
+const regionCounts = new Map<string, number>();
+for (const card of cards) {
+	if (card.data.location?.country === "Россия" && card.data.location?.region) {
+		const region = card.data.location.region;
+		regionCounts.set(region, (regionCounts.get(region) ?? 0) + 1);
+	}
+}
+
+const regions = [...regionCounts.entries()].sort((a, b) => a[0].localeCompare(b[0], "ru"));
+---
+
+<BackButton href="/" label="Обратно" variant="outline" />
+
+<Toolbar
+	cardsCount={cards.length}
+	countries={countries}
+	countryFlags={countryFlags}
+	regions={regions}
+/>
+
+<p id="no-results" hidden class="py-10 text-center text-sm text-zinc-400">Ничего не найдено</p>
+
+<GridCards cards={cards} />

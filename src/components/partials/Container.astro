@@ -1,0 +1,18 @@
+---
+import { cn } from "@/utils/libs/cn.ts";
+
+interface Props {
+	class?: string;
+	container?: boolean;
+}
+
+const { class: className, container } = Astro.props;
+---
+
+<div
+	class={!container
+		? "not-container"
+		: cn("container flex-1 px-5 mx-auto max-w-6xl", className)}
+>
+	<slot />
+</div>

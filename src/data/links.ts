@@ -1,0 +1,42 @@
+export const links = [
+	{
+		label: "Перейти к центрам",
+		icon: "",
+		class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5 ",
+		href: "/list",
+		size: "default",
+		variant: "default",
+	},
+	{
+		label: "История изменений",
+		icon: "mdi:cloud-arrow-right-outline",
+		class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5",
+		href: "#",
+		size: "default",
+		variant: "outline",
+	},
+	{
+		label: "Обратная связь",
+		icon: "mdi:telegram",
+		class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5",
+		href: "#",
+		size: "default",
+		variant: "outline",
+	},
+	{
+		label: "Страны",
+		icon: "mdi:world",
+		class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5",
+		href: "#",
+		size: "default",
+		variant: "disabled",
+	},
+	{
+		label: "Другие проекты",
+		icon: "mdi:file-search-outline",
+		class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5",
+		href: "#",
+		size: "default",
+		variant: "disabled",
+	},
+];

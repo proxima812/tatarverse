@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+
+@custom-variant dark (&:is(.dark *));
+@plugin "@tailwindcss/typography";
+@plugin "@toolwind/corner-shape";
+
+@theme {
+--color-primary: #1d1d1d;
+--color-primary-foreground: #ffffff;
+
+--color-intense-cherry-50: oklch(94.89% 0.020 9.78);
+--color-intense-cherry-100: oklch(89.91% 0.042 10.59);
+--color-intense-cherry-200: oklch(80.22% 0.085 12.74);
+--color-intense-cherry-300: oklch(71.10% 0.134 14.72);
+--color-intense-cherry-400: oklch(63.23% 0.179 18.23);
+--color-intense-cherry-500: oklch(57.47% 0.212 22.98);
+--color-intense-cherry-600: oklch(48.77% 0.178 22.68);
+--color-intense-cherry-700: oklch(39.81% 0.143 22.06);
+--color-intense-cherry-800: oklch(30.22% 0.103 21.13);
+--color-intense-cherry-900: oklch(19.99% 0.061 18.14);
+--color-intense-cherry-950: oklch(16.69% 0.047 15.30);
+
+
+
+}
+
+
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    margin: 0;
+    padding: 0;
+  }
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    box-sizing: border-box;
+    border: 0 solid;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-balance antialiased md:subpixel-antialiased;
+  }
+
+  p {
+    @apply text-pretty antialiased md:subpixel-antialiased;
+  }
+}
+
+@layer components {
+  :where([data-astro-image]) {
+    object-fit: var(--fit);
+    object-position: var(--pos);
+  }
+
+  :where([data-astro-image="full-width"]) {
+    width: 100%;
+  }
+
+  :where([data-astro-image="constrained"]) {
+    max-width: 100%;
+  }
+
+  .not-container {
+    @apply relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw];
+  }
+
+  	.fade-x {
+		-webkit-mask-image: linear-gradient(
+			90deg,
+			rgba(0, 0, 0, 0),
+			rgba(0, 0, 0, 1) 40px,
+			rgba(0, 0, 0, 1) calc(100% - 80px),
+			rgba(0, 0, 0, 0)
+		);
+		mask-image: linear-gradient(
+			90deg,
+			rgba(0, 0, 0, 0),
+			rgba(0, 0, 0, 1) 40px,
+			rgba(0, 0, 0, 1) calc(100% - 80px),
+			rgba(0, 0, 0, 0)
+		);
+	}
+	.animate-scroll-x {
+		animation: scrollX 70s linear infinite;
+	}
+	@keyframes scrollX {
+		0% {
+			background-position: 0 0;
+		}
+
+		to {
+			background-position: 200% 0;
+		}
+	}
+  	@keyframes word-rise {
+		0% {
+			transform: translateY(110%);
+			opacity: 0;
+			filter: blur(3px);
+		}
+		60% {
+			opacity: 1;
+			filter: blur(1px);
+		}
+		100% {
+			transform: translateY(0%);
+			opacity: 1;
+			filter: blur(0.5px);
+		}
+	}
+
+	@keyframes word-sink {
+		0% {
+			transform: translateY(0%);
+			opacity: 1;
+		}
+		40% {
+			opacity: 0;
+		}
+		100% {
+			transform: translateY(110%);
+			opacity: 0;
+		}
+	}
+
+	.word-rise {
+		animation: word-rise 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	.word-sink {
+		animation: word-sink 0.9s cubic-bezier(0.55, 0, 0.9, 0.6) forwards;
+	}
+}
+
+@utility content-auto {
+  content-visibility: auto;
+}
