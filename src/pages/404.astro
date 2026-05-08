@@ -1,18 +1,16 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
 
-const title = "404 - page not found";
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const title = t("notFound.title");
 ---
 
 <Layout
 	title={title}
 	classContainer="grid place-content-center"
-	description="Page not found. It may have been removed or moved."
+	description={t("notFound.description")}
 >
-	<h1
-		class="text-5xl tracking-tight text-center self-center font-bold"
-		data-i18n="notFound.title"
-	>
-		{title}
-	</h1>
+	<h1 class="text-5xl tracking-tight text-center self-center font-bold">{title}</h1>
 </Layout>

@@ -82,6 +82,8 @@
   p {
     @apply antialiased md:subpixel-antialiased text-pretty;
   }
+
+
 }
 
 @layer components {

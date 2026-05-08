@@ -1,11 +1,17 @@
 ---
+// Секция списка центров: готовит данные карточек и агрегаты для фильтров.
 import GridCards from "@/components/list/GridCards.astro";
-import Toolbar from "@/components/list/ToolBar.astro";
+import Toolbar from "@/components/list/Toolbar.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
 import BackButton from "../partials/BackButton.astro";
 
 const allCards = await getCollection("centers");
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 
+// Сортируем по дате обновления, чтобы самые свежие записи были первыми.
 const cards = allCards.sort((a, b) => {
 	return (
 		(b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0) -
@@ -65,25 +71,69 @@ const categories = [...categoryCounts.entries()].sort(
 ---
 
 <BackButton href="/" label="Back" labelKey="nav.back" variant="outline" />
+<main class="not-container bg-white p-6 ring ring-depth-100 lg:p-20">
+	<div
+		class="flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(232px,280px)_1fr] lg:items-start lg:gap-10 xl:gap-12"
+	>
+		<aside
+			data-filters-shell
+			class="hidden rounded-3xl corner-squircle border border-depth-100/70 bg-depth-100/20 p-4 shadow-2xs lg:sticky lg:top-6 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto lg:p-5"
+		>
+			<Toolbar
+				cardsCount={cards.length}
+				countries={countries}
+				countryFlags={countryFlags}
+				types={types}
+				categories={categories}
+				regions={regions}
+			/>
+		</aside>
 
-<Toolbar
-	cardsCount={cards.length}
-	countries={countries}
-	countryFlags={countryFlags}
-	types={types}
-	categories={categories}
-	regions={regions}
-/>
+		<div class="min-w-0">
+			<!-- Search + mobile filter toggle -->
+			<div
+				class="mb-6 flex items-center gap-2 rounded-3xl corner-squircle bg-white/90 p-2 shadow-2xs ring ring-depth-100/70 backdrop-blur lg:static lg:mb-10 lg:bg-transparent lg:p-0 lg:shadow-none lg:ring-0 lg:backdrop-blur-none"
+			>
+				<label class="relative min-w-0 flex-1">
+					<Icon
+						name="mdi:search"
+						class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle-foreground"
+					/>
+					<input
+						data-toolbar-search
+						type="search"
+						placeholder={t("list.search.placeholder")}
+						aria-label={t("list.search.placeholder")}
+						aria-controls="cards-grid"
+						class="w-full rounded-2xl corner-squircle bg-surface py-3 pl-9 pr-4 text-sm text-surface-foreground outline-none ring ring-depth-100 placeholder:text-subtle-foreground focus:ring-2 focus:ring-primary/25"
+					/>
+				</label>
 
-<p
-	id="no-results"
-	hidden
-	class="py-10 text-center text-sm text-subtle-foreground"
-	data-i18n="list.noResults"
-	role="status"
-	aria-live="polite"
->
-	No results found
-</p>
-
-<GridCards cards={cards} />
+				<button
+					type="button"
+					data-filters-toggle
+					aria-expanded="false"
+					aria-controls="filters-panel"
+					class="inline-flex shrink-0 items-center gap-1.5 rounded-2xl corner-squircle bg-muted px-3 py-3 text-sm font-medium text-muted-foreground transition hover:bg-subtle lg:hidden"
+				>
+					<Icon name="mdi:tune" class="size-4 shrink-0" aria-hidden="true" />
+					<span>{t("list.filters")}</span>
+					<span
+						data-filters-badge
+						class="hidden min-w-5 rounded-full bg-primary px-1.5 text-center text-xs font-semibold tabular-nums text-primary-foreground"
+					></span>
+				</button>
+			</div>
+			<p
+				id="no-results"
+				hidden
+				class="py-10 text-center text-sm text-subtle-foreground"
+				role="status"
+				aria-live="polite"
+			>
+				{t("list.noResults")}
+			</p>
+			<GridCards cards={cards} />
+		</div>
+	</div>
+</main>

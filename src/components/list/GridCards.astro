@@ -11,13 +11,11 @@ const { cards } = Astro.props as Props;
 
 <section
 	id="cards-grid"
-	data-view="4"
-	class="grid scroll-mt-32 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+	class="grid scroll-mt-28 grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3 xl:gap-8"
 >
 	{
 		cards.map((card) => (
 			<CardItem
-				// CardItem receives all filterable fields so the toolbar can work only through DOM data-attributes.
 				id={card.id}
 				title={card.data.title}
 				summary={card.data.summary}
@@ -30,3 +28,59 @@ const { cards } = Astro.props as Props;
 		))
 	}
 </section>
+
+<script>
+	function initCardsReveal() {
+		const grid = document.getElementById("cards-grid");
+		if (!grid) return;
+
+		const cards = Array.from(grid.querySelectorAll<HTMLElement>(":scope > article"));
+		if (cards.length === 0) return;
+
+		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		if (prefersReducedMotion) {
+			return;
+		}
+
+		const revealClass = ["opacity-0", "-translate-y-5", 'scale-[0.90]'];
+		const shownClass = ["opacity-100", "translate-y-0", 'scale-100'];
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (!entry.isIntersecting) return;
+
+					const card = entry.target as HTMLElement;
+					card.classList.remove(...revealClass);
+					card.classList.add(...shownClass);
+					observer.unobserve(card);
+				});
+			},
+			{
+				root: null,
+				rootMargin: "0px 0px 120px 0px",
+				threshold: 0.08,
+			},
+		);
+
+		cards.forEach((card) => {
+			card.classList.add(...revealClass);
+			card.classList.remove(...shownClass);
+			observer.observe(card);
+		});
+
+		document.addEventListener(
+			"astro:before-swap",
+			() => {
+				observer.disconnect();
+			},
+			{ once: true },
+		);
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initCardsReveal, { once: true });
+	} else {
+		initCardsReveal();
+	}
+</script>

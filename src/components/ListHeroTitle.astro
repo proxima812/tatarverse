@@ -1,0 +1,74 @@
+---
+// Hero-заголовок страницы списка: крутит названия стран из локализованного словаря.
+import { worldCountriesByLocale } from "@/data/worldCountries";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const words = worldCountriesByLocale[locale] ?? [];
+const initialWord = words[0] ?? "";
+const maxWordLength = words.reduce((max, word) => Math.max(max, word.length), 0);
+---
+
+<h1 class="relative select-none overflow-hidden">
+	<div
+		class="absolute bg-linear-to-br z-50 from-background/10 to-transparent dark:from-background/10 dark:to-transparent w-full h-full pointer-events-none"
+	>
+	</div>
+	<div
+		class="flex flex-col *:tracking-tight *:md:tracking-[-3.8px] *:font-bold *:text-4xl *:sm:text-5xl *:md:text-6xl *:lg:text-7xl *:uppercase"
+	>
+		<div class="text-muted-foreground">
+			<span class="blur-[0.5px]">
+				<span>{t("list.hero.start")}</span>
+				<i class="text-3xl sm:text-5xl">&</i>
+				<span>{t("list.hero.end")}</span>
+			</span>
+		</div>
+		<span
+			class="rotating-word-wrapper inline-block overflow-hidden align-bottom"
+			style={`min-inline-size: ${Math.max(8, maxWordLength)}ch;`}
+		>
+			<span id="rotating-word" class="text-primary tracking-normal font-black inline-block"
+				>{initialWord}</span
+			>
+		</span>
+	</div>
+</h1>
+
+<script define:vars={{ words }} is:inline>
+	// Меняем слово по таймеру с лёгким fade/blur эффектом.
+	const el = document.getElementById("rotating-word");
+	let current = 0;
+	let rotateTimer = 0;
+	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+	if (el && !prefersReducedMotion && words.length > 1) {
+		function showWord(word) {
+			el.style.transition = "opacity 250ms ease, filter 250ms ease";
+			el.style.opacity = "0";
+			el.style.filter = "blur(4px)";
+			window.setTimeout(() => {
+				el.textContent = word;
+				el.style.opacity = "1";
+				el.style.filter = "blur(0px)";
+			}, 280);
+		}
+
+		const rotate = () => {
+			current = (current + 1) % words.length;
+			showWord(words[current]);
+			rotateTimer = window.setTimeout(rotate, 2500);
+		};
+
+		rotateTimer = window.setTimeout(rotate, 2500);
+
+		document.addEventListener(
+			"astro:before-swap",
+			() => {
+				window.clearTimeout(rotateTimer);
+			},
+			{ once: true },
+		);
+	}
+</script>

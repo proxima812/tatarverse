@@ -1,8 +1,11 @@
 ---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
 
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 ---
 
-<a href="/" aria-label="Home page">
+<a href="/" class="sm:block hidden" aria-label={t("nav.home")}>
 	<svg
 		width="85"
 		height="94"

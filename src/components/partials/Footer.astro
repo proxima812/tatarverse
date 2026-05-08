@@ -1,8 +1,13 @@
 ---
 import Container from "@/components/partials/Container.astro";
 import release from "@/data/release.json";
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { Icon } from "astro-icon/components";
 
-const updatedAtLabelEn = new Intl.DateTimeFormat("en", {
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const policyHref = localizePath(locale, "/policy");
+const updatedAtLabel = new Intl.DateTimeFormat(locale, {
 	day: "numeric",
 	month: "long",
 	year: "numeric",
@@ -14,15 +19,41 @@ const updatedAtLabelEn = new Intl.DateTimeFormat("en", {
 ---
 
 <footer class="mt-auto border-t border-border-muted py-6 text-xs text-subtle-foreground">
-	<Container container>
-		<p>
-			v{release.version} · <span
-				data-i18n="footer.updated"
-				data-i18n-date={release.updatedAt}
-				data-i18n-values={JSON.stringify({ date: updatedAtLabelEn })}
+	<Container container class="space-y-3">
+		<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+			<div class="space-y-1">
+				<p>
+					v{release.version} · <span>{t("footer.updated", { date: updatedAtLabel })}</span>
+				</p>
+				<p>
+					Все материалы сайта доступны по лицензии: <a
+						href="https://creativecommons.org/licenses/by/4.0/deed.en"
+						target="_blank"
+						rel="noreferrer noopener"
+						class="font-medium text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
+					>
+						Creative Commons Attribution 4.0 International
+					</a>.
+				</p>
+				<p>&copy; tatarverse.cc {new Date().getFullYear()}</p>
+				<p>
+					<a
+						href={policyHref}
+						class="text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
+					>
+						Политика конфиденциальности персональных данных
+					</a>
+				</p>
+			</div>
+			<a
+				href="https://github.com/proxima812"
+				target="_blank"
+				rel="noreferrer noopener"
+				class="inline-flex w-fit items-center gap-1.5 text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
 			>
-				Updated {updatedAtLabelEn}
-			</span>
-		</p>
+				<Icon name="mdi:github" class="size-4" aria-hidden="true" />
+				<span>proxima812</span>
+			</a>
+		</div>
 	</Container>
 </footer>

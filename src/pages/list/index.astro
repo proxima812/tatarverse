@@ -1,13 +1,18 @@
 ---
+// Страница списка: крупный заголовок и блок карточек с фильтрами.
 import ListCards from "@/components/list/ListCards.astro";
-import MainTextInList from "@/components/MainTextInList.astro";
+import ListHeroTitle from "@/components/ListHeroTitle.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 ---
 
 <Layout
-	title="Centers — Tatar and Bashkir centers"
-	description="A complete list of Tatar, Bashkir, and Crimean Tatar cultural centers around the world. Find a center in your country."
+	title={t("list.title")}
+	description={t("list.description")}
 >
-	<MainTextInList />
+	<ListHeroTitle />
 	<ListCards />
 </Layout>

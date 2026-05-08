@@ -1,4 +1,5 @@
 ---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { cn } from "@/utils/libs/cn";
 import { Icon } from "astro-icon/components";
 
@@ -18,6 +19,8 @@ const buttonClass =
 	"theme-btn inline-flex size-8 items-center justify-center rounded-full text-subtle-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 aria-checked:bg-muted aria-checked:text-foreground";
 
 const { hidden, off, class: className } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 ---
 
 <div
@@ -27,8 +30,7 @@ const { hidden, off, class: className } = Astro.props;
 		hidden ? "hidden" : null,
 	)}
 	role="radiogroup"
-	aria-label="Theme switcher"
-	data-i18n-aria-label="theme.switcher"
+	aria-label={t("theme.switcher")}
 	data-theme-switcher
 >
 	{
@@ -38,8 +40,7 @@ const { hidden, off, class: className } = Astro.props;
 				class={buttonClass}
 				data-theme-option={item.value}
 				role="radio"
-				aria-label={item.label}
-				data-i18n-aria-label={item.labelKey}
+				aria-label={t(item.labelKey, undefined, item.label)}
 				aria-checked={index === 0 ? "true" : "false"}
 				tabindex={index === 0 ? "0" : "-1"}
 			>

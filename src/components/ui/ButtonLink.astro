@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { cn } from "@/utils/libs/cn";
 import { Icon } from "astro-icon/components";
 
@@ -46,22 +47,27 @@ const classes = cn(
 	isDisabled && "pointer-events-none cursor-not-allowed opacity-50",
 	className,
 );
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const localizedHref = href ? localizePath(locale, href) : href;
+const text = labelKey ? t(labelKey, undefined, label) : label;
+const soonText = t("nav.soon", undefined, "soon...");
 ---
 
 <a
-	href={isDisabled ? undefined : href}
+	href={isDisabled ? undefined : localizedHref}
 	aria-disabled={isDisabled || undefined}
 	tabindex={isDisabled ? -1 : undefined}
 	class={classes}
 	{...props}
 >
 	{icon ? <Icon name={icon} class="w-4 h-4" aria-hidden="true" /> : null}
-	<span data-i18n={labelKey}>{label}</span>
+	<span>{text}</span>
 	{
 		variant === "disabled" && (
 			<>
 				{" "}
-				<i class="text-xs opacity-40" data-i18n="nav.soon">soon...</i>
+				<i class="text-xs opacity-40">{soonText}</i>
 			</>
 		)
 	}

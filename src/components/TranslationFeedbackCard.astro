@@ -1,0 +1,27 @@
+---
+// Карточка обратной связи: показывает текст и ссылку в Telegram для исправлений.
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { Icon } from "astro-icon/components";
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<section class="flex gap-1.5 justify-between flex-wrap">
+	<div
+		id="errors"
+		class="max-w-fit flex gap-1.5 sm:items-center items-start text-sm font-medium bg-destructive/10 text-destructive px-3 py-1.5 rounded-md"
+	>
+		<Icon name="mdi:warning" class="shrink-0 inline" />
+		<span>{t("feedback.text")}</span>
+	</div>
+	<a
+		href="https://t.me/ulu_er/8"
+		target="_blank"
+		rel="noopener noreferrer"
+		class="max-w-fit hover:bg-sky-100 hover:text-sky-700 transition-colors ease-linear ring-1 ring-sky-200 flex gap-1.5 items-center text-sm font-medium bg-sky-50 text-sky-600 px-3 py-1.5 rounded-md"
+	>
+		<Icon name="mdi:telegram" />
+		<span>{t("feedback.link")}</span>
+	</a>
+</section>

@@ -8,15 +8,33 @@ export const links = [
 		size: "default",
 		variant: "default",
 	},
-	// {
-	// 	label: "Changelog",
-	// 	labelKey: "nav.changelog",
-	// 	icon: "mdi:cloud-arrow-right-outline",
-	// 	class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5",
-	// 	href: "/changelog",
-	// 	size: "default",
-	// 	variant: "outline",
-	// },
+	{
+		label: "Переводы",
+		labelKey: "nav.translations",
+		icon: "mdi:translate",
+		class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5 ",
+		href: "/translations",
+		size: "default",
+		variant: "outline",
+	},
+	{
+		label: "Sources",
+		labelKey: "nav.sources",
+
+		class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5",
+		href: "/sources",
+		size: "default",
+		variant: "outline",
+	},
+	{
+		label: "Policy",
+		labelKey: "nav.policy",
+
+		class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5",
+		href: "/policy",
+		size: "default",
+		variant: "outline",
+	},
 	{
 		label: "Feedback",
 		labelKey: "nav.feedback",

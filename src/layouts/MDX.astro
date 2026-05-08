@@ -17,9 +17,18 @@ const { frontmatter } = Astro.props as Props;
 ---
 
 <Layout {...frontmatter}>
-	<Container container class="max-w-3xl">
+	<Container container class="max-w-5xl">
 		<BackButton href="/" variant="outline" label="Back" labelKey="nav.back" />
-		<main class="mt-12 prose">
+		<div class="my-12 pl-6">
+			<span class="text-xs text-primary/40 mb-4 block">
+				от {frontmatter.updateInfo}
+			</span>
+			<h1 class="text-4xl font-bold tracking-tight">{frontmatter.title}</h1>
+		</div>
+
+		<main
+			class="prose max-w-none border-primary/10 bg-primary-foreground border p-8 rounded-2xl"
+		>
 			<slot />
 		</main>
 	</Container>

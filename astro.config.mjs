@@ -7,20 +7,26 @@ import metaTags from "astro-meta-tags";
 import { defineConfig } from "astro/config";
 import { config } from "./src/config";
 
+import rehypePrism from "rehype-prism-plus";
 import remarkGemoji from "remark-gemoji";
 import remarkGfm from "remark-gfm";
-
-import rehypePrism from "rehype-prism-plus";
 
 const remarkPlugins = [remarkGfm, remarkGemoji];
 const rehypePlugins = [rehypePrism];
 
 export default defineConfig({
 	site: config.site.url,
+	i18n: {
+		locales: ["ru", "en", "tt", "qt", "uk", "de", "es", "ky", "uz", "kk"],
+		defaultLocale: "ru",
+		routing: {
+			prefixDefaultLocale: false,
+		},
+	},
 	integrations: [
 		sitemap(),
 		mdx(),
-		icon(),
+		icon({ uis: ["*"] }),
 		metaTags(),
 		AstroPWA({
 			manifestFilename: "site.webmanifest",
@@ -130,8 +136,8 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 	},
-	// devToolbar: {
-	// 	enabled: false,
-	// },
+	devToolbar: {
+		enabled: false,
+	},
 	output: "static",
 });

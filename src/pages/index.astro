@@ -1,32 +1,31 @@
 ---
-import AllLang from "@/components/AllLang.astro";
-import LinksNav from "@/components/LinksNav.astro";
-import MainText from "@/components/MainText.astro";
+// Главная страница собирается из hero-заголовка, навигационных ссылок и бегущей плашки слов.
+import WordMarquee from "@/components/WordMarquee.astro";
+import HomeLinks from "@/components/HomeLinks.astro";
+import HomeHeroTitle from "@/components/HomeHeroTitle.astro";
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { getCollection } from "astro:content";
 const centers = (await getCollection("centers")).length;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 ---
 
 <Layout title="" description="">
 	<main class="space-y-12">
-		<MainText />
-		<LinksNav />
+		<HomeHeroTitle />
+		<HomeLinks />
 		<p class="text-primary/50 text-xs">
-			<span data-i18n="home.intro.prefix">Introducing</span>
+			<span>{t("home.intro.prefix")}</span>
 			<a
-				href="/list"
+				href={localizePath(locale, "/list")}
 				class="font-medium text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
-				data-i18n="home.intro.link"
-				data-i18n-values={JSON.stringify({ count: centers })}
 			>
-				a list of {centers} centers
+				{t("home.intro.link", { count: centers })}
 			</a>
-			<span data-i18n="home.intro.suffix">
-				where you can learn more about culture and languages, and find friends and relatives in
-				other cities and countries.
-			</span>
+			<span> {t("home.intro.suffix")}</span>
 		</p>
-		<AllLang />
+		<WordMarquee />
 	</main>
 
 	<!-- <QList /> -->

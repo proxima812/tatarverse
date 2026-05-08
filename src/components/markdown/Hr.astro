@@ -1,0 +1,12 @@
+---
+import { cn } from "@/utils/libs/cn";
+import { markdownClasses } from "./styles";
+
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props as Props;
+---
+
+<hr class={cn(markdownClasses.hr, className)} />

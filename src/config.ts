@@ -1,12 +1,12 @@
 export const config = {
 	site: {
-		url: "https://example.com",
+		url: "https://tatarverse.cc",
 		OG: {
 			title: "",
 			description: "",
-			author: "",
-			locale: "en",
-			site_name: "",
+			author: "proxima812",
+			locale: "",
+      site_name: "tatarverse",
 			defaultImage: "default-ogImage.jpg",
 			keywords: "",
 		},

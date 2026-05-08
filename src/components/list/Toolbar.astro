@@ -1,6 +1,8 @@
 ---
+// Панель фильтров списка: строит чипы по странам, типам, категориям и регионам.
 import { Icon } from "astro-icon/components";
-import { worldCountriesEn, worldCountriesRu, worldCountriesTt } from "@/data/worldCountries";
+import { getCountryLabels, getCountryLabel } from "@/data/worldCountries";
+import { getLocaleFromUrl, useTranslations, type AppLocale } from "@/i18n";
 
 interface FilterOption {
 	value: string;
@@ -18,35 +20,20 @@ interface Props {
 
 const { cardsCount, countries, countryFlags, types, categories, regions } =
 	Astro.props as Props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 
-type SupportedLanguage = "en" | "ru" | "tt";
-type CountryLabels = Record<SupportedLanguage, string>;
-
-const countryLabelsByLanguage = Object.fromEntries(
-	worldCountriesRu.map((country, index) => [
-		country,
-		{
-			en: worldCountriesEn[index] ?? country,
-			ru: country,
-			tt: worldCountriesTt[index] ?? country,
-		},
-	]),
-) as Record<string, CountryLabels>;
+type CountryLabels = Record<AppLocale, string>;
 
 const chipClass =
-	"group shrink-0 flex cursor-pointer items-center gap-1.5 rounded-2xl corner-squircle bg-muted px-2 py-1 text-sm font-medium text-muted-foreground transition hover:bg-subtle data-[active]:bg-primary data-[active]:text-primary-foreground sm:px-3 sm:py-1.5";
+	"group min-w-0 cursor-pointer items-center gap-1.5 rounded-2xl corner-squircle bg-muted px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition hover:bg-subtle data-[active]:bg-primary data-[active]:text-primary-foreground";
 
 function buildCountryLabels(country: string): CountryLabels {
-	return (
-		countryLabelsByLanguage[country] ?? {
-			en: country,
-			ru: country,
-			tt: country,
-		}
-	);
+	return getCountryLabels(country);
 }
 
 function buildOptions(entries: [string, number][]): FilterOption[] {
+	// Приводим tuples к единому виду для рендера чипов.
 	return entries.map(([value, count]) => ({ value, count }));
 }
 
@@ -54,11 +41,8 @@ const typeOptions = buildOptions(types);
 const categoryOptions = buildOptions(categories);
 const regionOptions = buildOptions(regions);
 
-function getOverflowCount(options: FilterOption[]) {
-	return Math.max(options.length - 2, 0);
-}
-
 function getVisibleOptions<T>(options: T[]) {
+	// По умолчанию показываем только первые 2 опции, остальные раскрываются кнопкой.
 	return options.slice(0, 2);
 }
 
@@ -67,346 +51,341 @@ function getOverflowOptions<T>(options: T[]) {
 }
 ---
 
-<section class="flex flex-wrap items-start gap-3">
-	<label class="relative min-w-45 flex-1">
-		<Icon
-			name="mdi:search"
-			class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle-foreground"
-		/>
-		<input
-			data-toolbar-search
-			type="search"
-			placeholder="Search by name, city, country, or region"
-			data-i18n-placeholder="list.search.placeholder"
-			aria-label="Search centers"
-			aria-controls="cards-grid"
-			class="w-full rounded-2xl corner-squircle bg-surface py-2.5 pl-9 pr-4 text-sm text-surface-foreground outline-none placeholder:text-subtle-foreground focus:ring-2 focus:ring-primary/20"
-		/>
-	</label>
-</section>
-<section class="space-y-6">
-	<section class="flex flex-col gap-2">
-		<p
-			class="text-xs font-medium tracking-wide text-subtle-foreground uppercase"
-			data-i18n="list.countries"
-		>
-			Countries
-		</p>
-		<div
-			class="flex flex-wrap gap-2"
-			role="group"
-			aria-label="Country filter"
-			data-i18n-aria-label="list.countries.aria"
-			data-filter-group="country"
-		>
+<section class="space-y-4 lg:space-y-5">
+	<!-- Filter sections: hidden on mobile by default, always visible on lg+ via <style> -->
+	<div id="filters-panel" data-filters-panel class="hidden space-y-5">
+		<div class="flex justify-end">
 			<button
 				type="button"
-				data-filter-all="country"
-				data-active=""
-				aria-pressed="true"
-				class={chipClass}
+				data-filters-reset
+				aria-label={t("list.clearFilters")}
+				title={t("list.clearFilters")}
+				class="hidden size-8 cursor-pointer rounded-2xl corner-squircle bg-muted p-2 text-muted-foreground transition hover:bg-subtle hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 			>
-				<Icon name="mdi:align-horizontal-left" />
-				<span data-i18n="list.all">All</span>
-				<span
-					class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground"
-				>
-					{cardsCount}
-				</span>
+				<Icon name="mdi:filter-remove-outline" class="size-4" aria-hidden="true" />
 			</button>
-
-			{
-				getVisibleOptions(countries).map(([country, count]) => (
-					<button
-						type="button"
-						data-filter-chip="country"
-						data-filter-value={country}
-						aria-pressed="false"
-						class={`inline-flex ${chipClass}`}
-					>
-						{countryFlags.get(country) && (
-							<span class="text-sm leading-none">{countryFlags.get(country)}</span>
-						)}
-						<span
-							data-country-label={country}
-							data-country-labels={JSON.stringify(buildCountryLabels(country))}
-						>
-							{buildCountryLabels(country).en}
-						</span>
-						<span class="grid h-4 place-content-center rounded-full bg-subtle px-1 text-[10px] tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
-							{count}
-						</span>
-					</button>
-				))
-			}
-			{
-				getOverflowOptions(countries).map(([country, count]) => (
-					<button
-						type="button"
-						data-filter-chip="country"
-						data-filter-value={country}
-						data-overflow-chip="true"
-						aria-pressed="false"
-						class={chipClass}
-						style="display: none;"
-					>
-						{countryFlags.get(country) && (
-							<span class="text-sm leading-none">{countryFlags.get(country)}</span>
-						)}
-						<span
-							data-country-label={country}
-							data-country-labels={JSON.stringify(buildCountryLabels(country))}
-						>
-							{buildCountryLabels(country).en}
-						</span>
-						<span class="grid h-4 place-content-center rounded-full bg-subtle px-1 text-[10px] tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
-							{count}
-						</span>
-					</button>
-				))
-			}
 		</div>
-		{
-			getOverflowOptions(countries).length > 0 && (
+
+		<!-- Countries -->
+		<section class="flex flex-col gap-2">
+			<p class="text-xs font-medium tracking-wide text-subtle-foreground uppercase">
+				{t("list.countries")}
+			</p>
+			<div
+				class="flex min-w-0 flex-wrap gap-2"
+				role="group"
+				aria-label={t("list.countries.aria")}
+				data-filter-group="country"
+			>
 				<button
 					type="button"
-					class="self-start cursor-pointer text-sm font-medium text-muted-foreground underline decoration-border underline-offset-4 transition hover:text-foreground"
-					data-filter-more="country"
-					data-expanded="false"
-					data-i18n="list.showMore"
-					data-i18n-values={JSON.stringify({ count: getOverflowOptions(countries).length })}
+					data-filter-all="country"
+					data-active=""
+					aria-pressed="true"
+					class={`inline-flex ${chipClass}`}
 				>
-					Show 0 more
+					<Icon name="mdi:align-horizontal-left" />
+					<span>{t("list.all")}</span>
+					<span
+						class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground"
+					>
+						{cardsCount}
+					</span>
 				</button>
-			)
-		}
-	</section>
 
-	{
-		typeOptions.length > 0 && (
-			<section class="flex flex-col gap-2">
-				<p
-					class="text-xs font-medium tracking-wide text-subtle-foreground uppercase"
-					data-i18n="list.types"
-				>
-					Types
-				</p>
-				<div
-					class="flex flex-wrap gap-2"
-					role="group"
-					aria-label="Type filter"
-					data-i18n-aria-label="list.types.aria"
-					data-filter-group="type"
-				>
-					<button
-						type="button"
-						data-filter-all="type"
-						data-active=""
-						aria-pressed="true"
-						class={`inline-flex ${chipClass}`}
-					>
-						<span data-i18n="list.allTypes">All types</span>
-					</button>
-
-					{getVisibleOptions(typeOptions).map((option) => (
+				{
+					getVisibleOptions(countries).map(([country, count]) => (
 						<button
 							type="button"
-							data-filter-chip="type"
-							data-filter-value={option.value}
+							data-filter-chip="country"
+							data-filter-value={country}
 							aria-pressed="false"
-							class={`inline-flex ${chipClass}`}
+							class={`inline-flex max-w-full ${chipClass}`}
 						>
-							<span>{option.value}</span>
-							<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
-								{option.count}
+							{countryFlags.get(country) && (
+								<span class="text-sm leading-none">{countryFlags.get(country)}</span>
+							)}
+							<span
+								class="min-w-0 truncate"
+								data-country-label={country}
+								data-country-labels={JSON.stringify(buildCountryLabels(country))}
+							>
+								{getCountryLabel(country, locale)}
+							</span>
+							<span class="grid h-4 place-content-center rounded-full bg-subtle px-1 text-[10px] tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
+								{count}
 							</span>
 						</button>
-					))}
-					{getOverflowOptions(typeOptions).map((option) => (
+					))
+				}
+				{
+					getOverflowOptions(countries).map(([country, count]) => (
 						<button
 							type="button"
-							data-filter-chip="type"
-							data-filter-value={option.value}
+							data-filter-chip="country"
+							data-filter-value={country}
 							data-overflow-chip="true"
 							aria-pressed="false"
-							class={chipClass}
-							style="display: none;"
+							class={`inline-flex max-w-full ${chipClass}`}
+							hidden
 						>
-							<span>{option.value}</span>
-							<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
-								{option.count}
+							{countryFlags.get(country) && (
+								<span class="text-sm leading-none">{countryFlags.get(country)}</span>
+							)}
+							<span
+								class="min-w-0 truncate"
+								data-country-label={country}
+								data-country-labels={JSON.stringify(buildCountryLabels(country))}
+							>
+								{getCountryLabel(country, locale)}
+							</span>
+							<span class="grid h-4 place-content-center rounded-full bg-subtle px-1 text-[10px] tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
+								{count}
 							</span>
 						</button>
-					))}
-				</div>
-				{getOverflowOptions(typeOptions).length > 0 && (
-					<button
-						type="button"
-						class="self-start text-sm cursor-pointer font-medium text-muted-foreground underline decoration-border underline-offset-4 transition hover:text-foreground"
-						data-filter-more="type"
-						data-expanded="false"
-						data-i18n="list.showMore"
-						data-i18n-values={JSON.stringify({
-							count: getOverflowOptions(typeOptions).length,
-						})}
-					>
-						Show 0 more
-					</button>
-				)}
-			</section>
-		)
-	}
-
-	{
-		categoryOptions.length > 0 && (
-			<section class="flex flex-col gap-2">
-				<p
-					class="text-xs font-medium tracking-wide text-subtle-foreground uppercase"
-					data-i18n="list.categories"
-				>
-					Categories
-				</p>
-				<div
-					class="flex flex-wrap gap-2"
-					role="group"
-					aria-label="Category filter"
-					data-i18n-aria-label="list.categories.aria"
-					data-filter-group="category"
-				>
-					<button
-						type="button"
-						data-filter-all="category"
-						data-active=""
-						aria-pressed="true"
-						class={`inline-flex ${chipClass}`}
-					>
-						<span data-i18n="list.allCategories">All categories</span>
-					</button>
-
-					{getVisibleOptions(categoryOptions).map((option) => (
-						<button
-							type="button"
-							data-filter-chip="category"
-							data-filter-value={option.value}
-							aria-pressed="false"
-							class={`inline-flex ${chipClass}`}
-						>
-							<span>{option.value}</span>
-							<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
-								{option.count}
-							</span>
-						</button>
-					))}
-					{getOverflowOptions(categoryOptions).map((option) => (
-						<button
-							type="button"
-							data-filter-chip="category"
-							data-filter-value={option.value}
-							data-overflow-chip="true"
-							aria-pressed="false"
-							class={chipClass}
-							style="display: none;"
-						>
-							<span>{option.value}</span>
-							<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
-								{option.count}
-							</span>
-						</button>
-					))}
-				</div>
-				{getOverflowOptions(categoryOptions).length > 0 && (
-					<button
-						type="button"
-						class="self-start text-sm cursor-pointer font-medium text-muted-foreground underline decoration-border underline-offset-4 transition hover:text-foreground"
-						data-filter-more="category"
-						data-expanded="false"
-						data-i18n="list.showMore"
-						data-i18n-values={JSON.stringify({
-							count: getOverflowOptions(categoryOptions).length,
-						})}
-					>
-						Show 0 more
-					</button>
-				)}
-			</section>
-		)
-	}
-
-	{
-		regionOptions.length > 0 && (
-			<section class="flex flex-col gap-2">
-				<p
-					class="text-xs font-medium tracking-wide text-subtle-foreground uppercase"
-					data-i18n="list.regions"
-				>
-					Regions
-				</p>
-				<div
-					class="flex flex-wrap gap-2"
-					role="group"
-					aria-label="Region filter"
-					data-i18n-aria-label="list.regions.aria"
-					data-filter-group="region"
-				>
-					<button
-						type="button"
-						data-filter-all="region"
-						data-active=""
-						aria-pressed="true"
-						class={`inline-flex ${chipClass}`}
-					>
-						<span data-i18n="list.allRegions">All regions</span>
-					</button>
-
-					{getVisibleOptions(regionOptions).map((option) => (
-						<button
-							type="button"
-							data-filter-chip="region"
-							data-filter-value={option.value}
-							aria-pressed="false"
-							class={`inline-flex ${chipClass}`}
-						>
-							<span>{option.value}</span>
-							<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
-								{option.count}
-							</span>
-						</button>
-					))}
-					{getOverflowOptions(regionOptions).map((option) => (
-						<button
-							type="button"
-							data-filter-chip="region"
-							data-filter-value={option.value}
-							data-overflow-chip="true"
-							aria-pressed="false"
-							class={chipClass}
-							style="display: none;"
-						>
-							<span>{option.value}</span>
-							<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
-								{option.count}
-							</span>
-						</button>
-					))}
-				</div>
-				{getOverflowOptions(regionOptions).length > 0 && (
+					))
+				}
+			</div>
+			{
+				getOverflowOptions(countries).length > 0 && (
 					<button
 						type="button"
 						class="self-start cursor-pointer text-sm font-medium text-muted-foreground underline decoration-border underline-offset-4 transition hover:text-foreground"
-						data-filter-more="region"
+						data-filter-more="country"
 						data-expanded="false"
-						data-i18n="list.showMore"
-						data-i18n-values={JSON.stringify({
-							count: getOverflowOptions(regionOptions).length,
-						})}
+						data-show-more={t("list.showMore", { count: "__COUNT__" })}
+						data-show-less={t("list.showLess")}
 					>
-						Show 0 more
+						{t("list.showMore", { count: getOverflowOptions(countries).length })}
 					</button>
-				)}
-			</section>
-		)
-	}
+				)
+			}
+		</section>
+
+		<!-- Types -->
+		{
+			typeOptions.length > 0 && (
+				<section class="flex flex-col gap-2">
+					<p class="text-xs font-medium tracking-wide text-subtle-foreground uppercase">
+						{t("list.types")}
+					</p>
+					<div
+						class="flex min-w-0 flex-wrap gap-2"
+						role="group"
+						aria-label={t("list.types.aria")}
+						data-filter-group="type"
+					>
+						<button
+							type="button"
+							data-filter-all="type"
+							data-active=""
+							aria-pressed="true"
+							class={`inline-flex ${chipClass}`}
+						>
+							<Icon name="mdi:align-horizontal-left" />
+							<span>{t("list.allTypes")}</span>
+						</button>
+
+						{getVisibleOptions(typeOptions).map((option) => (
+							<button
+								type="button"
+								data-filter-chip="type"
+								data-filter-value={option.value}
+								aria-pressed="false"
+								class={`inline-flex max-w-full ${chipClass}`}
+							>
+									<span class="min-w-0 truncate">{option.value}</span>
+								<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
+									{option.count}
+								</span>
+							</button>
+						))}
+						{getOverflowOptions(typeOptions).map((option) => (
+							<button
+								type="button"
+								data-filter-chip="type"
+								data-filter-value={option.value}
+								data-overflow-chip="true"
+								aria-pressed="false"
+								class={`inline-flex max-w-full ${chipClass}`}
+								hidden
+							>
+									<span class="min-w-0 truncate">{option.value}</span>
+								<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
+									{option.count}
+								</span>
+							</button>
+						))}
+					</div>
+					{getOverflowOptions(typeOptions).length > 0 && (
+						<button
+							type="button"
+							class="self-start cursor-pointer text-sm font-medium text-muted-foreground underline decoration-border underline-offset-4 transition hover:text-foreground"
+							data-filter-more="type"
+							data-expanded="false"
+							data-show-more={t("list.showMore", { count: "__COUNT__" })}
+							data-show-less={t("list.showLess")}
+						>
+							{t("list.showMore", { count: getOverflowOptions(typeOptions).length })}
+						</button>
+					)}
+				</section>
+			)
+		}
+
+		<!-- Categories -->
+		{
+			categoryOptions.length > 0 && (
+				<section class="flex flex-col gap-2">
+					<p class="text-xs font-medium tracking-wide text-subtle-foreground uppercase">
+						{t("list.categories")}
+					</p>
+					<div
+						class="flex min-w-0 flex-wrap gap-2"
+						role="group"
+						aria-label={t("list.categories.aria")}
+						data-filter-group="category"
+					>
+						<button
+							type="button"
+							data-filter-all="category"
+							data-active=""
+							aria-pressed="true"
+							class={`inline-flex ${chipClass}`}
+						>
+							<Icon name="mdi:align-horizontal-left" />
+							<span>{t("list.allCategories")}</span>
+						</button>
+
+						{getVisibleOptions(categoryOptions).map((option) => (
+							<button
+								type="button"
+								data-filter-chip="category"
+								data-filter-value={option.value}
+								aria-pressed="false"
+								class={`inline-flex max-w-full ${chipClass}`}
+							>
+									<span class="min-w-0 truncate">{option.value}</span>
+								<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
+									{option.count}
+								</span>
+							</button>
+						))}
+						{getOverflowOptions(categoryOptions).map((option) => (
+							<button
+								type="button"
+								data-filter-chip="category"
+								data-filter-value={option.value}
+								data-overflow-chip="true"
+								aria-pressed="false"
+								class={`inline-flex max-w-full ${chipClass}`}
+								hidden
+							>
+									<span class="min-w-0 truncate">{option.value}</span>
+								<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
+									{option.count}
+								</span>
+							</button>
+						))}
+					</div>
+					{getOverflowOptions(categoryOptions).length > 0 && (
+						<button
+							type="button"
+								class="self-start cursor-pointer text-sm font-medium text-muted-foreground underline decoration-border underline-offset-4 transition hover:text-foreground"
+							data-filter-more="category"
+							data-expanded="false"
+							data-show-more={t("list.showMore", { count: "__COUNT__" })}
+							data-show-less={t("list.showLess")}
+						>
+							{t("list.showMore", { count: getOverflowOptions(categoryOptions).length })}
+						</button>
+					)}
+				</section>
+			)
+		}
+
+		<!-- Regions -->
+		{
+			regionOptions.length > 0 && (
+				<section class="flex flex-col gap-2">
+					<p class="text-xs font-medium tracking-wide text-subtle-foreground uppercase">
+						{t("list.regions")}
+					</p>
+					<div
+						class="flex min-w-0 flex-wrap gap-2"
+						role="group"
+						aria-label={t("list.regions.aria")}
+						data-filter-group="region"
+					>
+						<button
+							type="button"
+							data-filter-all="region"
+							data-active=""
+							aria-pressed="true"
+							class={`inline-flex ${chipClass}`}
+						>
+							<Icon name="mdi:align-horizontal-left" />
+							<span>{t("list.allRegions")}</span>
+						</button>
+
+						{getVisibleOptions(regionOptions).map((option) => (
+							<button
+								type="button"
+								data-filter-chip="region"
+								data-filter-value={option.value}
+								aria-pressed="false"
+								class={`inline-flex max-w-full ${chipClass}`}
+							>
+									<span class="min-w-0 truncate">{option.value}</span>
+								<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
+									{option.count}
+								</span>
+							</button>
+						))}
+						{getOverflowOptions(regionOptions).map((option) => (
+							<button
+								type="button"
+								data-filter-chip="region"
+								data-filter-value={option.value}
+								data-overflow-chip="true"
+								aria-pressed="false"
+								class={`inline-flex max-w-full ${chipClass}`}
+								hidden
+							>
+									<span class="min-w-0 truncate">{option.value}</span>
+								<span class="rounded-lg corner-squircle bg-subtle px-1.5 py-0.5 text-xs tabular-nums text-subtle-foreground group-data-[active]:bg-primary-foreground/15 group-data-[active]:text-primary-foreground">
+									{option.count}
+								</span>
+							</button>
+						))}
+					</div>
+					{getOverflowOptions(regionOptions).length > 0 && (
+						<button
+							type="button"
+							class="self-start cursor-pointer text-sm font-medium text-muted-foreground underline decoration-border underline-offset-4 transition hover:text-foreground"
+							data-filter-more="region"
+							data-expanded="false"
+							data-show-more={t("list.showMore", { count: "__COUNT__" })}
+							data-show-less={t("list.showLess")}
+						>
+							{t("list.showMore", { count: getOverflowOptions(regionOptions).length })}
+						</button>
+					)}
+				</section>
+			)
+		}
+	</div>
 </section>
+
+<style>
+	/* On desktop the filter panel is always visible regardless of JS toggle state */
+	@media (min-width: 1024px) {
+		[data-filters-shell],
+		[data-filters-panel] {
+			display: block !important;
+		}
+	}
+</style>
 
 <script>
 	type FilterGroupName = "country" | "type" | "category" | "region";
@@ -422,12 +401,12 @@ function getOverflowOptions<T>(options: T[]) {
 		dataset: DOMStringMap & {
 			filterMore?: FilterGroupName;
 			expanded?: string;
-			i18n?: string;
-			i18nValues?: string;
+			showMore?: string;
+			showLess?: string;
 		};
 	};
 
-	type FilterableCard = HTMLAnchorElement & {
+	type FilterableCard = HTMLElement & {
 		dataset: DOMStringMap & {
 			country?: string;
 			type?: string;
@@ -439,17 +418,52 @@ function getOverflowOptions<T>(options: T[]) {
 		};
 	};
 
+	type CardIndexItem = {
+		element: FilterableCard;
+		country: string;
+		type: string;
+		category: string;
+		region: string;
+		searchText: string;
+	};
+
 	function initCardsToolbar() {
 		const cardsGrid = document.getElementById("cards-grid");
 		const noResults = document.getElementById("no-results");
 		const searchInput = document.querySelector<HTMLInputElement>("[data-toolbar-search]");
 		const viewButtons = document.querySelectorAll<HTMLElement>("[data-view-btn]");
+		const filtersToggle = document.querySelector<HTMLButtonElement>("[data-filters-toggle]");
+		const filtersShell = document.querySelector<HTMLElement>("[data-filters-shell]");
+		const filtersPanel = document.getElementById("filters-panel");
+		const filtersBadge = document.querySelector<HTMLElement>("[data-filters-badge]");
+		const filtersReset = document.querySelector<HTMLButtonElement>("[data-filters-reset]");
 
 		if (!cardsGrid || !noResults || !searchInput) {
 			return;
 		}
 
-		// One source of truth for every chip group. Empty set means “show all”.
+		const cards = Array.from(
+			cardsGrid.querySelectorAll<FilterableCard>(":scope > article"),
+		);
+		const cardsIndex: CardIndexItem[] = cards.map((card) => {
+			const country = card.dataset.country ?? "";
+			const type = card.dataset.type ?? "";
+			const category = card.dataset.category ?? "";
+			const region = card.dataset.region ?? "";
+			const title = card.dataset.title ?? "";
+			const summary = card.dataset.summary ?? "";
+			const city = card.dataset.city ?? "";
+
+			return {
+				element: card,
+				country,
+				type,
+				category,
+				region,
+				searchText: `${title} ${summary} ${city} ${country} ${type} ${category} ${region}`.toLowerCase(),
+			};
+		});
+
 		const state: FilterState = {
 			country: new Set(),
 			type: new Set(),
@@ -459,18 +473,14 @@ function getOverflowOptions<T>(options: T[]) {
 
 		let searchQuery = "";
 		let searchTimer = 0;
+		let filterFrame = 0;
 
-		// Each group manages its own chips and its own “All” reset button.
 		const groupElements = {
 			country: document.querySelector<HTMLElement>('[data-filter-group="country"]'),
 			type: document.querySelector<HTMLElement>('[data-filter-group="type"]'),
 			category: document.querySelector<HTMLElement>('[data-filter-group="category"]'),
 			region: document.querySelector<HTMLElement>('[data-filter-group="region"]'),
 		};
-
-		function getCards(): FilterableCard[] {
-			return Array.from(document.querySelectorAll("#cards-grid > a")) as FilterableCard[];
-		}
 
 		function getGroupChips(groupName: FilterGroupName): HTMLButtonElement[] {
 			return Array.from(
@@ -492,7 +502,16 @@ function getOverflowOptions<T>(options: T[]) {
 			cardsGrid.scrollIntoView({ behavior: "smooth", block: "start" });
 		}
 
-		// Keep visual active state in sync with the filter state object.
+		function updateFiltersBadge() {
+			const total =
+				state.country.size + state.type.size + state.category.size + state.region.size;
+			if (filtersBadge) {
+				filtersBadge.textContent = String(total);
+				filtersBadge.classList.toggle("hidden", total === 0);
+			}
+			filtersReset?.classList.toggle("hidden", total === 0);
+		}
+
 		function syncGroupUI(groupName: FilterGroupName) {
 			const selectedValues = state[groupName];
 			const allChip = getAllChip(groupName);
@@ -520,22 +539,27 @@ function getOverflowOptions<T>(options: T[]) {
 			}
 
 			syncGroupUI(groupName);
-			applyFilters();
-			scrollToCards();
+			scheduleApplyFilters(true);
 		}
 
 		function resetGroup(groupName: FilterGroupName) {
 			state[groupName].clear();
 			syncGroupUI(groupName);
-			applyFilters();
-			scrollToCards();
+			scheduleApplyFilters(true);
+		}
+
+		function resetFilters() {
+			(Object.keys(state) as FilterGroupName[]).forEach((groupName) => {
+				state[groupName].clear();
+				syncGroupUI(groupName);
+			});
+			scheduleApplyFilters(true);
 		}
 
 		function matchesGroup(selectedValues: Set<string>, value: string) {
 			return selectedValues.size === 0 || selectedValues.has(value);
 		}
 
-		// Overflow chips stay collapsed until the user explicitly expands a group.
 		function syncOverflowUI(groupName: FilterGroupName) {
 			const moreButton = getMoreButton(groupName);
 			if (!moreButton) return;
@@ -553,20 +577,14 @@ function getOverflowOptions<T>(options: T[]) {
 				const isSelected = state[groupName].has(value);
 				const shouldHide = !isExpanded && !isSelected;
 
-				chip.style.display = shouldHide ? "none" : "inline-flex";
+				chip.hidden = shouldHide;
 				if (shouldHide) hiddenCount += 1;
 			});
 
 			moreButton.hidden = !isExpanded && hiddenCount === 0;
-			moreButton.dataset.i18n = isExpanded ? "list.showLess" : "list.showMore";
-
-			if (!isExpanded) {
-				moreButton.dataset.i18nValues = JSON.stringify({ count: hiddenCount });
-			} else {
-				moreButton.dataset.i18nValues = JSON.stringify({});
-			}
-
-			window.__ximaApplyLanguage?.(document.documentElement.lang);
+			moreButton.textContent = isExpanded
+				? (moreButton.dataset.showLess ?? "")
+				: (moreButton.dataset.showMore ?? "").replace("__COUNT__", String(hiddenCount));
 		}
 
 		function toggleOverflow(groupName: FilterGroupName) {
@@ -578,38 +596,28 @@ function getOverflowOptions<T>(options: T[]) {
 			syncOverflowUI(groupName);
 		}
 
-		// The actual list filtering happens here. Every card must satisfy every active group.
-		function applyFilters() {
+		function applyFilters(shouldScrollToCards = false) {
 			const query = searchQuery.trim().toLowerCase();
+			const hasActiveFilters =
+				state.country.size > 0 ||
+				state.type.size > 0 ||
+				state.category.size > 0 ||
+				state.region.size > 0;
 			let visible = 0;
 
-			getCards().forEach((card) => {
-				const country = card.dataset.country ?? "";
-				const type = card.dataset.type ?? "";
-				const category = card.dataset.category ?? "";
-				const region = card.dataset.region ?? "";
-				const title = (card.dataset.title ?? "").toLowerCase();
-				const summary = (card.dataset.summary ?? "").toLowerCase();
-				const city = (card.dataset.city ?? "").toLowerCase();
-
-				const matchesCountry = matchesGroup(state.country, country);
-				const matchesType = matchesGroup(state.type, type);
-				const matchesCategory = matchesGroup(state.category, category);
-				const matchesRegion = matchesGroup(state.region, region);
-				const matchesSearch =
-					!query ||
-					title.includes(query) ||
-					summary.includes(query) ||
-					city.includes(query) ||
-					country.toLowerCase().includes(query) ||
-					type.toLowerCase().includes(query) ||
-					category.toLowerCase().includes(query) ||
-					region.toLowerCase().includes(query);
+			const shouldBypassFiltering = !hasActiveFilters && !query;
+			cardsIndex.forEach((item) => {
+				const matchesCountry = matchesGroup(state.country, item.country);
+				const matchesType = matchesGroup(state.type, item.type);
+				const matchesCategory = matchesGroup(state.category, item.category);
+				const matchesRegion = matchesGroup(state.region, item.region);
+				const matchesSearch = !query || item.searchText.includes(query);
 
 				const show =
-					matchesCountry && matchesType && matchesCategory && matchesRegion && matchesSearch;
+					shouldBypassFiltering ||
+					(matchesCountry && matchesType && matchesCategory && matchesRegion && matchesSearch);
 
-				card.style.display = show ? "" : "none";
+				item.element.hidden = !show;
 
 				if (show) {
 					visible += 1;
@@ -617,9 +625,30 @@ function getOverflowOptions<T>(options: T[]) {
 			});
 
 			noResults.hidden = visible > 0;
+			updateFiltersBadge();
+			if (shouldScrollToCards) {
+				scrollToCards();
+			}
 		}
 
-		// Wire chip interactions for every filter group with the same behavior.
+		function scheduleApplyFilters(shouldScrollToCards = false) {
+			window.cancelAnimationFrame(filterFrame);
+			filterFrame = window.requestAnimationFrame(() => {
+				applyFilters(shouldScrollToCards);
+			});
+		}
+
+		// Mobile filter panel toggle
+		filtersToggle?.addEventListener("click", () => {
+			if (!filtersPanel) return;
+			const isHidden = filtersPanel.classList.contains("hidden");
+			filtersShell?.classList.toggle("hidden", !isHidden);
+			filtersPanel.classList.toggle("hidden", !isHidden);
+			filtersToggle.setAttribute("aria-expanded", String(isHidden));
+		});
+
+		filtersReset?.addEventListener("click", resetFilters);
+
 		(Object.keys(groupElements) as FilterGroupName[]).forEach((groupName) => {
 			const groupElement = groupElements[groupName];
 			if (!groupElement) return;
@@ -641,13 +670,11 @@ function getOverflowOptions<T>(options: T[]) {
 			});
 		});
 
-		// Search stays debounced because it is the noisiest input in the toolbar.
 		searchInput.addEventListener("input", (event) => {
 			window.clearTimeout(searchTimer);
 			searchTimer = window.setTimeout(() => {
 				searchQuery = (event.target as HTMLInputElement).value;
-				applyFilters();
-				scrollToCards();
+				scheduleApplyFilters(false);
 			}, 150);
 		});
 
@@ -659,7 +686,6 @@ function getOverflowOptions<T>(options: T[]) {
 			});
 		});
 
-		// Initial UI sync keeps “All” chips active before the user touches anything.
 		(Object.keys(state) as FilterGroupName[]).forEach(syncGroupUI);
 		applyFilters();
 	}

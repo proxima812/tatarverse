@@ -12,7 +12,7 @@ const { class: className, container } = Astro.props as Props;
 <div
 	class={!container
 		? "not-container"
-		: cn("container flex-1 px-5 mx-auto max-w-6xl", className)}
+		: cn("container flex-1 px-5 mx-auto max-w-5xl", className)}
 >
 	<slot />
 </div>

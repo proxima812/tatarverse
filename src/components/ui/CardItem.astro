@@ -1,12 +1,7 @@
 ---
-import { worldCountriesEn, worldCountriesRu, worldCountriesTt } from "@/data/worldCountries";
+import { getCountryLabel, getCountryLabels } from "@/data/worldCountries";
+import { getLocaleFromUrl, localizePath } from "@/i18n";
 import { Icon } from "astro-icon/components";
-
-interface CardLink {
-	type: string;
-	url: string;
-	label?: string;
-}
 
 interface Location {
 	flag?: string;
@@ -22,42 +17,21 @@ interface Props {
 	type?: string;
 	category?: string;
 	location?: Location;
-	links?: CardLink[];
 	pubDate?: string | Date;
 	region?: string;
 }
 
-const { id, title, summary, type, category, location, links = [], pubDate, region } =
-	Astro.props as Props;
-const NINETY_DAYS = 90 * 24 * 60 * 60 * 1000;
-const isNew = pubDate ? Date.now() - new Date(pubDate).getTime() < NINETY_DAYS : false;
+const { id, title, summary, type, category, location, pubDate, region } = Astro.props as Props;
+const locale = getLocaleFromUrl(Astro.url);
 
 const NO_DATA = "Нет данных.";
 const cleanFlag = location?.flag && location.flag !== NO_DATA ? location.flag : undefined;
 const cleanCity = location?.city && location.city !== NO_DATA ? location.city : undefined;
 const cleanCountry =
 	location?.country && location.country !== NO_DATA ? location.country : undefined;
-const countryLabelsByLanguage = Object.fromEntries(
-	worldCountriesRu.map((country, index) => [
-		country,
-		{
-			en: worldCountriesEn[index] ?? country,
-			ru: country,
-			tt: worldCountriesTt[index] ?? country,
-		},
-	]),
-) as Record<string, { en: string; ru: string; tt: string }>;
-const displayCountry = cleanCountry
-	? (countryLabelsByLanguage[cleanCountry]?.en ?? cleanCountry)
-	: undefined;
+const displayCountry = cleanCountry ? getCountryLabel(cleanCountry, locale) : undefined;
 const countryKey = cleanCountry ?? "Прочее";
-const countryLabels = cleanCountry
-	? (countryLabelsByLanguage[cleanCountry] ?? {
-			en: cleanCountry,
-			ru: cleanCountry,
-			tt: cleanCountry,
-		})
-	: undefined;
+const countryLabels = cleanCountry ? getCountryLabels(cleanCountry) : undefined;
 
 const isDump =
 	summary &&
@@ -67,34 +41,80 @@ const isDump =
 		summary.length > 400);
 const displaySummary = isDump ? undefined : summary;
 
-const socialLinks = links.filter((l) => !["email", "phone"].includes(l.type.toLowerCase()));
-
-const iconMap: Record<string, string> = {
-	instagram: "mdi:instagram",
-	telegram: "mdi:telegram",
-	vk: "mdi:vk",
-	facebook: "mdi:facebook",
-	youtube: "mdi:youtube",
-	tiktok: "mdi:tiktok",
-	twitter: "mdi:twitter",
-	site: "mdi:web",
-	web: "mdi:web",
-	website: "mdi:web",
+const cardText = {
+	title: title ?? "—",
+	summary: displaySummary,
+	location:
+		cleanFlag || cleanCity || displayCountry
+			? {
+					flag: cleanFlag,
+					city: cleanCity,
+					country: displayCountry,
+					countryLabels,
+				}
+			: null,
 };
 
-function getIcon(type: string): string {
-	return iconMap[type.toLowerCase()] ?? "mdi:web";
+const GRADIENT_POSITIONS = [
+	["-10% 110%", "110% 105%", "-5% -8%", "108% -6%"],
+	["-12% 108%", "112% 112%", "50% -15%", "115% 50%"],
+	["50% 118%", "115% 60%", "-15% 50%", "-10% -10%"],
+	["-15% 100%", "108% 115%", "115% -10%", "-8% 0%"],
+	["-8% 115%", "115% 108%", "0% -12%", "112% -8%"],
+	["50% 120%", "120% 50%", "-20% 50%", "50% -18%"],
+] as const;
+
+const hashString = (value: string) =>
+	Array.from(value).reduce((acc, char) => (acc * 31 + char.charCodeAt(0)) >>> 0, 7);
+
+const wrapHue = (value: number) => ((value % 360) + 360) % 360;
+
+const oklch = (lightness: number, chroma: number, hue: number, alpha: number) =>
+	`oklch(${lightness} ${chroma} ${wrapHue(hue)} / ${alpha})`;
+
+function createCountryGradient(country: string) {
+	const seed = hashString(country);
+	const hue = seed % 360;
+	const stops = GRADIENT_POSITIONS[Math.floor(seed / 13) % GRADIENT_POSITIONS.length];
+	const colors = [
+		oklch(0.78, 0.18, hue, 0.55),
+		oklch(0.84, 0.16, hue + 32, 0.45),
+		oklch(0.74, 0.2, hue - 38, 0.5),
+		oklch(0.88, 0.14, hue + 162, 0.4),
+	] as const;
+
+	return {
+		base: oklch(0.965, 0.022, hue + 18, 1),
+		image: [
+			`radial-gradient(60% 55% at ${stops[0]}, ${colors[0]} 0%, transparent 70%)`,
+			`radial-gradient(55% 50% at ${stops[1]}, ${colors[1]} 0%, transparent 68%)`,
+			`radial-gradient(65% 60% at ${stops[2]}, ${colors[2]} 0%, transparent 72%)`,
+			`radial-gradient(50% 45% at ${stops[3]}, ${colors[3]} 0%, transparent 65%)`,
+		].join(", "),
+	};
 }
 
-function getLinkLabel(link: CardLink) {
-	const kind = link.label?.trim() || link.type.trim();
-	return `Open ${kind}`;
-}
+const badgeGradient = createCountryGradient(countryKey);
+
+type IconName = "tt" | "qt" | "bs";
+
+type Category = "Татарский" | "Татаро-Башкирский" | "Башкирский" | "Крымотатарский";
+
+const categoryIconMap: Record<Category, IconName[]> = {
+	Татарский: ["tt"],
+	"Татаро-Башкирский": ["tt", "bs"],
+	Башкирский: ["bs"],
+	Крымотатарский: ["qt"],
+};
+const icons = categoryIconMap[category as Category] ?? [];
+const truncate = (value?: string, max = 23) => {
+	if (!value) return "";
+	const v = value.trim();
+	return v.length > max ? v.slice(0, max).trimEnd() + "…" : v;
+};
 ---
 
-<a
-	href={`/list/centers/${id}`}
-	// These attributes are the filtering contract used by the list toolbar on the client.
+<article
 	data-type={type ?? ""}
 	data-category={category ?? ""}
 	data-country={countryKey}
@@ -103,62 +123,65 @@ function getLinkLabel(link: CardLink) {
 	data-summary={summary ?? ""}
 	data-city={cleanCity ?? ""}
 	data-date={pubDate ? new Date(pubDate).toISOString() : ""}
-	class="block h-full"
+	class="content-auto bg-depth-100 relative flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle p-5 shadow-2xs transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
+	style={`background-image:${badgeGradient.image}; background-color:${badgeGradient.base}; contain-intrinsic-size: 240px`}
 >
-	<article
-		class="group h-full relative flex flex-col gap-3 rounded-2xl corner-squircle bg-surface p-5 ring-1 ring-border-muted transition-all hover:shadow-sm hover:ring-ring"
-	>
-		<div class="flex items-start justify-between gap-2">
-			{
-				(cleanFlag || cleanCity || displayCountry) && (
-					<div class="flex items-center gap-1.5 text-xs text-subtle-foreground">
-						{cleanFlag && <span class="text-base leading-none">{cleanFlag}</span>}
-						{cleanCity && <span>{cleanCity}</span>}
-						{cleanCity && countryLabels && <span aria-hidden="true">&#10625;</span>}
-						{countryLabels && (
+	<div class="flex justify-center items-center">
+		{
+			cardText.location && (
+				<div class="rounded-full  bg-white/50 backdrop-blur-lg ring-inset ring ring-white corner-squircle px-3 py-1.5 shadow-2xs shrink-0 max-w-fit  text-right text-xs text-surface-foreground">
+					<div class="flex items-center gap-1.5">
+						{cardText.location.flag && (
+							<span class="text-base leading-none">{cardText.location.flag}</span>
+						)}
+						{cardText.location.city && (
+							<span>{truncate(cardText.location.city.trim(), 12)}</span>
+						)}
+						{cardText.location.city && cardText.location.countryLabels && (
+							<span aria-hidden="true">&#10625;</span>
+						)}
+						{cardText.location.countryLabels && (
 							<span
 								data-country-label={cleanCountry}
-								data-country-labels={JSON.stringify(countryLabels)}
+								data-country-labels={JSON.stringify(cardText.location.countryLabels)}
 							>
-								{countryLabels.en}
+								{cardText.location.country}
 							</span>
 						)}
 					</div>
-				)
-			}
-		</div>
-
-		<h2 class="line-clamp-2 font-semibold leading-snug text-surface-foreground">
-			{title ?? "—"}
+				</div>
+			)
+		}
+	</div>
+	<div>
+		<h2
+			class="line-clamp-1 text-center font-bold leading-snug tracking-tight mb-2 text-surface-foreground text-xl"
+		>
+			{cardText.title}
 		</h2>
-
 		{
-			displaySummary && (
-				<p class="line-clamp-3 grow text-xs leading-relaxed text-muted-foreground">
-					{displaySummary}
+			cardText.summary && (
+				<p class="relative text-center line-clamp-2 z-10 grow text-sm leading-relaxed text-muted-foreground">
+					{cardText.summary}
 				</p>
 			)
 		}
-
-		<div class="mt-auto flex items-center justify-between gap-2 pt-1">
+	</div>
+	<div class="flex justify-between items-center">
+		<div class="flex gap-3">
 			{
-				socialLinks.length > 0 && (
-					<div class="flex flex-wrap gap-1.5">
-						{socialLinks.map((link) => (
-							<a
-								href={link.url}
-								target="_blank"
-								rel="noopener noreferrer"
-								title={link.label ?? link.type}
-								aria-label={getLinkLabel(link)}
-								class="flex h-7 w-7 items-center justify-center rounded-lg corner-squircle bg-muted text-muted-foreground transition hover:bg-subtle hover:text-foreground"
-							>
-								<Icon name={getIcon(link.type)} class="h-4 w-4" aria-hidden="true" />
-							</a>
-						))}
-					</div>
-				)
+				icons.map((name) => (
+					<Icon
+						name={name}
+						class="shrink-0 pointer-events-none size-8 [&:not([class*='size-'])]:size-4"
+					/>
+				))
 			}
 		</div>
-	</article>
-</a>
+
+		<a
+			class="flex max-w-fit items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm text-surface-foreground shadow-2xs transition-all hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+			href={localizePath(locale, `/list/centers/${id}`)}><span>Подробнее</span></a
+		>
+	</div>
+</article>

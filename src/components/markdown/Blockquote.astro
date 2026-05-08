@@ -1,0 +1,14 @@
+---
+import { cn } from "@/utils/libs/cn";
+import { markdownClasses } from "./styles";
+
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props as Props;
+---
+
+<blockquote class={cn(markdownClasses.blockquote, className)}>
+	<slot />
+</blockquote>

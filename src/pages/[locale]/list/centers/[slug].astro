@@ -1,0 +1,21 @@
+---
+import CenterPage from "../../../list/centers/[slug].astro";
+import { defaultLocale, locales } from "@/i18n";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+	const entries = await getCollection("centers");
+
+	return locales
+		.filter((locale) => locale !== defaultLocale)
+		.flatMap((locale) =>
+			entries.map((entry) => ({
+				params: { locale, slug: entry.id },
+				props: { entry },
+			})),
+		);
+}
+
+---
+
+<CenterPage entry={Astro.props.entry} />

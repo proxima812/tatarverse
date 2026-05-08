@@ -1,0 +1,80 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e5]:
+      - navigation "Primary navigation" [ref=e6]:
+        - link "Home page" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img [ref=e8]
+        - link "Список центров" [ref=e12] [cursor=pointer]:
+          - /url: /list/
+          - generic [ref=e13]: Список центров
+      - generic [ref=e15]:
+        - button "Переключатель языка" [expanded] [active] [ref=e16]:
+          - generic [ref=e17]: RU
+          - img [ref=e18]
+        - menu [ref=e50]:
+          - menuitemradio "Русский" [checked] [ref=e51] [cursor=pointer]:
+            - generic [ref=e52]: Русский
+            - generic [ref=e53]: RU
+          - menuitemradio "English" [ref=e54] [cursor=pointer]:
+            - generic [ref=e55]: English
+            - generic [ref=e56]: EN
+          - menuitemradio "Татарча" [ref=e57] [cursor=pointer]:
+            - generic [ref=e58]: Татарча
+            - generic [ref=e59]: TT
+          - menuitemradio "Qırımtatarca" [ref=e60] [cursor=pointer]:
+            - generic [ref=e61]: Qırımtatarca
+            - generic [ref=e62]: QT
+          - menuitemradio "Українська" [ref=e63] [cursor=pointer]:
+            - generic [ref=e64]: Українська
+            - generic [ref=e65]: UK
+          - menuitemradio "Deutsch" [ref=e66] [cursor=pointer]:
+            - generic [ref=e67]: Deutsch
+            - generic [ref=e68]: DE
+          - menuitemradio "Español" [ref=e69] [cursor=pointer]:
+            - generic [ref=e70]: Español
+            - generic [ref=e71]: ES
+          - menuitemradio "Кыргызча" [ref=e72] [cursor=pointer]:
+            - generic [ref=e73]: Кыргызча
+            - generic [ref=e74]: KY
+          - menuitemradio "O‘zbekcha" [ref=e75] [cursor=pointer]:
+            - generic [ref=e76]: O‘zbekcha
+            - generic [ref=e77]: UZ
+          - menuitemradio "Қазақша" [ref=e78] [cursor=pointer]:
+            - generic [ref=e79]: Қазақша
+            - generic [ref=e80]: KK
+  - main [ref=e22]:
+    - heading "мы татары башкиры крымские татары везде.повсюду. навсегда!" [level=1] [ref=e23]:
+      - generic [ref=e25]:
+        - generic [ref=e26]: мы
+        - generic [ref=e27]: татары
+        - generic [ref=e28]: башкиры
+        - generic [ref=e29]: крымские татары
+        - generic [ref=e30]: везде.повсюду. навсегда!
+    - generic [ref=e32]:
+      - link "Перейти к центрам" [ref=e33] [cursor=pointer]:
+        - /url: /list/
+        - generic [ref=e34]: Перейти к центрам
+      - link "Переводы" [ref=e35] [cursor=pointer]:
+        - /url: /translations/
+        - img [ref=e36]
+        - generic [ref=e38]: Переводы
+      - link "Обратная связь" [ref=e39] [cursor=pointer]:
+        - /url: https://t.me/ulu_er
+        - img [ref=e40]
+        - generic [ref=e42]: Обратная связь
+      - generic:
+        - img
+        - generic: Страны
+        - generic: cкоро...
+      - generic:
+        - img
+        - generic: Другие проекты
+        - generic: cкоро...
+    - paragraph [ref=e43]:
+      - text: Представляем
+      - link "список из 365 центров" [ref=e44] [cursor=pointer]:
+        - /url: /list/
+      - text: где можно будет узнать больше о культуре и языках, найти друзей и родственников в других городах и странах.
+  - contentinfo [ref=e47]:
+    - paragraph [ref=e49]: v0.0.2 · Обновлено 20 апреля 2026 г. в 20:39
