@@ -111,6 +111,14 @@ const categories = [...categoryCounts.entries()].sort(
 
 				<button
 					type="button"
+					data-filters-reset
+					class="hidden shrink-0 cursor-pointer rounded-2xl corner-squircle bg-muted px-3 py-3 text-sm font-medium text-muted-foreground transition hover:bg-subtle hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+				>
+					{t("list.clearFilters")}
+				</button>
+
+				<button
+					type="button"
 					data-filters-toggle
 					aria-expanded="false"
 					aria-controls="filters-panel"

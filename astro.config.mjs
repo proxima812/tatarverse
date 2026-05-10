@@ -5,7 +5,11 @@ import AstroPWA from "@vite-pwa/astro";
 import icon from "astro-icon";
 import metaTags from "astro-meta-tags";
 import { defineConfig } from "astro/config";
-import { config } from "./src/config";
+import { config } from "./main.config";
+import aiTxt from "./src/integrations/aiTxt";
+import indexNow from "./src/integrations/indexNow";
+import llmsTxt from "./src/integrations/llmsTxt";
+import robotsTxt from "./src/integrations/robotsTxt";
 
 import rehypePrism from "rehype-prism-plus";
 import remarkGemoji from "remark-gemoji";
@@ -28,6 +32,17 @@ export default defineConfig({
 		mdx(),
 		icon({ uis: ["*"] }),
 		metaTags(),
+		robotsTxt(),
+		...(config.features.llms ? [llmsTxt()] : []),
+		...(config.features.ai ? [aiTxt()] : []),
+		...(config.features.indexNow
+			? [
+					indexNow({
+						key: config.indexNow.key,
+						siteUrl: config.site.url,
+					}),
+				]
+			: []),
 		AstroPWA({
 			manifestFilename: "site.webmanifest",
 			registerType: "autoUpdate",

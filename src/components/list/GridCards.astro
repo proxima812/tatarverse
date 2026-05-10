@@ -42,8 +42,8 @@ const { cards } = Astro.props as Props;
 			return;
 		}
 
-		const revealClass = ["opacity-0", "-translate-y-5", 'scale-[0.90]'];
-		const shownClass = ["opacity-100", "translate-y-0", 'scale-100'];
+		const revealClass = ["-translate-y-5", "scale-[0.90]"];
+		const shownClass = ["translate-y-0", "scale-100"];
 
 		const observer = new IntersectionObserver(
 			(entries) => {

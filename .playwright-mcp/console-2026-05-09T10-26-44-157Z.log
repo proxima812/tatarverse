@@ -1,0 +1,2 @@
+[    3413ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:4321/site.webmanifest:0
+[    3413ms] [ERROR] Manifest fetch from http://127.0.0.1:4321/site.webmanifest failed, code 404 @ http://127.0.0.1:4321/list/centers/tatarskaya-obshhina-d-sorok-tatar-litva-c303-457602:0

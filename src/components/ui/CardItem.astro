@@ -1,6 +1,6 @@
 ---
 import { getCountryLabel, getCountryLabels } from "@/data/worldCountries";
-import { getLocaleFromUrl, localizePath } from "@/i18n";
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { Icon } from "astro-icon/components";
 
 interface Location {
@@ -23,6 +23,7 @@ interface Props {
 
 const { id, title, summary, type, category, location, pubDate, region } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 
 const NO_DATA = "Нет данных.";
 const cleanFlag = location?.flag && location.flag !== NO_DATA ? location.flag : undefined;
@@ -33,17 +34,9 @@ const displayCountry = cleanCountry ? getCountryLabel(cleanCountry, locale) : un
 const countryKey = cleanCountry ?? "Прочее";
 const countryLabels = cleanCountry ? getCountryLabels(cleanCountry) : undefined;
 
-const isDump =
-	summary &&
-	(summary.startsWith("Полное название:") ||
-		summary.startsWith("Тел.:") ||
-		summary.startsWith("Адрес:") ||
-		summary.length > 400);
-const displaySummary = isDump ? undefined : summary;
-
 const cardText = {
 	title: title ?? "—",
-	summary: displaySummary,
+	summary: "",
 	location:
 		cleanFlag || cleanCity || displayCountry
 			? {
@@ -120,10 +113,8 @@ const truncate = (value?: string, max = 23) => {
 	data-country={countryKey}
 	data-region={region ?? ""}
 	data-title={title ?? ""}
-	data-summary={summary ?? ""}
 	data-city={cleanCity ?? ""}
-	data-date={pubDate ? new Date(pubDate).toISOString() : ""}
-	class="content-auto bg-depth-100 relative flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle p-5 shadow-2xs transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
+	class="content-auto relative flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle p-5 shadow-2xs transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
 	style={`background-image:${badgeGradient.image}; background-color:${badgeGradient.base}; contain-intrinsic-size: 240px`}
 >
 	<div class="flex justify-center items-center">
@@ -181,7 +172,7 @@ const truncate = (value?: string, max = 23) => {
 
 		<a
 			class="flex max-w-fit items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm text-surface-foreground shadow-2xs transition-all hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-			href={localizePath(locale, `/list/centers/${id}`)}><span>Подробнее</span></a
+			href={localizePath(locale, `/list/centers/${id}`)}><span>{t("card.details")}</span></a
 		>
 	</div>
 </article>

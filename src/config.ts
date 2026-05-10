@@ -1,36 +1,10 @@
-export const config = {
-	site: {
-		url: "https://tatarverse.cc",
-		OG: {
-			title: "",
-			description: "",
-			author: "proxima812",
-			locale: "",
-      site_name: "tatarverse",
-			defaultImage: "default-ogImage.jpg",
-			keywords: "",
-		},
-		verifications: [
-			{ name_verification: "yandex-verification", content: "" },
-			{ name_verification: "google-site-verification", content: "" },
-			{ name_verification: "msvalidate.01", content: "" },
-			{ name_verification: "p:domain_verify", content: "" },
-			{ name_verification: "facebook-domain-verification", content: "" },
-			{ name_verification: "baidu-site-verification", content: "" },
-			{ name_verification: "apple-site-verification", content: "" },
-			{ name_verification: "alexaVerifyID", content: "" },
-			{ name_verification: "norton-safeweb-site-verification", content: "" },
-			{ name_verification: "twitter-site-verification", content: "" },
-			{ name_verification: "linkedin-site-verification", content: "" },
-			{ name_verification: "adobe-site-verification", content: "" },
-			{ name_verification: "mail.ru-verification", content: "" },
-			{ name_verification: "myspace-site-verification", content: "" },
-			{ name_verification: "tumblr-site-verification", content: "" },
-			{ name_verification: "shopify-site-verification", content: "" },
-			{ name_verification: "weebly-site-verification", content: "" },
-			{ name_verification: "webmaster-site-verification", content: "" },
-			{ name_verification: "whatsapp-site-verification", content: "" },
-			{ name_verification: "stripe-site-verification", content: "" },
-		],
-	},
-};
+export { config } from "../main.config";
+export type {
+	AppConfig,
+	SeoKeywords,
+	SeoPageType,
+	SiteConfig,
+	SiteOpenGraphConfig,
+	SiteThemeColors,
+	SiteVerification,
+} from "../main.config";

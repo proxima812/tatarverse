@@ -1,23 +1,24 @@
 ---
-import { config } from "@/config";
+import {
+	config,
+	type SeoKeywords,
+	type SeoPageType,
+	type SiteVerification,
+} from "main.config";
 
-interface VerificationMeta {
-	name_verification: string;
-	content: string;
-}
-
-interface Props {
+export interface Props {
 	datePublished?: string | Date;
 	dateModified?: string | Date;
 	indexRobots?: boolean;
 	name?: string;
 	author?: string;
 	title?: string;
-	type?: "article" | "website";
-	keywords?: string | string[];
+	type?: SeoPageType;
+	keywords?: SeoKeywords;
 	description?: string;
 	ogImage?: string | URL;
 	locale?: string;
+	YM?: boolean;
 	canonicalURL?: string | URL;
 }
 
@@ -33,8 +34,10 @@ const {
 	description,
 	ogImage,
 	locale,
-	canonicalURL = new URL(Astro.url.pathname, Astro.site),
-} = Astro.props as Props;
+	canonicalURL,
+} = Astro.props;
+
+const siteURL = new URL(config.site.url);
 
 function formatCanonicalURL(url: string | URL) {
 	const path = url.toString();
@@ -43,118 +46,160 @@ function formatCanonicalURL(url: string | URL) {
 	return hasQueryParams ? path.replace(/\/$/, "") : path.replace(/\/?$/, "/");
 }
 
-function normalizeMetaValue(value?: string | string[]) {
-	if (Array.isArray(value)) {
-		return value.filter(Boolean).join(", ");
-	}
-
-	return value;
+function toAbsoluteURL(value: string | URL, base: URL) {
+	return new URL(value.toString(), base).href;
 }
+
+function formatDateToISO(date?: string | Date) {
+	if (!date) return undefined;
+
+	const parsedDate = date instanceof Date ? date : new Date(date);
+
+	return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate.toISOString();
+}
+
+function normalizeKeywords(value?: SeoKeywords) {
+	if (!value) return "";
+	return Array.isArray(value) ? value.filter(Boolean).join(", ") : value.trim();
+}
+
+const resolvedCanonicalURL = canonicalURL
+	? new URL(canonicalURL.toString(), siteURL)
+	: new URL(Astro.url.pathname, siteURL);
 
 const socialImageURL = new URL(
-	ogImage ? ogImage : `/${config.site.OG.defaultImage}`,
-	Astro.url,
+	ogImage ? ogImage.toString() : `/${config.site.OG.defaultImage.replace(/^\/+/, "")}`,
+	siteURL,
 ).href;
 
-const pageType = type === "article" ? "article" : "website";
-const schemaType = pageType === "article" ? "BlogPosting" : "WebPage";
-const mainTitle = title || config.site.OG.title;
+const siteName = name || config.site.OG.site_name || config.site.OG.title;
 
-const mainDescription = description ? description : config.site.OG.description;
+const mainTitle =
+	title && config.site.OG.title && title !== config.site.OG.title
+		? `${title} ${config.site.OG.titleSeparator} ${config.site.OG.title}`
+		: title || config.site.OG.title;
 
-const mainAuthor = author || config.site.OG.author;
+const mainDescription = description || config.site.OG.description;
+
+const mainAuthor = author || config.site.OG.author || siteName;
 const mainOGImage = socialImageURL || config.site.OG.defaultImage;
 const mainLocale = locale || config.site.OG.locale;
-const mainSiteName = name || config.site.OG.site_name;
-const mainKeywords = normalizeMetaValue(keywords) || config.site.OG.keywords;
+const mainKeywords = normalizeKeywords(keywords) || normalizeKeywords(config.site.OG.keywords);
+const publishedTime = formatDateToISO(datePublished);
+const modifiedTime = formatDateToISO(dateModified) || publishedTime;
+const isArticle = type === "article";
 
-function formatDateToYYYYMMDD(date: Date): string {
-	return date.toISOString().substring(0, 10);
-}
-
-function toIsoString(value?: string | Date) {
-	if (!value) return undefined;
-
-	const date = value instanceof Date ? value : new Date(value);
-	return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
-}
-
-const jsonLd = {
-	"@context": "https://schema.org",
-	"@type": schemaType,
-	headline: mainTitle,
-	description: mainDescription,
-	keywords: mainKeywords,
-	inLanguage: mainLocale,
-	url: formatCanonicalURL(canonicalURL),
-	image: mainOGImage,
-	author: {
-		"@type": "Person",
-		name: mainAuthor,
-		url: Astro.site,
-	},
-	publisher: {
-		"@type": "Organization",
-		name: config.site.name,
-		logo: {
+const schemaLogo = config.site.OG.logo
+	? {
 			"@type": "ImageObject",
-			url: `${Astro.site}logo.png`,
-		},
-	},
-	...(datePublished && {
-		datePublished: formatDateToYYYYMMDD(new Date(datePublished)),
-		dateModified: formatDateToYYYYMMDD(new Date(dateModified ?? datePublished)),
-	}),
+			url: toAbsoluteURL(config.site.OG.logo, siteURL),
+		}
+	: undefined;
+
+const schemaPublisher = {
+	"@type": "Organization",
+	name: config.site.OG.organizationName || siteName,
+	...(schemaLogo && { logo: schemaLogo }),
 };
 
-const articlePublishedTime = toIsoString(datePublished);
-const articleModifiedTime = toIsoString(dateModified);
+const schemaItem = isArticle
+	? {
+			"@context": "https://schema.org",
+			"@type": "BlogPosting",
+			headline: mainTitle,
+			description: mainDescription,
+			keywords: mainKeywords,
+			inLanguage: mainLocale,
+			url: formatCanonicalURL(resolvedCanonicalURL),
+			mainEntityOfPage: formatCanonicalURL(resolvedCanonicalURL),
+			image: [mainOGImage],
+			author: {
+				"@type": "Person",
+				name: mainAuthor,
+				url: siteURL.href,
+			},
+			publisher: schemaPublisher,
+			...(publishedTime && { datePublished: publishedTime }),
+			...(modifiedTime && { dateModified: modifiedTime }),
+		}
+	: {
+			"@context": "https://schema.org",
+			"@type": "WebPage",
+			name: mainTitle,
+			description: mainDescription,
+			inLanguage: mainLocale,
+			url: formatCanonicalURL(resolvedCanonicalURL),
+			image: [mainOGImage],
+			author: {
+				"@type": "Person",
+				name: mainAuthor,
+				url: siteURL.href,
+			},
+		};
+
+const enabledVerifications = config.site.verifications.filter(
+	(verification: SiteVerification) => verification.name_verification && verification.content,
+);
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="theme-color" content="#080214" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Xima Tatars" />
-<meta name="msapplication-TileColor" content="#080214" />
-<meta name="msapplication-TileImage" content="/mstile-150x150.png" />
-<link rel="alternate" type="text/plain" href="/llms.txt" title="LLMS Index" />
+
 <meta name="generator" content={Astro.generator} />
-{canonicalURL && <link rel="canonical" href={formatCanonicalURL(canonicalURL)} />}
+
+<link rel="canonical" href={formatCanonicalURL(resolvedCanonicalURL)} />
+
 <title>{mainTitle}</title>
+
 <meta name="title" content={mainTitle} />
 <meta name="description" content={mainDescription} />
 <meta name="author" content={mainAuthor} />
-<meta property="og:type" content={pageType} />
-{canonicalURL && <meta property="og:url" content={formatCanonicalURL(canonicalURL)} />}
+
 <meta property="og:title" content={mainTitle} />
 <meta property="og:description" content={mainDescription} />
+
+<meta property="og:type" content={isArticle ? "article" : "website"} />
+
+<meta property="og:url" content={formatCanonicalURL(resolvedCanonicalURL)} />
+
 <meta property="og:image" content={mainOGImage} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={config.site.OG.imageAlt || mainTitle} />
+
 <meta property="og:locale" content={mainLocale} />
-<meta property="og:site_name" content={mainSiteName} />
-<meta name="keywords" content={mainKeywords} />
+
+<meta property="og:site_name" content={siteName} />
+
+{mainKeywords && <meta name="keywords" content={mainKeywords} />}
+
 {
-	pageType === "article" && (
+	isArticle && (
 		<>
 			<meta property="article:author" content={mainAuthor} />
-			{articlePublishedTime && (
-				<meta property="article:published_time" content={articlePublishedTime} />
-			)}
-			{articleModifiedTime && (
-				<meta property="article:modified_time" content={articleModifiedTime} />
-			)}
+			{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+			{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 		</>
 	)
 }
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={formatCanonicalURL(canonicalURL)} />
-<meta property="twitter:title" content={mainTitle} />
-<meta property="twitter:description" content={mainDescription} />
-<meta property="twitter:image" content={mainOGImage} />
+
+<meta name="twitter:title" content={mainTitle} />
+<meta name="twitter:description" content={mainDescription} />
+<meta name="twitter:image" content={mainOGImage} />
+<meta name="twitter:image:alt" content={config.site.OG.imageAlt || mainTitle} />
+<meta name="twitter:card" content={config.site.OG.twitterCard} />
+<meta name="twitter:url" content={formatCanonicalURL(resolvedCanonicalURL)} />
+{
+	config.site.OG.twitterSite && (
+		<meta name="twitter:site" content={config.site.OG.twitterSite} />
+	)
+}
+{
+	config.site.OG.twitterCreator && (
+		<meta name="twitter:creator" content={config.site.OG.twitterCreator} />
+	)
+}
+
 <meta
 	name="robots"
 	content={indexRobots === false
@@ -162,86 +207,41 @@ const articleModifiedTime = toIsoString(dateModified);
 		: "index, follow, max-image-preview:large"}
 />
 
-<link type="text/plain" rel="author" href={`${Astro.site}humans.txt`} />
-<link
-	rel="alternate"
-	type="application/rss+xml"
-	title="RSS"
-	href={new URL("/posts/rss.xml", Astro.site)}
-/>
-
 <link rel="sitemap" href="/sitemap-index.xml" />
 
 {
-	config.site.verifications &&
-		config.site.verifications.some(
-			(verification: VerificationMeta) =>
-				verification.name_verification && verification.content,
-		) &&
-		config.site.verifications.map((verification: VerificationMeta) =>
-			verification.name_verification && verification.content ? (
-				<meta name={verification.name_verification} content={verification.content} />
-			) : null,
-		)
+	config.features.llms && (
+		<link rel="alternate" type="text/plain" href="/llms.txt" title="LLMS Index" />
+	)
 }
-<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+{
+	config.features.ai && (
+		<link rel="alternate" type="text/plain" href="/ai.txt" title="AI usage policy" />
+	)
+}
 
-<!-- =========================
-	FAVICON / APP ICONS
-	Рекомендуемые размеры
-========================= -->
+{
+	enabledVerifications.map((verification) => (
+		<meta name={verification.name_verification} content={verification.content} />
+	))
+}
 
-<!-- Классический favicon (старые браузеры, fallback)
-	Файл: /favicon.ico
-	Внутри .ico желательно иметь:
-	16x16, 32x32, 48x48 -->
 <link rel="icon" href="/favicon.ico" sizes="any" />
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-
-<!-- SVG favicon (современные браузеры, идеальный вариант)
-	Файл: /favicon.svg
-	Векторный, масштабируется без потери качества -->
+<link rel="shortcut icon" href="/favicon.ico" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
+<link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 
-<!-- Apple Touch Icon (iOS: Safari, добавление на экран)
-	Файл: /apple-touch-icon.png
-	Рекомендуемый размер: 180x180 -->
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<link rel="apple-touch-icon" sizes="152x152" href="/icon-152x152.png" />
-<link rel="apple-touch-icon" sizes="167x167" href="/icon-167x167.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+{config.features.manifest && <link rel="manifest" href="/site.webmanifest" />}
 
-<!-- Web App Manifest (Android, PWA, Chrome, Edge)
-	Файл: /site.webmanifest
-	Иконки внутри manifest:
-	- 192x192 (обязательно)
-	- 512x512 (обязательно) -->
-<link rel="manifest" href="/site.webmanifest" />
+<meta name="application-name" content={siteName} />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content={siteName} />
+<meta name="mobile-web-app-capable" content="yes" />
 
-<!--
-/public
-├─ favicon.ico          → 16x16, 32x32, 48x48 (в одном файле)
-├─ favicon.svg          → SVG
-├─ apple-touch-icon.png → 180x180
-├─ icon-192.png         → 192x192 (Android / PWA)
-├─ icon-512.png         → 512x512 (Android / PWA)
-└─ site.webmanifest
--->
+<meta name="msapplication-TileColor" content={config.site.theme.colors.tile} />
+<link rel="mask-icon" href="/favicon.svg" color={config.site.theme.colors.maskIcon} />
+<meta name="theme-color" content={config.site.theme.colors.theme} />
 
-<!--
-Design and development by:
-================================================================
-    __ __                        _     __
-   / //_/  ____ _   ____ ___    (_)   / /
-  / ,<    / __ `/  / __ `__ \  / /   / /
- / /| |  / /_/ /  / / / / / / / /   / /
-/_/ |_|  \__,_/  /_/ /_/ /_/ /_/   /_/
-    __  ___    _             _     __      __
-   /  |/  /   (_)   _____   (_)   / /__   / /_   ____ _   ____
-  / /|_/ /   / /   / ___/  / /   / //_/  / __ \ / __ `/  / __ \
- / /  / /   / /   / /     / /   / ,<    / / / // /_/ /  / / / /
-/_/  /_/   /_/   /_/     /_/   /_/|_|  /_/ /_/ \__,_/  /_/ /_/
-================================================================
--->
+<script is:inline type="application/ld+json" set:html={JSON.stringify(schemaItem)} />

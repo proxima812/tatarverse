@@ -27,6 +27,8 @@ type CountryLabels = Record<AppLocale, string>;
 
 const chipClass =
 	"group min-w-0 cursor-pointer items-center gap-1.5 rounded-2xl corner-squircle bg-muted px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition hover:bg-subtle data-[active]:bg-primary data-[active]:text-primary-foreground";
+const countryVisibleLimit = 8;
+const defaultVisibleLimit = 2;
 
 function buildCountryLabels(country: string): CountryLabels {
 	return getCountryLabels(country);
@@ -41,30 +43,20 @@ const typeOptions = buildOptions(types);
 const categoryOptions = buildOptions(categories);
 const regionOptions = buildOptions(regions);
 
-function getVisibleOptions<T>(options: T[]) {
-	// По умолчанию показываем только первые 2 опции, остальные раскрываются кнопкой.
-	return options.slice(0, 2);
+function getVisibleOptions<T>(options: T[], limit = defaultVisibleLimit) {
+	// По умолчанию показываем компактный набор, для стран — больше из-за частого сценария фильтрации.
+	return options.slice(0, limit);
 }
 
-function getOverflowOptions<T>(options: T[]) {
-	return options.slice(2);
+function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
+	return options.slice(limit);
 }
 ---
 
 <section class="space-y-4 lg:space-y-5">
 	<!-- Filter sections: hidden on mobile by default, always visible on lg+ via <style> -->
 	<div id="filters-panel" data-filters-panel class="hidden space-y-5">
-		<div class="flex justify-end">
-			<button
-				type="button"
-				data-filters-reset
-				aria-label={t("list.clearFilters")}
-				title={t("list.clearFilters")}
-				class="hidden size-8 cursor-pointer rounded-2xl corner-squircle bg-muted p-2 text-muted-foreground transition hover:bg-subtle hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-			>
-				<Icon name="mdi:filter-remove-outline" class="size-4" aria-hidden="true" />
-			</button>
-		</div>
+		
 
 		<!-- Countries -->
 		<section class="flex flex-col gap-2">
@@ -94,7 +86,7 @@ function getOverflowOptions<T>(options: T[]) {
 				</button>
 
 				{
-					getVisibleOptions(countries).map(([country, count]) => (
+					getVisibleOptions(countries, countryVisibleLimit).map(([country, count]) => (
 						<button
 							type="button"
 							data-filter-chip="country"
@@ -119,7 +111,7 @@ function getOverflowOptions<T>(options: T[]) {
 					))
 				}
 				{
-					getOverflowOptions(countries).map(([country, count]) => (
+					getOverflowOptions(countries, countryVisibleLimit).map(([country, count]) => (
 						<button
 							type="button"
 							data-filter-chip="country"
@@ -147,7 +139,7 @@ function getOverflowOptions<T>(options: T[]) {
 				}
 			</div>
 			{
-				getOverflowOptions(countries).length > 0 && (
+				getOverflowOptions(countries, countryVisibleLimit).length > 0 && (
 					<button
 						type="button"
 						class="self-start cursor-pointer text-sm font-medium text-muted-foreground underline decoration-border underline-offset-4 transition hover:text-foreground"
@@ -156,7 +148,9 @@ function getOverflowOptions<T>(options: T[]) {
 						data-show-more={t("list.showMore", { count: "__COUNT__" })}
 						data-show-less={t("list.showLess")}
 					>
-						{t("list.showMore", { count: getOverflowOptions(countries).length })}
+						{t("list.showMore", {
+							count: getOverflowOptions(countries, countryVisibleLimit).length,
+						})}
 					</button>
 				)
 			}
@@ -427,6 +421,13 @@ function getOverflowOptions<T>(options: T[]) {
 		searchText: string;
 	};
 
+	const filterQueryKeys: Record<FilterGroupName, string> = {
+		country: "country",
+		type: "type",
+		category: "category",
+		region: "region",
+	};
+
 	function initCardsToolbar() {
 		const cardsGrid = document.getElementById("cards-grid");
 		const noResults = document.getElementById("no-results");
@@ -436,7 +437,8 @@ function getOverflowOptions<T>(options: T[]) {
 		const filtersShell = document.querySelector<HTMLElement>("[data-filters-shell]");
 		const filtersPanel = document.getElementById("filters-panel");
 		const filtersBadge = document.querySelector<HTMLElement>("[data-filters-badge]");
-		const filtersReset = document.querySelector<HTMLButtonElement>("[data-filters-reset]");
+		const filtersResetButtons =
+			document.querySelectorAll<HTMLButtonElement>("[data-filters-reset]");
 
 		if (!cardsGrid || !noResults || !searchInput) {
 			return;
@@ -498,6 +500,54 @@ function getOverflowOptions<T>(options: T[]) {
 			);
 		}
 
+		function getValidValues(groupName: FilterGroupName): Set<string> {
+			return new Set(
+				getGroupChips(groupName)
+					.map((chip) => chip.dataset.filterValue ?? "")
+					.filter(Boolean),
+			);
+		}
+
+		function readStateFromUrl() {
+			const params = new URLSearchParams(window.location.search);
+			searchQuery = params.get("q") ?? "";
+			searchInput.value = searchQuery;
+
+			(Object.keys(state) as FilterGroupName[]).forEach((groupName) => {
+				const validValues = getValidValues(groupName);
+				const values = params.getAll(filterQueryKeys[groupName]);
+
+				state[groupName].clear();
+				values.forEach((value) => {
+					if (validValues.has(value)) {
+						state[groupName].add(value);
+					}
+				});
+			});
+		}
+
+		function writeStateToUrl() {
+			const url = new URL(window.location.href);
+			const query = searchQuery.trim();
+
+			url.searchParams.delete("q");
+			(Object.keys(state) as FilterGroupName[]).forEach((groupName) => {
+				url.searchParams.delete(filterQueryKeys[groupName]);
+			});
+
+			if (query) {
+				url.searchParams.set("q", query);
+			}
+
+			(Object.keys(state) as FilterGroupName[]).forEach((groupName) => {
+				state[groupName].forEach((value) => {
+					url.searchParams.append(filterQueryKeys[groupName], value);
+				});
+			});
+
+			window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+		}
+
 		function scrollToCards() {
 			cardsGrid.scrollIntoView({ behavior: "smooth", block: "start" });
 		}
@@ -505,11 +555,14 @@ function getOverflowOptions<T>(options: T[]) {
 		function updateFiltersBadge() {
 			const total =
 				state.country.size + state.type.size + state.category.size + state.region.size;
+			const hasSearchQuery = searchQuery.trim().length > 0;
 			if (filtersBadge) {
 				filtersBadge.textContent = String(total);
 				filtersBadge.classList.toggle("hidden", total === 0);
 			}
-			filtersReset?.classList.toggle("hidden", total === 0);
+			filtersResetButtons.forEach((button) => {
+				button.classList.toggle("hidden", total === 0 && !hasSearchQuery);
+			});
 		}
 
 		function syncGroupUI(groupName: FilterGroupName) {
@@ -553,6 +606,8 @@ function getOverflowOptions<T>(options: T[]) {
 				state[groupName].clear();
 				syncGroupUI(groupName);
 			});
+			searchQuery = "";
+			searchInput.value = "";
 			scheduleApplyFilters(true);
 		}
 
@@ -626,6 +681,7 @@ function getOverflowOptions<T>(options: T[]) {
 
 			noResults.hidden = visible > 0;
 			updateFiltersBadge();
+			writeStateToUrl();
 			if (shouldScrollToCards) {
 				scrollToCards();
 			}
@@ -647,7 +703,9 @@ function getOverflowOptions<T>(options: T[]) {
 			filtersToggle.setAttribute("aria-expanded", String(isHidden));
 		});
 
-		filtersReset?.addEventListener("click", resetFilters);
+		filtersResetButtons.forEach((button) => {
+			button.addEventListener("click", resetFilters);
+		});
 
 		(Object.keys(groupElements) as FilterGroupName[]).forEach((groupName) => {
 			const groupElement = groupElements[groupName];
@@ -686,6 +744,7 @@ function getOverflowOptions<T>(options: T[]) {
 			});
 		});
 
+		readStateFromUrl();
 		(Object.keys(state) as FilterGroupName[]).forEach(syncGroupUI);
 		applyFilters();
 	}

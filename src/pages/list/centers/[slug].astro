@@ -8,7 +8,7 @@ import { getCollection, render, type CollectionEntry } from "astro:content";
 import TranslationFeedbackCard from "@/components/TranslationFeedbackCard.astro";
 import { markdownComponents } from "@/components/markdown";
 import CopyPageMenu from "@/components/ui/CopyPageMenu.astro";
-import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 
 export async function getStaticPaths() {
 	const entries = await getCollection("centers");
@@ -27,6 +27,12 @@ const data = entry.data;
 const { Content } = await render(entry);
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
+const centerEntries = (await getCollection("centers")).sort((a, b) => {
+	return (
+		(b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0) -
+		(a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0)
+	);
+});
 
 const clean = (value?: string | null) => {
 	if (!value) return null;
@@ -34,12 +40,21 @@ const clean = (value?: string | null) => {
 	return normalized.length ? normalized : null;
 };
 
+const trimTitle = (value: string) =>
+	value.length > 20 ? `${value.slice(0, 20).trim()}...` : value;
+
 const title = clean(data.title) ?? t("detail.fallbackTitle");
 const summary = clean(data.summary);
 const country = clean(data.location?.country);
 const city = clean(data.location?.city);
 const flag = clean(data.location?.flag);
 const rawPubDate = clean(data.pubDate);
+const currentIndex = centerEntries.findIndex((centerEntry) => centerEntry.id === entry.id);
+const previousEntry = currentIndex > 0 ? centerEntries[currentIndex - 1] : null;
+const nextEntry =
+	currentIndex >= 0 && currentIndex < centerEntries.length - 1
+		? centerEntries[currentIndex + 1]
+		: null;
 
 const placeLine = [flag, country].filter(Boolean).join(" ");
 const cityLine = city ?? null;
@@ -128,34 +143,27 @@ const pageDescription = summary ?? undefined;
 		>
 		</div>
 
-		<h1
+		<!-- <h1
 			class="max-w-4xl mx-auto text-center text-3xl font-semibold leading-tight text-foreground sm:text-5xl"
 		>
 			{title}
-		</h1>
-
-		{
+		</h1> -->
+		<!-- {
 			summary && (
 				<p class="text-center max-w-4xl mx-auto text-base leading-7 text-muted-foreground sm:text-lg">
 					{summary}
 				</p>
 			)
-		}
-
-		<div
-			class="h-px w-[calc(100%-180px)] mx-auto bg-linear-to-r from-transparent via-border to-transparent"
-		>
-		</div>
+		} -->
+		<!-- <div
+        class="h-px w-[calc(100%-180px)] mx-auto bg-linear-to-r from-transparent via-border to-transparent"
+      >
+      </div> -->
 
 		<main class="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10 xl:gap-12">
-			<section
-				class="w-full rounded-2xl corner-squircle bg-background p-5 shadow-2xs ring ring-depth-100/70 sm:p-6 lg:order-1"
-			>
-				<div class="prose max-w-none">
-					<!-- <Content /> -->
-					<Content components={markdownComponents} />
-				</div>
-			</section>
+			<div class="max-w-none prose">
+				<Content components={markdownComponents} />
+			</div>
 
 			{
 				facts.length > 0 && (
@@ -179,7 +187,7 @@ const pageDescription = summary ?? undefined;
 						<hr class="bg-primary/10 my-4" />
 						<span class="mb-1 flex items-center gap-1.5 text-xs uppercase text-subtle-foreground">
 							<Icon name="mdi:link" />
-							Источник
+							{t("detail.source")}
 						</span>
 						{sourceUrl && (
 							<a
@@ -195,6 +203,33 @@ const pageDescription = summary ?? undefined;
 				)
 			}
 		</main>
+
+		{
+			(previousEntry || nextEntry) && (
+				<nav aria-label={t("detail.pagination")} class="grid gap-3 sm:grid-cols-2">
+					{previousEntry ? (
+						<a
+							href={localizePath(locale, `/list/centers/${previousEntry.id}`)}
+							class="inline-flex min-w-0 items-center gap-2 rounded-2xl corner-squircle bg-transparent px-4 py-3 text-sm font-medium text-primary/80 ring ring-primary/10 ring-inset transition hover:bg-primary/5"
+						>
+							<Icon name="mdi:arrow-left" class="size-4 shrink-0" aria-hidden="true" />
+							<span class="min-w-0 truncate">{trimTitle(previousEntry.data.title)}</span>
+						</a>
+					) : (
+						<span aria-hidden="true" />
+					)}
+					{nextEntry && (
+						<a
+							href={localizePath(locale, `/list/centers/${nextEntry.id}`)}
+							class="inline-flex min-w-0 items-center justify-end gap-2 rounded-2xl corner-squircle bg-transparent px-4 py-3 text-right text-sm font-medium text-primary/80 ring ring-primary/10 ring-inset transition hover:bg-primary/5"
+						>
+							<span class="min-w-0 truncate">{trimTitle(nextEntry.data.title)}</span>
+							<Icon name="mdi:arrow-right" class="size-4 shrink-0" aria-hidden="true" />
+						</a>
+					)}
+				</nav>
+			)
+		}
 
 		<TranslationFeedbackCard />
 	</article>
