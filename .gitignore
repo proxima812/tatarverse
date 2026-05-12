@@ -25,13 +25,9 @@ bun.lockb*
 .idea/
 
 
-.vscode
-
 .codex/
 .claude/
 .agents/
 .playwright-mcp/
+
 AGENTS.md
-scripts/format-mdx-production.js
-scripts/normalize-centers-content.js
-.vscode
