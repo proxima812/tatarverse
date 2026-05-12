@@ -14,9 +14,11 @@ const otherLinks = links.slice(-2);
 const licenseHref = "https://creativecommons.org/licenses/by/4.0/deed.en";
 const developerHref = "https://github.com/proxima812";
 
-const sectionTitleClass = "px-4 text-xs font-semibold uppercase tracking-wide text-foreground";
-const mobileLinkClass =
-	"w-full justify-start text-lg text-muted-foreground hover:text-foreground sm:text-xl";
+const sectionTitleClass =
+	"px-4 mb-4 text-xs font-semibold uppercase tracking-tight text-muted-foreground";
+const mobileLinkClass = "w-full justify-start text-lg text-primary";
+const mobileTextLinkClass =
+	"w-full font-medium justify-start flex items-center px-4 py-2 text-lg text-primary";
 ---
 
 <nav class="hidden space-x-3 sm:flex">
@@ -33,50 +35,53 @@ const mobileLinkClass =
 	}
 </nav>
 
-<div data-menu class="sm:hidden">
+<div data-menu class="sm:hidden select-none">
 	<button
 		type="button"
 		data-menu-toggle
-		class="fixed top-5 left-5 z-50 grid size-7 cursor-pointer place-items-center rounded-2xl corner-squircle bg-background/70 text-foreground shadow-2xs ring-1 ring-border-muted backdrop-blur-md transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+		class="fixed grid top-6 left-6 z-50 px-2.5 py-2 cursor-pointer place-items-center rounded-2xl corner-squircle bg-background/70 text-foreground backdrop-blur-md"
 		aria-label={t("menu.open")}
 		aria-controls="mobile-menu"
 		aria-expanded="false"
 	>
-		<svg
-			width="15"
-			height="12"
-			viewBox="0 0 15 12"
-			class="stroke-current"
-			stroke-width="1.5"
-			stroke-linecap="round"
-			aria-hidden="true"
-		>
-			<line
-				x1="0"
-				y1="6"
-				x2="15"
-				y2="6"
-				class="-translate-y-0.75"
-				style="transform-box: view-box; transform-origin: center center;"></line>
-			<line
-				x1="0"
-				y1="6"
-				x2="15"
-				y2="6"
-				class="translate-y-0.75"
-				style="transform-box: view-box; transform-origin: center center;"></line>
-		</svg></button
-	>
+		<div class="items-center gap-2 flex">
+			<svg
+				width="15"
+				height="12"
+				viewBox="0 0 15 12"
+				class="stroke-current"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				aria-hidden="true"
+			>
+				<line
+					x1="0"
+					y1="6"
+					x2="15"
+					y2="6"
+					class="-translate-y-0.75"
+					style="transform-box: view-box; transform-origin: center center;"></line>
+				<line
+					x1="0"
+					y1="6"
+					x2="15"
+					y2="6"
+					class="translate-y-0.75"
+					style="transform-box: view-box; transform-origin: center center;"></line>
+			</svg>
+			<span>Меню</span>
+		</div>
+	</button>
 
 	<nav
 		id="mobile-menu"
 		data-menu-list
-		class="pointer-events-none fixed inset-0 z-40 h-dvh overflow-hidden bg-background/80 opacity-0 backdrop-blur-lg transition-opacity duration-300 ease-out"
+		class="pointer-events-none fixed inset-0 z-40 h-dvh overflow-hidden bg-background/90 opacity-0 backdrop-blur transition-opacity duration-300 ease-out"
 		aria-label={t("menu.mobile")}
 	>
 		<div class="h-full overflow-y-auto overscroll-contain px-5 pb-12 pt-24">
 			<div class="flex flex-col gap-10">
-				<section class="flex flex-col gap-2" aria-labelledby="mobile-menu-main">
+				<section class="flex flex-col" aria-labelledby="mobile-menu-main">
 					<h2 id="mobile-menu-main" class={sectionTitleClass}>
 						{t("menu.main", undefined, "Menu")}
 					</h2>
@@ -93,7 +98,7 @@ const mobileLinkClass =
 					}
 				</section>
 
-				<section class="flex flex-col gap-2" aria-labelledby="mobile-menu-materials">
+				<section class="flex flex-col" aria-labelledby="mobile-menu-materials">
 					<h2 id="mobile-menu-materials" class={sectionTitleClass}>
 						{t("menu.materials", undefined, "Materials")}
 					</h2>
@@ -110,7 +115,7 @@ const mobileLinkClass =
 					}
 				</section>
 
-				<section class="flex flex-col gap-2" aria-labelledby="mobile-menu-legal">
+				<section class="flex flex-col" aria-labelledby="mobile-menu-legal">
 					<h2 id="mobile-menu-legal" class={sectionTitleClass}>
 						{t("menu.legal", undefined, "Legal")}
 					</h2>
@@ -129,13 +134,13 @@ const mobileLinkClass =
 						href={licenseHref}
 						target="_blank"
 						rel="noreferrer noopener"
-						class="inline-flex w-fit items-center px-4 text-lg font-medium text-link  transition hover:decoration-link sm:text-xl"
+						class={mobileTextLinkClass}
 					>
 						CC BY 4.0
 					</a>
 				</section>
 
-				<section class="flex flex-col gap-2" aria-labelledby="mobile-menu-other">
+				<section class="flex flex-col" aria-labelledby="mobile-menu-other">
 					<h2 id="mobile-menu-other" class={sectionTitleClass}>
 						{t("menu.other", undefined, "Other")}
 					</h2>
@@ -152,7 +157,7 @@ const mobileLinkClass =
 					}
 				</section>
 
-				<section class="flex flex-col gap-2" aria-labelledby="mobile-menu-developer">
+				<section class="flex flex-col" aria-labelledby="mobile-menu-developer">
 					<h2 id="mobile-menu-developer" class={sectionTitleClass}>
 						{t("menu.developer", undefined, "Developer")}
 					</h2>
@@ -160,7 +165,7 @@ const mobileLinkClass =
 						href={developerHref}
 						target="_blank"
 						rel="noreferrer noopener"
-						class="inline-flex w-fit items-center gap-2 px-4 text-lg font-medium text-link  transition hover:decoration-link sm:text-xl"
+						class={`${mobileTextLinkClass} gap-2`}
 					>
 						<Icon name="mdi:github" class="size-5" aria-hidden="true" />
 						<span>proxima812</span>

@@ -1,0 +1,40 @@
+name: Release bump
+
+on:
+  push:
+    branches:
+      - "**"
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore: release') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Bump release version
+        run: node scripts/release-bump.js auto
+        env:
+          RELEASE_BUMP_BASE: ${{ github.event.before }}
+          RELEASE_BUMP_HEAD: ${{ github.sha }}
+
+      - name: Commit release files
+        run: |
+          if git diff --quiet -- package.json src/data/release.json; then
+            echo "No release files changed"
+            exit 0
+          fi
+
+          VERSION="$(node -p "require('./package.json').version")"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json src/data/release.json
+          git commit -m "chore: release v${VERSION} [skip ci]"
+          git push

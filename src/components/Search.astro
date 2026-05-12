@@ -1,0 +1,48 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { Icon } from "astro-icon/components";
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<div
+	class="mb-6 flex items-center gap-2 rounded-3xl corner-squircle bg-white/90 p-2 shadow-2xs ring ring-depth-100/70 backdrop-blur lg:static lg:mb-10 lg:bg-transparent lg:p-0 lg:shadow-none lg:ring-0 lg:backdrop-blur-none"
+>
+	<label class="relative min-w-0 flex-1">
+		<Icon
+			name="mdi:search"
+			class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle-foreground"
+		/>
+		<input
+			data-toolbar-search
+			type="search"
+			placeholder={t("list.search.placeholder")}
+			aria-label={t("list.search.placeholder")}
+			aria-controls="cards-grid"
+			class="w-full rounded-2xl corner-squircle bg-surface py-3 pl-9 pr-4 text-sm text-surface-foreground outline-none ring ring-depth-100 placeholder:text-subtle-foreground focus:ring-2 focus:ring-primary/25"
+		/>
+	</label>
+
+	<button
+		type="button"
+		data-filters-reset
+		class="hidden shrink-0 cursor-pointer rounded-2xl corner-squircle bg-muted px-3 py-3 text-sm font-medium text-muted-foreground transition hover:bg-subtle hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+	>
+		{t("list.clearFilters")}
+	</button>
+
+	<button
+		type="button"
+		data-filters-toggle
+		aria-expanded="false"
+		aria-controls="filters-panel"
+		class="inline-flex shrink-0 items-center gap-1.5 rounded-2xl corner-squircle bg-muted px-3 py-3 text-sm font-medium text-muted-foreground transition hover:bg-subtle lg:hidden"
+	>
+		<Icon name="mdi:tune" class="size-4 shrink-0" aria-hidden="true" />
+		<span>{t("list.filters")}</span>
+		<span
+			data-filters-badge
+			class="hidden min-w-5 rounded-full bg-primary px-1.5 text-center text-xs font-semibold tabular-nums text-primary-foreground"
+		></span>
+	</button>
+</div>

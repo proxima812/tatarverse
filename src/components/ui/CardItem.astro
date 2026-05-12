@@ -1,29 +1,37 @@
 ---
 import { getCountryLabel, getCountryLabels } from "@/data/worldCountries";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { getCenterPath } from "@/utils/centers";
 import { Icon } from "astro-icon/components";
 
+type IconName = "tt" | "qt" | "bs";
+type Category = "Татарский" | "Татаро-Башкирский" | "Башкирский" | "Крымотатарский";
+const categoryIconMap: Record<Category, IconName[]> = {
+	Татарский: ["tt"],
+	"Татаро-Башкирский": ["tt", "bs"],
+	Башкирский: ["bs"],
+	Крымотатарский: ["qt"],
+};
 interface Location {
 	flag?: string;
 	city?: string;
 	country?: string;
-	address?: string;
 }
 
 interface Props {
 	id: string;
+	routeId?: string;
 	title?: string;
-	summary?: string;
 	type?: string;
 	category?: string;
 	location?: Location;
-	pubDate?: string | Date;
 	region?: string;
 }
 
-const { id, title, summary, type, category, location, pubDate, region } = Astro.props as Props;
+const { id, routeId, title, type, category, location, region } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
+const centerPath = getCenterPath(routeId ?? id);
 
 const NO_DATA = "Нет данных.";
 const cleanFlag = location?.flag && location.flag !== NO_DATA ? location.flag : undefined;
@@ -33,72 +41,12 @@ const cleanCountry =
 const displayCountry = cleanCountry ? getCountryLabel(cleanCountry, locale) : undefined;
 const countryKey = cleanCountry ?? "Прочее";
 const countryLabels = cleanCountry ? getCountryLabels(cleanCountry) : undefined;
+const displayTitle = title ?? "—";
+const displayLocation =
+	cleanFlag || cleanCity || displayCountry
+		? { flag: cleanFlag, city: cleanCity, country: displayCountry, countryLabels }
+		: null;
 
-const cardText = {
-	title: title ?? "—",
-	summary: "",
-	location:
-		cleanFlag || cleanCity || displayCountry
-			? {
-					flag: cleanFlag,
-					city: cleanCity,
-					country: displayCountry,
-					countryLabels,
-				}
-			: null,
-};
-
-const GRADIENT_POSITIONS = [
-	["-10% 110%", "110% 105%", "-5% -8%", "108% -6%"],
-	["-12% 108%", "112% 112%", "50% -15%", "115% 50%"],
-	["50% 118%", "115% 60%", "-15% 50%", "-10% -10%"],
-	["-15% 100%", "108% 115%", "115% -10%", "-8% 0%"],
-	["-8% 115%", "115% 108%", "0% -12%", "112% -8%"],
-	["50% 120%", "120% 50%", "-20% 50%", "50% -18%"],
-] as const;
-
-const hashString = (value: string) =>
-	Array.from(value).reduce((acc, char) => (acc * 31 + char.charCodeAt(0)) >>> 0, 7);
-
-const wrapHue = (value: number) => ((value % 360) + 360) % 360;
-
-const oklch = (lightness: number, chroma: number, hue: number, alpha: number) =>
-	`oklch(${lightness} ${chroma} ${wrapHue(hue)} / ${alpha})`;
-
-function createCountryGradient(country: string) {
-	const seed = hashString(country);
-	const hue = seed % 360;
-	const stops = GRADIENT_POSITIONS[Math.floor(seed / 13) % GRADIENT_POSITIONS.length];
-	const colors = [
-		oklch(0.78, 0.18, hue, 0.55),
-		oklch(0.84, 0.16, hue + 32, 0.45),
-		oklch(0.74, 0.2, hue - 38, 0.5),
-		oklch(0.88, 0.14, hue + 162, 0.4),
-	] as const;
-
-	return {
-		base: oklch(0.965, 0.022, hue + 18, 1),
-		image: [
-			`radial-gradient(60% 55% at ${stops[0]}, ${colors[0]} 0%, transparent 70%)`,
-			`radial-gradient(55% 50% at ${stops[1]}, ${colors[1]} 0%, transparent 68%)`,
-			`radial-gradient(65% 60% at ${stops[2]}, ${colors[2]} 0%, transparent 72%)`,
-			`radial-gradient(50% 45% at ${stops[3]}, ${colors[3]} 0%, transparent 65%)`,
-		].join(", "),
-	};
-}
-
-const badgeGradient = createCountryGradient(countryKey);
-
-type IconName = "tt" | "qt" | "bs";
-
-type Category = "Татарский" | "Татаро-Башкирский" | "Башкирский" | "Крымотатарский";
-
-const categoryIconMap: Record<Category, IconName[]> = {
-	Татарский: ["tt"],
-	"Татаро-Башкирский": ["tt", "bs"],
-	Башкирский: ["bs"],
-	Крымотатарский: ["qt"],
-};
 const icons = categoryIconMap[category as Category] ?? [];
 const truncate = (value?: string, max = 23) => {
 	if (!value) return "";
@@ -112,31 +60,29 @@ const truncate = (value?: string, max = 23) => {
 	data-category={category ?? ""}
 	data-country={countryKey}
 	data-region={region ?? ""}
-	data-title={title ?? ""}
-	data-city={cleanCity ?? ""}
-	class="content-auto relative flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle p-5 shadow-2xs transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
-	style={`background-image:${badgeGradient.image}; background-color:${badgeGradient.base}; contain-intrinsic-size: 240px`}
+	class="content-auto relative flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
+	style="contain-intrinsic-size: 240px"
 >
 	<div class="flex justify-center items-center">
 		{
-			cardText.location && (
-				<div class="rounded-full  bg-white/50 backdrop-blur-lg ring-inset ring ring-white corner-squircle px-3 py-1.5 shadow-2xs shrink-0 max-w-fit  text-right text-xs text-surface-foreground">
+			displayLocation && (
+				<div class="rounded-full bg-white/50 backdrop-blur-lg ring-inset ring ring-white corner-squircle px-3 py-1.5 shadow-2xs shrink-0 max-w-fit text-right text-xs text-surface-foreground">
 					<div class="flex items-center gap-1.5">
-						{cardText.location.flag && (
-							<span class="text-base leading-none">{cardText.location.flag}</span>
+						{displayLocation.flag && (
+							<span class="text-base leading-none">{displayLocation.flag}</span>
 						)}
-						{cardText.location.city && (
-							<span>{truncate(cardText.location.city.trim(), 12)}</span>
+						{displayLocation.city && (
+							<span>{truncate(displayLocation.city.trim(), 12)}</span>
 						)}
-						{cardText.location.city && cardText.location.countryLabels && (
+						{displayLocation.city && displayLocation.countryLabels && (
 							<span aria-hidden="true">&#10625;</span>
 						)}
-						{cardText.location.countryLabels && (
+						{displayLocation.countryLabels && (
 							<span
 								data-country-label={cleanCountry}
-								data-country-labels={JSON.stringify(cardText.location.countryLabels)}
+								data-country-labels={JSON.stringify(displayLocation.countryLabels)}
 							>
-								{cardText.location.country}
+								{displayLocation.country}
 							</span>
 						)}
 					</div>
@@ -146,17 +92,10 @@ const truncate = (value?: string, max = 23) => {
 	</div>
 	<div>
 		<h2
-			class="line-clamp-1 text-center font-bold leading-snug tracking-tight mb-2 text-surface-foreground text-xl"
+			class="text-center line-clamp-3 font-bold leading-snug tracking-tight mb-2 text-surface-foreground text-xl"
 		>
-			{cardText.title}
+			{displayTitle}
 		</h2>
-		{
-			cardText.summary && (
-				<p class="relative text-center line-clamp-2 z-10 grow text-sm leading-relaxed text-muted-foreground">
-					{cardText.summary}
-				</p>
-			)
-		}
 	</div>
 	<div class="flex justify-between items-center">
 		<div class="flex gap-3">
@@ -172,7 +111,7 @@ const truncate = (value?: string, max = 23) => {
 
 		<a
 			class="flex max-w-fit items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm text-surface-foreground shadow-2xs transition-all hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-			href={localizePath(locale, `/list/centers/${id}`)}><span>{t("card.details")}</span></a
+			href={localizePath(locale, centerPath)}><span>{t("card.details")}</span></a
 		>
 	</div>
 </article>

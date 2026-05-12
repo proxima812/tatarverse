@@ -31,7 +31,7 @@ const variants = {
 	default: "bg-primary text-primary-foreground hover:bg-primary/80",
 	outline: "bg-transparent text-primary/80 ring ring-primary/10 ring-inset hover:bg-primary/5",
 	ghost: "bg-transparent text-primary hover:bg-primary/5",
-	disabled: "bg-muted text-muted-foreground",
+	disabled: "bg-transparent text-muted-foreground",
 };
 
 const sizes = {
@@ -44,7 +44,7 @@ const classes = cn(
 	baseClass,
 	variants[variant] ?? variants.default,
 	sizes[size] ?? sizes.default,
-	isDisabled && "pointer-events-none cursor-not-allowed opacity-50",
+	isDisabled && "pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent",
 	className,
 );
 const locale = getLocaleFromUrl(Astro.url);

@@ -1,0 +1,15 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<p
+	id="no-results"
+	hidden
+	class="py-10 text-center text-sm text-subtle-foreground"
+	role="status"
+	aria-live="polite"
+>
+	{t("list.noResults")}
+</p>

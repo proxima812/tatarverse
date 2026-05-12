@@ -1,5 +1,4 @@
 ---
-// Страница детали центра: собирает контент, метаданные и блоки фактов.
 import ButtonLink from "@/components/ui/ButtonLink.astro";
 import Layout from "@/layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
@@ -9,11 +8,14 @@ import TranslationFeedbackCard from "@/components/TranslationFeedbackCard.astro"
 import { markdownComponents } from "@/components/markdown";
 import CopyPageMenu from "@/components/ui/CopyPageMenu.astro";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { createCenterRouteIdMap, getCenterPath } from "@/utils/centers";
 
 export async function getStaticPaths() {
 	const entries = await getCollection("centers");
+	const routeIds = createCenterRouteIdMap(entries);
+
 	return entries.map((entry) => ({
-		params: { slug: entry.id },
+		params: { id: routeIds.get(entry.id) ?? entry.id },
 		props: { entry },
 	}));
 }
@@ -33,6 +35,7 @@ const centerEntries = (await getCollection("centers")).sort((a, b) => {
 		(a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0)
 	);
 });
+const routeIds = createCenterRouteIdMap(centerEntries);
 
 const clean = (value?: string | null) => {
 	if (!value) return null;
@@ -49,6 +52,8 @@ const country = clean(data.location?.country);
 const city = clean(data.location?.city);
 const flag = clean(data.location?.flag);
 const rawPubDate = clean(data.pubDate);
+const routeId = routeIds.get(entry.id) ?? entry.id;
+const canonicalURL = localizePath(locale, getCenterPath(routeId));
 const currentIndex = centerEntries.findIndex((centerEntry) => centerEntry.id === entry.id);
 const previousEntry = currentIndex > 0 ? centerEntries[currentIndex - 1] : null;
 const nextEntry =
@@ -107,11 +112,16 @@ const facts = [
 const pageDescription = summary ?? undefined;
 ---
 
-<Layout title={`${title}`} description={`${pageDescription}`} type="article">
+<Layout
+	title={`${title}`}
+	description={`${pageDescription}`}
+	type="article"
+	canonicalURL={canonicalURL}
+>
 	<article class="flex flex-col gap-10 max-w-5xl mx-auto">
 		<nav class="flex justify-between flex-wrap items-center">
 			<ButtonLink
-				href="/list"
+				href={localizePath(locale, "/centers")}
 				label="All centers"
 				labelKey="nav.allCenters"
 				variant="outline"
@@ -209,7 +219,10 @@ const pageDescription = summary ?? undefined;
 				<nav aria-label={t("detail.pagination")} class="grid gap-3 sm:grid-cols-2">
 					{previousEntry ? (
 						<a
-							href={localizePath(locale, `/list/centers/${previousEntry.id}`)}
+							href={localizePath(
+								locale,
+								getCenterPath(routeIds.get(previousEntry.id) ?? previousEntry.id),
+							)}
 							class="inline-flex min-w-0 items-center gap-2 rounded-2xl corner-squircle bg-transparent px-4 py-3 text-sm font-medium text-primary/80 ring ring-primary/10 ring-inset transition hover:bg-primary/5"
 						>
 							<Icon name="mdi:arrow-left" class="size-4 shrink-0" aria-hidden="true" />
@@ -220,7 +233,10 @@ const pageDescription = summary ?? undefined;
 					)}
 					{nextEntry && (
 						<a
-							href={localizePath(locale, `/list/centers/${nextEntry.id}`)}
+							href={localizePath(
+								locale,
+								getCenterPath(routeIds.get(nextEntry.id) ?? nextEntry.id),
+							)}
 							class="inline-flex min-w-0 items-center justify-end gap-2 rounded-2xl corner-squircle bg-transparent px-4 py-3 text-right text-sm font-medium text-primary/80 ring ring-primary/10 ring-inset transition hover:bg-primary/5"
 						>
 							<span class="min-w-0 truncate">{trimTitle(nextEntry.data.title)}</span>

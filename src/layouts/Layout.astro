@@ -18,6 +18,7 @@ interface Props {
 	indexRobots?: boolean;
 	datePublished?: string | Date;
 	dateModified?: string | Date;
+	canonicalURL?: string | URL;
 	centered?: boolean;
 	classContainer?: string;
 }
@@ -31,6 +32,7 @@ const {
 	description,
 	ogImage,
 	keywords,
+	canonicalURL,
 	centered,
 	classContainer,
 } = Astro.props as Props;
@@ -47,6 +49,7 @@ const locale = getLocaleFromUrl(Astro.url);
 			ogImage={ogImage}
 			type={type}
 			keywords={keywords}
+			canonicalURL={canonicalURL}
 			datePublished={datePublished}
 			dateModified={dateModified}
 			locale={getOgLocale(locale)}

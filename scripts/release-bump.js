@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -10,6 +11,16 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, "..");
 const packagePath = path.join(rootDir, "package.json");
 const releasePath = path.join(rootDir, "src/data/release.json");
+const releaseFiles = new Set(["package.json", "src/data/release.json"]);
+const contentOrUiPatterns = [
+	/^src\/components\//,
+	/^src\/content\//,
+	/^src\/data\//,
+	/^src\/i18n\//,
+	/^src\/layouts\//,
+	/^src\/pages\//,
+	/\.mdx?$/,
+];
 
 const RU_MONTHS = [
 	"января",
@@ -55,6 +66,55 @@ function bumpVersion(current, bump) {
 	throw new Error("Expected bump type: patch, minor, major, or x.y.z");
 }
 
+function runGit(args) {
+	return execFileSync("git", args, { cwd: rootDir, encoding: "utf8" }).trim();
+}
+
+function getChangedFiles() {
+	const baseRef = process.env.RELEASE_BUMP_BASE;
+	const headRef = process.env.RELEASE_BUMP_HEAD ?? "HEAD";
+	let diffRange = "";
+
+	if (baseRef && !/^0+$/.test(baseRef)) {
+		diffRange = `${baseRef}..${headRef}`;
+	} else {
+		try {
+			diffRange = `${runGit(["rev-parse", "HEAD~1"])}..${headRef}`;
+		} catch {
+			diffRange = headRef;
+		}
+	}
+
+	const output = runGit(["diff", "--name-only", diffRange]);
+	return output
+		.split("\n")
+		.map((file) => file.trim())
+		.filter(Boolean)
+		.filter((file) => !releaseFiles.has(file));
+}
+
+function touchesContentOrUi(file) {
+	return contentOrUiPatterns.some((pattern) => pattern.test(file));
+}
+
+function detectBumpType() {
+	const changedFiles = getChangedFiles();
+
+	if (changedFiles.length === 0) return null;
+
+	const contentOrUiFiles = changedFiles.filter(touchesContentOrUi);
+
+	if (changedFiles.length >= 8 && contentOrUiFiles.length > 0) {
+		return "major";
+	}
+
+	if (changedFiles.length >= 3 || contentOrUiFiles.length > 0) {
+		return "minor";
+	}
+
+	return "patch";
+}
+
 function formatRuDate(date) {
 	const day = date.getDate();
 	const month = RU_MONTHS[date.getMonth()];
@@ -66,7 +126,14 @@ function formatRuDate(date) {
 }
 
 try {
-	const bump = process.argv[2] ?? "patch";
+	const requestedBump = process.argv[2] ?? "patch";
+	const bump = requestedBump === "auto" ? detectBumpType() : requestedBump;
+
+	if (!bump) {
+		console.log("No release bump needed");
+		process.exit(0);
+	}
+
 	const pkg = readJson(packagePath);
 	const nextVersion = bumpVersion(pkg.version, bump);
 	const now = new Date();

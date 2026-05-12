@@ -1,6 +1,6 @@
 ---
 // Страница списка: крупный заголовок и блок карточек с фильтрами.
-import ListCards from "@/components/list/ListCards.astro";
+import ListCards from "@/components/ListCards.astro";
 import ListHeroTitle from "@/components/ListHeroTitle.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
@@ -9,10 +9,7 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<Layout
-	title={t("list.title")}
-	description={t("list.description")}
->
+<Layout title={t("list.title")} description={t("list.description")}>
 	<ListHeroTitle />
 	<ListCards />
 </Layout>

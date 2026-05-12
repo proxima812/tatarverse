@@ -24,12 +24,14 @@ bun.lockb*
 # jetbrains setting folder
 .idea/
 
-.codex/
+
 .vscode
-CODEX.md
-TESTED.md
-src/pages/_changelog.mdx
-scripts/
-reports/
-src/data/_centers_notformatted
-src/data/_list-data.ts
+
+.codex/
+.claude/
+.agents/
+.playwright-mcp/
+AGENTS.md
+scripts/format-mdx-production.js
+scripts/normalize-centers-content.js
+.vscode

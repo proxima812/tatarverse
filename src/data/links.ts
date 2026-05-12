@@ -4,7 +4,7 @@ export const links = [
 		labelKey: "nav.toCenters",
 		icon: "",
 		class: "sm:text-sm text-xs sm:px-4 sm:py-2 px-3 py-1.5 ",
-		href: "/list",
+		href: "/centers",
 		size: "default",
 		variant: "default",
 	},

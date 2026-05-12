@@ -53,7 +53,8 @@ const socialByHost: Record<string, string> = {
 const baseLinkClass =
 	"inline-flex items-center gap-1.5 align-baseline text-foreground underline decoration-current/40 decoration-2 underline-offset-3 transition-colors hover:text-primary";
 const iconClass = "h-4 w-4 shrink-0 text-current opacity-70";
-const socialClass = "h-auto justify-start border-0 bg-transparent px-0 py-0 text-base leading-normal";
+const socialClass =
+	"h-auto justify-start border-0 bg-transparent px-0 py-0 text-base leading-normal";
 
 const defaultView = (value: string): LinkView => ({
 	label: rawText || value,
@@ -77,10 +78,9 @@ const emailView = (value: string): LinkView => ({
 
 const phoneView = (value: string): LinkView => ({
 	label: rawText || value.replace(/^(tel:|sms:)/, ""),
-	ariaLabel:
-		value.startsWith("sms:")
-			? `Send message: ${rawText || value.replace(/^sms:/, "")}`
-			: `Call: ${rawText || value.replace(/^tel:/, "")}`,
+	ariaLabel: value.startsWith("sms:")
+		? `Send message: ${rawText || value.replace(/^sms:/, "")}`
+		: `Call: ${rawText || value.replace(/^tel:/, "")}`,
 	ariaKey: value.startsWith("sms:") ? "link.sms" : "link.phone",
 	ariaValue: rawText || value.replace(/^(tel:|sms:)/, ""),
 	icon: value.startsWith("sms:") ? "mdi:message-outline" : "mdi:phone-outline",
@@ -113,12 +113,11 @@ const siteView = (value: string): LinkView => {
 	}
 };
 
-const view =
-	href.startsWith("mailto:")
-		? emailView(href)
-		: href.startsWith("tel:") || href.startsWith("sms:")
-			? phoneView(href)
-			: siteView(href);
+const view = href.startsWith("mailto:")
+	? emailView(href)
+	: href.startsWith("tel:") || href.startsWith("sms:")
+		? phoneView(href)
+		: siteView(href);
 
 const externalAttrs = view.isExternal
 	? { target: "_blank", rel: "noopener noreferrer nofollow" }
