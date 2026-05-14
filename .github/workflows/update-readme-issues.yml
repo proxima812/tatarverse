@@ -1,0 +1,59 @@
+name: Update README issues
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build open issues list
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          issues="$(gh issue list \
+            --repo "$REPO" \
+            --state open \
+            --limit 100 \
+            --json number,title,url \
+            --jq 'if length == 0 then "- No open issues." else map("- Issues #\(.number): [\(.title)](\(.url))") | join("\n") end')"
+
+          {
+            echo '<!-- open-issues:start -->'
+            echo "$issues"
+            echo '<!-- open-issues:end -->'
+          } > /tmp/open-issues.md
+
+      - name: Update README
+        run: |
+          set -euo pipefail
+
+          perl -0pi -e 's|<!-- open-issues:start -->.*?<!-- open-issues:end -->|do { local $/; open my $fh, "<", "/tmp/open-issues.md"; <$fh> }|se' README.md
+
+      - name: Commit README update
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet README.md; then
+            echo "README issues list is already up to date."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs: update README issues list"
+          git push

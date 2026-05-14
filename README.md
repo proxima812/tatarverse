@@ -167,3 +167,9 @@ This repository uses separate licenses for code and content:
 - [ ] update LanguageToggle.astro style position
 - [ ] update [id].astro style UI & UX
 <!-- - [x] fix -->
+
+## Current Issues
+
+<!-- open-issues:start -->
+- No open issues.
+<!-- open-issues:end -->
