@@ -174,3 +174,4 @@ This repository uses separate licenses for code and content:
 - Issues #1: [fix render /centers/index cards centers](https://github.com/proxima812/tatarverse/issues/1)
 <!-- open-issues:end -->
 
+
