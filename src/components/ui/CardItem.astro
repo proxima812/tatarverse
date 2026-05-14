@@ -1,5 +1,5 @@
 ---
-import { getCountryLabel, getCountryLabels } from "@/data/worldCountries";
+import { countryFlagsByRu, getCountryLabel, getCountryLabels } from "@/data/worldCountries";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { getCenterPath } from "@/utils/centers";
 import { Icon } from "astro-icon/components";
@@ -35,10 +35,15 @@ const t = useTranslations(locale);
 const centerPath = getCenterPath(routeId ?? id);
 
 const NO_DATA = "Нет данных.";
-const cleanFlag = location?.flag && location.flag !== NO_DATA ? location.flag : undefined;
 const cleanCity = location?.city && location.city !== NO_DATA ? location.city : undefined;
 const cleanCountry =
 	location?.country && location.country !== NO_DATA ? location.country : undefined;
+const cleanFlag =
+	location?.flag && location.flag !== NO_DATA
+		? location.flag
+		: cleanCountry
+			? countryFlagsByRu[cleanCountry]
+			: undefined;
 const displayCountry = cleanCountry ? getCountryLabel(cleanCountry, locale) : undefined;
 const countryKey = cleanCountry ?? "Прочее";
 const countryLabels = cleanCountry ? getCountryLabels(cleanCountry) : undefined;

@@ -1,45 +1,158 @@
 # tatarverse.cc
 
-## Что уже есть
-- Статический сайт на Astro с мультиязычностью (`ru`, `en`, `tt`, `qt`, `uk`, `de`, `es`, `ky`, `uz`, `kk`); полный перевод всего сайта сейчас есть только на `ru`.
-- Главная, список центров, страницы деталей, страницы источников и политики.
-- Данные центров и базовые SEO-мета/structured data.
+A static multilingual Astro site about Tatar and Bashkir communities, cultural centers, sources, translations, and reference materials.
 
-## Как сделать Pull Request с центром
+Russian documentation is available in [READMERU.md](./READMERU.md).
 
-Изменения по татарским центрам вносятся в `src/data/centers_formatted`.
+## Project Status
 
-1. Создайте отдельную ветку от актуальной основной ветки.
-2. Добавьте новый `.mdx` файл в `src/data/centers_formatted` или исправьте существующий файл центра.
-3. Заполните frontmatter по шаблону:
+This project is being prepared for open-source contributions. The most useful contributions are verified updates to community center data, translations, source references, accessibility fixes, and small UI improvements that preserve the existing visual language.
+
+## Stack
+
+- Astro 6 with static output
+- MDX content collections
+- Tailwind CSS v4 through `@tailwindcss/vite`
+- Bun as the preferred package manager
+- Multilingual routes: `ru`, `en`, `tt`, `qt`, `uk`, `de`, `es`, `ky`, `uz`, `kk`
+
+## Project Structure
+
+```txt
+src/
+  components/          Astro UI components
+  data/centers_formatted/
+                       MDX files for center pages
+  data/worldCountries.ts
+                       localized country labels and country flags
+  i18n/locales/        translation dictionaries
+  layouts/             page layouts
+  pages/               Astro pages and routes
+  styles/tailwind.css  Tailwind v4 theme tokens and global utilities
+```
+
+## Getting Started
+
+Install dependencies:
+
+```bash
+bun install
+```
+
+Run the local dev server:
+
+```bash
+bun run dev
+```
+
+Build the static site:
+
+```bash
+bun run build
+```
+
+Preview the production build:
+
+```bash
+bun run preview
+```
+
+## Contributing
+
+Please keep contributions focused and easy to review.
+
+1. Open an issue or describe the change clearly in your pull request.
+2. Create a dedicated branch from the current main branch.
+3. Keep changes narrowly scoped to one topic.
+4. Do not reformat unrelated files.
+5. Include sources for factual content changes.
+6. Run a relevant local check when possible.
+
+Good pull requests usually include:
+
+- what was added or fixed;
+- links to sources used for data updates;
+- screenshots for UI changes;
+- notes about incomplete or uncertain data.
+
+## Adding Or Updating A Center
+
+Center data lives in `src/data/centers_formatted`.
+
+Add a new `.mdx` file or edit an existing one. Use this frontmatter shape:
 
 ```mdx
 ---
-title: Название центра
+title: Center name
 pubDate: '2025-02-05T00:00:00.000Z'
 type: Зарубежный
 category: Татарский
 source: https://example.com/
-summary: Короткое описание центра
+summary: Short neutral description of the center
 location:
-  country: Страна
-  city: Город
-  region: Регион
+  country: Country
+  city: City
+  region: Region
 ---
 ```
 
-Обязательное поле: `title`.
+Required field:
 
-Допустимые значения `type`: `Регион РФ`, `Зарубежный`, `Онлайн`.
+- `title`
 
-Допустимые значения `category`: `Татарский`, `Татаро-Башкирский`, `Башкирский`, `Крымотатарский`.
+Allowed `type` values:
 
-В `location` можно заполнить `country`, `city`, `region`, `flag`. Если данных нет, поле лучше не добавлять.
+- `Регион РФ`
+- `Зарубежный`
+- `Онлайн`
 
-После frontmatter добавьте содержимое страницы: заголовок `# Название центра`, ссылки, особенности, адрес или другую проверенную информацию. Сохраняйте факты, источники и язык описания без рекламных формулировок.
+Allowed `category` values:
 
-В Pull Request укажите:
-- что добавлено или исправлено;
-- ссылку на источник данных;
-- какие поля frontmatter заполнены;
-- есть ли спорные или неполные данные, которые нужно проверить.
+- `Татарский`
+- `Татаро-Башкирский`
+- `Башкирский`
+- `Крымотатарский`
+
+Optional `location` fields:
+
+- `country`
+- `city`
+- `region`
+- `flag`
+
+If a value is unknown, omit the field instead of adding placeholder text.
+
+After the frontmatter, add the page content in MDX. Keep it factual, neutral, and source-backed. Avoid promotional wording.
+
+## Translations
+
+Translation dictionaries live in `src/i18n/locales`.
+
+When adding a UI string:
+
+1. Add the same key to every locale file.
+2. Use an existing key namespace such as `nav.*`, `list.*`, `detail.*`, `copy.*`, or `feedback.*`.
+3. In components, use `useTranslations(locale)` and `t("key.name")`.
+4. Do not leave hardcoded user-facing text in components.
+
+## UI Guidelines
+
+The site uses a restrained editorial visual language:
+
+- prefer semantic Tailwind theme tokens from `src/styles/tailwind.css`;
+- keep layouts content-first and simple;
+- use existing component patterns;
+- avoid introducing new color palettes unless there is a clear reason;
+- keep light and dark theme behavior in mind when touching global tokens.
+
+## Content And SEO Guidelines
+
+- Preserve canonical route behavior and localized links.
+- Keep headings meaningful and structured.
+- Preserve source links and factual intent.
+- Avoid broad MDX formatting churn.
+- Be careful with metadata and structured data.
+
+## License
+
+No open-source license has been added yet. Until a license is published, all rights are reserved by the project owner.

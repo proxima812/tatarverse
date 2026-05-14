@@ -1,6 +1,7 @@
 ---
 import GridCards from "@/components/GridCards.astro";
 import Toolbar from "@/components/Toolbar.astro";
+import { countryFlagsByRu } from "@/data/worldCountries";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { getCollection } from "astro:content";
 import NoResults from "./NoResults.astro";
@@ -20,7 +21,7 @@ const countryCounts = new Map<string, number>();
 const countryFlags = new Map<string, string>();
 for (const card of cards) {
 	const country = card.data.location?.country ?? "Прочее";
-	const flag = card.data.location?.flag;
+	const flag = card.data.location?.flag ?? countryFlagsByRu[country];
 	countryCounts.set(country, (countryCounts.get(country) ?? 0) + 1);
 	if (flag && !countryFlags.has(country)) {
 		countryFlags.set(country, flag);
