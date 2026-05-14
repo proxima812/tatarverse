@@ -47,7 +47,7 @@ const dict: Dictionary = {
 	"list.hero.end": "her tarafta",
 	"list.title": "Merkezler — tatar ve başqurt merkezleri",
 	"list.description":
-		"Dünya boyunca tatar, başqurt ve qırımtatar medeniy merkezleriniñ tam cedveli. Öz memleketiñizde merkez tapıñız.",
+		"TBQ merkezleriniñ cedveli: tatarlar, başqurtlar ve qırımtatarlar. Merkezlerni ve malümatnı memleket, şehir, bölge, tür ve kategoriya boyunca qıdırış ve süzgüçler ile tapıñız.",
 	"list.search.placeholder": "Adı, şehir, memleket ya da bölge boyunca qıdır",
 	"list.countries": "Memleketler",
 	"list.countries.aria": "Memleketler süzgüçi",

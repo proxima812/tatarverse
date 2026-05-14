@@ -9,7 +9,21 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<Layout title={t("list.title")} description={t("list.description")}>
+<Layout
+	title={t("list.title")}
+	description={t("list.description")}
+	keywords={[
+		"ТБК",
+		"татары",
+		"башкиры",
+		"крымские татары",
+		"поиск татарских центров",
+		"фильтр культурных центров",
+		"татарская диаспора",
+		"башкирская диаспора",
+		"крымскотатарская диаспора",
+	]}
+>
 	<ListHeroTitle />
 	<ListCards />
 </Layout>

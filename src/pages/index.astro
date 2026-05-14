@@ -8,16 +8,31 @@ import { getCollection } from "astro:content";
 const centers = (await getCollection("centers")).length;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
+const homeDescription =
+	"ТБК — это татары, башкиры и крымские татары. tatarverse собирает культурные центры, сообщества и источники в одном каталоге с поиском и фильтрами по странам, городам, регионам и категориям.";
 ---
 
-<Layout title="ТБК" description="">
+<Layout
+	title="ТБК — татары, башкиры и крымские татары"
+	description={homeDescription}
+	keywords={[
+		"ТБК",
+		"татары",
+		"башкиры",
+		"крымские татары",
+		"татарские центры",
+		"башкирские центры",
+		"крымскотатарские центры",
+		"культурные центры",
+	]}
+>
 	<main class="space-y-12">
 		<HomeHeroTitle />
 		<HomeLinks />
 		<p class="text-primary/50 text-xs">
 			<span>{t("home.intro.prefix")}</span>
 			<a
-				href={localizePath(locale, "/list")}
+				href={localizePath(locale, "/centers")}
 				class="font-medium text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
 			>
 				{t("home.intro.link", { count: centers })}

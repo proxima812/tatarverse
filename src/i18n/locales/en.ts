@@ -47,7 +47,7 @@ const dict: Dictionary = {
 	"list.hero.end": "all around",
 	"list.title": "Centers — Tatar and Bashkir centers",
 	"list.description":
-		"A complete list of Tatar, Bashkir, and Crimean Tatar cultural centers around the world. Find a center in your country.",
+		"A directory of TBK centers: Tatars, Bashkirs, and Crimean Tatars. Use search and filters by country, city, region, type, and category to find centers and reference information.",
 	"list.search.placeholder": "Search by name, city, country, or region",
 	"list.countries": "Countries",
 	"list.countries.aria": "Country filter",

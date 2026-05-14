@@ -99,7 +99,33 @@ const schemaLogo = config.site.OG.logo
 const schemaPublisher = {
 	"@type": "Organization",
 	name: config.site.OG.organizationName || siteName,
+	url: siteURL.href,
 	...(schemaLogo && { logo: schemaLogo }),
+};
+
+const websiteSchema = {
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	name: siteName,
+	alternateName: ["tatarverse.cc", "ТБК", "Татары, башкиры и крымские татары"],
+	description: config.site.OG.description,
+	inLanguage: mainLocale,
+	url: siteURL.href,
+	publisher: schemaPublisher,
+	about: [
+		{ "@type": "Thing", name: "Татары" },
+		{ "@type": "Thing", name: "Башкиры" },
+		{ "@type": "Thing", name: "Крымские татары" },
+		{ "@type": "Thing", name: "Татарские и башкирские культурные центры" },
+	],
+	potentialAction: {
+		"@type": "SearchAction",
+		target: {
+			"@type": "EntryPoint",
+			urlTemplate: new URL("/centers?q={search_term_string}", siteURL).href,
+		},
+		"query-input": "required name=search_term_string",
+	},
 };
 
 const schemaItem = isArticle
@@ -127,15 +153,33 @@ const schemaItem = isArticle
 			"@type": "WebPage",
 			name: mainTitle,
 			description: mainDescription,
+			keywords: mainKeywords,
 			inLanguage: mainLocale,
 			url: formatCanonicalURL(resolvedCanonicalURL),
 			image: [mainOGImage],
+			isPartOf: {
+				"@id": `${siteURL.href}#website`,
+			},
+			about: [
+				{ "@type": "Thing", name: "ТБК" },
+				{ "@type": "Thing", name: "Татары" },
+				{ "@type": "Thing", name: "Башкиры" },
+				{ "@type": "Thing", name: "Крымские татары" },
+			],
 			author: {
 				"@type": "Person",
 				name: mainAuthor,
 				url: siteURL.href,
 			},
 		};
+
+const schemaGraph =
+	isArticle
+		? schemaItem
+		: {
+				"@context": "https://schema.org",
+				"@graph": [{ ...websiteSchema, "@id": `${siteURL.href}#website` }, schemaItem],
+			};
 
 const enabledVerifications = config.site.verifications.filter(
 	(verification: SiteVerification) => verification.name_verification && verification.content,
@@ -244,4 +288,4 @@ const enabledVerifications = config.site.verifications.filter(
 <link rel="mask-icon" href="/favicon.svg" color={config.site.theme.colors.maskIcon} />
 <meta name="theme-color" content={config.site.theme.colors.theme} />
 
-<script is:inline type="application/ld+json" set:html={JSON.stringify(schemaItem)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(schemaGraph)} />

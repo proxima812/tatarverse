@@ -46,7 +46,7 @@ const dict: Dictionary = {
 	"list.hero.end": "weltweit",
 	"list.title": "Zentren — tatarische und baschkirische Zentren",
 	"list.description":
-		"Eine vollständige Liste tatarischer, baschkirischer und krimtatarischer Kulturzentren weltweit. Finde ein Zentrum in deinem Land.",
+		"Ein Verzeichnis der TBK-Zentren: Tataren, Baschkiren und Krimtataren. Nutze Suche und Filter nach Land, Stadt, Region, Typ und Kategorie, um Zentren und Referenzinformationen zu finden.",
 	"list.search.placeholder": "Nach Name, Stadt, Land oder Region suchen",
 	"list.countries": "Länder",
 	"list.countries.aria": "Länderfilter",

@@ -1,6 +1,8 @@
-export const languages = ["ru", "en", "tt", "qt", "uk", "de", "es", "ky", "uz", "kk"] as const;
+export const allLanguages = ["ru", "en", "tt", "qt", "uk", "de", "es", "ky", "uz", "kk"] as const;
+export const languages = ["ru", "en", "tt", "qt"] as const;
 
-export type Language = (typeof languages)[number];
+export type Language = (typeof allLanguages)[number];
+export type ActiveLanguage = (typeof languages)[number];
 
 export type Dictionary = Record<string, string>;
 

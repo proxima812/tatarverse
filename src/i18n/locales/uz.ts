@@ -47,7 +47,7 @@ const dict: Dictionary = {
 	"list.hero.end": "butun dunyoda",
 	"list.title": "Markazlar — tatar va boshqird markazlari",
 	"list.description":
-		"Butun dunyodagi tatar, boshqird va qrim tatar madaniy markazlarining to'liq ro'yxati. O'z mamlakatingizdagi markazni toping.",
+		"TBQ markazlari katalogi: tatarlar, boshqirdlar va qrim tatarlar. Markazlar va ma'lumotlarni mamlakat, shahar, hudud, tur va kategoriya bo'yicha qidiruv hamda filtrlar orqali toping.",
 	"list.search.placeholder": "Nomi, shahri, mamlakati yoki hududi bo'yicha qidirish",
 	"list.countries": "Mamlakatlar",
 	"list.countries.aria": "Mamlakatlar bo'yicha filtr",

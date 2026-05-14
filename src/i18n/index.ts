@@ -11,10 +11,12 @@ import uzDict from "@/i18n/locales/uz";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import type { Dictionary } from "@/i18n/ui";
 
-export const locales = ["ru", "en", "tt", "qt", "uk", "de", "es", "ky", "uz", "kk"] as const;
-export type AppLocale = (typeof locales)[number];
+export const allLocales = ["ru", "en", "tt", "qt", "uk", "de", "es", "ky", "uz", "kk"] as const;
+export const locales = ["ru", "en", "tt", "qt"] as const;
+export type AppLocale = (typeof allLocales)[number];
+export type ActiveLocale = (typeof locales)[number];
 
-export const defaultLocale: AppLocale = "ru";
+export const defaultLocale: ActiveLocale = "ru";
 
 export const localeLabels: Record<AppLocale, { label: string; short: Uppercase<AppLocale> }> = {
 	ru: { label: "Русский", short: "RU" },
@@ -110,4 +112,3 @@ export function useTranslations(locale: AppLocale) {
 		return template.replace(/\{(\w+)\}/g, (_, token: string) => String(values[token] ?? ""));
 	};
 }
-

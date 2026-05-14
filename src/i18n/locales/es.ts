@@ -47,7 +47,7 @@ const dict: Dictionary = {
 	"list.hero.end": "por todo el mundo",
 	"list.title": "Centros — centros tártaros y bashkires",
 	"list.description":
-		"Una lista completa de centros culturales tártaros, bashkires y tártaros de Crimea en todo el mundo. Encuentra un centro en tu país.",
+		"Directorio de centros TBK: tártaros, bashkires y tártaros de Crimea. Usa la búsqueda y los filtros por país, ciudad, región, tipo y categoría para encontrar centros e información de referencia.",
 	"list.search.placeholder": "Buscar por nombre, ciudad, país o región",
 	"list.countries": "Países",
 	"list.countries.aria": "Filtro de países",

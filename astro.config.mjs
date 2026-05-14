@@ -21,7 +21,7 @@ const rehypePlugins = [rehypePrism];
 export default defineConfig({
 	site: config.site.url,
 	i18n: {
-		locales: ["ru", "en", "tt", "qt", "uk", "de", "es", "ky", "uz", "kk"],
+		locales: ["ru", "en", "tt", "qt"],
 		defaultLocale: "ru",
 		routing: {
 			prefixDefaultLocale: false,
