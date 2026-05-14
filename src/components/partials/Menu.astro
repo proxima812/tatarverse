@@ -11,7 +11,8 @@ const mainLinks = links.slice(0, 1);
 const materialLinks = links.slice(1, 3).concat(links.slice(4, 5));
 const policyLinks = links.slice(3, 4);
 const otherLinks = links.slice(-2);
-const licenseHref = "https://creativecommons.org/licenses/by/4.0/deed.en";
+const codeLicenseHref = "https://github.com/proxima812/tatarverse/blob/main/LICENSE";
+const contentLicenseHref = "https://github.com/proxima812/tatarverse/blob/main/CONTENT-LICENSE.md";
 const developerHref = "https://github.com/proxima812";
 
 const sectionTitleClass =
@@ -130,13 +131,29 @@ const mobileTextLinkClass =
 							/>
 						))
 					}
+				</section>
+
+				<section class="flex flex-col" aria-labelledby="mobile-menu-licenses">
+					<h2 id="mobile-menu-licenses" class={sectionTitleClass}>
+						{t("menu.licenses", undefined, "Licenses")}
+					</h2>
 					<a
-						href={licenseHref}
+						href={codeLicenseHref}
 						target="_blank"
 						rel="noreferrer noopener"
-						class={mobileTextLinkClass}
+						class={`${mobileTextLinkClass} gap-2`}
 					>
-						CC BY 4.0
+						<Icon name="mdi:code-tags" class="size-5 shrink-0" aria-hidden="true" />
+						<span>MIT Code</span>
+					</a>
+					<a
+						href={contentLicenseHref}
+						target="_blank"
+						rel="noreferrer noopener"
+						class={`${mobileTextLinkClass} gap-2`}
+					>
+						<Icon name="mdi:file-document-outline" class="size-5 shrink-0" aria-hidden="true" />
+						<span>CC BY 4.0 Content</span>
 					</a>
 				</section>
 

@@ -155,4 +155,15 @@ The site uses a restrained editorial visual language:
 
 ## License
 
-No open-source license has been added yet. Until a license is published, all rights are reserved by the project owner.
+This repository uses separate licenses for code and content:
+
+- Code is licensed under the [MIT License](./LICENSE).
+- Content, center data, translations, and documentation are licensed under [CC BY 4.0](./CONTENT-LICENSE.md), unless otherwise noted.
+- The `tatarverse.cc` name, logos, brand assets, visual identity, and recognizable site design are not licensed for reuse without written permission.
+
+## Tasks
+
+- [ ] fix & update menu style position
+- [ ] update LanguageToggle.astro style position
+- [ ] update [id].astro style UI & UX
+<!-- - [x] fix -->

@@ -25,6 +25,7 @@ const dict: Dictionary = {
 	"menu.legal": "Правова інформація",
 	"menu.other": "Інше",
 	"menu.developer": "Розробник",
+	"menu.licenses": "Ліцензії",
 	"language.switcher": "Перемикач мови",
 	"theme.switcher": "Перемикач теми",
 	"theme.system": "Системна тема",

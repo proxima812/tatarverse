@@ -25,6 +25,7 @@ const dict: Dictionary = {
 	"menu.legal": "Huquqiy malümat",
 	"menu.other": "Diger",
 	"menu.developer": "İşlep çıqarıcı",
+	"menu.licenses": "Licenziyalar",
 	"language.switcher": "Til saylağıçı",
 	"theme.switcher": "Tema saylağıçı",
 	"theme.system": "Sistema teması",

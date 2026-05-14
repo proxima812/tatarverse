@@ -25,6 +25,7 @@ const dict: Dictionary = {
 	"menu.legal": "Información legal",
 	"menu.other": "Otros",
 	"menu.developer": "Desarrollador",
+	"menu.licenses": "Licencias",
 	"language.switcher": "Idioma",
 	"theme.switcher": "Tema",
 	"theme.system": "Tema del sistema",
