@@ -171,8 +171,10 @@ This repository uses separate licenses for code and content:
 ## Current Issues
 
 <!-- open-issues:start -->
+- Issues #2: [UI мобильный: баги и дополнения](https://github.com/proxima812/tatarverse/issues/2)
 - Issues #1: [fix render /centers/index cards centers](https://github.com/proxima812/tatarverse/issues/1)
 <!-- open-issues:end -->
+
 
 
 
