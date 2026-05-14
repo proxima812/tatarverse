@@ -91,6 +91,7 @@ const dict: Dictionary = {
 		"Хата, төгәлсезлек тапсагыз яки тәрҗемәне төзәтергә, тулыландырырга яки яхшыртырга теләсәгез — безгә хәбәр итегез.",
 	"feedback.link": "Telegram-га күчү",
 	"copy.copyPageUrl": "Бит URL-ын күчерү",
+	"copy.copyUrl": "URL күчерү",
 	"copy.moreOptions": "Өстәмә гамәлләр",
 	"copy.openPageIn": "Битне ачу",
 	"copy.copyPage": "Битне күчерү",

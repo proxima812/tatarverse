@@ -22,13 +22,14 @@ interface Props {
 	id: string;
 	routeId?: string;
 	title?: string;
+	summary?: string;
 	type?: string;
 	category?: string;
 	location?: Location;
 	region?: string;
 }
 
-const { id, routeId, title, type, category, location, region } = Astro.props as Props;
+const { id, routeId, title, summary, type, category, location, region } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const centerPath = getCenterPath(routeId ?? id);
@@ -59,14 +60,17 @@ const truncate = (value?: string, max = 23) => {
 	data-type={type ?? ""}
 	data-category={category ?? ""}
 	data-country={countryKey}
+	data-title={displayTitle}
+	data-summary={summary ?? ""}
+	data-city={cleanCity ?? ""}
 	data-region={region ?? ""}
-	class="content-auto relative flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
+	class="content-auto relative flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs ring ring-depth-100/40 transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
 	style="contain-intrinsic-size: 240px"
 >
 	<div class="flex justify-center items-center">
 		{
 			displayLocation && (
-				<div class="rounded-full bg-white/50 backdrop-blur-lg ring-inset ring ring-white corner-squircle px-3 py-1.5 shadow-2xs shrink-0 max-w-fit text-right text-xs text-surface-foreground">
+				<div class="rounded-full bg-surface/70 backdrop-blur-lg ring-inset ring ring-border-muted corner-squircle px-3 py-1.5 shadow-2xs shrink-0 max-w-fit text-right text-xs text-surface-foreground">
 					<div class="flex items-center gap-1.5">
 						{displayLocation.flag && (
 							<span class="text-base leading-none">{displayLocation.flag}</span>
@@ -98,7 +102,7 @@ const truncate = (value?: string, max = 23) => {
 		</h2>
 	</div>
 	<div class="flex justify-between items-center">
-		<div class="flex gap-3">
+		<div class="flex gap-0.5">
 			{
 				icons.map((name) => (
 					<Icon
@@ -110,7 +114,7 @@ const truncate = (value?: string, max = 23) => {
 		</div>
 
 		<a
-			class="flex max-w-fit items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm text-surface-foreground shadow-2xs transition-all hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+			class="flex max-w-fit items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-sm text-surface-foreground shadow-2xs ring ring-border-muted transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 			href={localizePath(locale, centerPath)}><span>{t("card.details")}</span></a
 		>
 	</div>

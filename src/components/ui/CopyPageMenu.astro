@@ -43,7 +43,7 @@ const aiPlatforms = [
 		<!-- Copy Page button -->
 		<button
 			type="button"
-			class="inline-flex text-sm size-9 items-center gap-1.5 rounded-l-lg pl-2.5 pr-2.5 text-[0.8rem] font-medium text-foreground transition-colors hover:bg-border/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+			class="inline-flex text-sm h-9 max-w-fit items-center gap-1.5 rounded-l-lg pl-2.5 pr-2.5 text-[0.8rem] font-medium text-foreground transition-colors hover:bg-border/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 			data-copy-btn
 			aria-label={t("copy.copyPageUrl")}
 		>
@@ -59,6 +59,7 @@ const aiPlatforms = [
 				<rect x="8" y="7" width="12" height="12" rx="3"></rect>
 				<path d="M16 7V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h1"></path>
 			</svg>
+			<span class="truncate">{t("copy.copyUrl")}</span>
 			<!-- copied: check icon (hidden by default) -->
 			<svg
 				data-icon-check

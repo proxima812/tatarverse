@@ -92,6 +92,7 @@ const dict: Dictionary = {
 		"Hata, yanlışlıq taptıñızmı ya da tercimeni tüzetmek, toldurmaq veya yahşılaştırmaq isteysiñizmi — bizge haber etiñiz.",
 	"feedback.link": "Telegramğa keç",
 	"copy.copyPageUrl": "Saife URL-ini kopiyala",
+	"copy.copyUrl": "URL-ni kopiyala",
 	"copy.moreOptions": "İlave ameller",
 	"copy.openPageIn": "Saifeni aç",
 	"copy.copyPage": "Saifeni kopiyala",

@@ -91,6 +91,7 @@ const dict: Dictionary = {
 		"Xato yoki noaniqlik topdingizmi, yoki tarjimani tuzatish, to'ldirish yoki yaxshilashni xohlaysizmi? Bizga xabar bering.",
 	"feedback.link": "Telegram'ga o'tish",
 	"copy.copyPageUrl": "Sahifa URL'ini nusxalash",
+	"copy.copyUrl": "URL nusxalash",
 	"copy.moreOptions": "Qo'shimcha amallar",
 	"copy.openPageIn": "Sahifani ochish",
 	"copy.copyPage": "Sahifani nusxalash",

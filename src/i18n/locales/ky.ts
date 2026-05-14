@@ -91,6 +91,7 @@ const dict: Dictionary = {
 		"Ката, так эместик тапсаңыз же котормону оңдоп, толуктап же жакшырткыңыз келсе — бизге кабарлаңыз.",
 	"feedback.link": "Telegram'га өтүү",
 	"copy.copyPageUrl": "Барактын URL'ин көчүрүү",
+	"copy.copyUrl": "URL көчүрүү",
 	"copy.moreOptions": "Кошумча аракеттер",
 	"copy.openPageIn": "Баракты ачуу",
 	"copy.copyPage": "Баракты көчүрүү",

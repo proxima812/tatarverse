@@ -59,9 +59,9 @@ export default defineConfig({
 				"mstile-150x150.png",
 			],
 			manifest: {
-				name: "Xima Tatars",
-				short_name: "Xima Tatars",
-				description: "Татарские центры, сообщества и ссылки по всему миру.",
+				name: config.site.OG.title,
+				short_name: "tatarverse",
+				description: "",
 				theme_color: "#080214",
 				background_color: "#fafafa",
 				display: "standalone",

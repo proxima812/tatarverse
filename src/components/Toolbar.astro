@@ -55,7 +55,7 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 
 <aside
 	data-filters-shell
-	class="hidden lg:sticky lg:top-12 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto p-6 bg-white rounded-3xl corner-squircle border sm:rounded-r-none border-primary/10"
+	class="hidden lg:sticky lg:top-12 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto p-6 bg-surface rounded-3xl corner-squircle border sm:rounded-r-none border-border-muted shadow-2xs ring ring-depth-100/40"
 >
 	<section class="space-y-4 lg:space-y-5">
 		<!-- Filter sections: hidden on mobile by default, always visible on lg+ via <style> -->
@@ -384,6 +384,8 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 </style>
 
 <script>
+	import Fuse from "fuse.js";
+
 	type FilterGroupName = "country" | "type" | "category" | "region";
 
 	type FilterState = {
@@ -420,7 +422,12 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 		type: string;
 		category: string;
 		region: string;
+		title: string;
+		summary: string;
+		city: string;
 		searchText: string;
+		terms: string[];
+		order: number;
 	};
 
 	const filterQueryKeys: Record<FilterGroupName, string> = {
@@ -434,6 +441,7 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 		const cardsGrid = document.getElementById("cards-grid");
 		const noResults = document.getElementById("no-results");
 		const searchInput = document.querySelector<HTMLInputElement>("[data-toolbar-search]");
+		const suggestions = document.querySelector<HTMLUListElement>("[data-search-suggestions]");
 		const viewButtons = document.querySelectorAll<HTMLElement>("[data-view-btn]");
 		const filtersToggle = document.querySelector<HTMLButtonElement>("[data-filters-toggle]");
 		const filtersShell = document.querySelector<HTMLElement>("[data-filters-shell]");
@@ -447,7 +455,17 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 		}
 
 		const cards = Array.from(cardsGrid.querySelectorAll<FilterableCard>(":scope > article"));
-		const cardsIndex: CardIndexItem[] = cards.map((card) => {
+		const normalize = (value: string) =>
+			value
+				.toLowerCase()
+				.normalize("NFKD")
+				.replace(/\p{Diacritic}/gu, "")
+				.replace(/[ё]/g, "е")
+				.replace(/[“”«»"']/g, "")
+				.trim();
+		const uniqueTerms = (terms: string[]) =>
+			Array.from(new Set(terms.map((term) => term.trim()).filter((term) => term.length > 1)));
+		const cardsIndex: CardIndexItem[] = cards.map((card, order) => {
 			const country = card.dataset.country ?? "";
 			const type = card.dataset.type ?? "";
 			const category = card.dataset.category ?? "";
@@ -455,6 +473,7 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 			const title = card.dataset.title ?? "";
 			const summary = card.dataset.summary ?? "";
 			const city = card.dataset.city ?? "";
+			const terms = uniqueTerms([title, city, country, region, type, category]);
 
 			return {
 				element: card,
@@ -462,9 +481,28 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 				type,
 				category,
 				region,
-				searchText:
-					`${title} ${summary} ${city} ${country} ${type} ${category} ${region}`.toLowerCase(),
+				title,
+				summary,
+				city,
+				terms,
+				order,
+				searchText: normalize(`${title} ${summary} ${city} ${country} ${type} ${category} ${region}`),
 			};
+		});
+		const fuse = new Fuse(cardsIndex, {
+			includeScore: true,
+			ignoreLocation: true,
+			threshold: 0.32,
+			minMatchCharLength: 2,
+			keys: [
+				{ name: "title", weight: 0.42 },
+				{ name: "city", weight: 0.2 },
+				{ name: "country", weight: 0.14 },
+				{ name: "region", weight: 0.1 },
+				{ name: "category", weight: 0.06 },
+				{ name: "type", weight: 0.05 },
+				{ name: "summary", weight: 0.03 },
+			],
 		});
 
 		const state: FilterState = {
@@ -477,6 +515,8 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 		let searchQuery = "";
 		let searchTimer = 0;
 		let filterFrame = 0;
+		let activeSuggestionIndex = -1;
+		let currentSuggestionValues: string[] = [];
 
 		const groupElements = {
 			country: document.querySelector<HTMLElement>('[data-filter-group="country"]'),
@@ -515,6 +555,7 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 			if (searchInput) {
 				searchInput.value = searchQuery;
 			}
+			updateSuggestions();
 
 			(Object.keys(state) as FilterGroupName[]).forEach((groupName) => {
 				const validValues = getValidValues(groupName);
@@ -613,11 +654,121 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 			if (searchInput) {
 				searchInput.value = "";
 			}
+			hideSuggestions();
 			scheduleApplyFilters(true);
 		}
 
 		function matchesGroup(selectedValues: Set<string>, value: string) {
 			return selectedValues.size === 0 || selectedValues.has(value);
+		}
+
+		function getSearchResults(query: string) {
+			const normalizedQuery = normalize(query);
+			if (!normalizedQuery) {
+				return cardsIndex.map((item) => ({ item, score: 0 }));
+			}
+
+			const exactMatches = cardsIndex
+				.filter((item) => item.searchText.includes(normalizedQuery))
+				.map((item) => ({ item, score: 0.01 }));
+			if (exactMatches.length > 0) {
+				return exactMatches.sort((a, b) => a.item.order - b.item.order);
+			}
+
+			const fuseResults = fuse.search(query);
+			const resultMap = new Map<FilterableCard, { item: CardIndexItem; score: number }>();
+
+			fuseResults
+				.map((result) => ({ item: result.item, score: result.score ?? 1 }))
+				.forEach((result) => {
+					resultMap.set(result.item.element, result);
+				});
+
+			return Array.from(resultMap.values()).sort(
+				(a, b) => a.score - b.score || a.item.order - b.item.order,
+			);
+		}
+
+		function hideSuggestions() {
+			if (!suggestions || !searchInput) return;
+			suggestions.classList.add("hidden");
+			suggestions.replaceChildren();
+			searchInput.setAttribute("aria-expanded", "false");
+			searchInput.removeAttribute("aria-activedescendant");
+			activeSuggestionIndex = -1;
+			currentSuggestionValues = [];
+		}
+
+		function renderSuggestions(values: string[]) {
+			if (!suggestions || !searchInput) return;
+
+			currentSuggestionValues = values;
+			activeSuggestionIndex = -1;
+			suggestions.replaceChildren();
+
+			if (values.length === 0) {
+				hideSuggestions();
+				return;
+			}
+
+			values.forEach((value, index) => {
+				const option = document.createElement("li");
+				option.id = `search-suggestion-${index}`;
+				option.role = "option";
+				option.dataset.searchSuggestion = value;
+				option.className =
+					"cursor-pointer rounded-xl px-3 py-2 text-surface-foreground transition hover:bg-muted aria-selected:bg-muted";
+				option.textContent = value;
+				option.addEventListener("mousedown", (event) => {
+					event.preventDefault();
+					commitSuggestion(value);
+				});
+				suggestions.append(option);
+			});
+
+			suggestions.classList.remove("hidden");
+			searchInput.setAttribute("aria-expanded", "true");
+		}
+
+		function updateSuggestions() {
+			const query = searchQuery.trim();
+			if (!query || query.length < 2) {
+				hideSuggestions();
+				return;
+			}
+
+			const normalizedQuery = normalize(query);
+			const suggestionsSet = new Set<string>();
+
+			getSearchResults(query)
+				.slice(0, 8)
+				.forEach(({ item }) => {
+					const matchingTerm = item.terms.find((term) => normalize(term).includes(normalizedQuery));
+					suggestionsSet.add(matchingTerm ?? item.title);
+				});
+
+			renderSuggestions(Array.from(suggestionsSet).slice(0, 6));
+		}
+
+		function setActiveSuggestion(nextIndex: number) {
+			if (!suggestions || !searchInput || currentSuggestionValues.length === 0) return;
+
+			const maxIndex = currentSuggestionValues.length - 1;
+			activeSuggestionIndex = nextIndex < 0 ? maxIndex : nextIndex > maxIndex ? 0 : nextIndex;
+
+			Array.from(suggestions.children).forEach((child, index) => {
+				child.setAttribute("aria-selected", String(index === activeSuggestionIndex));
+			});
+			searchInput.setAttribute("aria-activedescendant", `search-suggestion-${activeSuggestionIndex}`);
+		}
+
+		function commitSuggestion(value: string) {
+			searchQuery = value;
+			if (searchInput) {
+				searchInput.value = value;
+			}
+			hideSuggestions();
+			scheduleApplyFilters(true);
 		}
 
 		function syncOverflowUI(groupName: FilterGroupName) {
@@ -657,7 +808,11 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 		}
 
 		function applyFilters(shouldScrollToCards = false) {
-			const query = searchQuery.trim().toLowerCase();
+			const query = searchQuery.trim();
+			const rankedResults = getSearchResults(query);
+			const searchMatches = new Map(
+				rankedResults.map((result, index) => [result.item.element, index]),
+			);
 			const hasActiveFilters =
 				state.country.size > 0 ||
 				state.type.size > 0 ||
@@ -666,18 +821,29 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 			let visible = 0;
 
 			const shouldBypassFiltering = !hasActiveFilters && !query;
-			cardsIndex.forEach((item) => {
+			const orderedIndex = query
+				? [...cardsIndex].sort((a, b) => {
+						const left = searchMatches.get(a.element) ?? Number.MAX_SAFE_INTEGER;
+						const right = searchMatches.get(b.element) ?? Number.MAX_SAFE_INTEGER;
+						return left - right || a.order - b.order;
+					})
+				: cardsIndex;
+
+			orderedIndex.forEach((item) => {
 				const matchesCountry = matchesGroup(state.country, item.country);
 				const matchesType = matchesGroup(state.type, item.type);
 				const matchesCategory = matchesGroup(state.category, item.category);
 				const matchesRegion = matchesGroup(state.region, item.region);
-				const matchesSearch = !query || item.searchText.includes(query);
+				const matchesSearch = !query || searchMatches.has(item.element);
 
 				const show =
 					shouldBypassFiltering ||
 					(matchesCountry && matchesType && matchesCategory && matchesRegion && matchesSearch);
 
 				item.element.hidden = !show;
+				if (query) {
+					cardsGrid.append(item.element);
+				}
 
 				if (show) {
 					visible += 1;
@@ -737,8 +903,32 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 			window.clearTimeout(searchTimer);
 			searchTimer = window.setTimeout(() => {
 				searchQuery = (event.target as HTMLInputElement).value;
+				updateSuggestions();
 				scheduleApplyFilters(false);
 			}, 150);
+		});
+
+		searchInput?.addEventListener("keydown", (event) => {
+			if (event.key === "ArrowDown") {
+				event.preventDefault();
+				setActiveSuggestion(activeSuggestionIndex + 1);
+			}
+			if (event.key === "ArrowUp") {
+				event.preventDefault();
+				setActiveSuggestion(activeSuggestionIndex - 1);
+			}
+			if (event.key === "Enter" && activeSuggestionIndex >= 0) {
+				event.preventDefault();
+				commitSuggestion(currentSuggestionValues[activeSuggestionIndex] ?? "");
+			}
+			if (event.key === "Escape") {
+				hideSuggestions();
+			}
+		});
+
+		searchInput?.addEventListener("focus", updateSuggestions);
+		searchInput?.addEventListener("blur", () => {
+			window.setTimeout(hideSuggestions, 120);
 		});
 
 		viewButtons.forEach((button) => {

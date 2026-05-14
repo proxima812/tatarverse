@@ -91,6 +91,7 @@ const dict: Dictionary = {
 		"¿Encontraste un error o una imprecisión, o quieres corregir, ampliar o mejorar la traducción? Avísanos.",
 	"feedback.link": "Abrir Telegram",
 	"copy.copyPageUrl": "Copiar URL de la página",
+	"copy.copyUrl": "Copiar URL",
 	"copy.moreOptions": "Más opciones",
 	"copy.openPageIn": "Abrir página en",
 	"copy.copyPage": "Copiar página",

@@ -119,7 +119,7 @@ const pageDescription = summary ?? undefined;
 	canonicalURL={canonicalURL}
 >
 	<article class="flex flex-col gap-10 max-w-5xl mx-auto">
-		<nav class="flex justify-between flex-wrap items-center">
+		<nav class="flex justify-between sm:flex-nowrap flex-wrap items-center">
 			<ButtonLink
 				href={localizePath(locale, "/centers")}
 				label="All centers"
@@ -127,8 +127,7 @@ const pageDescription = summary ?? undefined;
 				variant="outline"
 				icon="tabler:arrow-back-up"
 			/>
-
-			<div class="sm:order-0 order-3 sm:mt-0 mt-3">
+			<div class="sm:order-0 order-3 sm:mt-0 mt-3 flex w-full justify-between sm:w-auto">
 				<ButtonLink
 					href="#errors"
 					label="Find a mistake?"
@@ -138,7 +137,7 @@ const pageDescription = summary ?? undefined;
 				/>
 				<ButtonLink
 					target="_blank"
-					href={`https://github.com/proxima812/list-centers/blob/main/src/data/centers/${entry.id}.mdx`}
+					href={`https://github.com/proxima812/tatarverse/blob/main/src/data/centers_formatted/${entry.id}.mdx`}
 					label="Edit on GitHub"
 					labelKey="nav.editOnGithub"
 					variant="ghost"
@@ -216,14 +215,17 @@ const pageDescription = summary ?? undefined;
 
 		{
 			(previousEntry || nextEntry) && (
-				<nav aria-label={t("detail.pagination")} class="grid gap-3 sm:grid-cols-2">
+				<nav
+					aria-label={t("detail.pagination")}
+					class="bg-surface p-1 flex items-center justify-between rounded-3xl corner-squircle shadow-2xs ring ring-depth-100/40"
+				>
 					{previousEntry ? (
 						<a
 							href={localizePath(
 								locale,
 								getCenterPath(routeIds.get(previousEntry.id) ?? previousEntry.id),
 							)}
-							class="inline-flex min-w-0 items-center gap-2 rounded-2xl corner-squircle bg-transparent px-4 py-3 text-sm font-medium text-primary/80 ring ring-primary/10 ring-inset transition hover:bg-primary/5"
+							class="bg-muted/60 inline-flex min-w-0 items-center gap-2 rounded-2xl corner-squircle  px-4 py-3 text-sm font-medium text-primary/80 transition hover:bg-muted/40"
 						>
 							<Icon name="mdi:arrow-left" class="size-4 shrink-0" aria-hidden="true" />
 							<span class="min-w-0 truncate">{trimTitle(previousEntry.data.title)}</span>
@@ -237,7 +239,7 @@ const pageDescription = summary ?? undefined;
 								locale,
 								getCenterPath(routeIds.get(nextEntry.id) ?? nextEntry.id),
 							)}
-							class="inline-flex min-w-0 items-center justify-end gap-2 rounded-2xl corner-squircle bg-transparent px-4 py-3 text-right text-sm font-medium text-primary/80 ring ring-primary/10 ring-inset transition hover:bg-primary/5"
+							class="bg-muted/60 inline-flex min-w-0 items-center justify-end gap-2 rounded-2xl corner-squircle  px-4 py-3 text-right text-sm font-medium text-primary/80  transition hover:bg-muted/40"
 						>
 							<span class="min-w-0 truncate">{trimTitle(nextEntry.data.title)}</span>
 							<Icon name="mdi:arrow-right" class="size-4 shrink-0" aria-hidden="true" />

@@ -90,6 +90,7 @@ const dict: Dictionary = {
 		"Fehler oder Ungenauigkeit gefunden, oder möchtest du die Übersetzung korrigieren, ergänzen oder verbessern? Gib uns Bescheid.",
 	"feedback.link": "Telegram öffnen",
 	"copy.copyPageUrl": "Seiten-URL kopieren",
+	"copy.copyUrl": "URL kopieren",
 	"copy.moreOptions": "Weitere Optionen",
 	"copy.openPageIn": "Seite öffnen in",
 	"copy.copyPage": "Seite kopieren",

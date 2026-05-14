@@ -1,8 +1,7 @@
 ---
-// Главная страница собирается из hero-заголовка, навигационных ссылок и бегущей плашки слов.
-import WordMarquee from "@/components/WordMarquee.astro";
-import HomeLinks from "@/components/HomeLinks.astro";
 import HomeHeroTitle from "@/components/HomeHeroTitle.astro";
+import HomeLinks from "@/components/HomeLinks.astro";
+import WordMarquee from "@/components/WordMarquee.astro";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { getCollection } from "astro:content";
@@ -11,7 +10,7 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<Layout title="" description="">
+<Layout title="ТБК" description="">
 	<main class="space-y-12">
 		<HomeHeroTitle />
 		<HomeLinks />

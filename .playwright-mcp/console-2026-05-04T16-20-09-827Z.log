@@ -1,5 +1,0 @@
-[    5359ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:4321/site.webmanifest:0
-[    5360ms] [ERROR] Manifest fetch from http://127.0.0.1:4321/site.webmanifest failed, code 404 @ http://127.0.0.1:4321/list:0
-[    5613ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:4321/site.webmanifest:0
-[    5613ms] [ERROR] Manifest fetch from http://127.0.0.1:4321/site.webmanifest failed, code 404 @ http://127.0.0.1:4321/list:0
-[   84256ms] [LOG] [vite] server connection lost. Polling for restart... @ http://127.0.0.1:4321/@vite/client:1596

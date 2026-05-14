@@ -91,6 +91,7 @@ const dict: Dictionary = {
 		"Знайшли помилку, неточність або хочете виправити, доповнити чи покращити переклад — повідомте нам.",
 	"feedback.link": "Перейти в Telegram",
 	"copy.copyPageUrl": "Скопіювати URL сторінки",
+	"copy.copyUrl": "Скопіювати URL",
 	"copy.moreOptions": "Додаткові дії",
 	"copy.openPageIn": "Відкрити сторінку в",
 	"copy.copyPage": "Скопіювати сторінку",

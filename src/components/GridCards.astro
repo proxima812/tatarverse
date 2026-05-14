@@ -13,7 +13,7 @@ const routeIds = createCenterRouteIdMap(cards);
 
 <section
 	id="cards-grid"
-	class="grid scroll-mt-28 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:grid-cols-4 gap-8 p-6 bg-white border border-primary/10 md:border-l-transparent rounded-3xl corner-squircle lg:rounded-l-none"
+	class="grid scroll-mt-28 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:grid-cols-4 gap-8 p-6 bg-surface border border-border-muted shadow-2xs ring ring-depth-100/40 md:border-l-transparent rounded-3xl corner-squircle lg:rounded-l-none"
 >
 	{
 		cards.map((card) => (
@@ -21,6 +21,7 @@ const routeIds = createCenterRouteIdMap(cards);
 				id={card.id}
 				routeId={routeIds.get(card.id)}
 				title={card.data.title}
+				summary={card.data.summary}
 				type={card.data.type}
 				category={card.data.category}
 				location={card.data.location}
@@ -29,59 +30,3 @@ const routeIds = createCenterRouteIdMap(cards);
 		))
 	}
 </section>
-
-<!-- <script>
-	function initCardsReveal() {
-		const grid = document.getElementById("cards-grid");
-		if (!grid) return;
-
-		const cards = Array.from(grid.querySelectorAll<HTMLElement>(":scope > article"));
-		if (cards.length === 0) return;
-
-		const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-		if (prefersReducedMotion) {
-			return;
-		}
-
-		const revealClass = ["-translate-y-5", "scale-[0.90]"];
-		const shownClass = ["translate-y-0", "scale-100"];
-
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (!entry.isIntersecting) return;
-
-					const card = entry.target as HTMLElement;
-					card.classList.remove(...revealClass);
-					card.classList.add(...shownClass);
-					observer.unobserve(card);
-				});
-			},
-			{
-				root: null,
-				rootMargin: "0px 0px 120px 0px",
-				threshold: 0.08,
-			},
-		);
-
-		cards.forEach((card) => {
-			card.classList.add(...revealClass);
-			card.classList.remove(...shownClass);
-			observer.observe(card);
-		});
-
-		document.addEventListener(
-			"astro:before-swap",
-			() => {
-				observer.disconnect();
-			},
-			{ once: true },
-		);
-	}
-
-	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initCardsReveal, { once: true });
-	} else {
-		initCardsReveal();
-	}
-</script> -->
