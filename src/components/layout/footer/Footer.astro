@@ -1,8 +1,9 @@
 ---
-import Container from "../container/Container.astro";
+import TechStacks from "@/components/shared/social/TechStacks.astro";
 import release from "@/data/release.json";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { Icon } from "astro-icon/components";
+import Container from "../container/Container.astro";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
@@ -16,6 +17,62 @@ const updatedAtLabel = new Intl.DateTimeFormat(locale, {
 	hour12: false,
 	timeZone: "Asia/Almaty",
 }).format(new Date(release.updatedAt));
+
+const baseStyle =
+	"text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link";
+
+const links = [
+	{
+		href: policyHref,
+		label: t("footer.privacy"),
+		class: baseStyle,
+		icon: null,
+		props: {
+			target: "_blank",
+			rel: "noreferrer noopener",
+		},
+	},
+	{
+		href: "https://github.com/proxima812/tatarverse/blob/main/LICENSE",
+		label: "MIT Code",
+		class: baseStyle,
+		icon: null,
+		props: {
+			target: "_blank",
+			rel: "noreferrer noopener",
+		},
+	},
+	{
+		href: "https://github.com/proxima812/tatarverse/blob/main/CONTENT-LICENSE.md",
+		label: "CC BY 4.0 Content",
+		class: baseStyle,
+		icon: null,
+		props: {
+			target: "_blank",
+			rel: "noreferrer noopener",
+		},
+	},
+	{
+		href: "https://github.com/proxima812",
+		label: "proxima812",
+		class: `inline-flex items-center gap-1.5 ${baseStyle}`,
+		icon: "mdi:github",
+		props: {
+			target: "_blank",
+			rel: "noreferrer noopener",
+		},
+	},
+	{
+		href: "https://github.com/proxima812/tatarverse",
+		label: "Open Source",
+		class: `inline-flex items-center gap-1.5 ${baseStyle}`,
+		icon: "mdi:github",
+		props: {
+			target: "_blank",
+			rel: "noreferrer noopener",
+		},
+	},
+];
 ---
 
 <footer class="mt-auto border-t border-border-muted py-6 text-xs text-subtle-foreground">
@@ -30,51 +87,40 @@ const updatedAtLabel = new Intl.DateTimeFormat(locale, {
 				aria-label={t("footer.links")}
 				class="flex flex-wrap items-center gap-x-3 gap-y-1 sm:justify-end"
 			>
-				<a
-					href={policyHref}
-					class="text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
-				>
-					{t("footer.privacy")}
-				</a>
-				<span class="text-subtle-foreground" aria-hidden="true">·</span>
-				<a
-					href="https://github.com/proxima812/tatarverse/blob/main/LICENSE"
-					target="_blank"
-					rel="noreferrer noopener"
-					class="text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
-				>
-					MIT Code
-				</a>
-				<span class="text-subtle-foreground" aria-hidden="true">·</span>
-				<a
-					href="https://github.com/proxima812/tatarverse/blob/main/CONTENT-LICENSE.md"
-					target="_blank"
-					rel="noreferrer noopener"
-					class="text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
-				>
-					CC BY 4.0 Content
-				</a>
-				<span class="text-subtle-foreground" aria-hidden="true">·</span>
-				<a
-					href="https://github.com/proxima812"
-					target="_blank"
-					rel="noreferrer noopener"
-					class="inline-flex items-center gap-1.5 text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
-				>
-					<Icon name="mdi:github" class="size-4" aria-hidden="true" />
-					<span>proxima812</span>
-				</a>
-				<span class="text-subtle-foreground" aria-hidden="true">·</span>
-				<a
-					href="https://github.com/proxima812/tatarverse"
-					target="_blank"
-					rel="noreferrer noopener"
-					class="inline-flex items-center gap-1.5 text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
-				>
-					<Icon name="mdi:github" class="size-4" aria-hidden="true" />
-					<span>Open Source</span>
-				</a>
+				{
+					links.map((link, index) => (
+						<>
+							{index > 0 && (
+								<span class="text-subtle-foreground" aria-hidden="true">
+									·
+								</span>
+							)}
+							<a href={link.href} class={link.class} {...link.props}>
+								{link.icon ? (
+									<>
+										<Icon name={link.icon} class="size-4" aria-hidden="true" />
+										<span>{link.label}</span>
+									</>
+								) : (
+									link.label
+								)}
+							</a>
+						</>
+					))
+				}
 			</nav>
 		</div>
+		<div
+			class="h-px my-8 w-[calc(100%-180px)] mx-auto bg-linear-to-r from-transparent via-border to-transparent"
+		>
+		</div>
+
+		<TechStacks
+			gap="5px"
+			class="justify-center"
+			stacks={["astro", "tailwind", "typescript", "javascript", "vite", "bun", "cloudflare"]}
+			size="xs"
+			wrap
+		/>
 	</Container>
 </footer>

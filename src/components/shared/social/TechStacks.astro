@@ -11,19 +11,21 @@ type StackDefinition = {
 };
 
 const toDataUri = (svg: string) => `data:image/svg+xml;utf8,${encodeURIComponent(svg.trim())}`;
+const toStackSrc = (source: string) =>
+	source.trim().startsWith("<svg") ? toDataUri(source) : source;
 
 const createStack = (
 	label: string,
 	category: StackCategory,
 	aliases: string[],
 	href: string,
-	svg: string,
+	source: string,
 ): StackDefinition => ({
 	label,
 	category,
 	aliases,
 	href,
-	src: toDataUri(svg),
+	src: toStackSrc(source),
 });
 
 const stackIcons = {
@@ -62,12 +64,33 @@ const stackIcons = {
 		"https://tailwindcss.com/",
 		`<svg xmlns="http://www.w3.org/2000/svg" width="1.67em" height="1em" viewBox="0 0 256 154"><defs><linearGradient id="tailwind-gradient" x1="-2.778%" x2="100%" y1="32%" y2="67.556%"><stop offset="0%" stop-color="#2298bd"/><stop offset="100%" stop-color="#0ed7b5"/></linearGradient></defs><path fill="url(#tailwind-gradient)" d="M128 0Q76.8 0 64 51.2Q83.2 25.6 108.8 32c9.737 2.434 16.697 9.499 24.401 17.318C145.751 62.057 160.275 76.8 192 76.8q51.2 0 64-51.2q-19.2 25.6-44.8 19.2c-9.737-2.434-16.697-9.499-24.401-17.318C174.249 14.743 159.725 0 128 0M64 76.8q-51.2 0-64 51.2q19.2-25.6 44.8-19.2c9.737 2.434 16.697 9.499 24.401 17.318C81.751 138.857 96.275 153.6 128 153.6q51.2 0 64-51.2q-19.2 25.6-44.8 19.2c-9.737-2.434-16.697-9.499-24.401-17.318C110.249 91.543 95.725 76.8 64 76.8"/></svg>`,
 	),
-	mdx: createStack(
-		"MDX",
+	typescript: createStack(
+		"TypeScript",
 		"frontend",
-		["mdx"],
-		"https://mdxjs.com/",
-		`<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256"><rect width="256" height="256" fill="#1b1f24" rx="36"/><path fill="#fff" d="M55 176V80h23.598l24.383 40.093L127.634 80H151v96h-21.512v-57.48l-22.611 36.806h-7.791L76.512 118.52V176zm113.7 0l27.247-48L170.88 80h24.65l13.914 27.247L223.519 80H248l-25.22 47.468L250 176h-24.99l-15.566-29.95L193.538 176z"/></svg>`,
+		["typescript", "ts"],
+		"https://www.typescriptlang.org/",
+		"https://svgl.app/library/typescript.svg",
+	),
+	javascript: createStack(
+		"JavaScript",
+		"frontend",
+		["javascript", "js"],
+		"https://developer.mozilla.org/docs/Web/JavaScript",
+		"https://svgl.app/library/javascript.svg",
+	),
+	vite: createStack(
+		"Vite",
+		"frontend",
+		["vite", "vitejs"],
+		"https://vitejs.dev",
+		"https://svgl.app/library/vite.svg",
+	),
+	motion: createStack(
+		"Motion",
+		"frontend",
+		["motion", "motion.dev", "framer-motion", "framer motion"],
+		"https://motion.dev/",
+		"https://svgl.app/library/motion.svg",
 	),
 	nodejs: createStack(
 		"Node.js",
@@ -153,12 +176,13 @@ const stackIcons = {
 		"https://www.cloudflare.com/",
 		`<svg xmlns="http://www.w3.org/2000/svg" width="2.19em" height="1em" viewBox="0 0 256 117"><path fill="#fbad41" d="M205.52 50.813c-.858 0-1.705.03-2.551.058q-.207.012-.398.094a1.42 1.42 0 0 0-.92.994l-3.628 12.672c-1.565 5.449-.983 10.48 1.646 14.174c2.41 3.416 6.42 5.421 11.289 5.655l19.679 1.194c.585.03 1.092.312 1.4.776a1.92 1.92 0 0 1 .2 1.692a2.5 2.5 0 0 1-2.134 1.662l-20.448 1.193c-11.11.515-23.062 9.58-27.255 20.633l-1.474 3.9a1.092 1.092 0 0 0 .967 1.49h70.425a1.87 1.87 0 0 0 1.81-1.365A51.2 51.2 0 0 0 256 101.828c0-28.16-22.582-50.984-50.449-50.984"/><path fill="#f6821f" d="m174.782 115.362l1.303-4.583c1.568-5.449.987-10.48-1.639-14.173c-2.418-3.417-6.424-5.422-11.296-5.656l-92.312-1.193a1.82 1.82 0 0 1-1.459-.776a1.92 1.92 0 0 1-.203-1.693a2.5 2.5 0 0 1 2.154-1.662l93.173-1.193c11.063-.511 23.015-9.58 27.208-20.633l5.313-14.04c.214-.596.27-1.238.156-1.86C191.126 20.51 166.91 0 137.96 0C111.269 0 88.626 17.403 80.5 41.596a27 27 0 0 0-19.156-5.359C48.549 37.524 38.25 47.946 36.979 60.88a27.9 27.9 0 0 0 .702 9.642C16.773 71.145 0 88.454 0 109.726c0 1.923.137 3.818.413 5.667c.115.897.879 1.57 1.783 1.568h170.48a2.22 2.22 0 0 0 2.106-1.63"/></svg>`,
 	),
-} as const;
+} as const satisfies Record<string, StackDefinition>;
 
 type StackKey = keyof typeof stackIcons;
 
-const stackAliasMap = Object.values(stackIcons).reduce<Record<string, StackKey>>((acc, item, index) => {
-	const key = Object.keys(stackIcons)[index] as StackKey;
+const stackEntries = Object.entries(stackIcons) as Array<[StackKey, StackDefinition]>;
+
+const stackAliasMap = stackEntries.reduce<Record<string, StackKey>>((acc, [key, item]) => {
 	for (const alias of item.aliases) {
 		acc[alias.toLowerCase()] = key;
 	}
@@ -171,7 +195,7 @@ const resolveStackIcon = (value?: string) => {
 	return key ? stackIcons[key] : null;
 };
 
-type Size = "sm" | "md" | "lg";
+type Size = "xs" | "sm" | "md" | "lg";
 
 interface Props {
 	stacks?: string[];
@@ -184,24 +208,28 @@ interface Props {
 }
 
 const sizeClasses: Record<Size, string> = {
+	xs: "min-h-7 gap-1.5 px-2 text-xs",
 	sm: "min-h-9 gap-2 px-3 text-sm",
 	md: "min-h-10 gap-2.5 px-3.5 text-sm",
 	lg: "min-h-12 gap-3 px-4 text-base",
 };
 
 const iconSizes: Record<Size, string> = {
+	xs: "h-3 max-w-4",
 	sm: "h-4 max-w-5",
 	md: "h-5 max-w-6",
 	lg: "h-6 max-w-7",
 };
 
 const iconOnlySizeClasses: Record<Size, string> = {
+	xs: "min-h-7 px-2",
 	sm: "min-h-9 px-3",
 	md: "min-h-10 px-3.5",
 	lg: "min-h-12 px-4",
 };
 
 const iconOnlyImageClasses: Record<Size, string> = {
+	xs: "h-3",
 	sm: "h-4",
 	md: "h-5",
 	lg: "h-6",
@@ -211,7 +239,7 @@ const {
 	stacks = [],
 	class: className = "",
 	itemClass = "",
-	size = "md",
+	size = "sm",
 	iconOnly = false,
 	wrap = true,
 	gap = "0.75rem",
@@ -240,9 +268,7 @@ const items = stacks.map((value) => ({
 					rel="noreferrer noopener"
 					class={cn(
 						"inline-flex shrink-0 items-center font-medium text-muted-foreground transition-opacity hover:opacity-80",
-						iconOnly
-							? iconOnlySizeClasses[size]
-							: "rounded-full border border-border-muted bg-surface",
+						iconOnly ? iconOnlySizeClasses[size] : "",
 						iconOnly ? "justify-center" : sizeClasses[size],
 						itemClass,
 					)}
