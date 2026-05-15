@@ -1,0 +1,15 @@
+---
+// Блок быстрых ссылок на внешние и внутренние разделы проекта.
+import { links } from "@/data/links";
+import ButtonLink from "../../ui/button/ButtonLink.astro";
+---
+
+<section>
+	<div class="flex gap-1.5 justify-start flex-wrap items-center">
+		{
+			links
+				.filter((_, index) => index < 2 || index >= links.length - 2)
+				.map((item) => <ButtonLink {...item} />)
+		}
+	</div>
+</section>

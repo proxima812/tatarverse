@@ -13,8 +13,8 @@ const siteThemeColors = {
 export const config = {
 	features: {
 		manifest: true,
-		ai: false,
-		llms: false,
+    ai: true,
+    llms: true,
 		indexNow: false,
 	},
 	indexNow: {

@@ -1,7 +1,5 @@
 ---
-import HomeHeroTitle from "@/components/HomeHeroTitle.astro";
-import HomeLinks from "@/components/HomeLinks.astro";
-import WordMarquee from "@/components/WordMarquee.astro";
+import { HomeHeroTitle, HomeLinks, WordMarquee } from "@/components";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { getCollection } from "astro:content";
@@ -26,10 +24,14 @@ const homeDescription =
 		"культурные центры",
 	]}
 >
-	<main class="space-y-12">
-		<HomeHeroTitle />
-		<HomeLinks />
-		<p class="text-primary/50 text-xs">
+	<main data-home-reveal-root class="space-y-12">
+		<div data-home-reveal>
+			<HomeHeroTitle />
+		</div>
+		<div data-home-reveal>
+			<HomeLinks />
+		</div>
+		<p data-home-reveal class="text-primary/50 text-xs">
 			<span>{t("home.intro.prefix")}</span>
 			<a
 				href={localizePath(locale, "/centers")}
@@ -39,8 +41,76 @@ const homeDescription =
 			</a>
 			<span> {t("home.intro.suffix")}</span>
 		</p>
-		<WordMarquee />
+		<div data-home-reveal>
+			<WordMarquee />
+		</div>
 	</main>
 
-	<!-- <QList /> -->
 </Layout>
+
+<script>
+	import { animate, stagger } from "motion";
+
+	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	const roots = document.querySelectorAll<HTMLElement>("[data-home-reveal-root]");
+
+	for (const root of roots) {
+		const items = root.querySelectorAll<HTMLElement>("[data-home-reveal]");
+
+		if (prefersReducedMotion) {
+			root.classList.add("is-home-motion-complete");
+			continue;
+		}
+
+		root.classList.add("is-home-motion-ready");
+
+		animate(
+			items,
+			{
+				opacity: [0, 1],
+				y: ["1rem", "0rem"],
+				filter: ["blur(10px)", "blur(0px)"],
+			},
+			{
+				delay: stagger(0.14, {
+					ease: [0.22, 1, 0.36, 1],
+					startDelay: 0.16,
+				}),
+				duration: 0.95,
+				ease: [0.22, 1, 0.36, 1],
+			},
+		).then(() => {
+			root.classList.remove("is-home-motion-ready");
+			root.classList.add("is-home-motion-complete");
+		});
+	}
+</script>
+
+<style>
+	[data-home-reveal] {
+		transform-origin: 50% 100%;
+		will-change: filter, opacity, transform;
+	}
+
+	.is-home-motion-ready [data-home-reveal] {
+		opacity: 0;
+		filter: blur(10px);
+		transform: translateY(1rem);
+	}
+
+	.is-home-motion-complete [data-home-reveal] {
+		opacity: 1;
+		filter: blur(0);
+		transform: translateY(0);
+		will-change: auto;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		[data-home-reveal] {
+			opacity: 1;
+			filter: blur(0);
+			transform: none;
+			will-change: auto;
+		}
+	}
+</style>

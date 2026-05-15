@@ -1,9 +1,5 @@
 ---
-import Container from "@/components/partials/Container.astro";
-import BackToTop from "@/components/partials/BackToTop.astro";
-import Footer from "@/components/partials/Footer.astro";
-import Header from "@/components/partials/Header.astro";
-import SEO from "@/components/partials/SEO.astro";
+import { BackToTop, Container, Footer, Header, SEO } from "@/components";
 import { getLocaleFromUrl, getOgLocale } from "@/i18n";
 
 import "@/styles/tailwind.css";
@@ -71,7 +67,7 @@ const locale = getLocaleFromUrl(Astro.url);
 			)
 		}
 	</head>
-	<body class="flex min-h-screen flex-col bg-background text-foreground">
+	<body class="flex min-h-screen flex-col bg-background text-foreground transition-all">
 		<Header />
 		<Container container class={cn("py-22", classContainer)}>
 			<div class={cn("flex flex-col gap-12", centered ? "items-center" : null)}>

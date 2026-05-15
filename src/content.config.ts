@@ -43,8 +43,35 @@ const centers = defineCollection({
 	schema: CenterSchema,
 });
 
+const centersEn = defineCollection({
+	loader: glob({
+		pattern: "**/*.{md,mdx}",
+		base: "./src/data/centers_i18n/en",
+	}),
+	schema: CenterSchema,
+});
+
+const centersTt = defineCollection({
+	loader: glob({
+		pattern: "**/*.{md,mdx}",
+		base: "./src/data/centers_i18n/tt",
+	}),
+	schema: CenterSchema,
+});
+
+const centersQt = defineCollection({
+	loader: glob({
+		pattern: "**/*.{md,mdx}",
+		base: "./src/data/centers_i18n/qt",
+	}),
+	schema: CenterSchema,
+});
+
 export const collections = {
 	centers,
+	centersEn,
+	centersTt,
+	centersQt,
 };
 
 export type CenterCategory = z.infer<typeof CenterCategorySchema>;

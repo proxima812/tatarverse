@@ -7,16 +7,36 @@ import CenterPage from "../../centers/[id].astro";
 export async function getStaticPaths() {
 	const entries = await getCollection("centers");
 	const routeIds = createCenterRouteIdMap(entries);
+	const translationEntriesByLocale = new Map(
+		await Promise.all(
+			locales
+				.filter((locale) => locale !== defaultLocale)
+				.map(async (locale) => {
+					const translatedEntries =
+						locale === "en"
+							? await getCollection("centersEn")
+							: locale === "tt"
+								? await getCollection("centersTt")
+								: locale === "qt"
+									? await getCollection("centersQt")
+									: [];
+					return [locale, new Map(translatedEntries.map((entry) => [entry.id, entry]))] as const;
+				}),
+		),
+	);
 
 	return locales
 		.filter((locale) => locale !== defaultLocale)
 		.flatMap((locale) =>
 			entries.map((entry) => ({
 				params: { locale, id: routeIds.get(entry.id) ?? entry.id },
-				props: { entry },
+				props: {
+					entry,
+					localizedEntry: translationEntriesByLocale.get(locale)?.get(entry.id),
+				},
 			})),
 		);
 }
 ---
 
-<CenterPage entry={Astro.props.entry} />
+<CenterPage entry={Astro.props.entry} localizedEntry={Astro.props.localizedEntry} />

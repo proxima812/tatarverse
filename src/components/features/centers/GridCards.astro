@@ -1,0 +1,32 @@
+---
+import CardItem from "../../ui/card/CardItem.astro";
+import { createCenterRouteIdMap } from "@/utils/centers";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+	cards: CollectionEntry<"centers" | "centersEn" | "centersTt" | "centersQt">[];
+}
+
+const { cards } = Astro.props as Props;
+const routeIds = createCenterRouteIdMap(cards);
+---
+
+<section
+	id="cards-grid"
+	class="grid scroll-mt-28 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:grid-cols-4 gap-8 p-6 bg-surface border border-border-muted shadow-2xs ring ring-depth-100/40 md:border-l-transparent rounded-3xl corner-squircle lg:rounded-l-none"
+>
+	{
+		cards.map((card) => (
+			<CardItem
+				id={card.id}
+				routeId={routeIds.get(card.id)}
+				title={card.data.title}
+				summary={card.data.summary}
+				type={card.data.type}
+				category={card.data.category}
+				location={card.data.location}
+				region={card.data.location?.region}
+			/>
+		))
+	}
+</section>

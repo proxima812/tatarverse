@@ -10,17 +10,18 @@
 		"release:bump": "node scripts/release-bump.js"
 	},
 	"dependencies": {
-		"@astrojs/mdx": "5.0.3",
+		"@astrojs/mdx": "5.0.6",
 		"@astrojs/rss": "4.0.18",
 		"@astrojs/sitemap": "3.7.2",
 		"@swup/astro": "^1.8.0",
 		"@tailwindcss/vite": "^4.0.9",
 		"@toolwind/corner-shape": "^0.0.8-3",
-		"astro": "6.1.4",
+		"astro": "6.3.3",
 		"astro-icon": "^1.1.5",
 		"astro-meta-tags": "^0.3.1",
 		"clsx": "^2.1.1",
 		"fuse.js": "^7.3.0",
+		"motion": "^12.38.0",
 		"tailwind-merge": "^2.6.0",
 		"tailwindcss": "^4.0.9"
 	},

@@ -1,12 +1,9 @@
 ---
-import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { ButtonLink, CopyPageMenu, markdownComponents, TranslationFeedbackCard } from "@/components";
 import Layout from "@/layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
 import { getCollection, render, type CollectionEntry } from "astro:content";
 
-import TranslationFeedbackCard from "@/components/TranslationFeedbackCard.astro";
-import { markdownComponents } from "@/components/markdown";
-import CopyPageMenu from "@/components/ui/CopyPageMenu.astro";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { createCenterRouteIdMap, getCenterPath } from "@/utils/centers";
 
@@ -22,11 +19,13 @@ export async function getStaticPaths() {
 
 interface Props {
 	entry: CollectionEntry<"centers">;
+	localizedEntry?: CollectionEntry<"centersEn" | "centersTt" | "centersQt">;
 }
 
-const { entry } = Astro.props as Props;
-const data = entry.data;
-const { Content } = await render(entry);
+const { entry, localizedEntry } = Astro.props as Props;
+const contentEntry = localizedEntry ?? entry;
+const data = contentEntry.data;
+const { Content } = await render(contentEntry);
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const centerEntries = (await getCollection("centers")).sort((a, b) => {
