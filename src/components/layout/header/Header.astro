@@ -1,5 +1,5 @@
 ---
-import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import Container from "../container/Container.astro";
 import LanguageToggle from "./LanguageToggle.astro";
 import Logotype from "./Logotype.astro";
@@ -8,10 +8,9 @@ import ThemeToggle from "./ThemeToggle.astro";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const shouldAnimateHeader = Astro.url.pathname === localizePath(locale, "/");
 ---
 
-<header data-site-header={shouldAnimateHeader ? "animated" : undefined}>
+<header>
 	<div class="py-5">
 		<Container container>
 			<div class="flex flex-wrap items-center justify-between gap-4">
@@ -27,68 +26,3 @@ const shouldAnimateHeader = Astro.url.pathname === localizePath(locale, "/");
 		</Container>
 	</div>
 </header>
-
-{
-	shouldAnimateHeader && (
-		<script>
-			import { animate } from "motion";
-
-			const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-			const headers = document.querySelectorAll<HTMLElement>('[data-site-header="animated"]');
-
-			for (const header of headers) {
-				if (prefersReducedMotion) {
-					header.classList.add("is-header-motion-complete");
-					continue;
-				}
-
-				header.classList.add("is-header-motion-ready");
-
-				animate(
-					header,
-					{
-						opacity: [0, 1],
-						y: ["-0.85rem", "0rem"],
-						filter: ["blur(8px)", "blur(0px)"],
-					},
-					{
-						delay: 0.06,
-						duration: 0.85,
-						ease: [0.22, 1, 0.36, 1],
-					},
-				).then(() => {
-					header.classList.remove("is-header-motion-ready");
-					header.classList.add("is-header-motion-complete");
-				});
-			}
-		</script>
-	)
-}
-
-<style>
-	[data-site-header="animated"] {
-		will-change: filter, opacity, transform;
-	}
-
-	.is-header-motion-ready {
-		opacity: 0;
-		filter: blur(8px);
-		transform: translateY(-0.85rem);
-	}
-
-	.is-header-motion-complete {
-		opacity: 1;
-		filter: none;
-		transform: none;
-		will-change: auto;
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		[data-site-header="animated"] {
-			opacity: 1;
-			filter: none;
-			transform: none;
-			will-change: auto;
-		}
-	}
-</style>

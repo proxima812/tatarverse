@@ -5,107 +5,44 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<h1 data-home-hero-title class="relative select-none overflow-hidden">
+<h1 class="relative select-none overflow-hidden">
 	<div
 		class="flex flex-col *:tracking-tight *:font-bold *:uppercase *:text-4xl *:sm:text-5xl *:md:text-6xl *:lg:text-7xl *:md:tracking-[-3.8px]"
 	>
-		<span data-hero-depth-item class="hero-depth-item text-depth-100">
+		<span class="hero-depth-item text-depth-100">
 			{t("home.hero.1")}
 		</span>
 
-		<span data-hero-depth-item class="hero-depth-item text-depth-200">
+		<span class="hero-depth-item text-depth-200">
 			{t("home.hero.2")}
 		</span>
 
-		<span data-hero-depth-item class="hero-depth-item text-depth-300">
+		<span class="hero-depth-item text-depth-300">
 			{t("home.hero.3")}
 		</span>
 
-		<span data-hero-depth-item class="hero-depth-item text-depth-400">
+		<span class="hero-depth-item text-depth-400">
 			{t("home.hero.4")}
 		</span>
 
 		<div class="space-x-3">
-			<span data-hero-depth-item class="hero-depth-item text-depth-500">
+			<span class="hero-depth-item text-depth-500">
 				{t("home.hero.5")}
 			</span>
 
-			<span data-hero-depth-item class="hero-depth-item text-depth-600">
+			<span class="hero-depth-item text-depth-600">
 				{t("home.hero.6")}
 			</span>
 
-			<span data-hero-depth-item class="hero-depth-item text-depth-700">
+			<span class="hero-depth-item text-depth-700">
 				{t("home.hero.7")}
 			</span>
 		</div>
 	</div>
 </h1>
 
-<script>
-	import { animate, stagger } from "motion";
-
-	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-	const heroTitles = document.querySelectorAll<HTMLElement>("[data-home-hero-title]");
-
-	for (const heroTitle of heroTitles) {
-		const items = heroTitle.querySelectorAll<HTMLElement>("[data-hero-depth-item]");
-
-		if (prefersReducedMotion) {
-			heroTitle.classList.add("is-motion-complete");
-			continue;
-		}
-
-		heroTitle.classList.add("is-motion-ready");
-
-		animate(
-			items,
-			{
-				opacity: [0, 1],
-				y: ["0.75em", "0em"],
-				filter: ["blur(4px)", "blur(0px)"],
-			},
-			{
-				delay: stagger(0.12, {
-					ease: [0.22, 1, 0.36, 1],
-					from: "first",
-					startDelay: 0.08,
-				}),
-				duration: 1.15,
-				ease: [0.22, 1, 0.36, 1],
-			},
-		).then(() => {
-			heroTitle.classList.remove("is-motion-ready");
-			heroTitle.classList.add("is-motion-complete");
-		});
-	}
-</script>
-
 <style>
 	.hero-depth-item {
 		display: inline-block;
-		transform-origin: 50% 100%;
-		will-change: filter, opacity, transform;
-	}
-
-	.is-motion-ready .hero-depth-item {
-		opacity: 0;
-		filter: blur(4px);
-		transform: translateY(0.75em);
-	}
-
-	.is-motion-complete .hero-depth-item {
-		opacity: 1;
-		filter: blur(0);
-		transform: translateY(0);
-		will-change: auto;
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.hero-depth-item {
-			opacity: 1;
-			filter: blur(0);
-			transform: none;
-			will-change: auto;
-		}
 	}
 </style>
