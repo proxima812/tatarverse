@@ -7,6 +7,8 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"astro": "astro",
+		"cf:preview": "bun run build && wrangler dev",
+		"cf:deploy": "bun run build && wrangler deploy",
 		"release:bump": "node scripts/release-bump.js"
 	},
 	"dependencies": {
@@ -30,6 +32,7 @@
 		"@iconify-json/tabler": "^1.2.33",
 		"@tailwindcss/typography": "^0.5.16",
 		"@vite-pwa/astro": "^1.2.0",
+		"wrangler": "^4.92.0",
 		"rehype-autolink-headings": "^7.1.0",
 		"rehype-github-alerts": "^4.2.0",
 		"rehype-prism-plus": "^2.0.2",

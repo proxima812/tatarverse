@@ -45,9 +45,9 @@ const dict: Dictionary = {
 	"list.hero": "everywhere & all around",
 	"list.hero.start": "everywhere",
 	"list.hero.end": "all around",
-	"list.title": "Centers — Tatar and Bashkir centers",
+	"list.title": "Centers — Tatars, Bashkirs, and Crimean Tatars",
 	"list.description":
-		"A directory of TBK centers: Tatars, Bashkirs, and Crimean Tatars. Use search and filters by country, city, region, type, and category to find centers and reference information.",
+		"TBK directory: {count} cards about Tatars, Bashkirs, and Crimean Tatars across all countries, regions, cities, types, and categories. The database currently covers {countries} countries and {regions} regions; use search and filters to find centers and reference information.",
 	"list.search.placeholder": "Search by name, city, country, or region",
 	"list.countries": "Countries",
 	"list.countries.aria": "Country filter",

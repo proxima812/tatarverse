@@ -3,19 +3,41 @@
 import { ListCards, ListHeroTitle } from "@/components";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
+import { getCollection } from "astro:content";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
+const allCards =
+	locale === "en"
+		? await getCollection("centersEn")
+		: locale === "tt"
+			? await getCollection("centersTt")
+			: locale === "qt"
+				? await getCollection("centersQt")
+				: await getCollection("centers");
+const cards = allCards.length > 0 ? allCards : await getCollection("centers");
+const countriesCount = new Set(cards.map((card) => card.data.location?.country).filter(Boolean)).size;
+const regionsCount = new Set(cards.map((card) => card.data.location?.region).filter(Boolean)).size;
+const seoStats = {
+	count: cards.length,
+	countries: countriesCount,
+	regions: regionsCount,
+};
 ---
 
 <Layout
 	title={t("list.title")}
-	description={t("list.description")}
+	description={t("list.description", seoStats)}
 	keywords={[
 		"ТБК",
 		"татары",
 		"башкиры",
 		"крымские татары",
+		`${cards.length} карточек ТБК`,
+		`стран: ${countriesCount}`,
+		`регионов: ${regionsCount}`,
+		"все страны",
+		"все регионы",
 		"поиск татарских центров",
 		"фильтр культурных центров",
 		"татарская диаспора",
