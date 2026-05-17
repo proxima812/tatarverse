@@ -8,7 +8,7 @@
 		"preview": "astro preview",
 		"astro": "astro",
 		"cf:preview": "bun run build && wrangler pages dev ./dist",
-		"cf:deploy": "bun run build && wrangler pages deploy ./dist --project-name xima-site-tatars --branch main",
+"cf:deploy": "bun run build && wrangler pages deploy ./dist --project-name tatarverse --branch main",
 		"release:bump": "node scripts/release-bump.js"
 	},
 	"dependencies": {
