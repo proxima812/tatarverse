@@ -1,5 +1,11 @@
 ---
-import { ButtonLink, CopyPageMenu, markdownComponents, TranslationFeedbackCard } from "@/components";
+import {
+	ButtonLink,
+	CenterPagination,
+	CopyPageMenu,
+	markdownComponents,
+	TranslationFeedbackCard,
+} from "@/components";
 import Layout from "@/layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
 import { getCollection, render, type CollectionEntry } from "astro:content";
@@ -41,9 +47,6 @@ const clean = (value?: string | null) => {
 	const normalized = value.trim();
 	return normalized.length ? normalized : null;
 };
-
-const trimTitle = (value: string) =>
-	value.length > 20 ? `${value.slice(0, 20).trim()}...` : value;
 
 const title = clean(data.title) ?? t("detail.fallbackTitle");
 const summary = clean(data.summary);
@@ -215,41 +218,11 @@ const pageDescription = summary ?? undefined;
 			}
 		</main>
 
-		{
-			(previousEntry || nextEntry) && (
-				<nav
-					aria-label={t("detail.pagination")}
-					class="bg-surface p-1 flex items-center justify-between rounded-3xl corner-squircle shadow-2xs ring ring-depth-100/40"
-				>
-					{previousEntry ? (
-						<a
-							href={localizePath(
-								locale,
-								getCenterPath(routeIds.get(previousEntry.id) ?? previousEntry.id),
-							)}
-							class="bg-muted/60 inline-flex min-w-0 items-center gap-2 rounded-2xl corner-squircle  px-4 py-3 text-sm font-medium text-primary/80 transition hover:bg-muted/40"
-						>
-							<Icon name="mdi:arrow-left" class="size-4 shrink-0" aria-hidden="true" />
-							<span class="min-w-0 truncate">{trimTitle(previousEntry.data.title)}</span>
-						</a>
-					) : (
-						<span aria-hidden="true" />
-					)}
-					{nextEntry && (
-						<a
-							href={localizePath(
-								locale,
-								getCenterPath(routeIds.get(nextEntry.id) ?? nextEntry.id),
-							)}
-							class="bg-muted/60 inline-flex min-w-0 items-center justify-end gap-2 rounded-2xl corner-squircle  px-4 py-3 text-right text-sm font-medium text-primary/80  transition hover:bg-muted/40"
-						>
-							<span class="min-w-0 truncate">{trimTitle(nextEntry.data.title)}</span>
-							<Icon name="mdi:arrow-right" class="size-4 shrink-0" aria-hidden="true" />
-						</a>
-					)}
-				</nav>
-			)
-		}
+		<CenterPagination
+			previousEntry={previousEntry}
+			nextEntry={nextEntry}
+			routeIds={routeIds}
+		/>
 
 		<TranslationFeedbackCard />
 	</article>

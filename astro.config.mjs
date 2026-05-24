@@ -57,8 +57,8 @@ export default defineConfig({
 		rehypePlugins,
 	},
 	prefetch: {
-		defaultStrategy: "viewport",
-		prefetchAll: true,
+		defaultStrategy: "tap",
+		prefetchAll: false,
 	},
 	vite: {
 		plugins: [tailwindcss()],

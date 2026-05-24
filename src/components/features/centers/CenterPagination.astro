@@ -1,0 +1,52 @@
+---
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { getCenterPath } from "@/utils/centers";
+import { Icon } from "astro-icon/components";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+	previousEntry: CollectionEntry<"centers"> | null;
+	nextEntry: CollectionEntry<"centers"> | null;
+	routeIds: Map<string, string>;
+}
+
+const { previousEntry, nextEntry, routeIds } = Astro.props as Props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const trimTitle = (value: string) =>
+	value.length > 20 ? `${value.slice(0, 20).trim()}...` : value;
+
+const getEntryPath = (entry: CollectionEntry<"centers">) =>
+	localizePath(locale, getCenterPath(routeIds.get(entry.id) ?? entry.id));
+---
+
+{
+	(previousEntry || nextEntry) && (
+		<nav
+			aria-label={t("detail.pagination")}
+			class="bg-surface p-1 flex items-center justify-between rounded-3xl corner-squircle shadow-2xs ring ring-depth-100/40 gap-1.5"
+		>
+			{previousEntry ? (
+				<a
+					href={getEntryPath(previousEntry)}
+					class="bg-muted/60 inline-flex min-w-0 items-center gap-2 rounded-2xl corner-squircle  px-4 py-3 text-sm font-medium text-primary/80 transition hover:bg-muted/40 ring-[0.5px] ring-depth-200/80"
+				>
+					<Icon name="mdi:arrow-left" class="size-4 shrink-0" aria-hidden="true" />
+					<span class="min-w-0 truncate">{trimTitle(previousEntry.data.title)}</span>
+				</a>
+			) : (
+				<span aria-hidden="true" />
+			)}
+			{nextEntry && (
+				<a
+					href={getEntryPath(nextEntry)}
+					class="bg-muted/60 inline-flex min-w-0 items-center justify-end gap-2 rounded-2xl corner-squircle  px-4 py-3 text-right text-sm font-medium text-primary/80  transition hover:bg-muted/40 ring-[0.5px] ring-depth-200/80"
+				>
+					<span class="min-w-0 truncate">{trimTitle(nextEntry.data.title)}</span>
+					<Icon name="mdi:arrow-right" class="size-4 shrink-0" aria-hidden="true" />
+				</a>
+			)}
+		</nav>
+	)
+}

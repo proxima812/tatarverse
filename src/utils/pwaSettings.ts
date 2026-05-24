@@ -14,7 +14,35 @@ export const workbox = {
 	clientsClaim: true,
 	skipWaiting: true,
 	cleanupOutdatedCaches: true,
-	globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,avif,woff2}"],
+	navigationPreload: true,
+	navigateFallback: null,
+	globPatterns: ["**/*.{js,css,ico,png,svg,jpg,jpeg,webp,avif,woff2,webmanifest}"],
+	runtimeCaching: [
+		{
+			urlPattern: ({ request }: { request: Request }) => request.mode === "navigate",
+			handler: "NetworkFirst",
+			options: {
+				cacheName: "pages-cache",
+				networkTimeoutSeconds: 3,
+				expiration: {
+					maxEntries: 30,
+					maxAgeSeconds: 60 * 60 * 24,
+				},
+			},
+		},
+		{
+			urlPattern: ({ request }: { request: Request }) =>
+				["image", "font"].includes(request.destination),
+			handler: "CacheFirst",
+			options: {
+				cacheName: "assets-cache",
+				expiration: {
+					maxEntries: 80,
+					maxAgeSeconds: 60 * 60 * 24 * 30,
+				},
+			},
+		},
+	],
 };
 
 export const manifest = {

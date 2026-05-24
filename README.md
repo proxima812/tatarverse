@@ -2,7 +2,7 @@
 
 A static multilingual Astro site about Tatar and Bashkir communities, cultural centers, sources, translations, and reference materials.
 
-Russian documentation is available in [READMERU.md](./READMERU.md).
+<!-- Russian documentation is available in [READMERU.md](./READMERU.md). -->
 
 ## Project Status
 
@@ -14,7 +14,7 @@ This project is being prepared for open-source contributions. The most useful co
 - MDX content collections
 - Tailwind CSS v4 through `@tailwindcss/vite`
 - Bun as the preferred package manager
-- Multilingual routes: `ru`, `en`, `tt`, `qt`, `uk`, `de`, `es`, `ky`, `uz`, `kk`
+- Multilingual routes: `ru`, `en`, `tt`, `qt`
 
 ## Project Structure
 
@@ -59,70 +59,12 @@ bun run preview
 
 ## Contributing
 
-Please keep contributions focused and easy to review.
+Please keep contributions focused and easy to review. Use the center data guide in the language most convenient for you:
 
-1. Open an issue or describe the change clearly in your pull request.
-2. Create a dedicated branch from the current main branch.
-3. Keep changes narrowly scoped to one topic.
-4. Do not reformat unrelated files.
-5. Include sources for factual content changes.
-6. Run a relevant local check when possible.
-
-Good pull requests usually include:
-
-- what was added or fixed;
-- links to sources used for data updates;
-- screenshots for UI changes;
-- notes about incomplete or uncertain data.
-
-## Adding Or Updating A Center
-
-Center data lives in `src/data/centers_formatted`.
-
-Add a new `.mdx` file or edit an existing one. Use this frontmatter shape:
-
-```mdx
----
-title: Center name
-pubDate: '2025-02-05T00:00:00.000Z'
-type: Зарубежный
-category: Татарский
-source: https://example.com/
-summary: Short neutral description of the center
-location:
-  country: Country
-  city: City
-  region: Region
----
-```
-
-Required field:
-
-- `title`
-
-Allowed `type` values:
-
-- `Регион РФ`
-- `Зарубежный`
-- `Онлайн`
-
-Allowed `category` values:
-
-- `Татарский`
-- `Татаро-Башкирский`
-- `Башкирский`
-- `Крымотатарский`
-
-Optional `location` fields:
-
-- `country`
-- `city`
-- `region`
-- `flag`
-
-If a value is unknown, omit the field instead of adding placeholder text.
-
-After the frontmatter, add the page content in MDX. Keep it factual, neutral, and source-backed. Avoid promotional wording.
+- [Русский](./CONTRIBUTING.ru.md)
+- [English](./CONTRIBUTING.en.md)
+- [Татарча](./CONTRIBUTING.tt.md)
+- [Qırımtatarca / Türkçe](./CONTRIBUTING.qt.md)
 
 ## Translations
 
@@ -161,11 +103,7 @@ This repository uses separate licenses for code and content:
 - Content, center data, translations, and documentation are licensed under [CC BY 4.0](./CONTENT-LICENSE.md), unless otherwise noted.
 - The `tatarverse.cc` name, logos, brand assets, visual identity, and recognizable site design are not licensed for reuse without written permission.
 
-## Tasks
-
-- [ ] fix & update menu style position
-- [ ] update LanguageToggle.astro style position
-- [ ] update [id].astro style UI & UX
+<!-- ## Tasks -->
 <!-- - [x] fix -->
 
 ## Current Issues
@@ -174,7 +112,6 @@ This repository uses separate licenses for code and content:
 - Issues #3: [после перехода обратно в index сделать плавную анимацию.](https://github.com/proxima812/tatarverse/issues/3)
 - Issues #2: [UI мобильный: баги и дополнения](https://github.com/proxima812/tatarverse/issues/2)
 <!-- open-issues:end -->
-
 
 
 
