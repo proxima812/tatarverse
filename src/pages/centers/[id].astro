@@ -53,6 +53,9 @@ const flag = clean(data.location?.flag);
 const rawPubDate = clean(data.pubDate);
 const routeId = routeIds.get(entry.id) ?? entry.id;
 const canonicalURL = localizePath(locale, getCenterPath(routeId));
+const githubSourcePath = localizedEntry
+	? `src/data/centers_i18n/${locale}/${localizedEntry.id}.mdx`
+	: `src/data/centers_formatted/${entry.id}.mdx`;
 const currentIndex = centerEntries.findIndex((centerEntry) => centerEntry.id === entry.id);
 const previousEntry = currentIndex > 0 ? centerEntries[currentIndex - 1] : null;
 const nextEntry =
@@ -136,7 +139,7 @@ const pageDescription = summary ?? undefined;
 				/>
 				<ButtonLink
 					target="_blank"
-					href={`https://github.com/proxima812/tatarverse/blob/main/src/data/centers_formatted/${entry.id}.mdx`}
+					href={`https://github.com/proxima812/tatarverse/blob/main/${githubSourcePath}`}
 					label="Edit on GitHub"
 					labelKey="nav.editOnGithub"
 					variant="ghost"

@@ -14,9 +14,9 @@ const t = useTranslations(locale);
 </button>
 
 <div
-	class="mb-6 flex items-center gap-2 rounded-3xl corner-squircle bg-surface/90 p-2 shadow-2xs ring ring-depth-100/70 backdrop-blur lg:static lg:mb-10 lg:bg-transparent lg:p-0 lg:shadow-none lg:ring-0 lg:backdrop-blur-none"
+	class="mb-6 flex relative z-40 items-center gap-2 rounded-3xl corner-squircle bg-surface/90 p-2 shadow-2xs ring ring-depth-100/70 backdrop-blur lg:static lg:mb-10 lg:bg-transparent lg:p-0 lg:shadow-none lg:ring-0 lg:backdrop-blur-none"
 >
-	<label class="relative min-w-0 flex-1">
+	<label class="relative min-w-0 flex-1 z-50">
 		<Icon
 			name="mdi:search"
 			class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle-foreground"
@@ -38,7 +38,7 @@ const t = useTranslations(locale);
 			id="search-suggestions"
 			data-search-suggestions
 			role="listbox"
-			class="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-30 hidden max-h-80 overflow-y-auto rounded-2xl corner-squircle bg-surface p-1.5 text-sm shadow-md ring ring-depth-100"
+			class="absolute z-40 sm:w-full w-[135%] left-0 right-0 top-[calc(100%+1rem)] sm:top-[calc(100%+0.5rem)] hidden max-h-80 overflow-y-auto rounded-2xl corner-squircle bg-surface p-1.5 text-sm shadow-md ring ring-depth-100"
 		>
 		</ul>
 	</label>

@@ -69,7 +69,7 @@ const truncate = (value?: string, max = 23) => {
 	data-summary={summary ?? ""}
 	data-city={cleanCity ?? ""}
 	data-region={region ?? ""}
-	class="content-auto relative flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs ring ring-depth-100/40 transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
+	class="content-auto flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs ring ring-depth-100/40 transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
 	style="contain-intrinsic-size: 240px"
 >
 	<div class="flex justify-center items-center">
@@ -80,9 +80,7 @@ const truncate = (value?: string, max = 23) => {
 						{displayLocation.flag && (
 							<span class="text-base leading-none">{displayLocation.flag}</span>
 						)}
-						{displayLocation.city && (
-							<span>{truncate(displayLocation.city.trim(), 12)}</span>
-						)}
+						{displayLocation.city && <span>{truncate(displayLocation.city.trim(), 12)}</span>}
 						{displayLocation.city && displayLocation.countryLabels && (
 							<span aria-hidden="true">&#10625;</span>
 						)}

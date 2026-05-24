@@ -486,7 +486,9 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 				city,
 				terms,
 				order,
-				searchText: normalize(`${title} ${summary} ${city} ${country} ${type} ${category} ${region}`),
+				searchText: normalize(
+					`${title} ${summary} ${city} ${country} ${type} ${category} ${region}`,
+				),
 			};
 		});
 		const fuse = new Fuse(cardsIndex, {
@@ -743,7 +745,9 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 			getSearchResults(query)
 				.slice(0, 8)
 				.forEach(({ item }) => {
-					const matchingTerm = item.terms.find((term) => normalize(term).includes(normalizedQuery));
+					const matchingTerm = item.terms.find((term) =>
+						normalize(term).includes(normalizedQuery),
+					);
 					suggestionsSet.add(matchingTerm ?? item.title);
 				});
 
@@ -759,7 +763,10 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 			Array.from(suggestions.children).forEach((child, index) => {
 				child.setAttribute("aria-selected", String(index === activeSuggestionIndex));
 			});
-			searchInput.setAttribute("aria-activedescendant", `search-suggestion-${activeSuggestionIndex}`);
+			searchInput.setAttribute(
+				"aria-activedescendant",
+				`search-suggestion-${activeSuggestionIndex}`,
+			);
 		}
 
 		function commitSuggestion(value: string) {

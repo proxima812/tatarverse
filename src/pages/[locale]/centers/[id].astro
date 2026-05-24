@@ -20,7 +20,10 @@ export async function getStaticPaths() {
 								: locale === "qt"
 									? await getCollection("centersQt")
 									: [];
-					return [locale, new Map(translatedEntries.map((entry) => [entry.id, entry]))] as const;
+					return [
+						locale,
+						new Map(translatedEntries.map((entry) => [entry.id, entry])),
+					] as const;
 				}),
 		),
 	);
