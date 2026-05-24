@@ -5,9 +5,7 @@ import AstroPWA from "@vite-pwa/astro";
 import icon from "astro-icon";
 import metaTags from "astro-meta-tags";
 import { defineConfig } from "astro/config";
-import rehypePrism from "rehype-prism-plus";
-import remarkGemoji from "remark-gemoji";
-import remarkGfm from "remark-gfm";
+
 import { config } from "./main.config.ts";
 import aiTxt from "./src/integrations/aiTxt.ts";
 import indexNow from "./src/integrations/indexNow.ts";
@@ -15,8 +13,6 @@ import llmsTxt from "./src/integrations/llmsTxt.ts";
 import robotsTxt from "./src/integrations/robotsTxt.ts";
 import { includeAssets, manifest, workbox } from "./src/utils/pwaSettings.ts";
 
-const remarkPlugins = [remarkGfm, remarkGemoji];
-const rehypePlugins = [rehypePrism];
 
 export default defineConfig({
 	site: config.site.url,
@@ -51,11 +47,7 @@ export default defineConfig({
 			workbox,
 		}),
 	],
-	markdown: {
-		syntaxHighlight: false,
-		remarkPlugins,
-		rehypePlugins,
-	},
+
 	prefetch: {
 		defaultStrategy: "tap",
 		prefetchAll: false,
@@ -64,7 +56,7 @@ export default defineConfig({
 		plugins: [tailwindcss()],
 	},
 	devToolbar: {
-		enabled: true,
+		enabled: false,
 	},
 	output: "static",
 });
