@@ -1,7 +1,7 @@
 ---
-import CardItem from "../../ui/card/CardItem.astro";
 import { createCenterRouteIdMap } from "@/utils/centers";
 import type { CollectionEntry } from "astro:content";
+import CardItem from "../../ui/card/CardItem.astro";
 
 interface Props {
 	cards: CollectionEntry<"centers" | "centersEn" | "centersTt" | "centersQt">[];
@@ -13,7 +13,7 @@ const routeIds = createCenterRouteIdMap(cards);
 
 <section
 	id="cards-grid"
-	class="grid scroll-mt-28 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:grid-cols-4 gap-8 p-6 bg-surface border border-border-muted shadow-2xs ring ring-depth-100/40 md:border-l-transparent rounded-3xl corner-squircle lg:rounded-l-none"
+	class="grid scroll-mt-28 grid-cols-1 gap-6"
 >
 	{
 		cards.map((card) => (

@@ -1,12 +1,12 @@
 ---
-import GridCards from "./GridCards.astro";
-import Toolbar from "./Toolbar.astro";
 import { countryFlagsByRu } from "@/data/worldCountries";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { getCollection } from "astro:content";
-import NoResults from "../../ui/feedback/NoResults.astro";
 import BackButton from "../../layout/navigation/BackButton.astro";
+import NoResults from "../../ui/feedback/NoResults.astro";
+import GridCards from "./GridCards.astro";
 import Search from "./Search.astro";
+import Toolbar from "./Toolbar.astro";
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const allCards =
@@ -79,9 +79,9 @@ const toolbarProps = {
 <BackButton href="/" label="Back" labelKey="nav.back" variant="outline" />
 <main class="not-container px-6">
 	<section class="sm:max-w-2xl sm:mx-auto">
-    <Search />
-  </section>
-	<div class="grid grid-cols-1 lg:grid-cols-[400px_minmax(0,1fr)]">
+		<Search />
+	</section>
+	<div class="grid grid-cols-1 lg:grid-cols-[400px_minmax(0,1fr)] gap-12 sm:px-12">
 		<Toolbar {...toolbarProps} />
 		<div>
 			<NoResults />

@@ -1,6 +1,6 @@
 ---
 import { countryFlagsByRu, getCountryLabel, getCountryLabels } from "@/data/worldCountries";
-import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { getLocaleFromUrl, localizePath } from "@/i18n";
 import { getCenterPath } from "@/utils/centers";
 import { Icon } from "astro-icon/components";
 
@@ -31,7 +31,6 @@ interface Props {
 
 const { id, routeId, title, summary, type, category, location, region } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
-const t = useTranslations(locale);
 const centerPath = getCenterPath(routeId ?? id);
 
 const NO_DATA = "Нет данных.";
@@ -54,6 +53,7 @@ const displayLocation =
 		: null;
 
 const icons = categoryIconMap[category as Category] ?? [];
+const hasIcons = icons.length > 0;
 const truncate = (value?: string, max = 23) => {
 	if (!value) return "";
 	const v = value.trim();
@@ -61,7 +61,7 @@ const truncate = (value?: string, max = 23) => {
 };
 ---
 
-<article
+<a
 	data-type={type ?? ""}
 	data-category={category ?? ""}
 	data-country={countryKey}
@@ -69,16 +69,40 @@ const truncate = (value?: string, max = 23) => {
 	data-summary={summary ?? ""}
 	data-city={cleanCity ?? ""}
 	data-region={region ?? ""}
-	class="content-auto flex h-56 transform-gpu overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs ring ring-depth-100/40 transition duration-500 ease-out sm:h-60 sm:p-6 flex-col justify-between motion-reduce:transform-none motion-reduce:transition-none mask-cover"
-	style="contain-intrinsic-size: 240px"
+	href={localizePath(locale, centerPath)}
+	class="block min-w-0 rounded-4xl corner-squircle text-surface-foreground no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
-	<div class="flex justify-center items-center">
-		{
-			displayLocation && (
-				<div class="rounded-full bg-surface/70 backdrop-blur-lg ring-inset ring ring-border-muted corner-squircle px-3 py-1.5 shadow-2xs shrink-0 max-w-fit text-right text-xs text-surface-foreground">
-					<div class="flex items-center gap-1.5">
+	<article
+		class="flex overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs ring ring-depth-100/40 transition duration-500 ease-out sm:p-6 flex-col justify-between"
+	>
+		<div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-surface-foreground">
+			{
+				hasIcons && (
+					<div data-card-section="icons" class="flex shrink-0 gap-0.5">
+						{icons.map((name) => (
+							<Icon
+								name={name}
+								class="pointer-events-none size-7 shrink-0 [&:not([class*='size-'])]:size-4"
+							/>
+						))}
+					</div>
+				)
+			}
+			{
+				hasIcons && displayLocation && (
+					<span aria-hidden="true" class="text-border">
+						|
+					</span>
+				)
+			}
+			{
+				displayLocation && (
+					<div
+						data-card-section="location"
+						class="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"
+					>
 						{displayLocation.flag && (
-							<span class="text-base leading-none">{displayLocation.flag}</span>
+							<span class="shrink-0 text-base leading-none">{displayLocation.flag}</span>
 						)}
 						{displayLocation.city && <span>{truncate(displayLocation.city.trim(), 12)}</span>}
 						{displayLocation.city && displayLocation.countryLabels && (
@@ -93,32 +117,21 @@ const truncate = (value?: string, max = 23) => {
 							</span>
 						)}
 					</div>
-				</div>
-			)
-		}
-	</div>
-	<div>
-		<h2
-			class="text-center line-clamp-3 font-bold leading-snug tracking-tight mb-2 text-surface-foreground text-xl"
-		>
-			{displayTitle}
-		</h2>
-	</div>
-	<div class="flex justify-between items-center">
-		<div class="flex gap-0.5">
-			{
-				icons.map((name) => (
-					<Icon
-						name={name}
-						class="shrink-0 pointer-events-none size-8 [&:not([class*='size-'])]:size-4"
-					/>
-				))
+				)
 			}
+			{
+				(hasIcons || displayLocation) && (
+					<span aria-hidden="true" class="text-border">
+						|
+					</span>
+				)
+			}
+			<h2
+				data-card-section="title"
+				class="min-w-0 flex-1 wrap-anywhere font-bold line-clamp-1 leading-snug tracking-tight text-surface-foreground"
+			>
+				{displayTitle}
+			</h2>
 		</div>
-
-		<a
-			class="flex max-w-fit items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-sm text-surface-foreground shadow-2xs ring ring-border-muted transition-all hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-			href={localizePath(locale, centerPath)}><span>{t("card.details")}</span></a
-		>
-	</div>
-</article>
+	</article>
+</a>

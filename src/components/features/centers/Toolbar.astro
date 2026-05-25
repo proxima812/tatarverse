@@ -55,7 +55,7 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 
 <aside
 	data-filters-shell
-	class="hidden lg:sticky lg:top-12 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto p-6 bg-surface rounded-3xl corner-squircle border sm:rounded-r-none border-border-muted shadow-2xs ring ring-depth-100/40"
+	class="hidden lg:sticky lg:top-12 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto px-6 pb-12"
 >
 	<section class="space-y-4 lg:space-y-5">
 		<!-- Filter sections: hidden on mobile by default, always visible on lg+ via <style> -->
@@ -404,7 +404,7 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 		};
 	};
 
-	type FilterableCard = HTMLElement & {
+	type FilterableCard = HTMLAnchorElement & {
 		dataset: DOMStringMap & {
 			country?: string;
 			type?: string;
@@ -454,7 +454,7 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 			return;
 		}
 
-		const cards = Array.from(cardsGrid.querySelectorAll<FilterableCard>(":scope > article"));
+		const cards = Array.from(cardsGrid.querySelectorAll<FilterableCard>(":scope > a"));
 		const normalize = (value: string) =>
 			value
 				.toLowerCase()
