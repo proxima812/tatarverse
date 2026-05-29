@@ -1,6 +1,6 @@
 ---
 import { countryFlagsByRu, getCountryLabel, getCountryLabels } from "@/data/worldCountries";
-import { getLocaleFromUrl, localizePath } from "@/i18n";
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { getCenterPath } from "@/utils/centers";
 import { Icon } from "astro-icon/components";
 
@@ -27,10 +27,13 @@ interface Props {
 	category?: string;
 	location?: Location;
 	region?: string;
+	pubDate?: string;
 }
 
-const { id, routeId, title, summary, type, category, location, region } = Astro.props as Props;
+const { id, routeId, title, summary, type, category, location, region, pubDate } =
+	Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 const centerPath = getCenterPath(routeId ?? id);
 
 const NO_DATA = "Нет данных.";
@@ -47,10 +50,15 @@ const displayCountry = cleanCountry ? getCountryLabel(cleanCountry, locale) : un
 const countryKey = cleanCountry ?? "Прочее";
 const countryLabels = cleanCountry ? getCountryLabels(cleanCountry) : undefined;
 const displayTitle = title ?? "—";
+const displaySummary = summary?.trim();
 const displayLocation =
 	cleanFlag || cleanCity || displayCountry
 		? { flag: cleanFlag, city: cleanCity, country: displayCountry, countryLabels }
 		: null;
+const formattedDate =
+	pubDate &&
+	!Number.isNaN(new Date(pubDate).getTime()) &&
+	new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(new Date(pubDate));
 
 const icons = categoryIconMap[category as Category] ?? [];
 const hasIcons = icons.length > 0;
@@ -73,65 +81,84 @@ const truncate = (value?: string, max = 23) => {
 	class="block min-w-0 rounded-4xl corner-squircle text-surface-foreground no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
 	<article
-		class="flex overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs ring ring-depth-100/40 transition duration-500 ease-out sm:p-6 flex-col justify-between"
+		class="flex min-h-40 overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs ring ring-depth-100/40 transition duration-300 ease-out hover:bg-surface-muted hover:ring-depth-200 sm:p-6 flex-col justify-between"
 	>
-		<div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-surface-foreground">
-			{
-				hasIcons && (
-					<div data-card-section="icons" class="flex shrink-0 gap-0.5">
-						{icons.map((name) => (
-							<Icon
-								name={name}
-								class="pointer-events-none size-7 shrink-0 [&:not([class*='size-'])]:size-4"
-							/>
-						))}
-					</div>
-				)
-			}
-			{
-				hasIcons && displayLocation && (
-					<span aria-hidden="true" class="text-border">
-						|
-					</span>
-				)
-			}
-			{
-				displayLocation && (
-					<div
-						data-card-section="location"
-						class="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"
-					>
-						{displayLocation.flag && (
-							<span class="shrink-0 text-base leading-none">{displayLocation.flag}</span>
-						)}
-						{displayLocation.city && <span>{truncate(displayLocation.city.trim(), 12)}</span>}
-						{displayLocation.city && displayLocation.countryLabels && (
-							<span aria-hidden="true">&#10625;</span>
-						)}
-						{displayLocation.countryLabels && (
-							<span
-								data-country-label={cleanCountry}
-								data-country-labels={JSON.stringify(displayLocation.countryLabels)}
+		<div class="space-y-4">
+			<div class="flex min-w-0 items-start justify-between gap-3">
+				<div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-surface-foreground">
+					{
+						hasIcons && (
+							<div data-card-section="icons" class="flex shrink-0 gap-0.5">
+								{icons.map((name) => (
+									<Icon
+										name={name}
+										class="pointer-events-none size-7 shrink-0 [&:not([class*='size-'])]:size-4"
+									/>
+								))}
+							</div>
+						)
+					}
+					{
+						displayLocation && (
+							<div
+								data-card-section="location"
+								class="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground"
 							>
-								{displayLocation.country}
-							</span>
-						)}
-					</div>
-				)
-			}
-			{
-				(hasIcons || displayLocation) && (
-					<span aria-hidden="true" class="text-border">
-						|
-					</span>
-				)
-			}
+								{displayLocation.flag && (
+									<span class="shrink-0 text-base leading-none">{displayLocation.flag}</span>
+								)}
+								{displayLocation.city && (
+									<span>{truncate(displayLocation.city.trim(), 16)}</span>
+								)}
+								{displayLocation.city && displayLocation.countryLabels && (
+									<span aria-hidden="true">&#10625;</span>
+								)}
+								{displayLocation.countryLabels && (
+									<span
+										data-country-label={cleanCountry}
+										data-country-labels={JSON.stringify(displayLocation.countryLabels)}
+									>
+										{displayLocation.country}
+									</span>
+								)}
+							</div>
+						)
+					}
+				</div>
+				<span class="shrink-0 rounded-full bg-surface px-2 py-1 text-xs font-medium text-muted-foreground ring ring-depth-100/60">
+					{t("card.details")}
+				</span>
+			</div>
 			<h2
 				data-card-section="title"
-				class="min-w-0 flex-1 wrap-anywhere font-bold line-clamp-1 leading-snug tracking-tight text-surface-foreground"
+				class="min-w-0 wrap-anywhere text-lg font-bold leading-snug tracking-tight text-surface-foreground sm:text-xl"
 			>
 				{displayTitle}
 			</h2>
+			{
+				displaySummary && (
+					<p class="line-clamp-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+						{displaySummary}
+					</p>
+				)
+			}
+		</div>
+		<div class="mt-5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+			{type && <span class="rounded-full bg-surface px-2 py-1 ring ring-depth-100/60">{type}</span>}
+			{
+				category && (
+					<span class="rounded-full bg-surface px-2 py-1 ring ring-depth-100/60">
+						{category}
+					</span>
+				)
+			}
+			{
+				formattedDate && (
+					<span class="ml-auto rounded-full bg-transparent px-2 py-1 tabular-nums">
+						{t("detail.updated")}: {formattedDate}
+					</span>
+				)
+			}
 		</div>
 	</article>
 </a>

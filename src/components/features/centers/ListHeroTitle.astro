@@ -1,78 +1,49 @@
 ---
-// Hero-заголовок страницы списка: крутит названия стран из локализованного словаря.
-import { worldCountriesByLocale } from "@/data/worldCountries";
+// Hero-заголовок страницы списка: практичный вводный блок каталога.
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
+
+interface Props {
+	stats?: {
+		count: number;
+		countries: number;
+		regions: number;
+	};
+}
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const words = worldCountriesByLocale[locale] ?? [];
-const initialWord = words[0] ?? "";
-const maxWordLength = words.reduce((max, word) => Math.max(max, word.length), 0);
+const stats = Astro.props.stats as Props["stats"] | undefined;
+const statItems = stats
+	? [
+			{ label: t("list.stat.centers"), value: stats.count },
+			{ label: t("list.stat.countries"), value: stats.countries },
+			{ label: t("list.stat.regions"), value: stats.regions },
+		]
+	: [];
 ---
 
-<h1
-	class="relative select-none overflow-hidden"
-	data-list-hero-title
-	data-words={JSON.stringify(words)}
->
-	<div
-		class="absolute bg-linear-to-br z-50 from-background/10 to-transparent dark:from-background/10 dark:to-transparent w-full h-full pointer-events-none"
-	>
-	</div>
-	<div
-		class="flex flex-col *:tracking-tight *:md:tracking-[-3.8px] *:font-bold *:text-4xl *:sm:text-5xl *:md:text-6xl *:lg:text-7xl *:uppercase"
-	>
-		<div class="text-muted-foreground">
-			<span class="blur-[0.5px]">
-				<span>{t("list.hero.start")}</span>
-				<i class="text-3xl sm:text-5xl">&</i>
-				<span>{t("list.hero.end")}</span>
-			</span>
+<section class="not-container pt-8 pb-10 lg:pt-12">
+	<div class="mx-auto max-w-7xl min-w-0 px-6 sm:px-12">
+		<div class="mx-auto flex min-w-0 max-w-5xl flex-col items-center space-y-6 text-center">
+			<p class="text-sm font-medium text-muted-foreground">{t("list.quickFind")}</p>
+			<h1 class="max-w-4xl text-3xl font-bold tracking-[-0.03em] text-foreground sm:text-5xl sm:tracking-[-0.035em] lg:text-6xl">
+				{t("list.title")}
+			</h1>
+			<p class="max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
+				{t("list.heroIntro")}
+			</p>
+			{
+				statItems.length > 0 && (
+					<dl class="flex justify-center flex-wrap gap-2">
+						{statItems.map((item) => (
+							<div class="flex items-center gap-2 rounded-2xl corner-squircle bg-surface px-3 py-2 shadow-2xs ring ring-depth-100/70">
+								<dt class="text-sm text-muted-foreground">{item.label}</dt>
+								<dd class="text-sm font-semibold tabular-nums text-foreground">{item.value}</dd>
+							</div>
+						))}
+					</dl>
+				)
+			}
 		</div>
-		<span
-			class="rotating-word-wrapper inline-block overflow-hidden align-bottom"
-			style={`min-inline-size: ${Math.max(8, maxWordLength)}ch;`}
-		>
-			<span id="rotating-word" class="text-primary tracking-normal font-black inline-block word-rise"
-				>{initialWord}</span
-			>
-		</span>
 	</div>
-</h1>
-
-<script>
-	const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-	document.querySelectorAll<HTMLElement>("[data-list-hero-title]").forEach((root) => {
-		const wordElement = root.querySelector<HTMLElement>("#rotating-word");
-		const words = JSON.parse(root.dataset.words ?? "[]") as string[];
-
-		if (!wordElement || words.length < 2 || reduceMotion) return;
-
-		let index = 0;
-		let timeoutId = 0;
-
-		const rotateWord = () => {
-			wordElement.classList.remove("word-rise");
-			wordElement.classList.add("word-sink");
-
-			window.setTimeout(() => {
-				index = (index + 1) % words.length;
-				wordElement.textContent = words[index] ?? "";
-				wordElement.classList.remove("word-sink");
-				wordElement.classList.add("word-rise");
-				timeoutId = window.setTimeout(rotateWord, 1800);
-			}, 900);
-		};
-
-		timeoutId = window.setTimeout(rotateWord, 1800);
-
-		document.addEventListener(
-			"astro:before-swap",
-			() => {
-				window.clearTimeout(timeoutId);
-			},
-			{ once: true },
-		);
-	});
-</script>
+</section>

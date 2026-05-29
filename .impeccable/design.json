@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-29T08:41:54Z",
+  "title": "Design System: Tatarverse",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Page White",
+        "canonical": "hsl(0 0% 98%)",
+        "tonalRamp": ["#262626", "#404040", "#666666", "#8c8c8c", "#b3b3b3", "#d9d9d9", "#f0f0f0", "#fafafa"]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Catalog Ink",
+        "canonical": "hsl(0 0% 11.4%)",
+        "tonalRamp": ["#111111", "#1d1d1d", "#333333", "#474747", "#5c5c5c", "#7a7a7a", "#a3a3a3", "#d1d1d1"]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Quiet Muted",
+        "canonical": "hsl(0 0% 94%)",
+        "tonalRamp": ["#262626", "#404040", "#666666", "#8c8c8c", "#b3b3b3", "#d9d9d9", "#f0f0f0", "#ffffff"]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Catalog Ink",
+        "canonical": "hsl(0 0% 11.4%)",
+        "tonalRamp": ["#111111", "#1d1d1d", "#333333", "#474747", "#5c5c5c", "#7a7a7a", "#a3a3a3", "#d1d1d1"]
+      },
+      "depth-700": {
+        "role": "neutral",
+        "displayName": "Deep Depth",
+        "canonical": "hsl(0 0% 20%)",
+        "tonalRamp": ["#111111", "#1d1d1d", "#333333", "#474747", "#5c5c5c", "#7a7a7a", "#a3a3a3", "#d1d1d1"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero statements and major catalog headers only."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Readable factual content, MDX prose, and catalog descriptions."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Compact controls, chips, metadata, and navigation labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "soft-surface-lift",
+        "value": "shadow-2xs",
+        "purpose": "Quiet separation for cards, controls, and compact menu surfaces."
+      },
+      {
+        "name": "menu-overlay-lift",
+        "value": "shadow-md",
+        "purpose": "Temporary overlays such as search suggestions."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-transition",
+        "value": "transition",
+        "purpose": "Small hover and focus state changes only."
+      },
+      {
+        "name": "no-new-decorative-motion",
+        "value": "none",
+        "purpose": "Do not add decorative animations."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Compact primary action for clear navigation or active commands.",
+      "html": "<button class=\"ds-button-primary\">Open catalog</button>",
+      "css": ".ds-button-primary { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 16px; background: var(--color-primary, #1d1d1d); color: var(--color-primary-foreground, #ffffff); padding: 8px 16px; font: 500 14px/1.25 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: background-color 150ms ease, color 150ms ease; } .ds-button-primary:hover { background: color-mix(in srgb, var(--color-primary, #1d1d1d) 80%, transparent); } .ds-button-primary:focus-visible { outline: 2px solid var(--color-primary, #1d1d1d); outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Quiet navigation action used in header and mobile menu links.",
+      "html": "<button class=\"ds-button-ghost\">Sources</button>",
+      "css": ".ds-button-ghost { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 16px; background: transparent; color: var(--color-primary, #1d1d1d); padding: 8px 16px; font: 500 14px/1.25 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: background-color 150ms ease, color 150ms ease; } .ds-button-ghost:hover { background: color-mix(in srgb, var(--color-primary, #1d1d1d) 5%, transparent); } .ds-button-ghost:focus-visible { outline: 2px solid var(--color-primary, #1d1d1d); outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip-active",
+      "description": "Compact filter control with a clear active state.",
+      "html": "<button class=\"ds-filter-chip\" data-active=\"true\"><span>All</span><span class=\"ds-filter-count\">128</span></button>",
+      "css": ".ds-filter-chip { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; border: 0; border-radius: 16px; background: var(--color-muted, #f0f0f0); color: var(--color-muted-foreground, #6b6b6b); padding: 6px 10px; font: 500 14px/1.25 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; cursor: pointer; transition: background-color 150ms ease, color 150ms ease; } .ds-filter-chip:hover { background: var(--color-subtle, #e6e6e6); } .ds-filter-chip[data-active='true'] { background: var(--color-primary, #1d1d1d); color: var(--color-primary-foreground, #ffffff); } .ds-filter-count { min-width: 16px; border-radius: 999px; background: color-mix(in srgb, currentColor 12%, transparent); padding: 1px 6px; font-size: 10px; text-align: center; font-variant-numeric: tabular-nums; } .ds-filter-chip:focus-visible { outline: 2px solid var(--color-primary, #1d1d1d); outline-offset: 2px; }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "Primary catalog search field with soft ring and visible focus.",
+      "html": "<label class=\"ds-search\"><svg class=\"ds-search-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M9.5 3a6.5 6.5 0 0 1 5.16 10.45l4.45 4.44-1.42 1.42-4.44-4.45A6.5 6.5 0 1 1 9.5 3Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z\"/></svg><input placeholder=\"Search centers\" /></label>",
+      "css": ".ds-search { position: relative; display: block; width: 100%; max-width: 420px; } .ds-search-icon { position: absolute; left: 12px; top: 50%; width: 16px; height: 16px; transform: translateY(-50%); color: var(--color-subtle-foreground, #8f8f8f); pointer-events: none; } .ds-search input { width: 100%; border: 0; border-radius: 16px; background: var(--color-surface, #ffffff); color: var(--color-surface-foreground, #1d1d1d); padding: 12px 16px 12px 36px; font: 400 14px/1.25 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; box-shadow: inset 0 0 0 1px var(--color-depth-100, #e6e6e6); outline: none; } .ds-search input::placeholder { color: var(--color-subtle-foreground, #8f8f8f); } .ds-search input:focus { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--color-primary, #1d1d1d) 25%, transparent); }"
+    },
+    {
+      "name": "Center Card",
+      "kind": "card",
+      "refersTo": "card-center",
+      "description": "Signature catalog list item for center pages.",
+      "html": "<article class=\"ds-center-card\"><div class=\"ds-card-meta\"><span class=\"ds-card-icon\">TT</span><span class=\"ds-card-separator\">|</span><span>Almaty</span><span>⦁</span><span>Kazakhstan</span><span class=\"ds-card-separator\">|</span></div><h3>Example Tatar Cultural Center</h3></article>",
+      "css": ".ds-center-card { display: flex; min-width: 0; flex-direction: column; justify-content: space-between; overflow: hidden; border-radius: 32px; background: var(--color-muted, #f0f0f0); color: var(--color-surface-foreground, #1d1d1d); padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.04), inset 0 0 0 1px color-mix(in srgb, var(--color-depth-100, #e6e6e6) 40%, transparent); } .ds-card-meta { display: flex; min-width: 0; flex-wrap: wrap; align-items: center; gap: 4px 8px; color: var(--color-muted-foreground, #6b6b6b); font: 400 12px/1.25 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; } .ds-card-icon { display: inline-grid; place-content: center; width: 28px; height: 28px; border-radius: 999px; background: var(--color-surface, #ffffff); color: var(--color-primary, #1d1d1d); font-size: 11px; font-weight: 700; } .ds-card-separator { color: var(--color-border, #dbdbdb); } .ds-center-card h3 { margin: 4px 0 0; overflow-wrap: anywhere; color: var(--color-surface-foreground, #1d1d1d); font: 700 16px/1.375 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; letter-spacing: -0.015em; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Useful Catalog",
+    "overview": "Tatarverse is a multilingual catalog, not a campaign page. The visual system should make center pages easy to find, scan, compare, and maintain. The interface is minimal, practical, fresh, modern, and restrained, with the content carrying the meaning.",
+    "keyCharacteristics": [
+      "Monochrome semantic tokens with rare functional contrast.",
+      "Catalog-first layouts with compact controls and readable cards.",
+      "Squircle geometry on buttons, chips, cards, search, and menu controls.",
+      "Factual UI copy, localized labels, and no decorative claims.",
+      "No new decorative motion."
+    ],
+    "rules": [
+      {
+        "name": "The No Extra Palette Rule",
+        "body": "Do not introduce new color families for decoration. If a new role is required, first map it to background, surface, muted, subtle, border, primary, or depth-*.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Means Active Rule",
+        "body": "primary is reserved for active filters, primary actions, strong text, and focus affordances. Its scarcity keeps the catalog practical.",
+        "section": "colors"
+      },
+      {
+        "name": "The Factual Type Rule",
+        "body": "Use typography to organize real information, not to dramatize it. No invented slogans, no decorative claims, no all-caps body copy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Catalog Rule",
+        "body": "Surfaces should feel calm at rest. Do not add large soft shadows, glass panels, or decorative glow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do reuse src/styles/tailwind.css semantic tokens before adding any new visual role.",
+      "Do keep the catalog useful first: search, filters, cards, locations, and localized routes must remain clear.",
+      "Do keep UI copy factual and direct.",
+      "Do use squircle geometry where the existing components already use it.",
+      "Do preserve readable contrast for muted text, placeholders, and small labels."
+    ],
+    "donts": [
+      "Don't add decorative animations.",
+      "Don't add invented words, slogans, or artificial meanings.",
+      "Don't make the site look like glossy SaaS, a marketplace, or a startup landing page.",
+      "Don't introduce extra color palettes beyond the existing restrained visual system.",
+      "Don't add side-stripe card accents, gradient text, glassmorphism, huge shadows, or repeated marketing-style card grids."
+    ]
+  }
+}

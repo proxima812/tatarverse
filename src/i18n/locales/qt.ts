@@ -48,9 +48,15 @@ const dict: Dictionary = {
 	"list.hero": "er yerde & her tarafta",
 	"list.hero.start": "er yerde",
 	"list.hero.end": "her tarafta",
-	"list.title": "Merkezler — tatarlar, başqurtlar ve qırımtatarlar",
+	"list.title": "Tatar, başqurt ve qırımtatar merkezleri cedveli",
 	"list.description":
 		"TBQ cedveli: tatarlar, başqurtlar ve qırımtatarlar aqqında {count} kart, bütün memleketler, bölgeler, şehirler, türler ve kategoriyalar boyunca. Bazada şimdi {countries} memleket ve {regions} bölge bar; merkezlerni ve malümatnı qıdırış ve süzgüçler ile tapıñız.",
+	"list.heroIntro":
+		"TBQ medeniy merkezleri, cemiyetleri ve teşebbüsleri cedveli: ad, şehir, memleket, bölge, tür ve kategoriya boyunca qıdırış.",
+	"list.quickFind": "Ameliy cedvel",
+	"list.stat.centers": "merkez",
+	"list.stat.countries": "memleket",
+	"list.stat.regions": "bölge",
 	"list.search.placeholder": "Adı, şehir, memleket ya da bölge boyunca qıdır",
 	"list.countries": "Memleketler",
 	"list.countries.aria": "Memleketler süzgüçi",
