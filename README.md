@@ -109,8 +109,9 @@ This repository uses separate licenses for code and content:
 ## Current Issues
 
 <!-- open-issues:start -->
-- Issues #3: [после перехода обратно в index сделать плавную анимацию.](https://github.com/proxima812/tatarverse/issues/3)
+- No open issues.
 <!-- open-issues:end -->
+
 
 
 
