@@ -6,7 +6,6 @@ import dualmark from "@dualmark/astro";
 import icon from "astro-icon";
 import metaTags from "astro-meta-tags";
 import { defineConfig } from "astro/config";
-
 import { config } from "./main.config.ts";
 import aiTxt from "./src/integrations/aiTxt.ts";
 import indexNow from "./src/integrations/indexNow.ts";

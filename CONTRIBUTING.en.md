@@ -1,6 +1,6 @@
 # Contributing Guide
 
-This guide explains how to add new centers and update existing center data in tatarverse.cc.
+This guide explains how to add new centers and update existing center data in `tatarverse.cc`.
 
 ## General Rules
 
@@ -9,39 +9,38 @@ This guide explains how to add new centers and update existing center data in ta
 - For factual changes, include a source: website, social profile, official post, organization page, or another verifiable link.
 - If data is unknown, omit the field. Do not add placeholders like `unknown`, `n/a`, or `-`.
 - Keep the tone neutral: no advertising, claims, or unsupported wording.
+- Preserve stable `tbk-*` file names. They act as public slugs.
 
 ## Where Centers Live
 
-Primary center files live in:
+Russian source center files live in:
 
 ```txt
 src/data/centers_formatted/
 ```
 
-Translated center files live in:
+English center translations live in:
 
 ```txt
 src/data/centers_i18n/en/
-src/data/centers_i18n/tt/
-src/data/centers_i18n/qt/
 ```
 
-The Russian version is the source version. File names should match across languages, for example:
+File names should match across languages:
 
 ```txt
 src/data/centers_formatted/tbk-366.mdx
 src/data/centers_i18n/en/tbk-366.mdx
-src/data/centers_i18n/tt/tbk-366.mdx
-src/data/centers_i18n/qt/tbk-366.mdx
 ```
+
+The Russian version is the source version. If you update the source entry, check whether the English translation needs the same factual update.
 
 ## Adding A New Center
 
 1. Find the next available `tbk-*` number in `src/data/centers_formatted/`.
 2. Create a new `.mdx` file with that number.
-3. Fill the frontmatter according to the Zod schema in `src/content.config.ts`.
+3. Fill the frontmatter according to the schema in `src/content.config.ts`.
 4. Add concise MDX content below the frontmatter: description, links, and verified details.
-5. When possible, add matching versions in `src/data/centers_i18n/en`, `tt`, and `qt`.
+5. When possible, add the matching English file in `src/data/centers_i18n/en/`.
 
 Minimal example:
 
@@ -69,14 +68,14 @@ Short description with verifiable information.
 ## Updating Existing Information
 
 - Change only the fields and text that are outdated or incorrect.
-- Do not rename the `tbk-*` file: it acts as a stable slug.
+- Do not rename the `tbk-*` file.
 - Do not remove existing information without a reason; replace outdated data with verified data.
 - When editing `title`, `summary`, `location`, `source`, `type`, or `category`, make sure the source supports the change.
-- If you update the Russian version, check whether the translated versions need the same update.
+- Keep the same factual meaning between source and translated files.
 
-## Zod Field Schema
+## Field Schema
 
-The schema is defined in `src/content.config.ts`. It is strict: extra frontmatter fields are not allowed.
+The center schema is defined in `src/content.config.ts`. It is strict: extra frontmatter fields are not allowed.
 
 Allowed fields:
 
@@ -112,8 +111,20 @@ Allowed `type` values:
 - `Зарубежный`
 - `Онлайн`
 
-Do not add new categories or types directly in MDX. If a new value is needed, update the Zod schema and related UI logic first.
+Do not add new categories or types directly in MDX. If a new value is needed, update the schema and related UI logic first.
+
+## UI Translation Changes
+
+UI strings live in `src/i18n/locales/ru.ts` and `src/i18n/locales/en.ts`.
+
+When adding a UI label, add the same key to both files and use `useTranslations(locale)` in Astro components. Avoid hardcoded user-facing text.
 
 ## Validation
 
-For regular content edits, review the changed `.mdx` files carefully. If the schema, routes, or shared data logic changed, run a stronger project check.
+For regular content edits, review the changed `.mdx` files carefully. If schema, routes, locale logic, or shared data behavior changed, run a targeted project check such as:
+
+```bash
+bunx astro sync
+```
+
+Run a full build only when the change affects routing, Astro config, integrations, or site-wide data behavior.

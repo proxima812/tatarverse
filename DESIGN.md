@@ -1,6 +1,6 @@
 ---
 name: Tatarverse
-description: Practical multilingual catalog of Tatar, Bashkir, Tatar-Bashkir, and Crimean Tatar centers.
+description: Practical Russian and English catalog of Tatar, Bashkir, Tatar-Bashkir, and Crimean Tatar centers.
 colors:
   background: "#fafafa"
   foreground: "#1d1d1d"
@@ -101,7 +101,7 @@ components:
 
 **Creative North Star: "The Useful Catalog"**
 
-Tatarverse is a multilingual catalog, not a campaign page. The visual system should make center pages easy to find, scan, compare, and maintain. The interface is minimal, practical, fresh, modern, and restrained, with the content carrying the meaning.
+Tatarverse is a Russian and English catalog, not a campaign page. The visual system should make center pages easy to find, scan, compare, translate, and maintain. The interface is minimal, practical, fresh, modern, and restrained, with the content carrying the meaning.
 
 The system is mostly monochrome. Depth comes from subtle gray steps, squircle corners, thin rings, and restrained spacing. It explicitly rejects decorative animations, invented words, artificial meanings, glossy SaaS or marketplace styling, and extra color palettes beyond the existing restrained visual system.
 

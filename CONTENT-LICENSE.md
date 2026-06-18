@@ -8,8 +8,9 @@ License text: https://creativecommons.org/licenses/by/4.0/legalcode
 This includes:
 
 - center data in `src/data/centers_formatted`;
+- English center translations in `src/data/centers_i18n/en`;
 - editorial page content;
-- translations;
+- UI translations in `src/i18n/locales`;
 - project documentation.
 
 ## Attribution

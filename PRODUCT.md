@@ -4,13 +4,24 @@
 
 brand
 
-## Users
-
-People looking for a practical directory of Tatar, Bashkir, Tatar-Bashkir, and Crimean Tatar centers. They need to find pages describing centers, communities, locations, sources, and related reference information without decorative noise.
-
 ## Product Purpose
 
-The site is a shared list and catalog of cultural and community centers. Success means the catalog stays clear, factual, searchable, and easy to maintain across languages and center pages.
+`tatarverse.cc` is a practical catalog of Tatar, Bashkir, Tatar-Bashkir, and Crimean Tatar cultural and community centers. Success means the catalog stays factual, searchable, localized, and easy to maintain.
+
+## Users
+
+- People looking for a center, community, source, or related reference page.
+- Contributors who can verify and improve center data.
+- Translators maintaining English versions of Russian source entries.
+- Researchers and community members who need stable source-backed links.
+
+## Current Scope
+
+- Static Astro site.
+- Public locales: Russian (`ru`) and English (`en`).
+- Russian center entries are the source content in `src/data/centers_formatted`.
+- English center entries live in `src/data/centers_i18n/en`.
+- UI strings live in `src/i18n/locales/ru.ts` and `src/i18n/locales/en.ts`.
 
 ## Brand Personality
 
@@ -24,9 +35,10 @@ No decorative animations. No invented words, slogans, or artificial meanings. No
 
 1. Keep the catalog useful first.
 2. Make center information easy to scan and compare.
-3. Preserve factual wording and avoid decorative claims.
+3. Preserve factual wording and source links.
 4. Use the existing restrained monochrome visual language.
 5. Prefer quiet, direct UI over expressive effects.
+6. Keep localization behavior predictable and visible.
 
 ## Accessibility & Inclusion
 
