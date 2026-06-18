@@ -2,7 +2,6 @@ export { default as Container } from "./container/Container.astro";
 export { default as Footer } from "./footer/Footer.astro";
 export { default as WhoDev } from "./footer/WhoDev.astro";
 export { default as Header } from "./header/Header.astro";
-export { default as LanguageToggle } from "./header/LanguageToggle.astro";
 export { default as Logotype } from "./header/Logotype.astro";
 export { default as Menu } from "./header/Menu.astro";
 export { default as ThemeToggle } from "./header/ThemeToggle.astro";

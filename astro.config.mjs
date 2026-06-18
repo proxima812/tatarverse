@@ -2,6 +2,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import AstroPWA from "@vite-pwa/astro";
+import dualmark from "@dualmark/astro";
 import icon from "astro-icon";
 import metaTags from "astro-meta-tags";
 import { defineConfig } from "astro/config";
@@ -14,49 +15,77 @@ import robotsTxt from "./src/integrations/robotsTxt.ts";
 import { includeAssets, manifest, workbox } from "./src/utils/pwaSettings.ts";
 
 
-export default defineConfig({
-	site: config.site.url,
-	i18n: {
-		locales: ["ru", "en", "tt", "qt"],
-		defaultLocale: "ru",
-		routing: {
-			prefixDefaultLocale: false,
-		},
-	},
-	integrations: [
-		sitemap(),
-		mdx(),
-		icon({ uis: ["*"] }),
-		metaTags(),
-		robotsTxt(),
-		...(config.features.llms ? [llmsTxt()] : []),
-		...(config.features.ai ? [aiTxt()] : []),
-		...(config.features.indexNow
-			? [
-					indexNow({
-						key: config.indexNow.key,
-						siteUrl: config.site.url,
-					}),
-				]
-			: []),
-		AstroPWA({
-			manifestFilename: "site.webmanifest",
-			registerType: "autoUpdate",
-			includeAssets,
-			manifest,
-			workbox,
-		}),
-	],
+import react from "@astrojs/react";
 
-	prefetch: {
-		defaultStrategy: "tap",
-		prefetchAll: false,
-	},
-	vite: {
-		plugins: [tailwindcss()],
-	},
-	devToolbar: {
-		enabled: false,
-	},
-	output: "static",
+
+export default defineConfig({
+    site: config.site.url,
+    i18n: {
+        locales: ["ru", "en"],
+        defaultLocale: "ru",
+        routing: {
+            prefixDefaultLocale: false,
+        },
+    },
+    integrations: [
+      sitemap(),
+      mdx(),
+      icon({ uis: ["*"] }),
+      metaTags(),
+      robotsTxt(),
+      ...(config.features.llms ? [llmsTxt()] : []),
+      ...(config.features.ai ? [aiTxt()] : []),
+      dualmark({
+          siteUrl: config.site.url.replace(/\/$/, ""),
+          collections: {
+              posts: {
+                  converter: "blog",
+                  route: "posts",
+                  slugStrategy: "single",
+                  listingMetadata: {
+                      title: "Посты tatarverse",
+                      description:
+                          "Редакционные заметки tatarverse о культуре, языке и сообществах.",
+                  },
+              },
+          },
+          llmsTxt: {
+              enabled: false,
+          },
+          middleware: {
+              injectLinkHeader: true,
+          },
+      }),
+      ...(config.features.indexNow
+          ? [
+                  indexNow({
+                      key: config.indexNow.key,
+                      siteUrl: config.site.url,
+                  }),
+              ]
+          : []),
+      AstroPWA({
+          manifestFilename: "site.webmanifest",
+          registerType: "autoUpdate",
+          includeAssets,
+          manifest,
+          workbox,
+      }),
+      react(),
+    ],
+
+    prefetch: {
+        defaultStrategy: "tap",
+        prefetchAll: false,
+    },
+    vite: {
+        plugins: [tailwindcss()],
+        ssr: {
+            external: ["@dualmark/astro", "@dualmark/core", "@dualmark/converters"],
+        },
+    },
+    devToolbar: {
+        enabled: false,
+    },
+    output: "static",
 });

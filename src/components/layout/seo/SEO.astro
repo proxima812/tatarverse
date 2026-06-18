@@ -76,7 +76,7 @@ const siteName = name || config.site.OG.site_name || config.site.OG.title;
 
 const mainTitle =
 	title && config.site.OG.title && title !== config.site.OG.title
-		? `${title} ${config.site.OG.titleSeparator} ${config.site.OG.title}`
+		? `tatarverse | ${title}`
 		: title || config.site.OG.title;
 
 const mainDescription = description || config.site.OG.description;
@@ -173,13 +173,12 @@ const schemaItem = isArticle
 			},
 		};
 
-const schemaGraph =
-	isArticle
-		? schemaItem
-		: {
-				"@context": "https://schema.org",
-				"@graph": [{ ...websiteSchema, "@id": `${siteURL.href}#website` }, schemaItem],
-			};
+const schemaGraph = isArticle
+	? schemaItem
+	: {
+			"@context": "https://schema.org",
+			"@graph": [{ ...websiteSchema, "@id": `${siteURL.href}#website` }, schemaItem],
+		};
 
 const enabledVerifications = config.site.verifications.filter(
 	(verification: SiteVerification) => verification.name_verification && verification.content,

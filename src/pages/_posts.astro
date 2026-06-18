@@ -1,0 +1,72 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("posts")).sort(
+	(a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+
+const title = "Посты";
+const description =
+	"Редакционные заметки tatarverse о татарских, башкирских и крымскотатарских центрах, культуре, языке и сообществах.";
+const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
+	day: "numeric",
+	month: "long",
+	year: "numeric",
+});
+---
+
+<Layout
+	title={title}
+	description={description}
+	keywords={["tatarverse", "посты", "культура", "язык", "татарские центры"]}
+>
+	<main class="space-y-10">
+		<header class="max-w-3xl space-y-4">
+			<p class="text-sm font-medium text-muted-foreground">Редакция</p>
+			<h1 class="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+				Посты о культуре, языке и сообществах
+			</h1>
+			<p class="text-base leading-7 text-muted-foreground sm:text-lg">
+				Материалы о том, как находить центры, знакомиться с людьми,
+				участвовать в культурной жизни и поддерживать татарские, башкирские
+				и крымскотатарские ценности.
+			</p>
+		</header>
+
+		<section class="grid gap-4" aria-label="Список постов">
+			{
+				posts.map((post) => (
+					<article class="corner-squircle rounded-3xl bg-surface p-5 shadow-2xs ring ring-border-muted ring-inset transition hover:bg-surface-muted sm:p-6">
+						<div class="flex flex-wrap items-center gap-2 text-xs font-medium text-subtle-foreground">
+							<time datetime={post.data.pubDate.toISOString()}>
+								{dateFormatter.format(post.data.pubDate)}
+							</time>
+							<span aria-hidden="true">/</span>
+							<span>{post.data.category}</span>
+							<span aria-hidden="true">/</span>
+							<span>{post.data.author}</span>
+						</div>
+						<h2 class="mt-3 text-xl font-semibold tracking-tight text-foreground">
+							{post.data.title}
+						</h2>
+						<p class="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
+							{post.data.description}
+						</p>
+						{
+							post.data.tags.length > 0 && (
+								<ul class="mt-4 flex flex-wrap gap-2" aria-label="Теги поста">
+									{post.data.tags.map((tag) => (
+										<li class="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+											{tag}
+										</li>
+									))}
+								</ul>
+							)
+						}
+					</article>
+				))
+			}
+		</section>
+	</main>
+</Layout>

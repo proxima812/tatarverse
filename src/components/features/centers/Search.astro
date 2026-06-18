@@ -1,6 +1,7 @@
 ---
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { Icon } from "astro-icon/components";
+
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---

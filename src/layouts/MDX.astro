@@ -17,7 +17,7 @@ const { frontmatter } = Astro.props as Props;
 
 <Layout {...frontmatter}>
 	<Container container class="max-w-5xl">
-		<BackButton href="/" variant="outline" label="Back" labelKey="nav.back" />
+		<BackButton href="/" variant="outline" label="Назад" labelKey="nav.back" />
 		<div class="my-12 pl-6">
 			<span class="text-xs text-primary/40 mb-4 block">
 				от {frontmatter.updateInfo}

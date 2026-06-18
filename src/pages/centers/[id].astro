@@ -25,7 +25,7 @@ export async function getStaticPaths() {
 
 interface Props {
 	entry: CollectionEntry<"centers">;
-	localizedEntry?: CollectionEntry<"centersEn" | "centersTt" | "centersQt">;
+	localizedEntry?: CollectionEntry<"centersEn">;
 }
 
 const { entry, localizedEntry } = Astro.props as Props;
@@ -91,7 +91,6 @@ const facts = [
 	placeLine
 		? {
 				label: t("detail.country"),
-				labelKey: "detail.country",
 				value: placeLine,
 				icon: "mdi:earth",
 			}
@@ -99,7 +98,6 @@ const facts = [
 	cityLine
 		? {
 				label: t("detail.city"),
-				labelKey: "detail.city",
 				value: cityLine,
 				icon: "mdi:city-variant-outline",
 			}
@@ -107,7 +105,6 @@ const facts = [
 	formattedDate
 		? {
 				label: t("detail.updated"),
-				labelKey: "detail.updated",
 				value: formattedDate,
 				icon: "mdi:calendar-outline",
 			}
@@ -127,7 +124,7 @@ const pageDescription = summary ?? undefined;
 		<nav class="flex justify-between sm:flex-nowrap flex-wrap items-center">
 			<ButtonLink
 				href={localizePath(locale, "/centers")}
-				label="All centers"
+				label="Все центры"
 				labelKey="nav.allCenters"
 				variant="outline"
 				icon="tabler:arrow-back-up"
@@ -135,7 +132,7 @@ const pageDescription = summary ?? undefined;
 			<div class="sm:order-0 order-3 sm:mt-0 mt-3 flex w-full justify-between sm:w-auto">
 				<ButtonLink
 					href="#errors"
-					label="Find a mistake?"
+					label="Нашли ошибку?"
 					labelKey="nav.mistake"
 					variant="ghost"
 					icon="tabler:face-id-error"
@@ -143,7 +140,7 @@ const pageDescription = summary ?? undefined;
 				<ButtonLink
 					target="_blank"
 					href={`https://github.com/proxima812/tatarverse/blob/main/${githubSourcePath}`}
-					label="Edit on GitHub"
+					label="Править на GitHub"
 					labelKey="nav.editOnGithub"
 					variant="ghost"
 					icon="mdi:github"

@@ -4,7 +4,7 @@ import type { CollectionEntry } from "astro:content";
 import CardItem from "../../ui/card/CardItem.astro";
 
 interface Props {
-	cards: CollectionEntry<"centers" | "centersEn" | "centersTt" | "centersQt">[];
+	cards: CollectionEntry<"centers" | "centersEn">[];
 }
 
 const { cards } = Astro.props as Props;

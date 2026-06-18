@@ -1,17 +1,44 @@
 ---
 import { HomeHeroTitle, HomeLinks, WordMarquee } from "@/components";
-import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import LIquidMetal from "@/components/LIquidMetal.astro";
+import { getLocaleFromUrl } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
+import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
+import searchImageEn from "@/assets/1-en.png";
+import searchImageRu from "@/assets/1-ru.png";
+
 const centers = (await getCollection("centers")).length;
 const locale = getLocaleFromUrl(Astro.url);
-const t = useTranslations(locale);
+const searchImage = locale === "en" ? searchImageEn : searchImageRu;
 const homeDescription =
-	"ТБК — это татары, башкиры и крымские татары. tatarverse собирает культурные центры, сообщества и источники в одном каталоге с поиском и фильтрами по странам, городам, регионам и категориям.";
+	locale === "en"
+		? "tatarverse helps people find Tatar, Bashkir, and Crimean Tatar centers around the world: for new connections, friends, relationships, language learning, cultural reconnection, and shared values."
+		: "tatarverse помогает найти татарские, башкирские и крымскотатарские центры по всему миру: для новых знакомств, друзей, отношений, изучения языка, восстановления связи с культурой и поддержки общих ценностей.";
+const introText =
+	locale === "en"
+		? `The catalog currently includes ${centers} centers, communities, and initiatives around the world. Find a place near you or in another country: join events, meet people, make friends and relationships, learn or restore a language, develop culture, and support Tatar, Bashkir, and Crimean Tatar values.`
+		: `В каталоге собрано ${centers} центров, сообществ и инициатив по всему миру. Здесь можно найти место рядом с собой или в другой стране: прийти на событие, познакомиться с людьми, найти друзей и отношения, изучать или восстанавливать язык, развивать культуру и поддерживать татарские, башкирские и крымскотатарские ценности.`;
+const searchSection =
+	locale === "en"
+		? {
+				title: "Communities on the world map",
+				text1: "Choose a country, city, or region and find nearby cultural centers, public associations, youth initiatives, language clubs, and local communities.",
+				text2: "The catalog helps you quickly understand where meetings, events, holidays, and educational programs take place.",
+				alt: "Catalog interface with search and center cards",
+			}
+		: {
+				title: "Сообщества на карте мира",
+				text1: "Выберите страну, город или регион и найдите ближайшие культурные центры, общественные объединения, молодежные инициативы, языковые клубы и локальные сообщества.",
+				text2: "Каталог помогает быстро понять, где проходят встречи, мероприятия, праздники и образовательные программы.",
+				alt: "Интерфейс каталога с поиском и карточками центров",
+			};
 ---
 
 <Layout
-	title="ТБК — татары, башкиры и крымские татары"
+	title={locale === "en"
+		? "Tatars, Bashkirs, and Crimean Tatars"
+		: "Татары, Башкиры и Крымские татары - список центров, сообществ по всему миру!"}
 	description={homeDescription}
 	keywords={[
 		"ТБК",
@@ -25,25 +52,43 @@ const homeDescription =
 	]}
 >
 	<main class="space-y-12">
-		<div>
-			<HomeHeroTitle />
-		</div>
+		<LIquidMetal />
+
+		<HomeHeroTitle />
+
 		<div>
 			<HomeLinks />
 		</div>
-		<p class="text-primary/50 text-xs">
-			<span>{t("home.intro.prefix")}</span>
-			<a
-				href={localizePath(locale, "/centers")}
-				class="font-medium text-link underline decoration-link-decoration underline-offset-4 transition hover:decoration-link"
+<!--
+		<p class="mx-auto max-w-3xl text-center text-sm leading-6 text-muted-foreground">
+			{introText}
+		</p> -->
+
+		<div class="space-y-6 sm:space-y-8">
+			<section
+				class="grid grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-2xl shadow-zinc-200 md:h-[485px] md:grid-cols-2"
 			>
-				{t("home.intro.link", { count: centers })}
-			</a>
-			<span> {t("home.intro.suffix")}</span>
-		</p>
-		<div>
-			<WordMarquee />
+				<div class="order-1 space-y-6 px-12 py-16 md:order-none">
+					<h2 class="text-3xl font-bold">
+						{searchSection.title}
+					</h2>
+					<p class="leading-6 text-muted-foreground">
+						{searchSection.text1}
+					</p>
+					<p class="leading-6 text-muted-foreground">
+						{searchSection.text2}
+					</p>
+				</div>
+				<Image
+					src={searchImage}
+					alt={searchSection.alt}
+					class="h-52 rounded-2xl object-cover md:h-full"
+				/>
+			</section>
+
+			<!-- <div>
+				<WordMarquee />
+			</div> -->
 		</div>
 	</main>
-
 </Layout>

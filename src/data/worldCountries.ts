@@ -1,4 +1,4 @@
-import type { AppLocale } from "@/i18n";
+type AppLocale = "ru" | "en" | "tt" | "qt" | "uk" | "de" | "es" | "ky" | "uz" | "kk";
 
 export const worldCountriesRu: string[] = [
 	"Россия",

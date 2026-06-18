@@ -1,6 +1,6 @@
 ---
 import { countryFlagsByRu } from "@/data/worldCountries";
-import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { getLocaleFromUrl } from "@/i18n";
 import { getCollection } from "astro:content";
 import BackButton from "../../layout/navigation/BackButton.astro";
 import NoResults from "../../ui/feedback/NoResults.astro";
@@ -8,15 +8,7 @@ import GridCards from "./GridCards.astro";
 import Search from "./Search.astro";
 import Toolbar from "./Toolbar.astro";
 const locale = getLocaleFromUrl(Astro.url);
-const t = useTranslations(locale);
-const allCards =
-	locale === "en"
-		? await getCollection("centersEn")
-		: locale === "tt"
-			? await getCollection("centersTt")
-			: locale === "qt"
-				? await getCollection("centersQt")
-				: await getCollection("centers");
+const allCards = locale === "en" ? await getCollection("centersEn") : await getCollection("centers");
 const fallbackCards = allCards.length > 0 ? allCards : await getCollection("centers");
 // Сортируем по дате обновления, чтобы самые свежие записи были первыми.
 const cards = fallbackCards.sort((a, b) => {
@@ -76,7 +68,7 @@ const toolbarProps = {
 };
 ---
 
-<BackButton href="/" label="Back" labelKey="nav.back" variant="outline" />
+<BackButton href="/" label="Назад" labelKey="nav.back" variant="outline" />
 <main class="not-container px-6">
 	<section class="sm:max-w-2xl sm:mx-auto">
 		<Search />

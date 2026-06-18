@@ -3,40 +3,37 @@ import { getLocaleFromUrl, useTranslations } from "@/i18n";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
+
+const heroLines = [
+	{ key: "home.hero.1", className: " text-black/30" },
+	{ key: "home.hero.2", className: " text-black/40" },
+	{ key: "home.hero.3", className: " text-black/50" },
+	{ key: "home.hero.4", className: " text-black/70" },
+] as const;
+
+const heroLines2 = [
+	{ key: "home.hero.5", className: " text-black/70" },
+	{ key: "home.hero.6", className: " text-black/70" },
+	{ key: "home.hero.7", className: " text-black/30" },
+] as const;
+
+const titleClass =
+	"tracking-tight font-black uppercase text-4xl sm:text-5xl md:text-6xl lg:text-7xl md:tracking-[-3.8px]";
 ---
 
-<h1 class="relative select-none overflow-hidden">
-	<div
-		class="flex flex-col *:tracking-tight *:font-bold *:uppercase *:text-4xl *:sm:text-5xl *:md:text-6xl *:lg:text-7xl *:md:tracking-[-3.8px] max-w-4xl"
-	>
-		<span class="text-depth-100">
-			{t("home.hero.1")}
-		</span>
-
-		<span class="text-depth-200">
-			{t("home.hero.2")}
-		</span>
-
-		<span class="text-depth-300">
-			{t("home.hero.3")}
-		</span>
-
-		<span class="text-depth-400">
-			{t("home.hero.4")}
-		</span>
-
-	<div class="space-x-1.5">
-	  	<span class="text-depth-500 inline">
-  			{t("home.hero.5")}
-  		</span>
-
-  		<span class="text-depth-600 inline">
-  			{t("home.hero.6")}
-  		</span>
-
-  		<span class="text-depth-700 inline">
-  			{t("home.hero.7")}
-  		</span>
+<h1 class="relative select-none text-center">
+	<div class="flex flex-wrap justify-center space-x-3.5 space-y-2">
+		{
+			heroLines.map(({ key, className }) => (
+				<span class:list={[titleClass, className]}>{t(key)}</span>
+			))
+		}
 	</div>
+	<div class="flex flex-wrap justify-center space-x-3.5 space-y-2">
+		{
+			heroLines2.map(({ key, className }) => (
+				<span class:list={[titleClass, className]}>{t(key)}</span>
+			))
+		}
 	</div>
 </h1>

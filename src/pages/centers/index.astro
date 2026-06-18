@@ -7,14 +7,7 @@ import { getCollection } from "astro:content";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const allCards =
-	locale === "en"
-		? await getCollection("centersEn")
-		: locale === "tt"
-			? await getCollection("centersTt")
-			: locale === "qt"
-				? await getCollection("centersQt")
-				: await getCollection("centers");
+const allCards = locale === "en" ? await getCollection("centersEn") : await getCollection("centers");
 const cards = allCards.length > 0 ? allCards : await getCollection("centers");
 const countriesCount = new Set(cards.map((card) => card.data.location?.country).filter(Boolean)).size;
 const regionsCount = new Set(cards.map((card) => card.data.location?.region).filter(Boolean)).size;

@@ -1,18 +1,10 @@
-import deDict from "@/i18n/locales/de";
 import enDict from "@/i18n/locales/en";
-import esDict from "@/i18n/locales/es";
-import kkDict from "@/i18n/locales/kk";
-import kyDict from "@/i18n/locales/ky";
-import qtDict from "@/i18n/locales/qt";
 import ruDict from "@/i18n/locales/ru";
-import ttDict from "@/i18n/locales/tt";
-import ukDict from "@/i18n/locales/uk";
-import uzDict from "@/i18n/locales/uz";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import type { Dictionary } from "@/i18n/ui";
 
-export const allLocales = ["ru", "en", "tt", "qt", "uk", "de", "es", "ky", "uz", "kk"] as const;
-export const locales = ["ru", "en", "tt", "qt"] as const;
+export const allLocales = ["ru", "en"] as const;
+export const locales = ["ru", "en"] as const;
 export type AppLocale = (typeof allLocales)[number];
 export type ActiveLocale = (typeof locales)[number];
 
@@ -21,40 +13,16 @@ export const defaultLocale: ActiveLocale = "ru";
 export const localeLabels: Record<AppLocale, { label: string; short: Uppercase<AppLocale> }> = {
 	ru: { label: "Русский", short: "RU" },
 	en: { label: "English", short: "EN" },
-	tt: { label: "Татарча", short: "TT" },
-	qt: { label: "Qırımtatarca", short: "QT" },
-	uk: { label: "Українська", short: "UK" },
-	de: { label: "Deutsch", short: "DE" },
-	es: { label: "Español", short: "ES" },
-	ky: { label: "Кыргызча", short: "KY" },
-	uz: { label: "O‘zbekcha", short: "UZ" },
-	kk: { label: "Қазақша", short: "KK" },
 };
 
 const dictionaries: Record<AppLocale, Dictionary> = {
 	ru: ruDict,
 	en: enDict,
-	tt: ttDict,
-	qt: qtDict,
-	uk: ukDict,
-	de: deDict,
-	es: esDict,
-	ky: kyDict,
-	uz: uzDict,
-	kk: kkDict,
 };
 
 const ogLocales: Record<AppLocale, string> = {
 	ru: "ru_RU",
 	en: "en_US",
-	tt: "tt_RU",
-	qt: "crh_UA",
-	uk: "uk_UA",
-	de: "de_DE",
-	es: "es_ES",
-	ky: "ky_KG",
-	uz: "uz_UZ",
-	kk: "kk_KZ",
 };
 
 export function isAppLocale(value: string | null | undefined): value is AppLocale {

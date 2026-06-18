@@ -35,6 +35,22 @@ const CenterSchema = z
 	})
 	.strict();
 
+const PostSchema = z
+	.object({
+		title: z.string().min(1),
+		description: z.string().min(1),
+		pubDate: z.coerce.date(),
+		author: z.string().min(1),
+		tags: z.array(z.string()).default([]),
+		category: z.string().min(1),
+		ogImage: z.string().optional(),
+	})
+	.strict()
+	.transform((data) => ({
+		...data,
+		publishedDate: data.pubDate,
+	}));
+
 const centers = defineCollection({
 	loader: glob({
 		pattern: "**/*.{md,mdx}",
@@ -51,30 +67,22 @@ const centersEn = defineCollection({
 	schema: CenterSchema,
 });
 
-const centersTt = defineCollection({
+const posts = defineCollection({
 	loader: glob({
 		pattern: "**/*.{md,mdx}",
-		base: "./src/data/centers_i18n/tt",
+		base: "./src/data/posts",
 	}),
-	schema: CenterSchema,
-});
-
-const centersQt = defineCollection({
-	loader: glob({
-		pattern: "**/*.{md,mdx}",
-		base: "./src/data/centers_i18n/qt",
-	}),
-	schema: CenterSchema,
+	schema: PostSchema,
 });
 
 export const collections = {
 	centers,
 	centersEn,
-	centersTt,
-	centersQt,
+	posts,
 };
 
 export type CenterCategory = z.infer<typeof CenterCategorySchema>;
 export type CenterType = z.infer<typeof CenterTypeSchema>;
 export type CenterLocation = z.infer<typeof CenterLocationSchema>;
 export type CenterData = z.infer<typeof CenterSchema>;
+export type PostData = z.infer<typeof PostSchema>;

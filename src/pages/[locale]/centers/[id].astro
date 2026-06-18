@@ -15,11 +15,7 @@ export async function getStaticPaths() {
 					const translatedEntries =
 						locale === "en"
 							? await getCollection("centersEn")
-							: locale === "tt"
-								? await getCollection("centersTt")
-								: locale === "qt"
-									? await getCollection("centersQt")
-									: [];
+							: [];
 					return [
 						locale,
 						new Map(translatedEntries.map((entry) => [entry.id, entry])),

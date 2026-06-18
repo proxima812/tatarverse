@@ -5,7 +5,7 @@
 /* @custom-variant dark (&:where(.dark, .dark *)); */
 
 @theme {
-  --color-background: hsl(0 0% 98%);
+  --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(0 0% 11.4%);
   --color-muted: hsl(0 0% 94%);
   --color-muted-foreground: hsl(0 0% 42%);

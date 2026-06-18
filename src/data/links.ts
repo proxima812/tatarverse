@@ -1,6 +1,6 @@
 export const links = [
 	{
-		label: "Go to centers",
+		label: "Перейти к центрам",
 		labelKey: "nav.toCenters",
 		icon: "",
 		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm ",
@@ -18,7 +18,7 @@ export const links = [
 		variant: "outline",
 	},
 	{
-		label: "Sources",
+		label: "Источники",
 		labelKey: "nav.sources",
 
 		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
@@ -27,7 +27,7 @@ export const links = [
 		variant: "outline",
 	},
 	{
-		label: "Policy",
+		label: "Политика",
 		labelKey: "nav.policy",
 
 		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
@@ -36,7 +36,7 @@ export const links = [
 		variant: "outline",
 	},
 	{
-		label: "Feedback",
+		label: "Обратная связь",
 		labelKey: "nav.feedback",
 		icon: "mdi:telegram",
 		target: "_blank",
@@ -46,7 +46,7 @@ export const links = [
 		variant: "outline",
 	},
 	{
-		label: "Countries",
+		label: "Страны",
 		labelKey: "nav.countries",
 		icon: "mdi:world",
 		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
@@ -55,7 +55,7 @@ export const links = [
 		variant: "disabled",
 	},
 	{
-		label: "Other projects",
+		label: "Другие проекты",
 		labelKey: "nav.otherProjects",
 		icon: "mdi:file-search-outline",
 		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
