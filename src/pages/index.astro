@@ -1,12 +1,12 @@
 ---
-import { HomeHeroTitle, HomeLinks, WordMarquee } from "@/components";
+import searchImageEn from "@/assets/1-en.png";
+import searchImageRu from "@/assets/1-ru.png";
+import { HomeHeroTitle, HomeLinks } from "@/components";
 import LIquidMetal from "@/components/LIquidMetal.astro";
 import { getLocaleFromUrl } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
-import searchImageEn from "@/assets/1-en.png";
-import searchImageRu from "@/assets/1-ru.png";
 
 const centers = (await getCollection("centers")).length;
 const locale = getLocaleFromUrl(Astro.url);
@@ -23,14 +23,18 @@ const searchSection =
 	locale === "en"
 		? {
 				title: "Communities on the world map",
-				text1: "Choose a country, city, or region and find nearby cultural centers, public associations, youth initiatives, language clubs, and local communities.",
-				text2: "The catalog helps you quickly understand where meetings, events, holidays, and educational programs take place.",
+				text1:
+					"Choose a country, city, or region and find nearby cultural centers, public associations, youth initiatives, language clubs, and local communities.",
+				text2:
+					"The catalog helps you quickly understand where meetings, events, holidays, and educational programs take place.",
 				alt: "Catalog interface with search and center cards",
 			}
 		: {
 				title: "Сообщества на карте мира",
-				text1: "Выберите страну, город или регион и найдите ближайшие культурные центры, общественные объединения, молодежные инициативы, языковые клубы и локальные сообщества.",
-				text2: "Каталог помогает быстро понять, где проходят встречи, мероприятия, праздники и образовательные программы.",
+				text1:
+					"Выберите страну, город или регион и найдите ближайшие культурные центры, общественные объединения, молодежные инициативы, языковые клубы и локальные сообщества.",
+				text2:
+					"Каталог помогает быстро понять, где проходят встречи, мероприятия, праздники и образовательные программы.",
 				alt: "Интерфейс каталога с поиском и карточками центров",
 			};
 ---
@@ -59,14 +63,14 @@ const searchSection =
 		<div>
 			<HomeLinks />
 		</div>
-<!--
+		<!--
 		<p class="mx-auto max-w-3xl text-center text-sm leading-6 text-muted-foreground">
 			{introText}
 		</p> -->
 
-		<div class="space-y-6 sm:space-y-8">
+		<div class="space-y-16 py-24">
 			<section
-				class="grid grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-2xl shadow-zinc-200 md:h-[485px] md:grid-cols-2"
+				class="grid grid-cols-1 rounded-2xl overflow-hidden h-[485px] bg-white shadow-2xl shadow-zinc-200 md:grid-cols-2"
 			>
 				<div class="order-1 space-y-6 px-12 py-16 md:order-none">
 					<h2 class="text-3xl font-bold">
@@ -81,10 +85,14 @@ const searchSection =
 				</div>
 				<Image
 					src={searchImage}
+					width={920}
+					quality={80}
 					alt={searchSection.alt}
 					class="h-52 rounded-2xl object-cover md:h-full"
 				/>
 			</section>
+
+			<!-- <section class="rounded-2xl bg-white shadow-2xl shadow-zinc-200">lorem ipsum</section> -->
 
 			<!-- <div>
 				<WordMarquee />
