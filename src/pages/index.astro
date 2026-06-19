@@ -68,27 +68,30 @@ const searchSection =
 			{introText}
 		</p> -->
 
-		<div class="space-y-16 py-24">
+		<div class="md:space-y-16 space-y-8 py-12 md:py-24">
 			<section
-				class="grid grid-cols-1 rounded-2xl overflow-hidden h-full md:h-[485px] bg-white shadow-2xl shadow-zinc-200 md:grid-cols-2"
+				class="grid grid-cols-1 overflow-hidden rounded-2xl bg-white shadow-2xl shadow-zinc-200 md:h-121 md:grid-cols-2"
 			>
-				<div class="order-1 space-y-6 px-12 py-16 md:order-none">
-					<h2 class="text-3xl font-bold">
+				<div class="order-2 space-y-6 px-6 py-10 sm:px-8 md:order-1 md:px-12 md:py-16">
+					<h2 class="text-3xl font-bold tracking-tight">
 						{searchSection.title}
 					</h2>
-					<p class="leading-6 text-muted-foreground">
+
+					<p class="leading-7 text-muted-foreground">
 						{searchSection.text1}
 					</p>
-					<p class="leading-6 text-muted-foreground">
+
+					<p class="leading-7 text-muted-foreground">
 						{searchSection.text2}
 					</p>
 				</div>
+
 				<Image
 					src={searchImage}
 					width={920}
 					quality={80}
 					alt={searchSection.alt}
-					class="h-52 rounded-2xl object-cover md:h-full"
+					class="order-1 h-52 w-full object-cover md:order-2 md:h-full"
 				/>
 			</section>
 

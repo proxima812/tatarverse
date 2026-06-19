@@ -22,14 +22,14 @@ const titleClass =
 ---
 
 <h1 class="relative select-none text-center">
-	<div class="flex flex-wrap justify-center space-x-3.5 space-y-2">
+	<div class="flex flex-wrap justify-center md:gap-0 gap-x-2 md:space-x-3.5 md:space-y-2">
 		{
 			heroLines.map(({ key, className }) => (
 				<span class:list={[titleClass, className]}>{t(key)}</span>
 			))
 		}
 	</div>
-	<div class="flex flex-wrap justify-center space-x-3.5 space-y-2">
+	<div class="flex flex-wrap justify-center md:gap-0 gap-x-2 md:space-x-3.5 md:space-y-2">
 		{
 			heroLines2.map(({ key, className }) => (
 				<span class:list={[titleClass, className]}>{t(key)}</span>
