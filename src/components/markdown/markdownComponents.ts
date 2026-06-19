@@ -4,8 +4,8 @@ import Hr from "./Hr.astro";
 import Strong from "./Strong.astro";
 
 export const markdownComponents = {
-  a: A,
-  blockquote: Blockquote,
-  hr: Hr,
-  strong: Strong,
+	a: A,
+	blockquote: Blockquote,
+	hr: Hr,
+	strong: Strong,
 };

@@ -1,6 +1,6 @@
 ---
 import { cn } from "@/utils/libs/cn";
-import { markdownClasses } from "./styles";
+import { markdownClasses } from "./markdownStyles";
 
 interface Props {
 	class?: string;
@@ -9,4 +9,6 @@ interface Props {
 const { class: className } = Astro.props as Props;
 ---
 
-<hr class={cn(markdownClasses.hr, className)} />
+<strong class={cn(markdownClasses.strong, className)}>
+	<slot />
+</strong>

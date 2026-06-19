@@ -4,8 +4,14 @@ import { LiquidMetal } from "@paper-design/shaders-react";
 
 <div
 	aria-hidden="true"
-	class="pointer-events-none -mb-0 w-[140px] grid place-items-center h-full mx-auto overflow-hidden"
+	class="liquid-metal pointer-events-none -mb-0 relative grid h-[140px] w-[140px] place-items-center overflow-hidden mx-auto"
 >
+	<img
+		src="/flower.svg"
+		alt=""
+		loading="eager"
+		class="absolute z-0 h-[82px] w-[82px] object-contain"
+	/>
 	<LiquidMetal
 		client:load
 		width={140}
@@ -26,3 +32,18 @@ import { LiquidMetal } from "@paper-design/shaders-react";
 		fit="contain"
 	/>
 </div>
+
+<style>
+	.liquid-metal :global(astro-island) {
+		position: relative;
+		z-index: 1;
+		opacity: 0;
+		animation: liquid-metal-fade-in 420ms ease-out 120ms forwards;
+	}
+
+	@keyframes liquid-metal-fade-in {
+		to {
+			opacity: 1;
+		}
+	}
+</style>

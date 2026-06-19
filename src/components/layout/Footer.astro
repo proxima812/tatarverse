@@ -1,9 +1,9 @@
 ---
-import TechStacks from "@/components/shared/social/TechStacks.astro";
+import TechStacks from "../social/TechStacks.astro";
 import release from "@/data/release.json";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { Icon } from "astro-icon/components";
-import Container from "../container/Container.astro";
+import Container from "./Container.astro";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
