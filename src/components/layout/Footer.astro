@@ -1,8 +1,8 @@
 ---
-import TechStacks from "../social/TechStacks.astro";
 import release from "@/data/release.json";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { Icon } from "astro-icon/components";
+import TechStacks from "../social/TechStacks.astro";
 import Container from "./Container.astro";
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -75,17 +75,22 @@ const links = [
 ];
 ---
 
-<footer class="mt-auto border-t border-border-muted py-6 text-sm sm:text-xs text-subtle-foreground">
+<footer class="mt-auto py-6 text-sm sm:text-xs text-subtle-foreground">
 	<Container container>
-		<div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-			<div class="space-y-1">
-				<p>&copy; tatarverse.cc {new Date().getFullYear()}</p>
+		<div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+			<div class="space-y-1 text-center sm:text-left">
+				<p class="font-bold">&copy; tatarverse.cc {new Date().getFullYear()}</p>
 				<p>v{release.version} · {t("footer.updated", { date: updatedAtLabel })}</p>
+			</div>
+
+			<div
+				class="h-px md:hidden block my-8 w-[calc(100%-180px)] mx-auto bg-linear-to-r from-transparent via-border to-transparent"
+			>
 			</div>
 
 			<nav
 				aria-label={t("footer.links")}
-				class="flex flex-wrap items-center gap-x-3 gap-y-1 sm:justify-end"
+				class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-end"
 			>
 				{
 					links.map((link, index) => (
