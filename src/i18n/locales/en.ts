@@ -5,8 +5,8 @@ const dict: Dictionary = {
 	"nav.toCenters": "Go to centers",
 	"nav.changelog": "Changelog",
 	"nav.feedback": "Feedback",
-	"nav.countries": "Countries",
-	"nav.otherProjects": "Other projects",
+	"nav.sabantuy": "#сабантуй",
+	"nav.support": "#поддержка",
 	"nav.soon": "soon...",
 	"nav.back": "Back",
 	"nav.mistake": "Find a mistake?",
@@ -50,6 +50,9 @@ const dict: Dictionary = {
 		"tatarverse helps people find Tatar, Bashkir, and Crimean Tatar centers around the world: for new connections, friends, relationships, language learning, cultural reconnection, and shared values.",
 	"home.intro.description":
 		"The catalog currently includes {centers} centers, communities, and initiatives around the world. Find a place near you or in another country: join events, meet people, make friends and relationships, learn or restore a language, develop culture, and support Tatar, Bashkir, and Crimean Tatar values.",
+	"home.stats.title": "The catalog in numbers",
+	"home.stats.caption":
+		"{centers} centers across {countries} countries and {regions} regions — find one near you or far away.",
 	"home.search.title": "Communities on the world map",
 	"home.search.text1":
 		"Choose a country, city, or region and find nearby cultural centers, public associations, youth initiatives, language clubs, and local communities.",
@@ -63,7 +66,7 @@ const dict: Dictionary = {
 	"list.description":
 		"TBK directory: {count} cards about Tatars, Bashkirs, and Crimean Tatars across all countries, regions, cities, types, and categories. The database currently covers {countries} countries and {regions} regions; use search and filters to find centers and reference information.",
 	"list.heroIntro":
-		"A reference catalog of TBK cultural centers, societies, and initiatives with search by name, city, country, region, type, and category.",
+		"Find centers, communities, and initiatives near you or abroad — to meet friends, relationships, and even relatives.",
 	"list.quickFind": "Practical directory",
 	"list.stat.centers": "centers",
 	"list.stat.countries": "countries",

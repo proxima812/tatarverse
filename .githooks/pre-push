@@ -1,0 +1,77 @@
+#!/usr/bin/env sh
+# Auto-bump release version before pushing to the remote.
+# On a successful bump, commits package.json + src/data/release.json and
+# aborts the current push so the new release commit is included next time.
+
+if [ "$RELEASE_BUMP_SKIP" = "1" ]; then
+  exit 0
+fi
+
+remote="$1"
+remote_url="$2"
+
+zero="0000000000000000000000000000000000000000"
+has_new_commits=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -z "$local_sha" ] && continue
+  [ "$local_sha" = "$zero" ] && continue
+
+  if [ "$remote_sha" = "$zero" ]; then
+    range="$local_sha"
+  else
+    range="$remote_sha..$local_sha"
+  fi
+
+  if [ -n "$(git rev-list -n 1 "$range" 2>/dev/null)" ]; then
+    has_new_commits=1
+    break
+  fi
+done
+
+if [ "$has_new_commits" -eq 0 ]; then
+  exit 0
+fi
+
+# Ensure working tree is clean so we don't sweep unrelated changes into
+# the release commit.
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "pre-push: working tree has uncommitted changes; skipping auto-bump." >&2
+  echo "          commit or stash them, then push again." >&2
+  exit 1
+fi
+
+# Skip when the most recent commit is already a release bump.
+last_msg=$(git log -1 --pretty=%s)
+case "$last_msg" in
+  "chore: release v"*) exit 0 ;;
+esac
+
+# Pass the push range to release-bump so it can detect bump type.
+RELEASE_BUMP_BASE=""
+RELEASE_BUMP_HEAD="HEAD"
+
+if upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null); then
+  if base=$(git merge-base "$upstream" HEAD 2>/dev/null); then
+    RELEASE_BUMP_BASE="$base"
+  fi
+fi
+
+export RELEASE_BUMP_BASE RELEASE_BUMP_HEAD
+
+if ! node scripts/release-bump.js auto --commit; then
+  echo "pre-push: release-bump failed." >&2
+  exit 1
+fi
+
+# If a new release commit was added, abort this push so the user re-pushes
+# with the version commit included.
+new_last=$(git log -1 --pretty=%s)
+if [ "$new_last" != "$last_msg" ]; then
+  echo "" >&2
+  echo "pre-push: release commit created ($new_last)." >&2
+  echo "          run \`git push\` again to send it." >&2
+  exit 1
+fi
+
+exit 0

@@ -1,5 +1,10 @@
 ---
-import { countryFlagsByRu, getCountryLabel, getCountryLabels } from "@/data/worldCountries";
+import {
+	countryFlagsByRu,
+	getCountryGradient,
+	getCountryLabel,
+	getCountryLabels,
+} from "@/data/worldCountries";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { getCenterPath } from "@/utils/centers";
 import { Icon } from "astro-icon/components";
@@ -48,6 +53,7 @@ const cleanFlag =
 			: undefined;
 const displayCountry = cleanCountry ? getCountryLabel(cleanCountry, locale) : undefined;
 const countryKey = cleanCountry ?? "Прочее";
+const countryGradient = getCountryGradient(cleanCountry);
 const countryLabels = cleanCountry ? getCountryLabels(cleanCountry) : undefined;
 const displayTitle = title ?? "—";
 const displaySummary = summary?.trim();
@@ -81,9 +87,18 @@ const truncate = (value?: string, max = 23) => {
 	class="block min-w-0 rounded-4xl corner-squircle text-surface-foreground no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
 	<article
-		class="flex min-h-40 overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs ring ring-depth-100/40 transition duration-300 ease-out hover:bg-surface-muted hover:ring-depth-200 sm:p-6 flex-col justify-between"
+		class="group relative flex min-h-40 overflow-hidden rounded-4xl corner-squircle bg-muted p-5 shadow-2xs ring ring-depth-100/40 transition duration-300 ease-out hover:bg-surface-muted hover:ring-depth-200 sm:p-6 flex-col justify-between"
 	>
-		<div class="space-y-4">
+		{
+			countryGradient && (
+				<span
+					aria-hidden="true"
+					class="pointer-events-none absolute inset-y-0 left-0 w-2/5 opacity-[0.12] transition-opacity duration-300 ease-out group-hover:opacity-[0.18]"
+					style={`background-image:${countryGradient};-webkit-mask-image:linear-gradient(to right, #000, transparent);mask-image:linear-gradient(to right, #000, transparent);`}
+				/>
+			)
+		}
+		<div class="relative space-y-4">
 			<div class="flex min-w-0 items-start justify-between gap-3">
 				<div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-surface-foreground">
 					{
@@ -143,7 +158,7 @@ const truncate = (value?: string, max = 23) => {
 				)
 			}
 		</div>
-		<div class="mt-5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+		<div class="relative mt-5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
 			{type && <span class="rounded-full bg-surface px-2 py-1 ring ring-depth-100/60">{type}</span>}
 			{
 				category && (

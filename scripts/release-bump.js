@@ -126,7 +126,10 @@ function formatRuDate(date) {
 }
 
 try {
-	const requestedBump = process.argv[2] ?? "patch";
+	const args = process.argv.slice(2);
+	const shouldCommit = args.includes("--commit");
+	const positional = args.filter((arg) => !arg.startsWith("--"));
+	const requestedBump = positional[0] ?? "patch";
 	const bump = requestedBump === "auto" ? detectBumpType() : requestedBump;
 
 	if (!bump) {
@@ -149,7 +152,14 @@ try {
 
 	console.log(`Prepared release v${nextVersion}`);
 	console.log("Updated package.json and src/data/release.json");
-	console.log(`Suggested commit: git commit -m "chore: release v${nextVersion}"`);
+
+	if (shouldCommit) {
+		runGit(["add", "package.json", "src/data/release.json"]);
+		runGit(["commit", "-m", `chore: release v${nextVersion}`]);
+		console.log(`Committed release v${nextVersion}`);
+	} else {
+		console.log(`Suggested commit: git commit -m "chore: release v${nextVersion}"`);
+	}
 } catch (error) {
 	console.error(error.message);
 	process.exit(1);

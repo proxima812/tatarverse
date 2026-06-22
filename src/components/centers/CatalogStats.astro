@@ -1,0 +1,36 @@
+---
+// Блок статистики каталога: крупные цифры с иконками. Переиспользуется на главной и в списке.
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	count: number;
+	countries: number;
+	regions: number;
+	class?: string;
+}
+
+const { count, countries, regions, class: className } = Astro.props as Props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const items = [
+	{ icon: "mdi:map-marker-radius", label: t("list.stat.centers"), value: count },
+	{ icon: "mdi:earth", label: t("list.stat.countries"), value: countries },
+	{ icon: "mdi:map-outline", label: t("list.stat.regions"), value: regions },
+];
+---
+
+<dl class:list={["grid w-full max-w-md grid-cols-3 gap-2", className]}>
+	{
+		items.map((item) => (
+			<div class="flex items-center justify-center gap-1.5 rounded-2xl corner-squircle bg-surface px-2.5 py-2 ring ring-depth-100/60">
+				<Icon name={item.icon} class="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+				<dd class="text-base font-semibold tracking-tight tabular-nums text-foreground sm:text-lg">
+					{item.value}
+				</dd>
+				<dt class="truncate text-xs font-medium text-muted-foreground">{item.label}</dt>
+			</div>
+		))
+	}
+</dl>

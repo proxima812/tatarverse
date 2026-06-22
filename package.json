@@ -12,6 +12,7 @@
 		"release:bump": "node scripts/release-bump.js"
 	},
 	"dependencies": {
+		"@astrojs/check": "^0.9.9",
 		"@astrojs/mdx": "5.0.6",
 		"@astrojs/react": "^5.0.7",
 		"@astrojs/rss": "4.0.18",

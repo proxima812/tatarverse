@@ -1,5 +1,6 @@
 export { default as LIquidMetal } from "./LIquidMetal.astro";
 
+export { default as CatalogStats } from "./centers/CatalogStats.astro";
 export { default as CenterPagination } from "./centers/CenterPagination.astro";
 export { default as GridCards } from "./centers/GridCards.astro";
 export { default as ListCards } from "./centers/ListCards.astro";

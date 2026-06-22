@@ -1,13 +1,20 @@
 ---
 import searchImageEn from "@/assets/1-en.png";
 import searchImageRu from "@/assets/1-ru.png";
-import { HomeHeroTitle, HomeLinks, LIquidMetal } from "@/components";
+import { CatalogStats, HomeHeroTitle, HomeLinks, LIquidMetal } from "@/components";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
-const centers = (await getCollection("centers")).length;
+const allCenters = await getCollection("centers");
+const centers = allCenters.length;
+const countriesCount = new Set(
+	allCenters.map((center) => center.data.location?.country).filter(Boolean),
+).size;
+const regionsCount = new Set(
+	allCenters.map((center) => center.data.location?.region).filter(Boolean),
+).size;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const searchImage = locale === "en" ? searchImageEn : searchImageRu;
@@ -25,6 +32,9 @@ const searchImage = locale === "en" ? searchImageEn : searchImageRu;
 		"башкирские центры",
 		"крымскотатарские центры",
 		"культурные центры",
+		`${centers} центров`,
+		`${countriesCount} стран`,
+		`${regionsCount} регионов`,
 	]}
 >
 	<main class="space-y-12">
@@ -35,12 +45,15 @@ const searchImage = locale === "en" ? searchImageEn : searchImageRu;
 		<div>
 			<HomeLinks />
 		</div>
-		<!--
-		<p class="mx-auto max-w-3xl text-center text-sm leading-6 text-muted-foreground">
-			{t("home.intro.description", { centers })}
-		</p> -->
+
 
 		<div class="md:space-y-16 space-y-8 py-12 md:py-24">
+      <section class="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 text-center">
+        <CatalogStats count={centers} countries={countriesCount} regions={regionsCount} />
+        <p class="max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+          {t("home.stats.caption", { centers, countries: countriesCount, regions: regionsCount })}
+        </p>
+      </section>
 			<section
 				class="grid grid-cols-1 items-center overflow-hidden rounded-3xl bg-white shadow-2xl shadow-zinc-200 md:grid-cols-2"
 			>

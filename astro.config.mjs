@@ -1,8 +1,8 @@
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
+import dualmark from "@dualmark/astro";
 import tailwindcss from "@tailwindcss/vite";
 import AstroPWA from "@vite-pwa/astro";
-import dualmark from "@dualmark/astro";
 import icon from "astro-icon";
 import metaTags from "astro-meta-tags";
 import { defineConfig } from "astro/config";

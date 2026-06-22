@@ -8,7 +8,8 @@ import GridCards from "./GridCards.astro";
 import Search from "./Search.astro";
 import Toolbar from "./Toolbar.astro";
 const locale = getLocaleFromUrl(Astro.url);
-const allCards = locale === "en" ? await getCollection("centersEn") : await getCollection("centers");
+const allCards =
+	locale === "en" ? await getCollection("centersEn") : await getCollection("centers");
 const fallbackCards = allCards.length > 0 ? allCards : await getCollection("centers");
 // Сортируем по дате обновления, чтобы самые свежие записи были первыми.
 const cards = fallbackCards.sort((a, b) => {
@@ -69,15 +70,13 @@ const toolbarProps = {
 ---
 
 <BackButton href="/" label="Назад" labelKey="nav.back" variant="outline" />
-<main class="not-container px-6">
-	<section class="sm:max-w-2xl sm:mx-auto">
-		<Search />
-	</section>
-	<div class="grid grid-cols-1 lg:grid-cols-[400px_minmax(0,1fr)] gap-12 sm:px-12">
-		<Toolbar {...toolbarProps} />
-		<div>
-			<NoResults />
-			<GridCards cards={cards} />
-		</div>
+
+<Search />
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+	<Toolbar {...toolbarProps} />
+	<div>
+		<NoResults />
+		<GridCards cards={cards} />
 	</div>
-</main>
+</div>
