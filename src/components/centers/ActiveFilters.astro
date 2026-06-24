@@ -1,0 +1,37 @@
+---
+// Бар активных фильтров: счётчик найденного, удаляемые токены и сброс всего.
+// Содержимое токенов рендерится клиентски из состояния в centersToolbar.ts.
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { Icon } from "astro-icon/components";
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<div
+	data-active-filters-bar
+	data-remove-label={t("list.removeFilter")}
+	aria-label={t("list.activeFilters")}
+	hidden
+	class="mb-6 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-2xl corner-squircle bg-surface/60 p-3 ring ring-depth-100/50"
+>
+	<span
+		data-results-count
+		data-results-template={t("list.results", { count: "__COUNT__" })}
+		class="shrink-0 text-sm font-medium text-foreground tabular-nums"
+	>
+	</span>
+	<div
+		data-active-filters-tokens
+		class="flex min-w-0 flex-1 flex-wrap items-center gap-1.5"
+	>
+	</div>
+	<button
+		type="button"
+		data-filters-reset
+		class="ml-auto inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-sm font-medium text-muted-foreground transition hover:bg-subtle hover:text-foreground"
+	>
+		<Icon name="mdi:close-circle-outline" class="size-4" aria-hidden="true" />
+		<span>{t("list.clearFilters")}</span>
+	</button>
+</div>

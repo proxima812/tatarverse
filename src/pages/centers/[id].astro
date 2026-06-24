@@ -1,15 +1,18 @@
 ---
 import {
 	ButtonLink,
+	CardItem,
 	CenterPagination,
 	CopyPageMenu,
 	markdownComponents,
 	TranslationFeedbackCard,
 } from "@/components";
+import SkipNode from "@/components/markdown/SkipNode.astro";
 import Layout from "@/layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
 import { getCollection, render, type CollectionEntry } from "astro:content";
 
+import { getCountryGradient, getCountryLabel } from "@/data/worldCountries";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { createCenterRouteIdMap, getCenterPath } from "@/utils/centers";
 
@@ -53,6 +56,9 @@ const summary = clean(data.summary);
 const country = clean(data.location?.country);
 const city = clean(data.location?.city);
 const flag = clean(data.location?.flag);
+const region = clean(data.location?.region);
+const type = clean(data.type);
+const category = clean(data.category);
 const rawPubDate = clean(data.pubDate);
 const routeId = routeIds.get(entry.id) ?? entry.id;
 const canonicalURL = localizePath(locale, getCenterPath(routeId));
@@ -102,6 +108,13 @@ const facts = [
 				icon: "mdi:city-variant-outline",
 			}
 		: null,
+	region
+		? {
+				label: t("detail.region"),
+				value: region,
+				icon: "mdi:map-marker-radius-outline",
+			}
+		: null,
 	formattedDate
 		? {
 				label: t("detail.updated"),
@@ -112,14 +125,62 @@ const facts = [
 ].filter(Boolean);
 
 const pageDescription = summary ?? undefined;
+
+// Шапка: бейджи категории/типа и ненавязчивый акцент по флагу страны.
+const headerBadges = [category, type].filter((value): value is string => Boolean(value));
+const localizedCountry = country ? getCountryLabel(country, locale) : null;
+const countryGradient = getCountryGradient(country ?? undefined);
+
+// Связанные центры: сперва из той же страны, иначе той же категории (по ru-данным
+// для стабильного совпадения), с локализованным выводом карточек.
+const ruCountry = clean(entry.data.location?.country);
+const ruCategory = clean(entry.data.category);
+const relatedIds = centerEntries
+	.filter((centerEntry) => centerEntry.id !== entry.id)
+	.filter((centerEntry) =>
+		ruCountry
+			? centerEntry.data.location?.country === ruCountry
+			: ruCategory
+				? centerEntry.data.category === ruCategory
+				: false,
+	)
+	.slice(0, 6)
+	.map((centerEntry) => centerEntry.id);
+
+const localeEntries = locale === "en" ? await getCollection("centersEn") : centerEntries;
+const localeEntryById = new Map(
+	localeEntries.map((centerEntry) => [centerEntry.id, centerEntry]),
+);
+const relatedEntries = relatedIds
+	.map((id) => localeEntryById.get(id) ?? centerEntries.find((e) => e.id === id))
+	.filter((centerEntry): centerEntry is NonNullable<typeof centerEntry> =>
+		Boolean(centerEntry),
+	);
+const relatedTitle = ruCountry
+	? t("detail.related", { country: localizedCountry ?? country ?? "" })
+	: t("detail.relatedCategory");
+
+// Структурированные данные для поисковиков (каталог организаций).
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "Organization",
+	name: title,
+	...(summary ? { description: summary } : {}),
+	url: sourceUrl ?? canonicalURL,
+	...(country || city
+		? {
+				address: {
+					"@type": "PostalAddress",
+					...(country ? { addressCountry: country } : {}),
+					...(region ? { addressRegion: region } : {}),
+					...(city ? { addressLocality: city } : {}),
+				},
+			}
+		: {}),
+};
 ---
 
-<Layout
-	title={`${title}`}
-	description={`${pageDescription}`}
-	type="article"
-	canonicalURL={canonicalURL}
->
+<Layout title={title} description={pageDescription} type="article" canonicalURL={canonicalURL}>
 	<article class="flex flex-col gap-10 max-w-5xl mx-auto">
 		<nav class="flex justify-between sm:flex-nowrap flex-wrap items-center">
 			<ButtonLink
@@ -154,26 +215,57 @@ const pageDescription = summary ?? undefined;
 		>
 		</div>
 
-		<!-- <h1
-			class="max-w-4xl mx-auto text-center text-3xl font-semibold leading-tight text-foreground sm:text-5xl"
+		<header
+			class="relative mx-auto flex max-w-4xl flex-col items-center gap-4 overflow-hidden text-center"
 		>
-			{title}
-		</h1> -->
-		<!-- {
-			summary && (
-				<p class="text-center max-w-4xl mx-auto text-base leading-7 text-muted-foreground sm:text-lg">
-					{summary}
-				</p>
-			)
-		} -->
-		<!-- <div
-        class="h-px w-[calc(100%-180px)] mx-auto bg-linear-to-r from-transparent via-border to-transparent"
-      >
-      </div> -->
+			<!-- {
+				countryGradient && (
+					<span
+						aria-hidden="true"
+						class="pointer-events-none absolute -top-16 left-1/2 -z-10 h-40 w-[28rem] max-w-full -translate-x-1/2 opacity-[0.12] blur-2xl"
+						style={`background-image:${countryGradient};`}
+					/>
+				)
+			} -->
+			{
+				(headerBadges.length > 0 || localizedCountry) && (
+					<div class="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
+						{localizedCountry && (
+							<span class="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 font-medium ring ring-depth-100/60">
+								{flag && <span class="text-sm leading-none">{flag}</span>}
+								{localizedCountry}
+							</span>
+						)}
+						{headerBadges.map((badge) => (
+							<span class="rounded-full bg-surface px-3 py-1 font-medium ring ring-depth-100/60">
+								{badge}
+							</span>
+						))}
+					</div>
+				)
+			}
+			<h1
+				class="text-3xl font-semibold leading-tight text-foreground text-balance sm:text-5xl"
+			>
+				{title}
+			</h1>
+			{
+				summary && (
+					<p class="max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
+						{summary}
+					</p>
+				)
+			}
+		</header>
+
+		<div
+			class="h-px w-[calc(100%-180px)] mx-auto bg-linear-to-r from-transparent via-border to-transparent"
+		>
+		</div>
 
 		<main class="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10 xl:gap-12">
 			<div class="max-w-none prose">
-				<Content components={markdownComponents} />
+				<Content components={{ ...markdownComponents, h1: SkipNode }} />
 			</div>
 
 			{
@@ -215,6 +307,32 @@ const pageDescription = summary ?? undefined;
 			}
 		</main>
 
+		{
+			relatedEntries.length > 0 && (
+				<section class="flex flex-col gap-5">
+					<h2 class="flex items-center gap-2 text-lg font-semibold text-foreground">
+						<Icon name="mdi:compass-outline" class="h-5 w-5 text-muted-foreground" />
+						{relatedTitle}
+					</h2>
+					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+						{relatedEntries.map((relatedEntry) => (
+							<CardItem
+								id={relatedEntry.id}
+								routeId={routeIds.get(relatedEntry.id) ?? relatedEntry.id}
+								title={relatedEntry.data.title}
+								summary={relatedEntry.data.summary}
+								type={relatedEntry.data.type}
+								category={relatedEntry.data.category}
+								location={relatedEntry.data.location}
+								region={relatedEntry.data.location?.region}
+								pubDate={relatedEntry.data.pubDate}
+							/>
+						))}
+					</div>
+				</section>
+			)
+		}
+
 		<CenterPagination
 			previousEntry={previousEntry}
 			nextEntry={nextEntry}
@@ -223,4 +341,5 @@ const pageDescription = summary ?? undefined;
 
 		<TranslationFeedbackCard />
 	</article>
+	<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
 </Layout>

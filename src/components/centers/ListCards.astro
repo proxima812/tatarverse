@@ -4,6 +4,7 @@ import { getLocaleFromUrl } from "@/i18n";
 import { getCollection } from "astro:content";
 import BackButton from "../navigation/BackButton.astro";
 import NoResults from "../ui/NoResults.astro";
+import ActiveFilters from "./ActiveFilters.astro";
 import GridCards from "./GridCards.astro";
 import Search from "./Search.astro";
 import Toolbar from "./Toolbar.astro";
@@ -72,6 +73,8 @@ const toolbarProps = {
 <BackButton href="/" label="Назад" labelKey="nav.back" variant="outline" />
 
 <Search />
+
+<ActiveFilters />
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
 	<Toolbar {...toolbarProps} />

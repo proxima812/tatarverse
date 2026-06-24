@@ -65,6 +65,12 @@ export function initCardsToolbar() {
 	const filtersBadge = document.querySelector<HTMLElement>("[data-filters-badge]");
 	const filtersResetButtons =
 		document.querySelectorAll<HTMLButtonElement>("[data-filters-reset]");
+	const searchClear = document.querySelector<HTMLButtonElement>("[data-search-clear]");
+	const activeFiltersBar = document.querySelector<HTMLElement>("[data-active-filters-bar]");
+	const activeFiltersTokens = document.querySelector<HTMLElement>(
+		"[data-active-filters-tokens]",
+	);
+	const resultsCount = document.querySelector<HTMLElement>("[data-results-count]");
 
 	if (!cardsGrid || !noResults) {
 		return;
@@ -231,9 +237,97 @@ export function initCardsToolbar() {
 			filtersBadge.textContent = String(total);
 			filtersBadge.classList.toggle("hidden", total === 0);
 		}
-		filtersResetButtons.forEach((button) => {
-			button.classList.toggle("hidden", total === 0 && !hasSearchQuery);
+		if (activeFiltersBar) {
+			activeFiltersBar.hidden = total === 0 && !hasSearchQuery;
+		}
+	}
+
+	function updateSearchClear() {
+		if (searchClear) {
+			searchClear.hidden = searchQuery.trim().length === 0;
+		}
+	}
+
+	function updateResultsCount(visible: number) {
+		if (!resultsCount) return;
+		const template = resultsCount.dataset.resultsTemplate ?? "{count}";
+		resultsCount.textContent = template.replace("__COUNT__", String(visible));
+	}
+
+	function getChipMeta(groupName: FilterGroupName, value: string) {
+		const chip = getGroupChips(groupName).find(
+			(item) => (item.dataset.filterValue ?? "") === value,
+		);
+		if (!chip) return { label: value, flag: "" };
+		const labelEl =
+			chip.querySelector<HTMLElement>("[data-country-label]") ??
+			chip.querySelector<HTMLElement>(".truncate");
+		const flagEl =
+			groupName === "country" ? chip.querySelector<HTMLElement>(".leading-none") : null;
+		return {
+			label: labelEl?.textContent?.trim() || value,
+			flag: flagEl?.textContent?.trim() ?? "",
+		};
+	}
+
+	function createToken(label: string, onRemove: () => void, flag = "") {
+		const removeLabel = activeFiltersBar?.dataset.removeLabel ?? "";
+		const token = document.createElement("button");
+		token.type = "button";
+		token.setAttribute("aria-label", removeLabel ? `${removeLabel}: ${label}` : label);
+		token.className =
+			"group inline-flex max-w-full items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 text-sm font-medium text-primary-foreground transition hover:bg-primary/85";
+
+		if (flag) {
+			const flagEl = document.createElement("span");
+			flagEl.className = "text-sm leading-none";
+			flagEl.textContent = flag;
+			token.append(flagEl);
+		}
+
+		const labelEl = document.createElement("span");
+		labelEl.className = "min-w-0 truncate";
+		labelEl.textContent = label;
+		token.append(labelEl);
+
+		const closeEl = document.createElement("span");
+		closeEl.setAttribute("aria-hidden", "true");
+		closeEl.className = "text-base leading-none opacity-80 transition group-hover:opacity-100";
+		closeEl.textContent = "×";
+		token.append(closeEl);
+
+		token.addEventListener("click", onRemove);
+		return token;
+	}
+
+	function renderActiveFilters() {
+		if (!activeFiltersTokens) return;
+		activeFiltersTokens.replaceChildren();
+
+		(Object.keys(state) as FilterGroupName[]).forEach((groupName) => {
+			state[groupName].forEach((value) => {
+				const { label, flag } = getChipMeta(groupName, value);
+				activeFiltersTokens.append(
+					createToken(label, () => toggleChip(groupName, value), flag),
+				);
+			});
 		});
+
+		const query = searchQuery.trim();
+		if (query) {
+			activeFiltersTokens.append(createToken(`«${query}»`, clearSearchQuery));
+		}
+	}
+
+	function clearSearchQuery() {
+		searchQuery = "";
+		if (searchInput) {
+			searchInput.value = "";
+			searchInput.focus();
+		}
+		updateSearchClear();
+		hideSuggestions();
+		scheduleApplyFilters(false);
 	}
 
 	function syncGroupUI(groupName: FilterGroupName) {
@@ -484,6 +578,9 @@ export function initCardsToolbar() {
 
 		noResults.hidden = visible > 0;
 		updateFiltersBadge();
+		updateResultsCount(visible);
+		updateSearchClear();
+		renderActiveFilters();
 		writeStateToUrl();
 		if (shouldScrollToCards) {
 			scrollToCards();
@@ -510,6 +607,8 @@ export function initCardsToolbar() {
 		button.addEventListener("click", resetFilters);
 	});
 
+	searchClear?.addEventListener("click", clearSearchQuery);
+
 	(Object.keys(groupElements) as FilterGroupName[]).forEach((groupName) => {
 		const groupElement = groupElements[groupName];
 		if (!groupElement) return;
@@ -532,9 +631,13 @@ export function initCardsToolbar() {
 	});
 
 	searchInput?.addEventListener("input", (event) => {
+		const value = (event.target as HTMLInputElement).value;
+		if (searchClear) {
+			searchClear.hidden = value.trim().length === 0;
+		}
 		window.clearTimeout(searchTimer);
 		searchTimer = window.setTimeout(() => {
-			searchQuery = (event.target as HTMLInputElement).value;
+			searchQuery = value;
 			updateSuggestions();
 			scheduleApplyFilters(false);
 		}, 150);
