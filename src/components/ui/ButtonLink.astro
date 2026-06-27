@@ -21,6 +21,8 @@ const {
 	labelKey,
 	href = "#",
 	icon,
+	target,
+	rel: relProp,
 	...props
 } = Astro.props as Props;
 
@@ -52,6 +54,7 @@ const t = useTranslations(locale);
 const localizedHref = href ? localizePath(locale, href) : href;
 const text = labelKey ? t(labelKey, undefined, label) : label;
 const soonText = t("nav.soon", undefined, "soon...");
+const rel = target === "_blank" && !relProp ? "noopener noreferrer" : relProp;
 ---
 
 <a
@@ -59,6 +62,8 @@ const soonText = t("nav.soon", undefined, "soon...");
 	aria-disabled={isDisabled || undefined}
 	tabindex={isDisabled ? -1 : undefined}
 	class={classes}
+	target={target}
+	rel={rel}
 	{...props}
 >
 	{icon ? <Icon name={icon} class="w-4 h-4" aria-hidden="true" /> : null}

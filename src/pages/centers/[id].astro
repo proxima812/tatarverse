@@ -12,7 +12,7 @@ import Layout from "@/layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
 import { getCollection, render, type CollectionEntry } from "astro:content";
 
-import { getCountryGradient, getCountryLabel } from "@/data/worldCountries";
+import { getCountryLabel } from "@/data/worldCountries";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { createCenterRouteIdMap, getCenterPath } from "@/utils/centers";
 
@@ -129,7 +129,6 @@ const pageDescription = summary ?? undefined;
 // Шапка: бейджи категории/типа и ненавязчивый акцент по флагу страны.
 const headerBadges = [category, type].filter((value): value is string => Boolean(value));
 const localizedCountry = country ? getCountryLabel(country, locale) : null;
-const countryGradient = getCountryGradient(country ?? undefined);
 
 // Связанные центры: сперва из той же страны, иначе той же категории (по ru-данным
 // для стабильного совпадения), с локализованным выводом карточек.
@@ -218,15 +217,6 @@ const jsonLd = {
 		<header
 			class="relative mx-auto flex max-w-4xl flex-col items-center gap-4 overflow-hidden text-center"
 		>
-			<!-- {
-				countryGradient && (
-					<span
-						aria-hidden="true"
-						class="pointer-events-none absolute -top-16 left-1/2 -z-10 h-40 w-[28rem] max-w-full -translate-x-1/2 opacity-[0.12] blur-2xl"
-						style={`background-image:${countryGradient};`}
-					/>
-				)
-			} -->
 			{
 				(headerBadges.length > 0 || localizedCountry) && (
 					<div class="flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">

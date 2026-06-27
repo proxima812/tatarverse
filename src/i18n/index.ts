@@ -60,6 +60,10 @@ export function localizePath(locale: AppLocale, href: string): string {
 
 export function getSwitcherHref(locale: AppLocale, url: URL): string {
 	const currentPath = getLocalePathname(url.pathname);
+	if (currentPath === "404") {
+		return getRelativeLocaleUrl(locale, "");
+	}
+
 	const localized = getRelativeLocaleUrl(locale, currentPath);
 	return `${localized}${url.search}${url.hash}`;
 }

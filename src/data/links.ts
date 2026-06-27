@@ -1,3 +1,14 @@
+type Link = {
+	label: string;
+	labelKey: string;
+	icon?: string;
+	class: string;
+	href: string;
+	size: "default";
+	variant: "default" | "outline" | "disabled";
+	target?: "_blank";
+};
+
 export const links = [
 	{
 		label: "Перейти к центрам",
@@ -63,4 +74,4 @@ export const links = [
 		size: "default",
 		variant: "disabled",
 	},
-];
+] satisfies Link[];

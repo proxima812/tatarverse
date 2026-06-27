@@ -1,11 +1,7 @@
 ---
-import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import Container from "./Container.astro";
 import LanguageToggle from "./LanguageToggle.astro";
 import Menu from "./Menu.astro";
-
-const locale = getLocaleFromUrl(Astro.url);
-const t = useTranslations(locale);
 ---
 
 <header>

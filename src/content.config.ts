@@ -29,7 +29,7 @@ const CenterSchema = z
 		pubDate: z.string().optional(),
 		type: CenterTypeSchema.optional(),
 		category: CenterCategorySchema.optional(),
-		source: z.string().url().optional(),
+			source: z.url().optional(),
 		summary: z.string().optional(),
 		location: CenterLocationSchema.optional(),
 	})
