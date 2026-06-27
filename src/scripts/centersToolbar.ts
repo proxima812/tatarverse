@@ -76,7 +76,9 @@ export function initCardsToolbar() {
 		return;
 	}
 
-	const cards = Array.from(cardsGrid.querySelectorAll<FilterableCard>(":scope > a"));
+	const cardsGridElement = cardsGrid;
+	const noResultsElement = noResults;
+	const cards = Array.from(cardsGridElement.querySelectorAll<FilterableCard>(":scope > a"));
 	const normalize = (value: string) =>
 		value
 			.toLowerCase()
@@ -223,7 +225,7 @@ export function initCardsToolbar() {
 
 	function scrollToCards() {
 		if (isDesktopLayout.matches) return;
-		cardsGrid.scrollIntoView({
+		cardsGridElement.scrollIntoView({
 			behavior: prefersReducedMotion.matches ? "auto" : "smooth",
 			block: "start",
 		});
@@ -568,7 +570,7 @@ export function initCardsToolbar() {
 
 			item.element.hidden = !show;
 			if (query) {
-				cardsGrid.append(item.element);
+				cardsGridElement.append(item.element);
 			}
 
 			if (show) {
@@ -576,7 +578,7 @@ export function initCardsToolbar() {
 			}
 		});
 
-		noResults.hidden = visible > 0;
+		noResultsElement.hidden = visible > 0;
 		updateFiltersBadge();
 		updateResultsCount(visible);
 		updateSearchClear();

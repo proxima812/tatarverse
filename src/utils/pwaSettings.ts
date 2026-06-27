@@ -48,7 +48,7 @@ export const workbox = {
 export const manifest = {
 	name: config.site.OG.title,
 	short_name: "tatarverse",
-	description: config.site.description,
+	description: config.site.OG.description,
 	theme_color: "#080214",
 	background_color: "#fafafa",
 	display: "standalone",
