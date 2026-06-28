@@ -21,16 +21,94 @@ const items = [
 ];
 ---
 
-<dl class:list={["grid w-full max-w-md grid-cols-3 gap-2", className]}>
+<dl class:list={["stats-focus grid w-full max-w-md grid-cols-3 gap-2", className]}>
 	{
-		items.map((item) => (
-			<div class="flex items-center justify-center gap-1.5 rounded-2xl corner-squircle bg-surface px-2.5 py-2 ring ring-depth-100/60">
-				<Icon name={item.icon} class="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+		items.map((item, index) => (
+			<div class="stats-focus__item flex items-center justify-center gap-1.5 rounded-2xl corner-squircle bg-surface px-2.5 py-2 ring ring-depth-100/60" style={`--i: ${index}`}>
+				<Icon name={item.icon} class="stats-focus__icon size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
 				<dd class="text-base font-semibold tracking-tight tabular-nums text-foreground sm:text-lg">
-					{item.value}
+					<span class="stats-focus__number" style={`--target: ${item.value}; --i: ${index}`} aria-hidden="true" />
+					<span class="sr-only">{item.value}</span>
 				</dd>
 				<dt class="truncate text-xs font-medium text-muted-foreground">{item.label}</dt>
 			</div>
 		))
 	}
 </dl>
+
+<style>
+	@property --stat-value {
+		syntax: "<integer>";
+		inherits: false;
+		initial-value: 0;
+	}
+
+	.stats-focus {
+		--ease: cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.stats-focus__item {
+		animation: stats-soft-focus 912ms var(--ease) both;
+		animation-delay: calc(var(--i) * 120ms);
+	}
+
+	.stats-focus__icon {
+		animation: stats-icon-mark 620ms var(--ease) both;
+		animation-delay: calc(140ms + (var(--i) * 120ms));
+	}
+
+	.stats-focus__number {
+		--stat-value: 0;
+		counter-reset: stat var(--stat-value);
+		animation: stats-number 912ms var(--ease) both;
+		animation-delay: calc(80ms + (var(--i) * 90ms));
+	}
+
+	.stats-focus__number::after {
+		content: counter(stat);
+	}
+
+	@keyframes stats-number {
+		to {
+			--stat-value: var(--target);
+		}
+	}
+
+	@keyframes stats-soft-focus {
+		0% {
+			opacity: 0.55;
+			box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-depth-100) 60%, transparent);
+		}
+		45% {
+			opacity: 1;
+			box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
+		}
+		100% {
+			opacity: 1;
+			box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-depth-100) 60%, transparent);
+		}
+	}
+
+	@keyframes stats-icon-mark {
+		0% {
+			opacity: 0.45;
+			transform: scale(0.92);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.stats-focus__item,
+		.stats-focus__number,
+		.stats-focus__icon {
+			--stat-value: var(--target);
+			animation-duration: 0.01ms;
+			animation-delay: 0ms;
+			transform: none;
+			filter: none;
+		}
+	}
+</style>

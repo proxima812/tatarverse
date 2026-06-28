@@ -15,7 +15,7 @@ export const config = {
     manifest: true,
     ai: true,
     llms: true,
-    indexNow: false,
+    indexNow: true,
   },
   indexNow: {
     key: "",

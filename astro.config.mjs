@@ -79,6 +79,11 @@ export default defineConfig({
     },
     vite: {
         plugins: [tailwindcss()],
+        server: {
+            watch: {
+                ignored: ["**/.impeccable/**"],
+            },
+        },
         ssr: {
             external: ["@dualmark/astro", "@dualmark/core", "@dualmark/converters"],
         },

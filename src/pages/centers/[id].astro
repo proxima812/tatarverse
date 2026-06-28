@@ -143,7 +143,7 @@ const relatedIds = centerEntries
 				? centerEntry.data.category === ruCategory
 				: false,
 	)
-	.slice(0, 6)
+	.slice(0, 4)
 	.map((centerEntry) => centerEntry.id);
 
 const localeEntries = locale === "en" ? await getCollection("centersEn") : centerEntries;
@@ -253,7 +253,9 @@ const jsonLd = {
 		>
 		</div>
 
-		<main class="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10 xl:gap-12">
+		<main
+			class="relative bg-zinc-50 p-5 shadow-2xs ring ring-depth-100/70 sm:p-10 rounded-2xl flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10 xl:gap-12"
+		>
 			<div class="max-w-none prose">
 				<Content components={{ ...markdownComponents, h1: SkipNode }} />
 			</div>
@@ -297,6 +299,11 @@ const jsonLd = {
 			}
 		</main>
 
+		<div
+			class="h-px w-[calc(100%-180px)] mx-auto bg-linear-to-r from-transparent via-border to-transparent"
+		>
+		</div>
+
 		{
 			relatedEntries.length > 0 && (
 				<section class="flex flex-col gap-5">
@@ -304,7 +311,7 @@ const jsonLd = {
 						<Icon name="mdi:compass-outline" class="h-5 w-5 text-muted-foreground" />
 						{relatedTitle}
 					</h2>
-					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 ">
 						{relatedEntries.map((relatedEntry) => (
 							<CardItem
 								id={relatedEntry.id}
