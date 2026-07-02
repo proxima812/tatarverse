@@ -11,6 +11,7 @@ interface Props extends HTMLAttributes<"a"> {
 	labelKey?: string;
 	href?: string;
 	icon?: string;
+	badge?: number;
 }
 
 const {
@@ -21,6 +22,7 @@ const {
 	labelKey,
 	href = "#",
 	icon,
+	badge,
 	target,
 	rel: relProp,
 	...props
@@ -68,6 +70,7 @@ const rel = target === "_blank" && !relProp ? "noopener noreferrer" : relProp;
 >
 	{icon ? <Icon name={icon} class="w-4 h-4" aria-hidden="true" /> : null}
 	<span>{text}</span>
+	{badge !== undefined && <span class="text-xs opacity-60 tabular-nums">{badge}</span>}
 	{
 		variant === "disabled" && (
 			<>

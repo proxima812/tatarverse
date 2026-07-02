@@ -25,6 +25,8 @@ const ogLocales: Record<AppLocale, string> = {
 	en: "en_US",
 };
 
+const unlocalizedPathnames = new Set(["posts", "sabantye"]);
+
 export function isAppLocale(value: string | null | undefined): value is AppLocale {
 	return Boolean(value && locales.includes(value as AppLocale));
 }
@@ -53,6 +55,10 @@ export function localizePath(locale: AppLocale, href: string): string {
 
 	const [pathname, hash = ""] = href.split("#");
 	const relativePath = getLocalePathname(pathname);
+	if (unlocalizedPathnames.has(relativePath)) {
+		return hash ? `/${relativePath}/#${hash}` : `/${relativePath}/`;
+	}
+
 	const localized = getRelativeLocaleUrl(locale, relativePath);
 
 	return hash ? `${localized}#${hash}` : localized;
@@ -62,6 +68,10 @@ export function getSwitcherHref(locale: AppLocale, url: URL): string {
 	const currentPath = getLocalePathname(url.pathname);
 	if (currentPath === "404") {
 		return getRelativeLocaleUrl(locale, "");
+	}
+
+	if (unlocalizedPathnames.has(currentPath)) {
+		return `/${currentPath}/${url.search}${url.hash}`;
 	}
 
 	const localized = getRelativeLocaleUrl(locale, currentPath);

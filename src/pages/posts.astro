@@ -1,72 +1,163 @@
 ---
+import BackButton from "@/components/navigation/BackButton.astro";
 import Layout from "@/layouts/Layout.astro";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 
-const posts = (await getCollection("posts")).sort(
-	(a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
-);
+const posts = await getCollection("posts");
+const rendered = posts.sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
 const title = "Посты";
 const description =
-	"Редакционные заметки tatarverse о татарских, башкирских и крымскотатарских центрах, культуре, языке и сообществах.";
-const dateFormatter = new Intl.DateTimeFormat("ru-RU", {
+	"Лента tatarverse: короткие заметки о центрах, культуре, языке и живом сообществе.";
+
+const fullDateFormatter = new Intl.DateTimeFormat("ru-RU", {
 	day: "numeric",
-	month: "long",
+	month: "short",
 	year: "numeric",
 });
+
+const stripMarkdown = (value: string) =>
+	value
+		.replace(/```[\s\S]*?```/g, "")
+		.replace(/`([^`]+)`/g, "$1")
+		.replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+		.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+		.replace(/[#>*_~|-]/g, "")
+		.replace(/\s+/g, " ")
+		.trim();
+
+const getRelativeTime = (date: Date) => {
+	const diffMs = Date.now() - date.getTime();
+	const minute = 60000;
+	const hour = 60 * minute;
+	const day = 24 * hour;
+
+	if (diffMs < hour) {
+		return `${Math.max(1, Math.floor(diffMs / minute))} мин.`;
+	}
+
+	if (diffMs < day) {
+		return `${Math.floor(diffMs / hour)} ч.`;
+	}
+
+	return `${Math.floor(diffMs / day)} дн.`;
+};
+
+const postsFeed = await Promise.all(
+	rendered.map(async (post) => {
+		const { Content } = await render(post);
+		const plainText = stripMarkdown(post.body ?? post.data.description);
+
+		return {
+			Content,
+			isLong: plainText.length > 200,
+			pubDate: post.data.pubDate,
+			relativeTime: getRelativeTime(post.data.pubDate),
+			fullDate: fullDateFormatter.format(post.data.pubDate).replace(/\s?г\.$/, ""),
+		};
+	}),
+);
 ---
 
 <Layout
 	title={title}
 	description={description}
-	keywords={["tatarverse", "посты", "культура", "язык", "татарские центры"]}
+	keywords={["tatarverse", "посты", "лента", "сабантуй", "культура", "язык"]}
 >
-	<main class="space-y-10">
-		<header class="max-w-3xl space-y-4">
-			<p class="text-sm font-medium text-muted-foreground">Редакция</p>
-			<h1 class="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-				Посты о культуре, языке и сообществах
+	<BackButton href="/" variant="outline" label="Назад" labelKey="nav.back" />
+	<main class="mx-auto w-full max-w-2xl">
+		<header class="space-y-3">
+			<h1 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+				{title}
 			</h1>
-			<p class="text-base leading-7 text-muted-foreground sm:text-lg">
-				Материалы о том, как находить центры, знакомиться с людьми,
-				участвовать в культурной жизни и поддерживать татарские, башкирские
-				и крымскотатарские ценности.
+			<p class="text-sm leading-6 text-muted-foreground sm:text-base">
+				{description}
 			</p>
 		</header>
 
-		<section class="grid gap-4" aria-label="Список постов">
+		<section
+			class="mt-6 divide-y divide-border-muted border-y border-border-muted"
+			aria-label="Лента постов"
+		>
 			{
-				posts.map((post) => (
-					<article class="corner-squircle rounded-3xl bg-surface p-5 shadow-2xs ring ring-border-muted ring-inset transition hover:bg-surface-muted sm:p-6">
-						<div class="flex flex-wrap items-center gap-2 text-xs font-medium text-subtle-foreground">
-							<time datetime={post.data.pubDate.toISOString()}>
-								{dateFormatter.format(post.data.pubDate)}
+				postsFeed.map((post) => (
+					<article class="py-5 sm:py-6">
+						<header class="flex min-w-0 items-center gap-1.5 text-sm leading-5">
+							<span class="font-semibold text-foreground">tatarverse</span>
+							<span class="text-subtle-foreground" aria-hidden="true">
+								|
+							</span>
+							<time
+								class="text-muted-foreground"
+								datetime={post.pubDate.toISOString()}
+								title={post.fullDate}
+							>
+								{post.relativeTime}
 							</time>
-							<span aria-hidden="true">/</span>
-							<span>{post.data.category}</span>
-							<span aria-hidden="true">/</span>
-							<span>{post.data.author}</span>
+							<span class="text-subtle-foreground" aria-hidden="true">
+								|
+							</span>
+							<time
+								class="truncate text-muted-foreground"
+								datetime={post.pubDate.toISOString()}
+							>
+								{post.fullDate}
+							</time>
+						</header>
+
+						<div class="mt-2 text-depth-600 leading-relaxed">
+							<div
+								class:list={[
+									"prose prose-sm max-w-none sm:prose-base prose-p:my-2 prose-blockquote:my-3 first:prose-p:mt-0 last:prose-p:mb-0",
+									post.isLong && "line-clamp-4",
+								]}
+								data-post-text
+							>
+								<post.Content />
+							</div>
+							{post.isLong && (
+								<button
+									type="button"
+									class="mt-1 inline-flex items-center gap-1 text-sm cursor-pointer font-medium text-muted-foreground transition hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&[aria-expanded='true']_svg]:rotate-180"
+									data-post-toggle
+									aria-expanded="false"
+								>
+									<span data-post-toggle-label>Развернуть</span>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="size-4 transition-transform"
+										aria-hidden="true"
+									>
+										<path d="m6 9 6 6 6-6" />
+									</svg>
+								</button>
+							)}
 						</div>
-						<h2 class="mt-3 text-xl font-semibold tracking-tight text-foreground">
-							{post.data.title}
-						</h2>
-						<p class="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-							{post.data.description}
-						</p>
-						{
-							post.data.tags.length > 0 && (
-								<ul class="mt-4 flex flex-wrap gap-2" aria-label="Теги поста">
-									{post.data.tags.map((tag) => (
-										<li class="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
-											{tag}
-										</li>
-									))}
-								</ul>
-							)
-						}
 					</article>
 				))
 			}
 		</section>
 	</main>
 </Layout>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>("[data-post-toggle]").forEach((toggle) => {
+		const text = toggle.closest("article")?.querySelector<HTMLElement>("[data-post-text]");
+		const label = toggle.querySelector<HTMLElement>("[data-post-toggle-label]");
+		if (!text || !label) return;
+
+		toggle.addEventListener("click", () => {
+			const expanded = toggle.getAttribute("aria-expanded") === "true";
+
+			text.classList.toggle("line-clamp-4", expanded);
+			toggle.setAttribute("aria-expanded", String(!expanded));
+			label.textContent = expanded ? "Развернуть" : "Свернуть";
+		});
+	});
+</script>

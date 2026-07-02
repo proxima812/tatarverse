@@ -5,6 +5,7 @@ const dict: Dictionary = {
 	"nav.toCenters": "Go to centers",
 	"nav.changelog": "Changelog",
 	"nav.feedback": "Feedback",
+	"nav.posts": "Posts",
 	"nav.sabantuy": "#сабантуй",
 	"nav.support": "#поддержка",
 	"nav.soon": "soon...",

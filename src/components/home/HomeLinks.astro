@@ -1,15 +1,20 @@
 ---
 // Блок быстрых ссылок на внешние и внутренние разделы проекта.
 import { links } from "@/data/links";
+import { getCollection } from "astro:content";
 import ButtonLink from "../ui/ButtonLink.astro";
+
+const postsCount = (await getCollection("posts")).length;
 ---
 
 <section>
 	<div class="flex gap-1.5 justify-center flex-wrap items-center">
 		{
 			links
-				.filter((_, index) => index < 2 || index >= links.length - 2)
-				.map((item) => <ButtonLink {...item} />)
+				.filter((_, index) => index < 2 || index >= links.length - 3)
+				.map((item) => (
+					<ButtonLink {...item} badge={item.href === "/posts" ? postsCount : undefined} />
+				))
 		}
 	</div>
 </section>
