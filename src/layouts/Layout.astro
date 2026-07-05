@@ -42,6 +42,13 @@ const locale = getLocaleFromUrl(Astro.url);
 	class="scroll-smooth subpixel-antialiased transition-all duration-300 ease-linear"
 >
 	<head>
+		<link
+			rel="preload"
+			href="/fonts/tatarverse-sans.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
 		<SEO
 			title={title}
 			description={description}
@@ -80,8 +87,5 @@ const locale = getLocaleFromUrl(Astro.url);
 		</Container>
 		<Footer />
 		<BackToTop />
-	<!-- impeccable-live-start -->
-<script is:inline src="http://localhost:8400/live.js"></script>
-<!-- impeccable-live-end -->
-</body>
+	</body>
 </html>

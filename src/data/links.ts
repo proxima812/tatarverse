@@ -5,7 +5,7 @@ type Link = {
 	class: string;
 	href: string;
 	size: "default";
-	variant: "default" | "outline" | "disabled";
+	variant: "default" | "outline" | "disabled" | "ghost";
 	target?: "_blank";
 };
 
@@ -26,7 +26,7 @@ export const links = [
 		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
 		href: "/posts",
 		size: "default",
-		variant: "default",
+		variant: "outline",
 	},
 	{
 		label: "Переводы",
@@ -67,19 +67,19 @@ export const links = [
 	{
 		label: "#сабантуй",
 		labelKey: "nav.sabantuy",
-		// icon: "mdi:party-popper",
+    icon: "mdi:puzzle-star",
 		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
 		href: "/sabantye",
 		size: "default",
-		variant: "outline",
+		variant: "ghost",
 	},
 	{
 		label: "#поддержка",
 		labelKey: "nav.support",
-		// icon: "mdi:hand-heart",
+    icon: "mdi:puzzle-star",
 		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
-		href: "#",
+    href: "/support",
 		size: "default",
-		variant: "disabled",
+    variant: "ghost",
 	},
 ] satisfies Link[];

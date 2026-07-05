@@ -37,9 +37,8 @@ const feedbackHref = "https://t.me/ulu_er/19";
 	description={description}
 	keywords={["tatarverse", "сабантуй", "праздник", "культура", "татары"]}
 >
-<BackButton href="/" variant="outline" label="Назад" labelKey="nav.back" />
+	<BackButton href="/" variant="outline" label="Назад" labelKey="nav.back" />
 	<main class="mx-auto w-full max-w-2xl space-y-6">
-
 		<header class="space-y-3">
 			<h1 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
 				{title}
@@ -47,21 +46,27 @@ const feedbackHref = "https://t.me/ulu_er/19";
 		</header>
 
 		<article
-			class="corner-squircle relative overflow-hidden rounded-4xl bg-primary p-6 text-primary-foreground shadow-2xs ring ring-inset ring-white/10 sm:p-8"
+			class="corner-squircle relative overflow-hidden rounded-4xl bg-neutral-950 p-6 text-white shadow-2xs ring ring-inset ring-white/10 sm:p-8"
 		>
-			<div
-				class="pointer-events-none absolute -top-28 left-1/2 h-52 w-[120%] -translate-x-1/2 rounded-full bg-white/10 blur-3xl"
-				aria-hidden="true"
-			>
+			<div class="pointer-events-none absolute inset-0" aria-hidden="true">
+				<div
+					class="absolute -top-24 -left-20 size-72 rounded-full bg-emerald-500/25 blur-3xl"
+				>
+				</div>
+				<div
+					class="absolute top-1/3 -right-24 size-80 rounded-full bg-sky-500/20 blur-3xl"
+				>
+				</div>
+				<div
+					class="absolute -bottom-28 left-1/3 size-72 rounded-full bg-red-500/20 blur-3xl"
+				>
+				</div>
 			</div>
 
 			<div class="relative">
 				<h2 class="text-3xl font-bold tracking-tight sm:text-4xl">
 					Сабантуй <span data-sabantuy-year>{sabantuyYear}</span>
 				</h2>
-				<p class="mt-2 text-sm font-medium text-white/60 sm:text-base">
-					1 июля <span data-sabantuy-year>{sabantuyYear}</span> года
-				</p>
 
 				<div
 					id="sabantuy-countdown"
@@ -98,15 +103,15 @@ const feedbackHref = "https://t.me/ulu_er/19";
 
 				<p class="mt-7 max-w-prose text-sm leading-6 text-white/80 sm:text-base">
 					Проводите Сабантуй в своём городе или стране? Оставьте заявку — мы разместим ваш
-					праздник в ленте, чтобы земляки и гости смогли найти его и присоединиться. Расскажите,
-					где и когда, а мы поможем о нём узнать.
+					праздник в ленте, чтобы земляки и гости смогли найти его и присоединиться.
+					Расскажите, где и когда, а мы поможем о нём узнать.
 				</p>
 
 				<a
 					href={feedbackHref}
 					target="_blank"
 					rel="noreferrer noopener"
-					class="group mt-6 inline-flex items-center gap-2 rounded-full bg-primary-foreground px-5 py-2.5 text-sm font-semibold text-primary no-underline transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+					class="group mt-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-neutral-900 no-underline transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
 				>
 					Оставить заявку
 					<svg
@@ -120,13 +125,32 @@ const feedbackHref = "https://t.me/ulu_er/19";
 							stroke="currentColor"
 							stroke-width="1.5"
 							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
+							stroke-linejoin="round"></path>
 					</svg>
 				</a>
 			</div>
 		</article>
 	</main>
+	<section class="grid grid-cols-1 md:grid-cols-2 gap-5" aria-label="Предстоящие сабантуи">
+		{
+			Array.from({ length: 4 }).map(() => (
+				<article
+					class="corner-squircle relative select-none overflow-hidden rounded-4xl bg-muted/50 p-5 opacity-60 ring ring-inset ring-border sm:p-6"
+					aria-disabled="true"
+				>
+					<span class="inline-flex items-center rounded-full bg-foreground/10 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
+						Скоро
+					</span>
+					<h3 class="mt-4 text-lg font-bold tracking-tight text-muted-foreground">Сабантуй</h3>
+					<p class="mt-1 text-sm text-muted-foreground/70">Город уточняется</p>
+					<div class="mt-5 space-y-2" aria-hidden="true">
+						<div class="h-2 w-3/4 rounded-full bg-foreground/10" />
+						<div class="h-2 w-1/2 rounded-full bg-foreground/10" />
+					</div>
+				</article>
+			))
+		}
+	</section>
 </Layout>
 
 <style>
