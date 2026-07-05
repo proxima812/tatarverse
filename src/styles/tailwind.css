@@ -4,7 +4,17 @@
 @plugin "@toolwind/corner-shape";
 /* @custom-variant dark (&:where(.dark, .dark *)); */
 
+@font-face {
+  font-family: "Tatarverse Sans";
+  src: url("/fonts/tatarverse-sans.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
+  --font-sans: "Tatarverse Sans", ui-sans-serif, system-ui, sans-serif;
+
   --color-background: hsl(0 0% 100%);
   --color-foreground: hsl(0 0% 11.4%);
   --color-muted: hsl(0 0% 94%);
@@ -30,6 +40,19 @@
   --color-depth-700: hsl(0 0% 20%);
 
   --color-destructive: lab(48.4493% 77.4328 61.5452);
+
+  --animate-hero-gradient-flow: hero-gradient-flow 8s ease-in-out infinite;
+
+  @keyframes hero-gradient-flow {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+  }
 }
 
 /* .dark {

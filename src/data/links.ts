@@ -49,22 +49,21 @@ export const links = [
 	{
 		label: "Политика",
 		labelKey: "nav.policy",
-
 		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
 		href: "/policy",
 		size: "default",
 		variant: "outline",
 	},
-	{
-		label: "Обратная связь",
-		labelKey: "nav.feedback",
-		icon: "mdi:telegram",
-		target: "_blank",
-		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
-		href: "https://t.me/ulu_er",
-		size: "default",
-		variant: "outline",
-	},
+	// {
+	// 	label: "Обратная связь",
+	// 	labelKey: "nav.feedback",
+	// 	icon: "mdi:telegram",
+	// 	target: "_blank",
+	// 	class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
+	// 	href: "https://t.me/ulu_er",
+	// 	size: "default",
+	// 	variant: "outline",
+	// },
 	{
 		label: "#сабантуй",
 		labelKey: "nav.sabantuy",

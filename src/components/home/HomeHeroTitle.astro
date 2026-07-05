@@ -4,34 +4,37 @@ import { getLocaleFromUrl, useTranslations } from "@/i18n";
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
+const solidClass = "font-black tracking-tight md:tracking-[-1.4px]";
+const gradientClass = `${solidClass} text-transparent bg-clip-text bg-[linear-gradient(90deg,#38bdf8,#2563eb,#60a5fa,#0ea5e9,#38bdf8)] bg-size-[240%_100%] bg-position-[0%_50%] animate-hero-gradient-flow`;
+
 const heroLines = [
-	{ key: "home.hero.1", className: " text-black" },
-	{
-		key: "home.hero.2",
-		className: " hero-gradient-text",
-	},
-	{ key: "home.hero.3", className: " text-black" },
+	{ key: "home.hero.1", className: `${solidClass} text-zinc-950` },
+	{ key: "home.hero.2", className: gradientClass },
+	{ key: "home.hero.3", className: `${solidClass} text-zinc-950/90` },
 ] as const;
 
 const heroLines2 = [
-	{ key: "home.hero.5", className: " text-black/60" },
-	{ key: "home.hero.6", className: " text-black/60" },
-	{ key: "home.hero.7", className: " text-black/60" },
+	{ key: "home.hero.5", className: `${solidClass} text-zinc-950/50` },
+	{ key: "home.hero.6", className: `${solidClass} text-zinc-950/90` },
+	{ key: "home.hero.7", className: `${solidClass} text-zinc-950/50` },
 ] as const;
 
-const titleClass =
-	"tracking-tight font-black uppercase text-4xl sm:text-5xl md:text-6xl lg:text-7xl md:tracking-[-3.8px]";
+const titleClass = "uppercase inline-block";
 ---
 
-<h1 class="relative select-none text-center">
-	<div class="flex flex-wrap justify-center md:gap-0 gap-x-2 md:space-x-3.5 md:space-y-2">
+<h1 class="relative select-none text-center text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
+	<div
+		class="flex flex-wrap items-center justify-center md:gap-0 gap-x-2 md:space-x-3.5 md:space-y-2"
+	>
 		{
 			heroLines.map(({ key, className }) => (
 				<span class:list={[titleClass, className]}>{t(key)}</span>
 			))
 		}
 	</div>
-	<div class="flex flex-wrap justify-center md:gap-0 gap-x-2 md:space-x-3.5 md:space-y-2">
+	<div
+		class="flex flex-wrap items-center justify-center md:gap-0 gap-x-2 md:space-x-3.5 md:space-y-2"
+	>
 		{
 			heroLines2.map(({ key, className }) => (
 				<span class:list={[titleClass, className]}>{t(key)}</span>
@@ -39,27 +42,3 @@ const titleClass =
 		}
 	</div>
 </h1>
-
-<style>
-	.hero-gradient-text {
-		background-image: linear-gradient(90deg, #38bdf8, #2563eb, #60a5fa, #0ea5e9, #38bdf8);
-		background-size: 240% 100%;
-		background-position: 0% 50%;
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
-		-webkit-text-fill-color: transparent;
-		animation: hero-gradient-flow 8s ease-in-out infinite;
-	}
-
-	@keyframes hero-gradient-flow {
-		0%,
-		100% {
-			background-position: 0% 50%;
-		}
-
-		50% {
-			background-position: 100% 50%;
-		}
-	}
-</style>
