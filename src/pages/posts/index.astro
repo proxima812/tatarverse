@@ -26,6 +26,8 @@ const stripMarkdown = (value: string) =>
 		.replace(/\s+/g, " ")
 		.trim();
 
+const getPostAnchor = (id: string) => id.replace(/\/$/, "");
+
 const getRelativeTime = (date: Date) => {
 	const diffMs = Date.now() - date.getTime();
 	const minute = 60000;
@@ -50,6 +52,7 @@ const postsFeed = await Promise.all(
 
 		return {
 			Content,
+			id: getPostAnchor(post.id),
 			isLong: plainText.length > 200,
 			pubDate: post.data.pubDate,
 			relativeTime: getRelativeTime(post.data.pubDate),
@@ -63,6 +66,7 @@ const postsFeed = await Promise.all(
 	title={title}
 	description={description}
 	keywords={["tatarverse", "посты", "лента", "сабантуй", "культура", "язык"]}
+	rssURL="/posts/rss.xml"
 >
 	<BackButton href="/" variant="outline" label="Назад" labelKey="nav.back" />
 	<main class="mx-auto w-full max-w-2xl">
@@ -81,7 +85,7 @@ const postsFeed = await Promise.all(
 		>
 			{
 				postsFeed.map((post) => (
-					<article class="py-5 sm:py-6">
+					<article id={post.id} class="scroll-mt-24 py-5 sm:py-6">
 						<header class="flex min-w-0 items-center gap-1.5 text-sm leading-5">
 							<span class="font-semibold text-foreground">tatarverse</span>
 							<span class="text-subtle-foreground" aria-hidden="true">

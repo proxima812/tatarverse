@@ -15,6 +15,7 @@ interface Props {
 	datePublished?: string | Date;
 	dateModified?: string | Date;
 	canonicalURL?: string | URL;
+	rssURL?: string | URL;
 	centered?: boolean;
 	classContainer?: string;
 }
@@ -29,6 +30,7 @@ const {
 	ogImage,
 	keywords,
 	canonicalURL,
+	rssURL,
 	centered,
 	classContainer,
 } = Astro.props as Props;
@@ -57,6 +59,7 @@ const locale = getLocaleFromUrl(Astro.url);
 			type={type}
 			keywords={keywords}
 			canonicalURL={canonicalURL}
+			rssURL={rssURL}
 			datePublished={datePublished}
 			dateModified={dateModified}
 			locale={getOgLocale(locale)}
