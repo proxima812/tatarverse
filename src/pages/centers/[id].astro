@@ -180,8 +180,10 @@ const jsonLd = {
 ---
 
 <Layout title={title} description={pageDescription} type="article" canonicalURL={canonicalURL}>
-	<article class="flex flex-col gap-10 max-w-5xl mx-auto">
-		<nav class="flex justify-between sm:flex-nowrap flex-wrap items-center">
+	<article class="mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-10">
+		<nav
+			class="grid w-full min-w-0 max-w-full grid-cols-1 gap-3 sm:grid-cols-[auto_auto] sm:items-center sm:justify-between lg:grid-cols-[auto_1fr_auto]"
+		>
 			<ButtonLink
 				href={localizePath(locale, "/centers")}
 				label="Все центры"
@@ -189,7 +191,9 @@ const jsonLd = {
 				variant="outline"
 				icon="tabler:arrow-back-up"
 			/>
-			<div class="sm:order-0 order-3 sm:mt-0 mt-3 flex w-full justify-between sm:w-auto">
+			<div
+				class="flex min-w-0 max-w-full flex-col items-start gap-2 sm:order-3 sm:col-span-2 sm:flex-row sm:flex-wrap lg:order-none lg:col-span-1 lg:justify-self-center"
+			>
 				<ButtonLink
 					href="#errors"
 					label="Нашли ошибку?"
@@ -206,7 +210,7 @@ const jsonLd = {
 					icon="mdi:github"
 				/>
 			</div>
-			<CopyPageMenu />
+			<CopyPageMenu class="max-w-full justify-self-start sm:justify-self-end" />
 		</nav>
 
 		<div
@@ -215,7 +219,7 @@ const jsonLd = {
 		</div>
 
 		<header
-			class="relative mx-auto flex max-w-4xl flex-col items-center gap-4 overflow-hidden text-center"
+			class="relative mx-auto flex w-full max-w-4xl min-w-0 flex-col items-center gap-4 overflow-hidden text-center"
 		>
 			{
 				(headerBadges.length > 0 || localizedCountry) && (
@@ -235,7 +239,7 @@ const jsonLd = {
 				)
 			}
 			<h1
-				class="text-3xl font-semibold leading-tight text-foreground text-balance sm:text-5xl"
+				class="max-w-full text-balance break-words text-3xl font-semibold leading-tight text-foreground sm:text-4xl lg:text-5xl"
 			>
 				{title}
 			</h1>
@@ -254,9 +258,9 @@ const jsonLd = {
 		</div>
 
 		<main
-			class="relative bg-zinc-50 p-5 shadow-2xs ring ring-depth-100/70 sm:p-10 rounded-2xl flex flex-col gap-6 lg:flex-row lg:items-start justify-between lg:gap-10 xl:gap-12"
+			class="relative flex w-full min-w-0 max-w-full flex-col justify-between gap-6 rounded-2xl bg-zinc-50 p-5 shadow-2xs ring ring-depth-100/70 sm:p-10 lg:flex-row lg:items-start lg:gap-10 xl:gap-12"
 		>
-			<div class="max-w-none prose">
+			<div class="prose min-w-0 max-w-full">
 				<Content components={{ ...markdownComponents, h1: SkipNode }} />
 			</div>
 
