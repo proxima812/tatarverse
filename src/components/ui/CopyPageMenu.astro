@@ -38,7 +38,7 @@ const aiPlatforms = [
 ] as const;
 ---
 
-<div class={cn("relative inline-flex", className)} data-copy-page-menu>
+<div class={cn("relative inline-flex", className)} data-copy-page-menu data-locale={locale}>
 	<div class="group relative flex rounded-lg bg-muted">
 		<!-- Copy Page button -->
 		<button
@@ -133,12 +133,17 @@ const aiPlatforms = [
 </div>
 
 <script>
-	const PROMPT_TEXT = (url: string) =>
-		`I'm looking at this page: ${url}. Help me understand it. Be ready to explain concepts, give examples, or answer any questions about it. It can also help you find more information on the Internet and in other sources.`;
+	const PROMPT_TEXT: Record<string, (url: string) => string> = {
+		ru: (url: string) =>
+			`Я смотрю эту страницу: ${url}. Помоги мне разобраться в ней. Будь готов объяснять концепции, приводить примеры или отвечать на любые вопросы о ней. Также можешь найти дополнительную информацию в интернете и других источниках.`,
+		en: (url: string) =>
+			`I'm looking at this page: ${url}. Help me understand it. Be ready to explain concepts, give examples, or answer any questions about it. It can also help you find more information on the Internet and in other sources.`,
+	};
 
-	function getPromptUrl(base: string, url: string) {
+	function getPromptUrl(base: string, url: string, locale: string) {
+		const prompt = (PROMPT_TEXT[locale] ?? PROMPT_TEXT.ru)(url);
 		const target = new URL(base);
-		target.searchParams.set("q", PROMPT_TEXT(url));
+		target.searchParams.set("q", prompt);
 		return target.toString();
 	}
 
@@ -198,10 +203,11 @@ const aiPlatforms = [
 
 		// --- Populate dropdown hrefs ---
 		const url = window.location.href;
+		const locale = (root as HTMLElement).dataset.locale ?? "ru";
 
 		root.querySelectorAll<HTMLAnchorElement>("[data-ai-platform]").forEach((item) => {
 			const base = item.dataset.promptBase;
-			if (base) item.href = getPromptUrl(base, url);
+			if (base) item.href = getPromptUrl(base, url, locale);
 		});
 
 		// --- Keyboard nav within dropdown ---
