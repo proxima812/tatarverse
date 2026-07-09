@@ -182,7 +182,7 @@ const jsonLd = {
 <Layout title={title} description={pageDescription} type="article" canonicalURL={canonicalURL}>
 	<article class="mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-10">
 		<nav
-			class="grid w-full min-w-0 max-w-full grid-cols-1 gap-3 sm:grid-cols-[auto_auto] sm:items-center sm:justify-between lg:grid-cols-[auto_1fr_auto]"
+			class="w-full flex justify-between items-center flex-wrap"
 		>
 			<ButtonLink
 				href={localizePath(locale, "/centers")}
@@ -191,7 +191,7 @@ const jsonLd = {
 				variant="outline"
 				icon="tabler:arrow-back-up"
 			/>
-			<div
+			<!-- <div
 				class="flex min-w-0 max-w-full flex-col items-start gap-2 sm:order-3 sm:col-span-2 sm:flex-row sm:flex-wrap lg:order-none lg:col-span-1 lg:justify-self-center"
 			>
 				<ButtonLink
@@ -209,7 +209,7 @@ const jsonLd = {
 					variant="ghost"
 					icon="mdi:github"
 				/>
-			</div>
+			</div> -->
 			<CopyPageMenu class="max-w-full justify-self-start sm:justify-self-end" />
 		</nav>
 
