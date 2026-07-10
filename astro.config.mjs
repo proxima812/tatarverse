@@ -60,6 +60,8 @@ export default defineConfig({
                   indexNow({
                       key: config.indexNow.key,
                       siteUrl: config.site.url,
+                      collections: ["centers", "posts"],
+                      maxUrls: 500,
                   }),
               ]
           : []),

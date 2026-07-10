@@ -1,6 +1,7 @@
 ---
 import BackButton from "@/components/navigation/BackButton.astro";
 import Layout from "@/layouts/Layout.astro";
+import { formatContentDateTime, getContentDates } from "@/utils/contentDates";
 import { getCollection, render } from "astro:content";
 
 const posts = await getCollection("posts");
@@ -49,17 +50,30 @@ const postsFeed = await Promise.all(
 	rendered.map(async (post) => {
 		const { Content } = await render(post);
 		const plainText = stripMarkdown(post.body ?? post.data.description);
+		const { publishedDate, modifiedDate } = getContentDates({
+			pubDate: post.data.pubDate,
+			filePath: post.filePath,
+		});
 
 		return {
 			Content,
 			id: getPostAnchor(post.id),
 			isLong: plainText.length > 200,
 			pubDate: post.data.pubDate,
+			publishedDate,
+			modifiedDate,
 			relativeTime: getRelativeTime(post.data.pubDate),
 			fullDate: fullDateFormatter.format(post.data.pubDate).replace(/\s?г\.$/, ""),
+			publishedLabel: formatContentDateTime(publishedDate, "ru"),
+			modifiedLabel: formatContentDateTime(modifiedDate, "ru"),
 		};
 	}),
 );
+
+const latestModifiedDate = postsFeed
+	.map((post) => post.modifiedDate)
+	.filter((date): date is Date => Boolean(date))
+	.sort((a, b) => b.getTime() - a.getTime())[0];
 ---
 
 <Layout
@@ -67,6 +81,7 @@ const postsFeed = await Promise.all(
 	description={description}
 	keywords={["tatarverse", "посты", "лента", "сабантуй", "культура", "язык"]}
 	rssURL="/posts/rss.xml"
+	dateModified={latestModifiedDate}
 >
 	<BackButton href="/" variant="outline" label="Назад" labelKey="nav.back" />
 	<main class="mx-auto w-full max-w-2xl">
@@ -142,6 +157,19 @@ const postsFeed = await Promise.all(
 									</svg>
 								</button>
 							)}
+							<footer class="mt-4 text-[0.68rem] leading-5 text-muted-foreground/60">
+								{post.publishedLabel && (
+									<time datetime={post.publishedDate?.toISOString()}>
+										Опубликовано: {post.publishedLabel}
+									</time>
+								)}
+								{post.publishedLabel && post.modifiedLabel && <span aria-hidden="true"> · </span>}
+								{post.modifiedLabel && (
+									<time datetime={post.modifiedDate?.toISOString()}>
+										Обновлено: {post.modifiedLabel}
+									</time>
+								)}
+							</footer>
 						</div>
 					</article>
 				))

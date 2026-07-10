@@ -1,5 +1,4 @@
 ---
-// Панель фильтров списка: строит чипы по странам, типам, категориям и регионам.
 import { Icon } from "astro-icon/components";
 import { getCountryLabels, getCountryLabel } from "@/data/worldCountries";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
@@ -35,7 +34,6 @@ function buildCountryLabels(country: string): CountryLabels {
 }
 
 function buildOptions(entries: [string, number][]): FilterOption[] {
-	// Приводим tuples к единому виду для рендера чипов.
 	return entries.map(([value, count]) => ({ value, count }));
 }
 
@@ -44,7 +42,6 @@ const categoryOptions = buildOptions(categories);
 const regionOptions = buildOptions(regions);
 
 function getVisibleOptions<T>(options: T[], limit = defaultVisibleLimit) {
-	// По умолчанию показываем компактный набор, для стран — больше из-за частого сценария фильтрации.
 	return options.slice(0, limit);
 }
 
@@ -58,9 +55,7 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 	class="hidden lg:sticky lg:top-12 lg:block lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto pb-12"
 >
 	<section class="space-y-4 lg:space-y-5">
-		<!-- Filter sections: hidden on mobile by default, always visible on lg+ via <style> -->
 		<div id="filters-panel" data-filters-panel class="hidden space-y-5">
-			<!-- Countries -->
 			<section class="flex flex-col gap-2">
 				<p class="text-xs font-medium tracking-wide text-subtle-foreground uppercase">
 					{t("list.countries")}
@@ -158,7 +153,6 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 				}
 			</section>
 
-			<!-- Types -->
 			{
 				typeOptions.length > 0 && (
 					<section class="flex flex-col gap-2">
@@ -229,7 +223,6 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 				)
 			}
 
-			<!-- Categories -->
 			{
 				categoryOptions.length > 0 && (
 					<section class="flex flex-col gap-2">
@@ -300,7 +293,6 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 				)
 			}
 
-			<!-- Regions -->
 			{
 				regionOptions.length > 0 && (
 					<section class="flex flex-col gap-2">
@@ -374,7 +366,6 @@ function getOverflowOptions<T>(options: T[], limit = defaultVisibleLimit) {
 	</section>
 </aside>
 <style>
-	/* On desktop the filter panel is always visible regardless of JS toggle state */
 	@media (min-width: 1024px) {
 		[data-filters-shell],
 		[data-filters-panel] {

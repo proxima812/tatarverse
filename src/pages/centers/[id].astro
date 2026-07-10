@@ -15,6 +15,7 @@ import { getCollection, render, type CollectionEntry } from "astro:content";
 import { getCountryLabel } from "@/data/worldCountries";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { createCenterRouteIdMap, getCenterPath } from "@/utils/centers";
+import { formatContentDateTime, getContentDates } from "@/utils/contentDates";
 
 export async function getStaticPaths() {
 	const entries = await getCollection("centers");
@@ -60,11 +61,12 @@ const region = clean(data.location?.region);
 const type = clean(data.type);
 const category = clean(data.category);
 const rawPubDate = clean(data.pubDate);
+const { publishedDate, modifiedDate } = getContentDates({
+	pubDate: rawPubDate,
+	filePath: contentEntry.filePath,
+});
 const routeId = routeIds.get(entry.id) ?? entry.id;
 const canonicalURL = localizePath(locale, getCenterPath(routeId));
-const githubSourcePath = localizedEntry
-	? `src/data/centers_i18n/${locale}/${localizedEntry.id}.mdx`
-	: `src/data/centers_formatted/${entry.id}.mdx`;
 const currentIndex = centerEntries.findIndex((centerEntry) => centerEntry.id === entry.id);
 const previousEntry = currentIndex > 0 ? centerEntries[currentIndex - 1] : null;
 const nextEntry =
@@ -82,6 +84,8 @@ const formattedDate = rawPubDate
 			timeZone: "Asia/Almaty",
 		})
 	: null;
+const publishedLabel = formatContentDateTime(publishedDate, locale);
+const modifiedLabel = formatContentDateTime(modifiedDate, locale);
 
 const sourceUrl = clean(data.source);
 const sourceLabel = (() => {
@@ -117,7 +121,7 @@ const facts = [
 		: null,
 	formattedDate
 		? {
-				label: t("detail.updated"),
+				label: t("content.published"),
 				value: formattedDate,
 				icon: "mdi:calendar-outline",
 			}
@@ -126,12 +130,9 @@ const facts = [
 
 const pageDescription = summary ?? undefined;
 
-// Шапка: бейджи категории/типа и ненавязчивый акцент по флагу страны.
 const headerBadges = [category, type].filter((value): value is string => Boolean(value));
 const localizedCountry = country ? getCountryLabel(country, locale) : null;
 
-// Связанные центры: сперва из той же страны, иначе той же категории (по ru-данным
-// для стабильного совпадения), с локализованным выводом карточек.
 const ruCountry = clean(entry.data.location?.country);
 const ruCategory = clean(entry.data.category);
 const relatedIds = centerEntries
@@ -159,7 +160,6 @@ const relatedTitle = ruCountry
 	? t("detail.related", { country: localizedCountry ?? country ?? "" })
 	: t("detail.relatedCategory");
 
-// Структурированные данные для поисковиков (каталог организаций).
 const jsonLd = {
 	"@context": "https://schema.org",
 	"@type": "Organization",
@@ -179,7 +179,14 @@ const jsonLd = {
 };
 ---
 
-<Layout title={title} description={pageDescription} type="article" canonicalURL={canonicalURL}>
+<Layout
+	title={title}
+	description={pageDescription}
+	type="article"
+	canonicalURL={canonicalURL}
+	datePublished={publishedDate}
+	dateModified={modifiedDate}
+>
 	<article class="mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-10">
 		<nav
 			class="w-full flex justify-between items-center flex-wrap"
@@ -191,25 +198,6 @@ const jsonLd = {
 				variant="outline"
 				icon="tabler:arrow-back-up"
 			/>
-			<!-- <div
-				class="flex min-w-0 max-w-full flex-col items-start gap-2 sm:order-3 sm:col-span-2 sm:flex-row sm:flex-wrap lg:order-none lg:col-span-1 lg:justify-self-center"
-			>
-				<ButtonLink
-					href="#errors"
-					label="Нашли ошибку?"
-					labelKey="nav.mistake"
-					variant="ghost"
-					icon="tabler:face-id-error"
-				/>
-				<ButtonLink
-					target="_blank"
-					href={`https://github.com/proxima812/tatarverse/blob/main/${githubSourcePath}`}
-					label="Править на GitHub"
-					labelKey="nav.editOnGithub"
-					variant="ghost"
-					icon="mdi:github"
-				/>
-			</div> -->
 			<CopyPageMenu class="max-w-full justify-self-start sm:justify-self-end" />
 		</nav>
 
@@ -262,6 +250,23 @@ const jsonLd = {
 		>
 			<div class="prose min-w-0 max-w-full">
 				<Content components={{ ...markdownComponents, h1: SkipNode }} />
+				{
+					(publishedLabel || modifiedLabel) && (
+						<footer class="mt-8 border-t border-depth-100 pt-3 text-[0.68rem] leading-5 text-muted-foreground/60">
+							{publishedLabel && (
+								<time datetime={publishedDate?.toISOString()}>
+									{t("content.published")}: {publishedLabel}
+								</time>
+							)}
+							{publishedLabel && modifiedLabel && <span aria-hidden="true"> · </span>}
+							{modifiedLabel && (
+								<time datetime={modifiedDate?.toISOString()}>
+									{t("content.updated")}: {modifiedLabel}
+								</time>
+							)}
+						</footer>
+					)
+				}
 			</div>
 
 			{

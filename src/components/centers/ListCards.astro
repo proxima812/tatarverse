@@ -12,7 +12,6 @@ const locale = getLocaleFromUrl(Astro.url);
 const allCards =
 	locale === "en" ? await getCollection("centersEn") : await getCollection("centers");
 const fallbackCards = allCards.length > 0 ? allCards : await getCollection("centers");
-// Сортируем по дате обновления, чтобы самые свежие записи были первыми.
 const cards = fallbackCards.sort((a, b) => {
 	return (
 		(b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0) -

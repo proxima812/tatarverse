@@ -1,8 +1,3 @@
-// Клиентская логика каталога центров: фильтры по чипам, поиск через Fuse.js,
-// синхронизация состояния с URL и переключение вида сетки.
-// Вынесено из Toolbar.astro без смены парадигмы — императивный DOM-подход сохранён.
-import Fuse from "fuse.js";
-
 type FilterGroupName = "country" | "type" | "category" | "region";
 
 type FilterState = {
@@ -24,6 +19,7 @@ type ExpandableFilterButton = HTMLButtonElement & {
 type FilterableCard = HTMLAnchorElement & {
 	dataset: DOMStringMap & {
 		country?: string;
+		searchId?: string;
 		type?: string;
 		category?: string;
 		region?: string;
@@ -34,6 +30,7 @@ type FilterableCard = HTMLAnchorElement & {
 };
 
 type CardIndexItem = {
+	id: string;
 	element: FilterableCard;
 	country: string;
 	type: string;
@@ -47,6 +44,62 @@ type CardIndexItem = {
 	order: number;
 };
 
+type SearchIndexItem = Omit<CardIndexItem, "element">;
+
+type SearchResult = {
+	item: CardIndexItem;
+	score: number;
+};
+
+type FuseResult = {
+	item: SearchIndexItem;
+	score?: number;
+};
+
+type FuseInstance = {
+	search: (query: string) => FuseResult[];
+};
+
+type FuseConstructor = new (
+	items: SearchIndexItem[],
+	options: {
+		includeScore: boolean;
+		ignoreLocation: boolean;
+		threshold: number;
+		minMatchCharLength: number;
+		keys: { name: keyof SearchIndexItem; weight: number }[];
+	},
+) => FuseInstance;
+
+type VoiceRecognitionResultEvent = {
+	results: ArrayLike<{
+		0?: {
+			transcript?: string;
+		};
+	}>;
+};
+
+type VoiceRecognition = {
+	lang: string;
+	continuous: boolean;
+	interimResults: boolean;
+	start: () => void;
+	stop: () => void;
+	onstart: (() => void) | null;
+	onend: (() => void) | null;
+	onresult: ((event: VoiceRecognitionResultEvent) => void) | null;
+	onerror: (() => void) | null;
+};
+
+type VoiceRecognitionConstructor = new () => VoiceRecognition;
+
+declare global {
+	interface Window {
+		SpeechRecognition?: VoiceRecognitionConstructor;
+		webkitSpeechRecognition?: VoiceRecognitionConstructor;
+	}
+}
+
 const filterQueryKeys: Record<FilterGroupName, string> = {
 	country: "country",
 	type: "type",
@@ -57,8 +110,12 @@ const filterQueryKeys: Record<FilterGroupName, string> = {
 export function initCardsToolbar() {
 	const cardsGrid = document.getElementById("cards-grid");
 	const noResults = document.getElementById("no-results");
+	const searchForm = document.querySelector<HTMLFormElement>("[data-search-form]");
 	const searchInput = document.querySelector<HTMLInputElement>("[data-toolbar-search]");
 	const suggestions = document.querySelector<HTMLUListElement>("[data-search-suggestions]");
+	const searchSubmit = document.querySelector<HTMLButtonElement>("[data-search-submit]");
+	const voiceButton = document.querySelector<HTMLButtonElement>("[data-search-voice]");
+	const voiceStatus = document.querySelector<HTMLElement>("[data-voice-status]");
 	const filtersToggle = document.querySelector<HTMLButtonElement>("[data-filters-toggle]");
 	const filtersShell = document.querySelector<HTMLElement>("[data-filters-shell]");
 	const filtersPanel = document.getElementById("filters-panel");
@@ -79,6 +136,9 @@ export function initCardsToolbar() {
 	const cardsGridElement = cardsGrid;
 	const noResultsElement = noResults;
 	const cards = Array.from(cardsGridElement.querySelectorAll<FilterableCard>(":scope > a"));
+	const cardBySearchId = new Map(
+		cards.map((card, order) => [card.dataset.searchId ?? String(order), card] as const),
+	);
 	const normalize = (value: string) =>
 		value
 			.toLowerCase()
@@ -90,6 +150,7 @@ export function initCardsToolbar() {
 	const uniqueTerms = (terms: string[]) =>
 		Array.from(new Set(terms.map((term) => term.trim()).filter((term) => term.length > 1)));
 	const cardsIndex: CardIndexItem[] = cards.map((card, order) => {
+		const id = card.dataset.searchId ?? String(order);
 		const country = card.dataset.country ?? "";
 		const type = card.dataset.type ?? "";
 		const category = card.dataset.category ?? "";
@@ -100,6 +161,7 @@ export function initCardsToolbar() {
 		const terms = uniqueTerms([title, city, country, region, type, category]);
 
 		return {
+			id,
 			element: card,
 			country,
 			type,
@@ -115,21 +177,7 @@ export function initCardsToolbar() {
 			),
 		};
 	});
-	const fuse = new Fuse(cardsIndex, {
-		includeScore: true,
-		ignoreLocation: true,
-		threshold: 0.32,
-		minMatchCharLength: 2,
-		keys: [
-			{ name: "title", weight: 0.42 },
-			{ name: "city", weight: 0.2 },
-			{ name: "country", weight: 0.14 },
-			{ name: "region", weight: 0.1 },
-			{ name: "category", weight: 0.06 },
-			{ name: "type", weight: 0.05 },
-			{ name: "summary", weight: 0.03 },
-		],
-	});
+	const searchIndexUrl = searchForm?.dataset.searchIndexUrl;
 
 	const state: FilterState = {
 		country: new Set(),
@@ -143,10 +191,12 @@ export function initCardsToolbar() {
 	let filterFrame = 0;
 	let activeSuggestionIndex = -1;
 	let currentSuggestionValues: string[] = [];
+	let voiceRecognition: VoiceRecognition | null = null;
+	let isListening = false;
+	let searchItemsPromise: Promise<SearchIndexItem[]> | null = null;
+	let fusePromise: Promise<FuseInstance> | null = null;
 
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-	// На десктопе панель фильтров стоит сбоку, а сетка всегда в зоне видимости —
-	// автоскролл при каждом тоггле чипа только дёргает страницу.
 	const isDesktopLayout = window.matchMedia("(min-width: 1024px)");
 
 	const groupElements = {
@@ -186,7 +236,7 @@ export function initCardsToolbar() {
 		if (searchInput) {
 			searchInput.value = searchQuery;
 		}
-		updateSuggestions();
+		void updateSuggestions();
 
 		(Object.keys(state) as FilterGroupName[]).forEach((groupName) => {
 			const validValues = getValidValues(groupName);
@@ -244,10 +294,17 @@ export function initCardsToolbar() {
 		}
 	}
 
+	function syncSearchActions() {
+		if (searchSubmit) {
+			searchSubmit.disabled = !searchInput?.value.trim();
+		}
+	}
+
 	function updateSearchClear() {
 		if (searchClear) {
 			searchClear.hidden = searchQuery.trim().length === 0;
 		}
+		syncSearchActions();
 	}
 
 	function updateResultsCount(visible: number) {
@@ -385,24 +442,82 @@ export function initCardsToolbar() {
 		return selectedValues.size === 0 || selectedValues.has(value);
 	}
 
-	function getSearchResults(query: string) {
+	function getFallbackSearchItems(): SearchIndexItem[] {
+		return cardsIndex.map(({ element: _element, ...item }) => item);
+	}
+
+	async function loadSearchItems(): Promise<SearchIndexItem[]> {
+		if (!searchIndexUrl) return getFallbackSearchItems();
+		if (!searchItemsPromise) {
+			searchItemsPromise = fetch(searchIndexUrl)
+				.then((response) => {
+					if (!response.ok) throw new Error(`Search index failed: ${response.status}`);
+					return response.json() as Promise<SearchIndexItem[]>;
+				})
+				.catch(() => getFallbackSearchItems());
+		}
+		return searchItemsPromise;
+	}
+
+	function withCardElements(items: SearchIndexItem[]): CardIndexItem[] {
+		return items
+			.map((item) => {
+				const element = cardBySearchId.get(item.id);
+				return element ? { ...item, element } : null;
+			})
+			.filter((item): item is CardIndexItem => Boolean(item));
+	}
+
+	async function loadFuse() {
+		if (!fusePromise) {
+			fusePromise = Promise.all([import("fuse.js"), loadSearchItems()]).then(
+				([{ default: Fuse }, items]) => {
+					const FuseCtor = Fuse as FuseConstructor;
+					return new FuseCtor(items, {
+						includeScore: true,
+						ignoreLocation: true,
+						threshold: 0.32,
+						minMatchCharLength: 2,
+						keys: [
+							{ name: "title", weight: 0.42 },
+							{ name: "city", weight: 0.2 },
+							{ name: "country", weight: 0.14 },
+							{ name: "region", weight: 0.1 },
+							{ name: "category", weight: 0.06 },
+							{ name: "type", weight: 0.05 },
+							{ name: "summary", weight: 0.03 },
+						],
+					});
+				},
+			);
+		}
+		return fusePromise;
+	}
+
+	async function getSearchResults(query: string): Promise<SearchResult[]> {
 		const normalizedQuery = normalize(query);
 		if (!normalizedQuery) {
 			return cardsIndex.map((item) => ({ item, score: 0 }));
 		}
 
-		const exactMatches = cardsIndex
+		const searchItems = await loadSearchItems();
+		const exactMatches = withCardElements(searchItems)
 			.filter((item) => item.searchText.includes(normalizedQuery))
 			.map((item) => ({ item, score: 0.01 }));
 		if (exactMatches.length > 0) {
 			return exactMatches.sort((a, b) => a.item.order - b.item.order);
 		}
 
-		const fuseResults = fuse.search(query);
-		const resultMap = new Map<FilterableCard, { item: CardIndexItem; score: number }>();
+		const fuse = await loadFuse();
+		const resultMap = new Map<FilterableCard, SearchResult>();
 
-		fuseResults
-			.map((result) => ({ item: result.item, score: result.score ?? 1 }))
+		fuse
+			.search(query)
+			.map((result) => {
+				const element = cardBySearchId.get(result.item.id);
+				return element ? { item: { ...result.item, element }, score: result.score ?? 1 } : null;
+			})
+			.filter((result): result is SearchResult => Boolean(result))
 			.forEach((result) => {
 				resultMap.set(result.item.element, result);
 			});
@@ -453,7 +568,7 @@ export function initCardsToolbar() {
 		searchInput.setAttribute("aria-expanded", "true");
 	}
 
-	function updateSuggestions() {
+	async function updateSuggestions() {
 		const query = searchQuery.trim();
 		if (!query || query.length < 2) {
 			hideSuggestions();
@@ -463,7 +578,10 @@ export function initCardsToolbar() {
 		const normalizedQuery = normalize(query);
 		const suggestionsSet = new Set<string>();
 
-		getSearchResults(query)
+		const searchResults = await getSearchResults(query);
+		if (query !== searchQuery.trim()) return;
+
+		searchResults
 			.slice(0, 8)
 			.forEach(({ item }) => {
 				const matchingTerm = item.terms.find((term) =>
@@ -495,8 +613,83 @@ export function initCardsToolbar() {
 		if (searchInput) {
 			searchInput.value = value;
 		}
+		syncSearchActions();
 		hideSuggestions();
 		scheduleApplyFilters(true);
+	}
+
+	function setListeningState(listening: boolean) {
+		isListening = listening;
+		if (!voiceButton) return;
+
+		voiceButton.dataset.listening = String(listening);
+		voiceButton.setAttribute("aria-pressed", String(listening));
+		if (voiceStatus) {
+			const listeningLabel = searchForm?.dataset.voiceListening ?? "";
+			if (listening) {
+				voiceStatus.textContent = listeningLabel;
+			} else if (voiceStatus.textContent === listeningLabel) {
+				voiceStatus.textContent = "";
+			}
+		}
+	}
+
+	function initVoiceSearch() {
+		const Recognition = window.SpeechRecognition ?? window.webkitSpeechRecognition;
+		if (!Recognition || !voiceButton || !searchInput) return;
+
+		voiceButton.hidden = false;
+		voiceRecognition = new Recognition();
+		voiceRecognition.lang = searchForm?.dataset.speechLang ?? "ru-RU";
+		voiceRecognition.continuous = false;
+		voiceRecognition.interimResults = false;
+
+		voiceRecognition.onstart = () => {
+			setListeningState(true);
+		};
+
+		voiceRecognition.onresult = (event) => {
+			const lastResult = event.results[event.results.length - 1];
+			const transcript = lastResult?.[0]?.transcript?.trim() ?? "";
+			if (!transcript) return;
+
+			window.clearTimeout(searchTimer);
+			searchInput.value = transcript;
+			searchQuery = transcript;
+			if (voiceStatus) voiceStatus.textContent = "";
+			syncSearchActions();
+			void updateSuggestions();
+			scheduleApplyFilters(false);
+			searchInput.focus();
+		};
+
+		voiceRecognition.onerror = () => {
+			setListeningState(false);
+			if (voiceStatus) {
+				voiceStatus.textContent = searchForm?.dataset.voiceError ?? "";
+			}
+		};
+
+		voiceRecognition.onend = () => {
+			setListeningState(false);
+		};
+
+		voiceButton.addEventListener("click", () => {
+			if (!voiceRecognition) return;
+			if (isListening) {
+				voiceRecognition.stop();
+				return;
+			}
+
+			if (voiceStatus) voiceStatus.textContent = "";
+			try {
+				voiceRecognition.start();
+			} catch {
+				if (voiceStatus) {
+					voiceStatus.textContent = searchForm?.dataset.voiceError ?? "";
+				}
+			}
+		});
 	}
 
 	function syncOverflowUI(groupName: FilterGroupName) {
@@ -535,9 +728,10 @@ export function initCardsToolbar() {
 		syncOverflowUI(groupName);
 	}
 
-	function applyFilters(shouldScrollToCards = false) {
+	async function applyFilters(shouldScrollToCards = false) {
 		const query = searchQuery.trim();
-		const rankedResults = getSearchResults(query);
+		const rankedResults = await getSearchResults(query);
+		if (query !== searchQuery.trim()) return;
 		const searchMatches = new Map(
 			rankedResults.map((result, index) => [result.item.element, index]),
 		);
@@ -592,11 +786,10 @@ export function initCardsToolbar() {
 	function scheduleApplyFilters(shouldScrollToCards = false) {
 		window.cancelAnimationFrame(filterFrame);
 		filterFrame = window.requestAnimationFrame(() => {
-			applyFilters(shouldScrollToCards);
+			void applyFilters(shouldScrollToCards);
 		});
 	}
 
-	// Mobile filter panel toggle
 	filtersToggle?.addEventListener("click", () => {
 		if (!filtersPanel) return;
 		const isHidden = filtersPanel.classList.contains("hidden");
@@ -610,6 +803,15 @@ export function initCardsToolbar() {
 	});
 
 	searchClear?.addEventListener("click", clearSearchQuery);
+	searchForm?.addEventListener("submit", (event) => {
+		event.preventDefault();
+		if (!searchInput?.value.trim()) return;
+
+		window.clearTimeout(searchTimer);
+		searchQuery = searchInput.value;
+		hideSuggestions();
+		scheduleApplyFilters(true);
+	});
 
 	(Object.keys(groupElements) as FilterGroupName[]).forEach((groupName) => {
 		const groupElement = groupElements[groupName];
@@ -634,13 +836,14 @@ export function initCardsToolbar() {
 
 	searchInput?.addEventListener("input", (event) => {
 		const value = (event.target as HTMLInputElement).value;
+		syncSearchActions();
 		if (searchClear) {
 			searchClear.hidden = value.trim().length === 0;
 		}
 		window.clearTimeout(searchTimer);
 		searchTimer = window.setTimeout(() => {
 			searchQuery = value;
-			updateSuggestions();
+			void updateSuggestions();
 			scheduleApplyFilters(false);
 		}, 150);
 	});
@@ -663,12 +866,15 @@ export function initCardsToolbar() {
 		}
 	});
 
-	searchInput?.addEventListener("focus", updateSuggestions);
+	searchInput?.addEventListener("focus", () => {
+		void updateSuggestions();
+	});
 	searchInput?.addEventListener("blur", () => {
 		window.setTimeout(hideSuggestions, 120);
 	});
 
+	initVoiceSearch();
 	readStateFromUrl();
 	(Object.keys(state) as FilterGroupName[]).forEach(syncGroupUI);
-	applyFilters();
+	void applyFilters();
 }

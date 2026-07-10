@@ -539,8 +539,6 @@ export function getCountryLabel(country: string, locale: AppLocale): string {
 	return getCountryLabels(country)[locale] ?? country;
 }
 
-// Основные цвета флага по стране (ru-ключ). Белый намеренно опускаем — на светлом фоне он не читается.
-// Используются для ненавязчивого бокового градиента в карточке центра.
 export const countryFlagColorsByRu: Record<string, string[]> = {
 	Россия: ["#0039A6", "#D52B1E"],
 	Казахстан: ["#00AFCA", "#FEC50C"],
@@ -585,7 +583,6 @@ export const countryFlagColorsByRu: Record<string, string[]> = {
 	"Южная Корея": ["#003478", "#C60C30"],
 };
 
-// Возвращает CSS-градиент по цветам флага страны или null, если страна неизвестна.
 export function getCountryGradient(country?: string): string | null {
 	const colors = country ? countryFlagColorsByRu[country] : undefined;
 	if (!colors || colors.length === 0) return null;

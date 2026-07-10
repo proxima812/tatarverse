@@ -9,6 +9,7 @@
 		"astro": "astro",
 		"cf:preview": "bun run build && wrangler pages dev ./dist",
 		"cf:deploy": "bun run build && CLOUDFLARE_ACCOUNT_ID=711d25ce64e87b4faeb50022b3e63631 wrangler pages deploy ./dist --project-name tatarverse --branch main",
+		"cf:deploy:dist": "CLOUDFLARE_ACCOUNT_ID=711d25ce64e87b4faeb50022b3e63631 wrangler pages deploy ./dist --project-name tatarverse --branch main",
 		"release:bump": "node scripts/release-bump.js"
 	},
 	"dependencies": {

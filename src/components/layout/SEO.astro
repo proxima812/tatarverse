@@ -230,6 +230,8 @@ const enabledVerifications = config.site.verifications.filter(
 			<meta property="article:author" content={mainAuthor} />
 			{publishedTime && <meta property="article:published_time" content={publishedTime} />}
 			{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+			{publishedTime && <meta name="pubdate" content={publishedTime} />}
+			{modifiedTime && <meta name="updated" content={modifiedTime} />}
 		</>
 	)
 }

@@ -2,7 +2,6 @@
 
 @plugin "@tailwindcss/typography";
 @plugin "@toolwind/corner-shape";
-/* @custom-variant dark (&:where(.dark, .dark *)); */
 
 @font-face {
   font-family: "Tatarverse Sans";
@@ -54,32 +53,6 @@
     }
   }
 }
-
-/* .dark {
-  --color-background: hsl(0 0% 8%);
-  --color-foreground: hsl(0 0% 94%);
-  --color-muted: hsl(0 0% 16%);
-  --color-muted-foreground: hsl(0 0% 68%);
-  --color-subtle: hsl(0 0% 22%);
-  --color-subtle-foreground: hsl(0 0% 54%);
-  --color-surface: hsl(0 0% 11.4%);
-  --color-surface-foreground: hsl(0 0% 94%);
-  --color-surface-muted: hsl(0 0% 14%);
-  --color-border: hsl(0 0% 24%);
-  --color-border-muted: hsl(0 0% 18%);
-  --color-ring: hsl(0 0% 36%);
-  --color-primary: hsl(0 0% 98%);
-  --color-primary-foreground: hsl(0 0% 10%);
-  --color-link: hsl(0 0% 98%);
-  --color-link-decoration: hsl(0 0% 42%);
-  --color-depth-100: hsl(0 0% 14%);
-  --color-depth-200: hsl(0 0% 22%);
-  --color-depth-300: hsl(0 0% 32%);
-  --color-depth-400: hsl(0 0% 48%);
-  --color-depth-500: hsl(0 0% 64%);
-  --color-depth-600: hsl(0 0% 78%);
-  --color-depth-700: hsl(0 0% 88%);
-} */
 
 @layer base {
   *,

@@ -16,7 +16,8 @@ export const workbox = {
 	cleanupOutdatedCaches: true,
 	navigationPreload: true,
 	navigateFallback: null,
-	globPatterns: ["**/*.{js,css,ico,png,svg,jpg,jpeg,webp,avif,woff2,webmanifest}"],
+	globPatterns: ["**/*.{js,css,ico,woff2,webmanifest}"],
+	globIgnores: ["**/fuse.*.js"],
 	runtimeCaching: [
 		{
 			urlPattern: ({ request }: { request: Request }) => request.mode === "navigate",

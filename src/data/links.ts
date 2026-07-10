@@ -9,7 +9,7 @@ type Link = {
 	target?: "_blank";
 };
 
-export const links = [
+export const links: Link[] = [
 	{
 		label: "Перейти к центрам",
 		labelKey: "nav.toCenters",
@@ -54,16 +54,6 @@ export const links = [
 		size: "default",
 		variant: "outline",
 	},
-	// {
-	// 	label: "Обратная связь",
-	// 	labelKey: "nav.feedback",
-	// 	icon: "mdi:telegram",
-	// 	target: "_blank",
-	// 	class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
-	// 	href: "https://t.me/ulu_er",
-	// 	size: "default",
-	// 	variant: "outline",
-	// },
 	{
 		label: "#сабантуй",
 		labelKey: "nav.sabantuy",
@@ -82,4 +72,4 @@ export const links = [
 		size: "default",
     variant: "ghost",
 	},
-] satisfies Link[];
+];

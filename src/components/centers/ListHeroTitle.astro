@@ -1,5 +1,4 @@
 ---
-// Hero-заголовок страницы списка: практичный вводный блок каталога.
 import CatalogStats from "./CatalogStats.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 
@@ -19,7 +18,6 @@ const stats = Astro.props.stats as Props["stats"] | undefined;
 <section class="not-container pt-8 pb-10 lg:pt-12">
 	<div class="mx-auto max-w-7xl min-w-0 px-6 sm:px-12">
 		<div class="mx-auto flex min-w-0 max-w-5xl flex-col items-center space-y-6 text-center">
-			<!-- <p class="text-sm font-medium text-muted-foreground">{t("list.quickFind")}</p> -->
 			<h1 class="max-w-4xl text-3xl font-bold tracking-[-0.03em] text-foreground sm:text-5xl sm:tracking-[-0.035em] lg:text-6xl">
 				{t("list.title")}
 			</h1>
