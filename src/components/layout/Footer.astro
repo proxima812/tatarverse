@@ -73,15 +73,74 @@ const links = [
 		},
 	},
 ];
+
+const collaborationLinks = [
+	{
+		href: "mailto:kamil.mirikhan@gmail.com",
+		label: "kamil.mirikhan@gmail.com",
+		prefix: t("footer.collaboration.email"),
+		icon: "mdi:email-outline",
+		props: {},
+	},
+	{
+		href: "https://t.me/mirikhan1",
+		label: "@mirikhan1",
+		prefix: "Telegram",
+		icon: "mdi:telegram",
+		props: {
+			target: "_blank",
+			rel: "noreferrer noopener",
+		},
+	},
+];
 ---
 
 <footer class="mt-auto py-6 text-sm sm:text-xs text-subtle-foreground">
 	<Container container>
-		<div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+		<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 			<div class="space-y-1 text-center sm:text-left">
 				<p class="font-bold">&copy; tatarverse.cc {new Date().getFullYear()}</p>
 				<p>v{release.version} · {t("footer.updated", { date: updatedAtLabel })}</p>
 			</div>
+
+			<div
+				class="h-px md:hidden block my-8 w-[calc(100%-180px)] mx-auto bg-linear-to-r from-transparent via-border to-transparent"
+			>
+			</div>
+
+			<section
+				aria-labelledby="footer-collaboration"
+				class="space-y-1 text-center sm:text-left"
+			>
+				<p id="footer-collaboration" class="font-bold text-subtle-foreground">
+					{t("footer.collaboration.title")}
+				</p>
+				<div
+					class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start"
+				>
+					{
+						collaborationLinks.map((link, index) => (
+							<>
+								{index > 0 && (
+									<span class="text-subtle-foreground" aria-hidden="true">
+										·
+									</span>
+								)}
+								<a
+									href={link.href}
+									class={`inline-flex items-center gap-1.5 text-zinc-700 ${baseStyle}`}
+									{...link.props}
+								>
+									<Icon name={link.icon} class="size-4" aria-hidden="true" />
+									<span>
+										{link.prefix}: {link.label}
+									</span>
+								</a>
+							</>
+						))
+					}
+				</div>
+			</section>
 
 			<div
 				class="h-px md:hidden block my-8 w-[calc(100%-180px)] mx-auto bg-linear-to-r from-transparent via-border to-transparent"

@@ -116,6 +116,8 @@ const dict: Dictionary = {
 	"footer.updated": "Updated {date}",
 	"footer.links": "Footer links",
 	"footer.privacy": "Privacy policy",
+	"footer.collaboration.title": "For collaboration",
+	"footer.collaboration.email": "Email",
 	"whoDev.made": "Made",
 	"whoDev.forEveryone": "for everyone",
 	"whoDev.inspired": "inspired by",

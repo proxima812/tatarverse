@@ -116,6 +116,8 @@ const dict: Dictionary = {
 	"footer.updated": "Обновлено {date}",
 	"footer.links": "Ссылки в подвале",
 	"footer.privacy": "Политика конфиденциальности",
+	"footer.collaboration.title": "Для сотрудничества",
+	"footer.collaboration.email": "Почта",
 	"whoDev.made": "Сделано",
 	"whoDev.forEveryone": "для всех",
 	"whoDev.inspired": "вдохновлено",

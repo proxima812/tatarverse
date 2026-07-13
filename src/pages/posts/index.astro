@@ -1,5 +1,6 @@
 ---
 import BackButton from "@/components/navigation/BackButton.astro";
+import PostCard from "@/components/posts/PostCard.astro";
 import Layout from "@/layouts/Layout.astro";
 import { formatContentDateTime, getContentDates } from "@/utils/contentDates";
 import { getCollection, render } from "astro:content";
@@ -58,6 +59,9 @@ const postsFeed = await Promise.all(
 		return {
 			Content,
 			id: getPostAnchor(post.id),
+			title: post.data.title,
+			description: post.data.description,
+			author: post.data.author,
 			isLong: plainText.length > 200,
 			pubDate: post.data.pubDate,
 			publishedDate,
@@ -84,112 +88,40 @@ const latestModifiedDate = postsFeed
 	dateModified={latestModifiedDate}
 >
 	<BackButton href="/" variant="outline" label="Назад" labelKey="nav.back" />
-	<main class="mx-auto w-full max-w-2xl">
+	<main class="mx-auto w-full max-w-3xl">
 		<header class="space-y-3">
 			<h1 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
 				{title}
 			</h1>
-			<p class="text-sm leading-6 text-muted-foreground sm:text-base">
+			<p class="max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
 				{description}
 			</p>
 		</header>
 
 		<section
-			class="mt-6 divide-y divide-border-muted border-y border-border-muted"
+			class="mt-6 grid gap-4 sm:mt-8 sm:gap-5"
 			aria-label="Лента постов"
 		>
 			{
 				postsFeed.map((post) => (
-					<article id={post.id} class="scroll-mt-24 py-5 sm:py-6">
-						<header class="flex min-w-0 items-center gap-1.5 text-sm leading-5">
-							<span class="font-semibold text-foreground">tatarverse</span>
-							<span class="text-subtle-foreground" aria-hidden="true">
-								|
-							</span>
-							<time
-								class="text-muted-foreground"
-								datetime={post.pubDate.toISOString()}
-								title={post.fullDate}
-							>
-								{post.relativeTime}
-							</time>
-							<span class="text-subtle-foreground" aria-hidden="true">
-								|
-							</span>
-							<time
-								class="truncate text-muted-foreground"
-								datetime={post.pubDate.toISOString()}
-							>
-								{post.fullDate}
-							</time>
-						</header>
-
-						<div class="mt-2 text-depth-600 leading-relaxed">
-							<div
-								class:list={[
-									"prose prose-sm max-w-none sm:prose-base prose-p:my-2 prose-blockquote:my-3 first:prose-p:mt-0 last:prose-p:mb-0",
-									post.isLong && "line-clamp-4",
-								]}
-								data-post-text
-							>
-								<post.Content />
-							</div>
-							{post.isLong && (
-								<button
-									type="button"
-									class="mt-1 inline-flex items-center gap-1 text-sm cursor-pointer font-medium text-muted-foreground transition hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [&[aria-expanded='true']_svg]:rotate-180"
-									data-post-toggle
-									aria-expanded="false"
-								>
-									<span data-post-toggle-label>Развернуть</span>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="size-4 transition-transform"
-										aria-hidden="true"
-									>
-										<path d="m6 9 6 6 6-6" />
-									</svg>
-								</button>
-							)}
-							<footer class="mt-4 text-[0.68rem] leading-5 text-muted-foreground/60">
-								{post.publishedLabel && (
-									<time datetime={post.publishedDate?.toISOString()}>
-										Опубликовано: {post.publishedLabel}
-									</time>
-								)}
-								{post.publishedLabel && post.modifiedLabel && <span aria-hidden="true"> · </span>}
-								{post.modifiedLabel && (
-									<time datetime={post.modifiedDate?.toISOString()}>
-										Обновлено: {post.modifiedLabel}
-									</time>
-								)}
-							</footer>
-						</div>
-					</article>
+					<PostCard
+						id={post.id}
+						title={post.title}
+						description={post.description}
+						author={post.author}
+						pubDate={post.pubDate}
+						publishedDate={post.publishedDate}
+						modifiedDate={post.modifiedDate}
+						relativeTime={post.relativeTime}
+						fullDate={post.fullDate}
+						publishedLabel={post.publishedLabel}
+						modifiedLabel={post.modifiedLabel}
+						isLong={post.isLong}
+					>
+						<post.Content />
+					</PostCard>
 				))
 			}
 		</section>
 	</main>
 </Layout>
-
-<script>
-	document.querySelectorAll<HTMLButtonElement>("[data-post-toggle]").forEach((toggle) => {
-		const text = toggle.closest("article")?.querySelector<HTMLElement>("[data-post-text]");
-		const label = toggle.querySelector<HTMLElement>("[data-post-toggle-label]");
-		if (!text || !label) return;
-
-		toggle.addEventListener("click", () => {
-			const expanded = toggle.getAttribute("aria-expanded") === "true";
-
-			text.classList.toggle("line-clamp-4", expanded);
-			toggle.setAttribute("aria-expanded", String(!expanded));
-			label.textContent = expanded ? "Развернуть" : "Свернуть";
-		});
-	});
-</script>

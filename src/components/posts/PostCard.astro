@@ -1,0 +1,143 @@
+---
+interface Props {
+	id: string;
+	title: string;
+	description: string;
+	author: string;
+	pubDate: Date;
+	publishedDate?: Date;
+	modifiedDate?: Date;
+	relativeTime: string;
+	fullDate: string;
+	publishedLabel?: string;
+	modifiedLabel?: string;
+	isLong?: boolean;
+}
+
+const {
+	id,
+	title,
+	description,
+	author,
+	pubDate,
+	publishedDate,
+	modifiedDate,
+	relativeTime,
+	fullDate,
+	publishedLabel,
+	modifiedLabel,
+	isLong,
+} = Astro.props as Props;
+---
+
+<article
+	id={id}
+	class="group scroll-mt-24 rounded-4xl corner-squircle bg-surface p-5 text-surface-foreground shadow-2xs ring ring-border-muted transition duration-300 ease-out hover:bg-surface-muted hover:ring-depth-200 sm:p-6"
+>
+	<header>
+		<div class="flex flex-wrap items-center gap-2 text-xs leading-5">
+			<span class="rounded-full bg-muted px-2.5 py-1 font-medium text-muted-foreground">
+				{author}
+			</span>
+			<time
+				class="rounded-full bg-muted px-2.5 py-1 font-medium tabular-nums text-muted-foreground"
+				datetime={pubDate.toISOString()}
+				title={fullDate}
+			>
+				{relativeTime}
+			</time>
+			<time
+				class="text-muted-foreground"
+				datetime={pubDate.toISOString()}
+			>
+				{fullDate}
+			</time>
+		</div>
+
+		<h2 class="mt-4 text-xl font-bold leading-tight tracking-tight text-foreground sm:text-2xl">
+			<a
+				href={`#${id}`}
+				class="wrap-anywhere rounded-lg no-underline outline-none transition hover:text-depth-600 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+			>
+				{title}
+			</a>
+		</h2>
+
+		<p class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+			{description}
+		</p>
+	</header>
+
+	<div class="mt-5 rounded-3xl corner-squircle bg-background p-4 ring ring-border-muted sm:p-5">
+		<div
+			class:list={[
+				"prose prose-sm max-w-none text-depth-600 sm:prose-base prose-p:my-2 prose-a:font-medium prose-a:text-link prose-a:decoration-link-decoration prose-a:underline-offset-4 prose-blockquote:my-3 first:prose-p:mt-0 last:prose-p:mb-0",
+				isLong && "line-clamp-5",
+			]}
+			data-post-text
+		>
+			<slot />
+		</div>
+
+		{
+			isLong && (
+				<button
+					type="button"
+					class="mt-3 inline-flex cursor-pointer items-center gap-1 rounded-lg text-sm font-medium text-muted-foreground transition hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring [&[aria-expanded='true']_svg]:rotate-180"
+					data-post-toggle
+					aria-expanded="false"
+				>
+					<span data-post-toggle-label>Развернуть</span>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="size-4 transition-transform"
+						aria-hidden="true"
+					>
+						<path d="m6 9 6 6 6-6" />
+					</svg>
+				</button>
+			)
+		}
+	</div>
+
+	<footer class="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.72rem] leading-5 text-muted-foreground">
+		{
+			publishedLabel && (
+				<time datetime={publishedDate?.toISOString()}>
+					Опубликовано: {publishedLabel}
+				</time>
+			)
+		}
+		{publishedLabel && modifiedLabel && <span class="hidden sm:inline" aria-hidden="true">·</span>}
+		{
+			modifiedLabel && (
+				<time datetime={modifiedDate?.toISOString()}>
+					Обновлено: {modifiedLabel}
+				</time>
+			)
+		}
+	</footer>
+</article>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>("[data-post-toggle]").forEach((toggle) => {
+		const text = toggle.closest("article")?.querySelector<HTMLElement>("[data-post-text]");
+		const label = toggle.querySelector<HTMLElement>("[data-post-toggle-label]");
+		if (!text || !label || toggle.dataset.postToggleReady) return;
+
+		toggle.dataset.postToggleReady = "true";
+		toggle.addEventListener("click", () => {
+			const expanded = toggle.getAttribute("aria-expanded") === "true";
+
+			text.classList.toggle("line-clamp-5", expanded);
+			toggle.setAttribute("aria-expanded", String(!expanded));
+			label.textContent = expanded ? "Развернуть" : "Свернуть";
+		});
+	});
+</script>
