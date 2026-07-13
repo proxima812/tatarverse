@@ -10,9 +10,11 @@ const CENTER_CATEGORIES = [
 ] as const;
 
 const CENTER_TYPES = ["Регион РФ", "Зарубежный", "Онлайн"] as const;
+const PROJECT_CATEGORIES = ["Общепит"] as const;
 
 const CenterCategorySchema = z.enum(CENTER_CATEGORIES);
 const CenterTypeSchema = z.enum(CENTER_TYPES);
+const ProjectCategorySchema = z.enum(PROJECT_CATEGORIES);
 
 const CenterLocationSchema = z
 	.object({
@@ -29,7 +31,7 @@ const CenterSchema = z
 		pubDate: z.string().optional(),
 		type: CenterTypeSchema.optional(),
 		category: CenterCategorySchema.optional(),
-			source: z.url().optional(),
+		source: z.url().optional(),
 		summary: z.string().optional(),
 		location: CenterLocationSchema.optional(),
 	})
@@ -50,6 +52,23 @@ const PostSchema = z
 		...data,
 		publishedDate: data.pubDate,
 	}));
+
+const ProjectSchema = z
+	.object({
+		title: z.string().min(1),
+		description: z.string().min(1),
+		category: ProjectCategorySchema,
+		location: z.string().min(1).optional(),
+		logo: z.string().min(1),
+		image: z.string().min(1),
+		instagram: z.url().optional(),
+		website: z.url().optional(),
+		orderLabel: z.string().min(1).optional(),
+		orderUrl: z.url().optional(),
+		tags: z.array(z.string()).default([]),
+		sortOrder: z.number().default(0),
+	})
+	.strict();
 
 const centers = defineCollection({
 	loader: glob({
@@ -75,10 +94,19 @@ const posts = defineCollection({
 	schema: PostSchema,
 });
 
+const projects = defineCollection({
+	loader: glob({
+		pattern: "**/*.{md,mdx}",
+		base: "./src/data/projects",
+	}),
+	schema: ProjectSchema,
+});
+
 export const collections = {
 	centers,
 	centersEn,
 	posts,
+	projects,
 };
 
 export type CenterCategory = z.infer<typeof CenterCategorySchema>;
@@ -86,3 +114,5 @@ export type CenterType = z.infer<typeof CenterTypeSchema>;
 export type CenterLocation = z.infer<typeof CenterLocationSchema>;
 export type CenterData = z.infer<typeof CenterSchema>;
 export type PostData = z.infer<typeof PostSchema>;
+export type ProjectCategory = z.infer<typeof ProjectCategorySchema>;
+export type ProjectData = z.infer<typeof ProjectSchema>;

@@ -1,20 +1,50 @@
 ---
 import BackButton from "@/components/navigation/BackButton.astro";
 import Layout from "@/layouts/Layout.astro";
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import type { ImageMetadata } from "astro";
 
 const title = "#поддержка";
 const description =
 	"Поддержка в tatarverse: витрина проектов татар, башкир и крымских татар — малый и средний бизнес, YouTube-каналы, сайты, Telegram-каналы и другие соцсети. Расскажите о своём проекте, чтобы его заметили.";
 
-const categories = [
-	"Малый и средний бизнес",
-	"YouTube-каналы",
-	"Сайты",
-	"Telegram-каналы",
-	"Соцсети",
-];
-
 const feedbackHref = "https://t.me/ulu_er/20";
+const projects = (await getCollection("projects")).sort(
+	(a, b) => a.data.sortOrder - b.data.sortOrder || a.data.title.localeCompare(b.data.title, "ru"),
+);
+const categories = Array.from(new Set(projects.map((project) => project.data.category)));
+const projectAssets = import.meta.glob<{ default: ImageMetadata }>(
+	"../assets/projects/**/*.{jpg,jpeg,png,webp}",
+	{ eager: true },
+);
+
+function getProjectAsset(path: string) {
+	const asset = projectAssets[`../assets/projects/${path}`]?.default;
+
+	if (!asset) {
+		throw new Error(`Project asset not found: ${path}`);
+	}
+
+	return asset;
+}
+
+function getUrlLabel(url?: string) {
+	if (!url) return null;
+
+	try {
+		return new URL(url).hostname.replace(/^www\./, "");
+	} catch {
+		return url;
+	}
+}
+
+const projectCards = projects.map((project) => ({
+	entry: project,
+	detailHref: `/support/${project.id}/`,
+	logo: getProjectAsset(project.data.logo),
+	websiteLabel: getUrlLabel(project.data.website),
+}));
 ---
 
 <Layout
@@ -28,6 +58,8 @@ const feedbackHref = "https://t.me/ulu_er/20";
 		"татары",
 		"башкиры",
 		"крымские татары",
+		"общепит",
+		"Burger Point",
 	]}
 >
 	<BackButton href="/" variant="outline" label="Назад" labelKey="nav.back" />
@@ -97,21 +129,71 @@ const feedbackHref = "https://t.me/ulu_er/20";
 			</div>
 		</article>
 	</main>
-	<section class="grid grid-cols-1 md:grid-cols-2 gap-5" aria-label="Проекты сообщества">
+	<section class="mx-auto w-full max-w-4xl space-y-5" aria-label="Проекты сообщества">
 		{
-			Array.from({ length: 4 }).map(() => (
+			projectCards.map(({ entry: project, detailHref, logo, websiteLabel }) => (
 				<article
-					class="corner-squircle relative select-none overflow-hidden rounded-4xl bg-muted/50 p-5 opacity-60 ring ring-inset ring-border sm:p-6"
-					aria-disabled="true"
+					class="corner-squircle rounded-4xl bg-surface p-5 text-surface-foreground shadow-2xs ring ring-border-muted sm:flex sm:items-center sm:justify-between sm:gap-5 sm:p-6"
 				>
-					<span class="inline-flex items-center rounded-full bg-foreground/10 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
-						Скоро
-					</span>
-					<h3 class="mt-4 text-lg font-bold tracking-tight text-muted-foreground">Проект</h3>
-					<p class="mt-1 text-sm text-muted-foreground/70">Название уточняется</p>
-					<div class="mt-5 space-y-2" aria-hidden="true">
-						<div class="h-2 w-3/4 rounded-full bg-foreground/10" />
-						<div class="h-2 w-1/2 rounded-full bg-foreground/10" />
+					<div class="flex min-w-0 items-center gap-4">
+						<Image
+							src={logo}
+							alt={`Логотип ${project.data.title}`}
+							class="size-16 shrink-0 rounded-2xl bg-white object-contain p-1 ring ring-border-muted"
+							widths={[64, 128]}
+							sizes="4rem"
+							loading="lazy"
+						/>
+						<div class="min-w-0">
+							<div class="flex flex-wrap items-center gap-2">
+								<span class="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary ring ring-inset ring-primary/10">
+									{project.data.category}
+								</span>
+								{
+									project.data.location ? (
+										<span class="text-sm font-medium text-muted-foreground">
+											{project.data.location}
+										</span>
+									) : null
+								}
+							</div>
+							<h3 class="mt-2 truncate text-xl font-bold tracking-tight">
+								{project.data.title}
+							</h3>
+							{
+								project.data.website && websiteLabel ? (
+									<a
+										href={project.data.website}
+										target="_blank"
+										rel="noreferrer noopener"
+										class="mt-1 block truncate text-sm font-medium text-link underline decoration-link-decoration underline-offset-4"
+									>
+										{websiteLabel}
+									</a>
+								) : null
+							}
+						</div>
+					</div>
+
+					<div class="mt-5 flex flex-wrap gap-2 sm:mt-0 sm:justify-end">
+						<a
+							href={detailHref}
+							class="inline-flex items-center rounded-2xl corner-squircle bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground no-underline transition hover:bg-primary/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+						>
+							Подробнее
+						</a>
+						{
+							project.data.instagram ? (
+								<a
+									href={project.data.instagram}
+									target="_blank"
+									rel="noreferrer noopener"
+									class="inline-flex items-center rounded-2xl corner-squircle bg-transparent px-4 py-2 text-sm font-semibold text-primary/80 no-underline ring ring-inset ring-primary/10 transition hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+								>
+									Instagram
+								</a>
+							) : null
+						}
 					</div>
 				</article>
 			))
