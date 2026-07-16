@@ -1,13 +1,10 @@
 ---
 import BackButton from "@/components/navigation/BackButton.astro";
 import Layout from "@/layouts/Layout.astro";
-import {
-	getProjectAsset,
-	getProjectGradient,
-	getProjectInitial,
-} from "@/utils/projects";
+import { getProjectAsset, getProjectGradient } from "@/utils/projects";
 import { Image } from "astro:assets";
 import { getCollection, render, type CollectionEntry } from "astro:content";
+import { Icon } from "astro-icon/components";
 
 export async function getStaticPaths() {
 	const projects = await getCollection("projects");
@@ -63,12 +60,10 @@ const websiteLabel = getUrlLabel(data.website);
 						/>
 					) : (
 						<div
-							class="flex size-20 shrink-0 items-center justify-center rounded-3xl text-3xl font-bold text-white ring ring-inset ring-white/15"
+							class="size-20 shrink-0 rounded-3xl ring ring-inset ring-white/15"
 							style={`background:${getProjectGradient(data.title)}`}
 							aria-hidden="true"
-						>
-							{getProjectInitial(data.title)}
-						</div>
+						/>
 					)}
 					<div class="min-w-0">
 						<div class="flex flex-wrap items-center gap-2">
@@ -118,8 +113,9 @@ const websiteLabel = getUrlLabel(data.website);
 								href={data.instagram}
 								target="_blank"
 								rel="noreferrer noopener"
-								class="inline-flex items-center rounded-2xl corner-squircle bg-transparent px-4 py-2 text-sm font-semibold text-primary/80 no-underline ring ring-inset ring-primary/10 transition hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+								class="inline-flex items-center gap-2 rounded-2xl corner-squircle bg-transparent px-4 py-2 text-sm font-semibold text-primary/80 no-underline ring ring-inset ring-primary/10 transition hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 							>
+								<Icon name="mdi:instagram" class="size-4" aria-hidden="true" />
 								Instagram
 							</a>
 						) : null
@@ -136,17 +132,7 @@ const websiteLabel = getUrlLabel(data.website);
 				widths={[640, 960, 1280]}
 				sizes="(min-width: 1024px) 56rem, 100vw"
 			/>
-		) : (
-			<div
-				class="corner-squircle relative flex h-64 w-full items-center justify-center overflow-hidden rounded-4xl shadow-2xs ring ring-inset ring-white/10 sm:h-80"
-				style={`background:${getProjectGradient(data.title)}`}
-				aria-hidden="true"
-			>
-				<span class="text-6xl font-bold text-white/90 drop-shadow sm:text-7xl">
-					{getProjectInitial(data.title)}
-				</span>
-			</div>
-		)}
+		) : null}
 
 		<section class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_16rem]" aria-label="Описание проекта">
 			<article
