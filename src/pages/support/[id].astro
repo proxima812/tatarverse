@@ -1,9 +1,13 @@
 ---
 import BackButton from "@/components/navigation/BackButton.astro";
 import Layout from "@/layouts/Layout.astro";
+import {
+	getProjectAsset,
+	getProjectGradient,
+	getProjectInitial,
+} from "@/utils/projects";
 import { Image } from "astro:assets";
 import { getCollection, render, type CollectionEntry } from "astro:content";
-import type { ImageMetadata } from "astro";
 
 export async function getStaticPaths() {
 	const projects = await getCollection("projects");
@@ -21,20 +25,6 @@ interface Props {
 const { project } = Astro.props as Props;
 const { Content } = await render(project);
 const data = project.data;
-const projectAssets = import.meta.glob<{ default: ImageMetadata }>(
-	"../../assets/projects/**/*.{jpg,jpeg,png,webp}",
-	{ eager: true },
-);
-
-function getProjectAsset(path: string) {
-	const asset = projectAssets[`../../assets/projects/${path}`]?.default;
-
-	if (!asset) {
-		throw new Error(`Project asset not found: ${path}`);
-	}
-
-	return asset;
-}
 
 function getUrlLabel(url?: string) {
 	if (!url) return null;
@@ -63,13 +53,23 @@ const websiteLabel = getUrlLabel(data.website);
 		>
 			<div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
 				<div class="flex min-w-0 items-center gap-4">
-					<Image
-						src={logo}
-						alt={`Логотип ${data.title}`}
-						class="size-20 shrink-0 rounded-3xl bg-white object-contain p-1.5 ring ring-border-muted"
-						widths={[80, 160]}
-						sizes="5rem"
-					/>
+					{logo ? (
+						<Image
+							src={logo}
+							alt={`Логотип ${data.title}`}
+							class="size-20 shrink-0 rounded-3xl bg-white object-contain p-1.5 ring ring-border-muted"
+							widths={[80, 160]}
+							sizes="5rem"
+						/>
+					) : (
+						<div
+							class="flex size-20 shrink-0 items-center justify-center rounded-3xl text-3xl font-bold text-white ring ring-inset ring-white/15"
+							style={`background:${getProjectGradient(data.title)}`}
+							aria-hidden="true"
+						>
+							{getProjectInitial(data.title)}
+						</div>
+					)}
 					<div class="min-w-0">
 						<div class="flex flex-wrap items-center gap-2">
 							<span class="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary ring ring-inset ring-primary/10">
@@ -128,13 +128,25 @@ const websiteLabel = getUrlLabel(data.website);
 			</div>
 		</header>
 
-		<Image
-			src={image}
-			alt={`Фото проекта ${data.title}`}
-			class="corner-squircle max-h-[34rem] w-full rounded-4xl object-cover shadow-2xs ring ring-border-muted"
-			widths={[640, 960, 1280]}
-			sizes="(min-width: 1024px) 56rem, 100vw"
-		/>
+		{image ? (
+			<Image
+				src={image}
+				alt={`Фото проекта ${data.title}`}
+				class="corner-squircle max-h-[34rem] w-full rounded-4xl object-cover shadow-2xs ring ring-border-muted"
+				widths={[640, 960, 1280]}
+				sizes="(min-width: 1024px) 56rem, 100vw"
+			/>
+		) : (
+			<div
+				class="corner-squircle relative flex h-64 w-full items-center justify-center overflow-hidden rounded-4xl shadow-2xs ring ring-inset ring-white/10 sm:h-80"
+				style={`background:${getProjectGradient(data.title)}`}
+				aria-hidden="true"
+			>
+				<span class="text-6xl font-bold text-white/90 drop-shadow sm:text-7xl">
+					{getProjectInitial(data.title)}
+				</span>
+			</div>
+		)}
 
 		<section class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_16rem]" aria-label="Описание проекта">
 			<article

@@ -12,16 +12,6 @@ const rootDir = path.join(__dirname, "..");
 const packagePath = path.join(rootDir, "package.json");
 const releasePath = path.join(rootDir, "src/data/release.json");
 const releaseFiles = new Set(["package.json", "src/data/release.json"]);
-const contentOrUiPatterns = [
-	/^src\/components\//,
-	/^src\/content\//,
-	/^src\/data\//,
-	/^src\/i18n\//,
-	/^src\/layouts\//,
-	/^src\/pages\//,
-	/\.mdx?$/,
-];
-
 const RU_MONTHS = [
 	"января",
 	"февраля",
@@ -93,24 +83,10 @@ function getChangedFiles() {
 		.filter((file) => !releaseFiles.has(file));
 }
 
-function touchesContentOrUi(file) {
-	return contentOrUiPatterns.some((pattern) => pattern.test(file));
-}
-
 function detectBumpType() {
 	const changedFiles = getChangedFiles();
 
 	if (changedFiles.length === 0) return null;
-
-	const contentOrUiFiles = changedFiles.filter(touchesContentOrUi);
-
-	if (changedFiles.length >= 8 && contentOrUiFiles.length > 0) {
-		return "major";
-	}
-
-	if (changedFiles.length >= 3 || contentOrUiFiles.length > 0) {
-		return "minor";
-	}
 
 	return "patch";
 }

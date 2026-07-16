@@ -10,7 +10,12 @@ const CENTER_CATEGORIES = [
 ] as const;
 
 const CENTER_TYPES = ["Регион РФ", "Зарубежный", "Онлайн"] as const;
-const PROJECT_CATEGORIES = ["Общепит"] as const;
+const PROJECT_CATEGORIES = [
+	"Общепит",
+	"Бизнес",
+	"Медиа",
+	"Образование",
+] as const;
 
 const CenterCategorySchema = z.enum(CENTER_CATEGORIES);
 const CenterTypeSchema = z.enum(CENTER_TYPES);
@@ -59,8 +64,8 @@ const ProjectSchema = z
 		description: z.string().min(1),
 		category: ProjectCategorySchema,
 		location: z.string().min(1).optional(),
-		logo: z.string().min(1),
-		image: z.string().min(1),
+		logo: z.string().min(1).optional(),
+		image: z.string().min(1).optional(),
 		instagram: z.url().optional(),
 		website: z.url().optional(),
 		orderLabel: z.string().min(1).optional(),
