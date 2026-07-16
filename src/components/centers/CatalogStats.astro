@@ -1,29 +1,47 @@
 ---
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { CENTER_KIND_ICONS, type CenterKindBucket } from "@/utils/centerKinds";
 import { Icon } from "astro-icon/components";
 
 interface Props {
 	count: number;
 	countries: number;
 	regions: number;
+	/** Optional kind composition. When present, tiles are merged into one grid. */
+	buckets?: CenterKindBucket[];
 	class?: string;
 }
 
-const { count, countries, regions, class: className } = Astro.props as Props;
+const { count, countries, regions, buckets, class: className } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
+const hasBuckets = Boolean(buckets?.length);
+
 const items = [
-	{ icon: "mdi:map-marker-radius", label: t("list.stat.centers"), value: count },
+	{
+		icon: "mdi:map-marker-radius",
+		label: hasBuckets ? t("list.stat.total") : t("list.stat.centers"),
+		value: count,
+	},
 	{ icon: "mdi:earth", label: t("list.stat.countries"), value: countries },
 	{ icon: "mdi:map-outline", label: t("list.stat.regions"), value: regions },
+	...(buckets ?? []).map((bucket) => ({
+		icon: CENTER_KIND_ICONS[bucket.kind],
+		label: t(`kind.${bucket.kind}`),
+		value: bucket.count,
+	})),
 ];
+
+const gridClass = hasBuckets
+	? "grid w-full max-w-3xl grid-cols-2 gap-2 sm:grid-cols-3"
+	: "grid w-full max-w-md grid-cols-3 gap-2";
 ---
 
-<dl class:list={["stats-focus grid w-full max-w-md grid-cols-3 gap-2", className]}>
+<dl class:list={["stats-focus", gridClass, className]}>
 	{
 		items.map((item, index) => (
-			<div class="stats-focus__item flex items-center justify-center gap-1.5 rounded-2xl corner-squircle bg-surface px-2.5 py-2 ring ring-depth-100/60" style={`--i: ${index}`}>
+			<div class:list={["stats-focus__item flex items-center gap-1.5 rounded-2xl corner-squircle bg-surface px-2.5 py-2 ring ring-depth-100/60", hasBuckets ? "justify-start" : "justify-center"]} style={`--i: ${index}`}>
 				<Icon name={item.icon} class="stats-focus__icon size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
 				<dd class="text-base font-semibold tracking-tight tabular-nums text-foreground sm:text-lg">
 					<span class="stats-focus__number" style={`--target: ${item.value}; --i: ${index}`} aria-hidden="true" />

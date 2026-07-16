@@ -1,12 +1,14 @@
 ---
 import CatalogStats from "./CatalogStats.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import type { CenterKindBucket } from "@/utils/centerKinds";
 
 interface Props {
 	stats?: {
 		count: number;
 		countries: number;
 		regions: number;
+		buckets?: CenterKindBucket[];
 	};
 }
 
@@ -30,6 +32,7 @@ const stats = Astro.props.stats as Props["stats"] | undefined;
 						count={stats.count}
 						countries={stats.countries}
 						regions={stats.regions}
+						buckets={stats.buckets}
 						class="pt-2"
 					/>
 				)

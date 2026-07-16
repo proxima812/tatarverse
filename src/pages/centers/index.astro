@@ -2,16 +2,24 @@
 import { ListCards, ListHeroTitle } from "@/components";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
+import { getCenterKindBreakdown } from "@/utils/centerKinds";
 import { getCollection } from "astro:content";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const allCards = locale === "en" ? await getCollection("centersEn") : await getCollection("centers");
-const cards = allCards.length > 0 ? allCards : await getCollection("centers");
-const countriesCount = new Set(cards.map((card) => card.data.location?.country).filter(Boolean)).size;
-const regionsCount = new Set(cards.map((card) => card.data.location?.region).filter(Boolean)).size;
+// Stats are catalog facts, so derive them from the Russian source collection —
+// this keeps the counter identical and consistent (buckets sum to the total)
+// on both locales, even while English translations lag behind.
+const sourceCenters = await getCollection("centers");
+const countriesCount = new Set(
+	sourceCenters.map((card) => card.data.location?.country).filter(Boolean),
+).size;
+const regionsCount = new Set(
+	sourceCenters.map((card) => card.data.location?.region).filter(Boolean),
+).size;
+const kindBreakdown = getCenterKindBreakdown(sourceCenters);
 const seoStats = {
-	count: cards.length,
+	count: sourceCenters.length,
 	countries: countriesCount,
 	regions: regionsCount,
 };
@@ -25,7 +33,7 @@ const seoStats = {
 		"татары",
 		"башкиры",
 		"крымские татары",
-		`${cards.length} карточек ТБК`,
+		`${sourceCenters.length} карточек ТБК`,
 		`стран: ${countriesCount}`,
 		`регионов: ${regionsCount}`,
 		"все страны",
@@ -37,6 +45,6 @@ const seoStats = {
 		"крымскотатарская диаспора",
 	]}
 >
-	<ListHeroTitle stats={seoStats} />
+	<ListHeroTitle stats={{ ...seoStats, buckets: kindBreakdown }} />
 	<ListCards />
 </Layout>
