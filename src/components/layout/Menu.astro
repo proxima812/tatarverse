@@ -168,9 +168,11 @@ const mobileTextLinkClass =
 					{
 						otherLinks.map((item) => (
 							<ButtonLink
-								variant="disabled"
+								variant="ghost"
+								icon={item.icon}
 								class={mobileLinkClass}
 								href={item.href}
+								target={item.target}
 								label={item.label}
 								labelKey={item.labelKey}
 							/>
