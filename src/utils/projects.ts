@@ -28,21 +28,33 @@ export function getProjectGradient(seed: string): string {
 		hash |= 0;
 	}
 
-	const palettes = [
-		[218, 238, 194, 262],
-		[276, 306, 334, 248],
-		[164, 192, 220, 142],
-		[24, 46, 348, 292],
-		[202, 226, 252, 176],
-		[338, 8, 36, 310],
+	const gradients = [
+		[
+			"radial-gradient(78% 70% at 68% 76%, rgb(88 88 245 / 0.78), transparent 66%)",
+			"radial-gradient(70% 60% at 40% 28%, rgb(239 248 255 / 0.7), transparent 62%)",
+			"linear-gradient(150deg, #c8effa 0%, #aee6df 100%)",
+		],
+		[
+			"radial-gradient(78% 70% at 68% 76%, rgb(37 126 224 / 0.72), transparent 66%)",
+			"radial-gradient(70% 60% at 42% 28%, rgb(234 255 225 / 0.68), transparent 62%)",
+			"linear-gradient(150deg, #b9f4c8 0%, #a9e9b7 100%)",
+		],
+		[
+			"radial-gradient(78% 70% at 68% 76%, rgb(255 82 42 / 0.74), transparent 66%)",
+			"radial-gradient(68% 58% at 44% 36%, rgb(255 221 73 / 0.62), transparent 62%)",
+			"linear-gradient(150deg, #f4d1ac 0%, #f6c59f 100%)",
+		],
+		[
+			"radial-gradient(78% 70% at 68% 76%, rgb(219 20 100 / 0.74), transparent 66%)",
+			"radial-gradient(72% 62% at 40% 64%, rgb(100 76 238 / 0.6), transparent 64%)",
+			"linear-gradient(150deg, #d99bed 0%, #d992dc 100%)",
+		],
+		[
+			"radial-gradient(78% 70% at 62% 78%, rgb(255 49 32 / 0.76), transparent 66%)",
+			"radial-gradient(68% 58% at 40% 36%, rgb(255 220 217 / 0.68), transparent 62%)",
+			"linear-gradient(150deg, #f5b2b8 0%, #f0a5a9 100%)",
+		],
 	] as const;
-	const [hue, hue2, hue3, hue4] = palettes[Math.abs(hash) % palettes.length];
 
-	return [
-		`radial-gradient(110% 90% at 4% 0%, hsl(${hue} 92% 72% / 0.95), transparent 57%)`,
-		`radial-gradient(100% 92% at 100% 8%, hsl(${hue2} 84% 65% / 0.82), transparent 58%)`,
-		`radial-gradient(105% 94% at 86% 100%, hsl(${hue3} 78% 57% / 0.72), transparent 62%)`,
-		`radial-gradient(96% 90% at 0% 100%, hsl(${hue4} 72% 53% / 0.62), transparent 60%)`,
-		`linear-gradient(145deg, hsl(${hue} 56% 42%), hsl(${hue3} 52% 30%))`,
-	].join(", ");
+	return gradients[Math.abs(hash) % gradients.length].join(", ");
 }
