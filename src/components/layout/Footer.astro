@@ -234,7 +234,7 @@ const sectionById = new Map(footerSections.map((section) => [section.id, section
 const footerColumns: FooterSection[][] = [
 	["navigation", "materials", "about"],
 	["posts", "added"],
-	["contacts", "open-source"],
+	["contacts", "open-source", "collab"],
 ].map((ids) => ids.map((id) => sectionById.get(id)).filter((s): s is FooterSection => !!s));
 ---
 
