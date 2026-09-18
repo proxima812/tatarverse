@@ -11,10 +11,6 @@ interface Props {
 
 const { group, label, value, count, flag, all = false } = Astro.props as Props;
 
-const chipClass =
-	"group flex min-w-0 max-w-fit cursor-pointer items-center gap-1.5 rounded-full bg-surface-muted px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition not-data-[active]:hover:bg-subtle hover:text-foreground data-[active]:bg-accent data-[active]:text-accent-foreground lg:w-full lg:max-w-none lg:rounded-micro lg:corner-squircle lg:bg-transparent lg:px-2 lg:not-data-[active]:hover:bg-surface-muted lg:data-[active]:bg-accent-soft lg:data-[active]:font-semibold lg:data-[active]:text-accent-soft-foreground";
-const countClass =
-	"shrink-0 text-xs tabular-nums text-subtle-foreground group-data-[active]:text-current lg:ml-auto lg:pl-2";
 ---
 
 <button
@@ -24,13 +20,13 @@ const countClass =
 	data-filter-value={all ? undefined : value}
 	data-active={all ? "" : undefined}
 	aria-pressed={all ? "true" : "false"}
-	class={chipClass}
+	class="catalog-filter-chip group"
 >
 	{flag && <span class="shrink-0 text-sm leading-none">{flag}</span>}
 	<span class="min-w-0 truncate" data-chip-label>{label}</span>
 	{
 		count !== undefined && (
-			<span class={countClass} data-chip-count>
+			<span class="catalog-filter-count" data-chip-count>
 				{count}
 			</span>
 		)

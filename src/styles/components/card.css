@@ -1,0 +1,74 @@
+/**
+ * Карточка центра (`ui/CardItem.astro`) и чип фильтра
+ * (`centers/FilterChip.astro`).
+ *
+ * Классы вынесены из разметки не ради красоты: на /centers/ карточка
+ * повторяется сотни раз, и утилитарные простыни давали ~800 КБ HTML.
+ * Здесь тот же набор утилит через @apply — визуально ничего не меняется.
+ * Элементы с вариантом `group-*` рассчитывают на класс `group`
+ * на самой карточке/чипе — он остаётся в разметке.
+ */
+
+.catalog-card {
+	@apply relative flex h-full min-w-0 flex-col gap-3 rounded-catalog corner-squircle bg-surface p-6 text-surface-foreground transition duration-300 ease-out hover:surface-lift has-[[data-card-link]:focus-visible]:outline-2 has-[[data-card-link]:focus-visible]:outline-offset-2 has-[[data-card-link]:focus-visible]:outline-accent;
+}
+
+.catalog-card-location {
+	@apply flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-muted-foreground;
+}
+
+.catalog-card-flag {
+	@apply shrink-0 text-base leading-none;
+}
+
+.catalog-card-title-row {
+	@apply flex min-w-0 items-center gap-3;
+}
+
+.catalog-card-mark {
+	@apply size-9 shrink-0 rounded-full transition-transform duration-300 ease-out group-hover:scale-110;
+}
+
+.catalog-card-heading {
+	@apply min-w-0 wrap-anywhere font-bold leading-snug tracking-tight;
+}
+
+.catalog-card-link {
+	@apply text-surface-foreground no-underline before:absolute before:inset-0 before:rounded-catalog before:content-[''] focus-visible:outline-hidden;
+}
+
+.catalog-card-summary {
+	@apply line-clamp-2 text-sm leading-6 text-muted-foreground;
+}
+
+.catalog-card-meta {
+	@apply mt-auto flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 pt-1 text-xs text-muted-foreground;
+}
+
+.catalog-card-chip {
+	@apply inline-flex min-w-0 items-center rounded-micro corner-squircle bg-surface-muted px-2 py-1;
+}
+
+.catalog-card-date {
+	@apply ml-auto shrink-0 tabular-nums text-subtle-foreground;
+}
+
+.catalog-card-links {
+	@apply flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 pt-1;
+}
+
+.catalog-quick-link {
+	@apply relative z-10 inline-flex min-w-0 items-center gap-1 text-xs font-medium text-muted-foreground no-underline transition hover:text-foreground;
+}
+
+.catalog-card-more {
+	@apply ml-auto inline-flex shrink-0 items-center gap-1 rounded-full corner-squircle bg-surface-muted px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors duration-300 ease-out group-hover:bg-accent group-hover:text-accent-foreground;
+}
+
+.catalog-filter-chip {
+	@apply flex min-w-0 max-w-fit cursor-pointer items-center gap-1.5 rounded-full bg-surface-muted px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition not-data-[active]:hover:bg-subtle hover:text-foreground data-[active]:bg-accent data-[active]:text-accent-foreground lg:w-full lg:max-w-none lg:rounded-micro lg:corner-squircle lg:bg-transparent lg:px-2 lg:not-data-[active]:hover:bg-surface-muted lg:data-[active]:bg-accent-soft lg:data-[active]:font-semibold lg:data-[active]:text-accent-soft-foreground;
+}
+
+.catalog-filter-count {
+	@apply shrink-0 text-xs tabular-nums text-subtle-foreground group-data-[active]:text-current lg:ml-auto lg:pl-2;
+}
