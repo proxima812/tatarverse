@@ -11,7 +11,12 @@ import type { CenterScope, FacetKey } from "@/lib/types";
 
 const SCOPE_KEY = "scope";
 const QUERY_KEY = "q";
+const SORT_KEY = "sort";
 const LEGACY_TYPE_KEY = "type";
+
+export type CatalogSort = "recency" | "alpha" | "country";
+
+const KNOWN_SORTS: readonly CatalogSort[] = ["recency", "alpha", "country"];
 
 /** Ссылки, разошедшиеся до перехода на `scope`, обязаны продолжать работать. */
 const LEGACY_TYPE_TO_SCOPE: Record<string, CenterScope> = {
@@ -22,6 +27,7 @@ const LEGACY_TYPE_TO_SCOPE: Record<string, CenterScope> = {
 
 export interface CatalogQuery extends FilterSnapshot {
 	search: string;
+	sort: CatalogSort;
 }
 
 /**
@@ -49,9 +55,12 @@ export function readCatalogQuery(
 		selections[key] = value ? [value] : [];
 	}
 
+	const requestedSort = params.get(SORT_KEY) as CatalogSort;
+
 	return {
 		search: params.get(QUERY_KEY) ?? "",
 		scope: isKnownScope(requested) ? requested : "",
+		sort: KNOWN_SORTS.includes(requestedSort) ? requestedSort : "recency",
 		selections,
 	};
 }
@@ -67,11 +76,13 @@ export function writeCatalogQuery(
 
 	url.searchParams.delete(QUERY_KEY);
 	url.searchParams.delete(SCOPE_KEY);
+	url.searchParams.delete(SORT_KEY);
 	url.searchParams.delete(LEGACY_TYPE_KEY);
 	for (const key of facetKeys) url.searchParams.delete(key);
 
 	if (query) url.searchParams.set(QUERY_KEY, query);
 	if (state.scope) url.searchParams.set(SCOPE_KEY, state.scope);
+	if (state.sort !== "recency") url.searchParams.set(SORT_KEY, state.sort);
 	for (const key of facetKeys) {
 		for (const value of state.selections[key] ?? []) url.searchParams.append(key, value);
 	}

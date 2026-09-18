@@ -1,42 +1,18 @@
 ---
-import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
-import { Icon } from "astro-icon/components";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+
+/**
+ * Заголовок каталога скрыт визуально, но остаётся в разметке для SEO и
+ * скринридеров: страница начинается сразу с поиска и карточек, а h1 и
+ * вводный абзац читают только роботы. Ссылки «Статистика» и «Печать»,
+ * жившие в герое, переехали в низ панели фильтров (`Toolbar.astro`).
+ */
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const showPrintLink = locale === "ru";
-const statsHref = localizePath(locale, "/stats");
 ---
 
-<section class="not-container pt-8 pb-10 lg:pt-12">
-	<div class="mx-auto max-w-7xl min-w-0 px-6 sm:px-12">
-		<div class="mx-auto flex min-w-0 max-w-5xl flex-col items-center space-y-6 text-center">
-			<h1 class="max-w-4xl text-3xl font-bold tracking-[-0.03em] text-foreground sm:text-5xl sm:tracking-[-0.035em] lg:text-6xl">
-				{t("list.title")}
-			</h1>
-			<p class="max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
-				{t("list.heroIntro")}
-			</p>
-			<div class="flex flex-wrap items-center justify-center gap-3">
-				<a
-					href={statsHref}
-					class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-surface hover:text-foreground"
-				>
-					<Icon name="mdi:chart-box-outline" class="size-4 shrink-0" aria-hidden="true" />
-					<span>{t("list.stat.link")}</span>
-				</a>
-				{
-					showPrintLink && (
-						<a
-							href="/centers/print"
-							class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-surface hover:text-foreground"
-						>
-							<Icon name="mdi:printer-outline" class="size-4 shrink-0" aria-hidden="true" />
-							<span>Список для печати и PDF</span>
-						</a>
-					)
-				}
-			</div>
-		</div>
-	</div>
-</section>
+<header class="sr-only">
+	<h1>{t("list.title")}</h1>
+	<p>{t("list.heroIntro")}</p>
+</header>

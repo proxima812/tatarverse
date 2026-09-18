@@ -1,14 +1,19 @@
 ---
 import type { CenterFacets } from "@/lib/center/facets";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { Icon } from "astro-icon/components";
+import ButtonLink from "../ui/ButtonLink.astro";
 import FilterSection from "./FilterSection.astro";
 import ScopeSwitch from "./ScopeSwitch.astro";
-
 
 interface Props {
 	facets: CenterFacets;
 }
 
 const { facets } = Astro.props as Props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const showPrintLink = locale === "ru";
 
 const GATES: Record<string, string> = {
 	macro: "world",
@@ -20,15 +25,36 @@ const GATES: Record<string, string> = {
 };
 ---
 
+<div
+	data-filters-backdrop
+	hidden
+	class="fixed inset-0 z-40 bg-shade/45 lg:hidden"
+	aria-hidden="true"
+>
+</div>
+
 <aside
 	data-filters-shell
-	class="hidden w-full pb-8 lg:sticky lg:top-36 lg:block lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto lg:pb-12"
+	class="catalog-sheet hidden w-full lg:sticky lg:top-0 lg:block lg:max-h-dvh lg:overflow-y-auto lg:pb-12"
 >
-	<section class="w-full">
+	<!-- Шапка шторки: только на мобилке, на десктопе панель живёт в сайдбаре. -->
+	<div class="flex shrink-0 items-center justify-between px-4 pt-3 pb-1 lg:hidden">
+		<h2 class="text-base font-semibold text-surface-foreground">{t("list.filters")}</h2>
+		<button
+			type="button"
+			data-filters-close
+			aria-label={t("list.closeFilters")}
+			class="grid size-10 cursor-pointer place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+		>
+			<Icon name="mdi:close" class="size-5" aria-hidden="true" />
+		</button>
+	</div>
+
+	<div class="min-h-0 flex-1 overflow-y-auto overscroll-contain lg:overflow-visible">
 		<div
 			id="filters-panel"
 			data-filters-panel
-			class="hidden w-full space-y-4 rounded-catalog corner-squircle bg-surface p-4 text-surface-foreground"
+			class="hidden w-full space-y-4 bg-surface p-4 text-surface-foreground lg:rounded-catalog lg:corner-squircle"
 		>
 			<ScopeSwitch scopes={facets.scopes} total={facets.total} />
 
@@ -37,8 +63,42 @@ const GATES: Record<string, string> = {
 					<FilterSection facet={facet} gate={GATES[facet.key] ?? "always"} />
 				))
 			}
+
+			<div class="flex flex-wrap items-center gap-1.5 border-t border-depth-100 pt-4">
+				<ButtonLink
+					href="/stats"
+					labelKey="list.stat.link"
+					label="Статистика"
+					icon="mdi:chart-box-outline"
+					variant="outline"
+					class="text-sm"
+				/>
+				{
+					showPrintLink && (
+						<ButtonLink
+							href="/centers/print"
+							label="Список для печати и PDF"
+							icon="mdi:printer-outline"
+							variant="outline"
+							class="text-sm"
+						/>
+					)
+				}
+			</div>
 		</div>
-	</section>
+	</div>
+
+	<!-- Футер шторки: применить и увидеть результат. Счётчик обновляет скрипт. -->
+	<div class="shrink-0 border-t border-depth-100 bg-surface p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden">
+		<button
+			type="button"
+			data-sheet-apply
+			data-results-template={t("list.applyFilters", { count: "__COUNT__" })}
+			class="w-full cursor-pointer rounded-control corner-squircle bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition active:scale-[0.99]"
+		>
+			{t("list.applyFilters", { count: String(facets.total) })}
+		</button>
+	</div>
 </aside>
 
 <script>

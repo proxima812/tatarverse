@@ -10,7 +10,7 @@
  */
 
 .catalog-card {
-	@apply relative flex h-full min-w-0 flex-col gap-3 rounded-catalog corner-squircle bg-surface p-6 text-surface-foreground transition duration-300 ease-out hover:surface-lift has-[[data-card-link]:focus-visible]:outline-2 has-[[data-card-link]:focus-visible]:outline-offset-2 has-[[data-card-link]:focus-visible]:outline-accent;
+	@apply relative flex h-full min-w-0 flex-col gap-3 rounded-catalog corner-squircle bg-surface p-6 text-surface-foreground has-[[data-card-link]:focus-visible]:outline-2 has-[[data-card-link]:focus-visible]:outline-offset-2 has-[[data-card-link]:focus-visible]:outline-accent;
 }
 
 .catalog-card-location {
@@ -26,7 +26,7 @@
 }
 
 .catalog-card-mark {
-	@apply size-9 shrink-0 rounded-full transition-transform duration-300 ease-out group-hover:scale-110;
+	@apply size-9 shrink-0 rounded-full;
 }
 
 .catalog-card-heading {
@@ -62,7 +62,7 @@
 }
 
 .catalog-card-more {
-	@apply ml-auto inline-flex shrink-0 items-center gap-1 rounded-full corner-squircle bg-surface-muted px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors duration-300 ease-out group-hover:bg-accent group-hover:text-accent-foreground;
+	@apply ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full corner-squircle bg-surface-muted px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors group-hover:bg-accent group-hover:text-accent-foreground;
 }
 
 .catalog-filter-chip {

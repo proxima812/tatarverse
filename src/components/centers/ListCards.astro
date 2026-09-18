@@ -1,6 +1,6 @@
 ---
 import { buildCenterFacets, buildFacetRecords, buildGeoIndex } from "@/lib/center/facets";
-import { getLocaleFromUrl } from "@/i18n";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { getCollection, type CollectionEntry } from "astro:content";
 import NoResults from "../ui/NoResults.astro";
 import ActiveFilters from "./ActiveFilters.astro";
@@ -14,6 +14,13 @@ interface Props {
 
 const { cards } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const SORT_OPTIONS = [
+	{ value: "recency", labelKey: "list.sort.recency" },
+	{ value: "alpha", labelKey: "list.sort.alpha" },
+	{ value: "country", labelKey: "list.sort.country" },
+] as const;
 
 const geoById = buildGeoIndex(await getCollection("centers"));
 const records = buildFacetRecords(cards, geoById);
@@ -21,21 +28,46 @@ const facets = buildCenterFacets(records, locale);
 const geoByCardId = new Map(records.map((record) => [record.id, record]));
 ---
 
-<div class="not-container bg-catalog px-5 pt-8 pb-12 sm:px-8 lg:px-12 lg:pt-10">
-	<div
-		data-catalog-bar
-		class="sticky top-15 z-30 -mx-5 flex flex-col gap-2 bg-catalog px-5 py-2 sm:-mx-8 sm:px-8 lg:top-0 lg:-mx-12 lg:gap-3 lg:pr-12 lg:pb-5 lg:pl-[calc(var(--catalog-aside)+var(--catalog-gap)+3rem)] lg:pt-5"
-	>
-		<Search />
-		<ActiveFilters />
-	</div>
-
+<div class="not-container bg-catalog px-5 pt-4 pb-12 sm:px-8 lg:px-12 lg:pt-8">
 	<div
 		class="grid grid-cols-1 gap-x-8 lg:grid-cols-[var(--catalog-aside)_minmax(0,1fr)] lg:gap-x-[var(--catalog-gap)]"
 	>
 		<Toolbar facets={facets} />
 
-		<div>
+		<div class="min-w-0">
+			<!-- Поиск живёт в колонке карточек: так панель фильтров слева
+			     начинается на одном уровне с ним, без пустого отступа сверху. -->
+			<div
+				data-catalog-bar
+				class="sticky top-15 z-30 -mx-5 flex flex-col gap-2 bg-catalog px-5 py-2 sm:-mx-8 sm:px-8 lg:top-0 lg:mx-0 lg:gap-3 lg:px-0 lg:pt-0 lg:pb-4"
+			>
+				<Search />
+				<ActiveFilters />
+			</div>
+
+			<div class="mb-4 flex items-center justify-between gap-3">
+				<span
+					data-results-count
+					data-results-template={t("list.results", { count: "__COUNT__" })}
+					class="shrink-0 text-sm font-medium text-muted-foreground tabular-nums"
+				>
+					{t("list.results", { count: String(cards.length) })}
+				</span>
+				<label class="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
+					<span class="sr-only">{t("list.sort.label")}</span>
+					<select
+						data-catalog-sort
+						data-relevance-label={t("list.sort.relevance")}
+						class="min-w-0 cursor-pointer appearance-none rounded-control corner-squircle bg-surface px-3 py-1.5 text-sm font-medium text-surface-foreground outline-none transition hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+					>
+						{
+							SORT_OPTIONS.map((option) => (
+								<option value={option.value}>{t(option.labelKey)}</option>
+							))
+						}
+					</select>
+				</label>
+			</div>
 			<GridCards cards={cards} geoByCardId={geoByCardId} />
 			<NoResults />
 		</div>

@@ -49,7 +49,7 @@
   --color-ring: #C4C0C9;
 
 
-  --color-catalog: var(--color-surface-muted);
+  --color-catalog: color-mix(in oklab, var(--color-surface-muted) 70%, var(--color-surface));
 
   --color-foreground: #111012;
   --color-surface-foreground: #111012;
@@ -245,7 +245,7 @@
   --color-muted: #181719;
   --color-surface: #222123;
   --color-subtle: #333234;
-  --color-catalog: var(--color-muted);
+  --color-catalog: color-mix(in oklab, var(--color-muted) 70%, var(--color-surface));
   --color-ring: #545355;
 
 

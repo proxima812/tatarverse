@@ -1,7 +1,7 @@
 import { CARD_ATTR, isFacetField, readCard } from "@/lib/site/cardAttributes";
 import { normalizeSearchText, uniqueTerms } from "@/lib/center/searchText";
 import { createCatalogFilter } from "@/lib/catalog/filterState";
-import { readCatalogQuery, writeCatalogQuery } from "@/lib/catalog/query";
+import { readCatalogQuery, writeCatalogQuery, type CatalogSort } from "@/lib/catalog/query";
 import { createCenterSearch } from "@/lib/catalog/search";
 import { createSearchSuggestions } from "@/lib/catalog/suggestions";
 import type {
@@ -46,15 +46,20 @@ export function initCardsToolbar() {
 	const filtersToggle = document.querySelector<HTMLButtonElement>("[data-filters-toggle]");
 	const filtersShell = document.querySelector<HTMLElement>("[data-filters-shell]");
 	const filtersPanel = document.getElementById("filters-panel");
+	const filtersBackdrop = document.querySelector<HTMLElement>("[data-filters-backdrop]");
+	const filtersClose = document.querySelector<HTMLButtonElement>("[data-filters-close]");
+	const sheetApply = document.querySelector<HTMLButtonElement>("[data-sheet-apply]");
+	const sortSelect = document.querySelector<HTMLSelectElement>("[data-catalog-sort]");
 	const filtersBadge = document.querySelector<HTMLElement>("[data-filters-badge]");
 	const filtersResetButtons =
 		document.querySelectorAll<HTMLButtonElement>("[data-filters-reset]");
-	const stickyBar = document.querySelector<HTMLElement>("[data-catalog-bar]");
 	const activeFiltersBar = document.querySelector<HTMLElement>("[data-active-filters-bar]");
 	const activeFiltersTokens = document.querySelector<HTMLElement>(
 		"[data-active-filters-tokens]",
 	);
-	const resultsCount = document.querySelector<HTMLElement>("[data-results-count]");
+	const resultsCounters = Array.from(
+		document.querySelectorAll<HTMLElement>("[data-results-count]"),
+	);
 	const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-filter-section]"));
 	const groupElements = Array.from(
 		document.querySelectorAll<HTMLElement>("[data-filter-group]"),
@@ -106,8 +111,11 @@ export function initCardsToolbar() {
 	let searchTimer = 0;
 	let blurTimer = 0;
 	let filterFrame = 0;
-	/** Поиск переставляет карточки; после сброса порядок надо вернуть один раз. */
+	/** Поиск и сортировка переставляют карточки; после сброса порядок надо вернуть один раз. */
 	let gridReordered = false;
+	let sortMode: CatalogSort = "recency";
+	/** Запросы «найти в списке» внутри длинных секций фильтров. */
+	const facetQueries = new Map<string, string>();
 
 	const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 	const isDesktopLayout = window.matchMedia("(min-width: 1024px)");
@@ -143,6 +151,9 @@ export function initCardsToolbar() {
 			const limit = groupLimit(key);
 			const more = moreButton(key);
 			const isExpanded = more?.dataset.expanded === "true";
+			// Пока в секции набран запрос, лимит и «показать ещё» не действуют:
+			// показываем все совпавшие по названию чипы.
+			const facetQuery = normalizeSearchText(facetQueries.get(key) ?? "");
 
 			let shown = 0;
 			let hidden = 0;
@@ -162,6 +173,15 @@ export function initCardsToolbar() {
 					continue;
 				}
 
+				if (facetQuery) {
+					const label =
+						chip.querySelector<HTMLElement>("[data-chip-label]")?.textContent ?? "";
+					const matches = normalizeSearchText(label).includes(facetQuery);
+					chip.hidden = !matches && !isActive;
+					if (!chip.hidden) shown += 1;
+					continue;
+				}
+
 				const overLimit = limit > 0 && shown >= limit && !isActive && !isExpanded;
 				chip.hidden = overLimit;
 				if (overLimit) hidden += 1;
@@ -173,13 +193,22 @@ export function initCardsToolbar() {
 			allChip(key)?.setAttribute("aria-pressed", String(isAllActive));
 
 			if (more) {
-				more.hidden = hidden === 0 && !isExpanded;
+				more.hidden = Boolean(facetQuery) || (hidden === 0 && !isExpanded);
 				more.textContent = isExpanded
 					? (more.dataset.showLess ?? "")
 					: (more.dataset.showMore ?? "").replace("__COUNT__", String(hidden));
 			}
 
-			section.hidden = !filter.isSectionVisible(gate, key) || shown === 0;
+			const badge = section.querySelector<HTMLElement>("[data-section-badge]");
+			if (badge) {
+				badge.textContent = String(selected.size);
+				badge.hidden = selected.size === 0;
+			}
+
+			// Секция с запросом без совпадений остаётся видимой: иначе пропал бы
+			// и сам инпут, которым запрос можно стереть.
+			section.hidden =
+				!filter.isSectionVisible(gate, key) || (shown === 0 && !facetQuery);
 		}
 
 		const scopeCounts = filter.countScopes();
@@ -289,9 +318,14 @@ export function initCardsToolbar() {
 	}
 
 	function renderResultsCount(visible: number) {
-		if (!resultsCount) return;
-		const template = resultsCount.dataset.resultsTemplate ?? "{count}";
-		resultsCount.textContent = template.replace("__COUNT__", String(visible));
+		for (const counter of resultsCounters) {
+			const template = counter.dataset.resultsTemplate ?? "{count}";
+			counter.textContent = template.replace("__COUNT__", String(visible));
+		}
+		if (sheetApply) {
+			const template = sheetApply.dataset.resultsTemplate ?? "__COUNT__";
+			sheetApply.textContent = template.replace("__COUNT__", String(visible));
+		}
 	}
 
 	// --- подсказки ----------------------------------------------------------
@@ -372,6 +406,26 @@ export function initCardsToolbar() {
 		renderFacets();
 	}
 
+	const pageLang = document.documentElement.lang || undefined;
+
+	/** Порядок без поиска: свежесть (исходный), алфавит или страна. */
+	function sortedCards(): typeof cards {
+		if (sortMode === "alpha") {
+			return [...cards].sort(
+				(a, b) => a.title.localeCompare(b.title, pageLang) || a.order - b.order,
+			);
+		}
+		if (sortMode === "country") {
+			return [...cards].sort(
+				(a, b) =>
+					a.country.localeCompare(b.country, pageLang) ||
+					a.title.localeCompare(b.title, pageLang) ||
+					a.order - b.order,
+			);
+		}
+		return cards;
+	}
+
 	async function apply(shouldScroll = false) {
 		const query = searchQuery.trim();
 		const ranked = await search.run(query);
@@ -381,17 +435,21 @@ export function initCardsToolbar() {
 		filter.limitTo(query ? new Set(ranked.map((result) => result.item.id)) : null);
 		filter.pruneEmpty();
 
+		// При поиске побеждает релевантность, селект сортировки замирает.
 		const ordered = query
 			? [...cards].sort((a, b) => {
 					const left = rank.get(a.id) ?? Number.MAX_SAFE_INTEGER;
 					const right = rank.get(b.id) ?? Number.MAX_SAFE_INTEGER;
 					return left - right || a.order - b.order;
 				})
-			: cards;
+			: sortedCards();
+
+		if (sortSelect) sortSelect.disabled = Boolean(query);
 
 		// Переставляем узлы только когда порядок действительно менялся:
 		// иначе каждый клик по фильтру дёргал бы весь грид.
-		const shouldReorder = Boolean(query) || gridReordered;
+		const customOrder = Boolean(query) || sortMode !== "recency";
+		const shouldReorder = customOrder || gridReordered;
 		let visible = 0;
 
 		for (const item of ordered) {
@@ -400,7 +458,7 @@ export function initCardsToolbar() {
 			if (shouldReorder) cardsGrid.append(item.element);
 			if (show) visible += 1;
 		}
-		gridReordered = Boolean(query);
+		gridReordered = customOrder;
 
 		renderFacets();
 		noResults.hidden = visible > 0;
@@ -414,12 +472,14 @@ export function initCardsToolbar() {
 			"",
 			writeCatalogQuery(
 				window.location.href,
-				{ ...filter.snapshot(), search: searchQuery },
+				{ ...filter.snapshot(), search: searchQuery, sort: sortMode },
 				facetKeys,
 			),
 		);
 
-		if (shouldScroll && !isDesktopLayout.matches) {
+		// Пока открыта шторка, страница под ней заблокирована — прокрутка к
+		// сетке случится при закрытии, из sheet-кнопки «Показать».
+		if (shouldScroll && !isDesktopLayout.matches && !isSheetOpen()) {
 			cardsGrid.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
 		}
 	}
@@ -431,22 +491,72 @@ export function initCardsToolbar() {
 		});
 	}
 
+	// --- шторка фильтров (мобилка) ------------------------------------------
+
+	function isSheetOpen() {
+		return filtersShell?.dataset.sheetOpen !== undefined;
+	}
+
+	function openSheet() {
+		if (!filtersShell || !filtersPanel) return;
+
+		filtersShell.classList.remove("hidden");
+		filtersPanel.classList.remove("hidden");
+		filtersShell.dataset.sheetOpen = "";
+		if (filtersBackdrop) filtersBackdrop.hidden = false;
+		filtersToggle?.setAttribute("aria-expanded", "true");
+		document.documentElement.style.overflow = "hidden";
+		filtersClose?.focus({ preventScroll: true });
+	}
+
+	function closeSheet(scrollToGrid = false) {
+		if (!filtersShell || !isSheetOpen()) return;
+
+		delete filtersShell.dataset.sheetOpen;
+		filtersShell.classList.add("hidden");
+		filtersPanel?.classList.add("hidden");
+		if (filtersBackdrop) filtersBackdrop.hidden = true;
+		filtersToggle?.setAttribute("aria-expanded", "false");
+		document.documentElement.style.overflow = "";
+		filtersToggle?.focus({ preventScroll: true });
+
+		if (scrollToGrid) {
+			cardsGrid.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+		}
+	}
+
 	// --- события ------------------------------------------------------------
 
 	filtersToggle?.addEventListener("click", () => {
-		if (!filtersPanel) return;
-
-		const isHidden = filtersPanel.classList.contains("hidden");
-		filtersShell?.classList.toggle("hidden", !isHidden);
-		filtersPanel.classList.toggle("hidden", !isHidden);
-		filtersToggle.setAttribute("aria-expanded", String(isHidden));
-
-		if (isHidden && !isDesktopLayout.matches && filtersShell) {
-			const barBottom = stickyBar?.getBoundingClientRect().bottom ?? 0;
-			const target = filtersShell.getBoundingClientRect().top + window.scrollY - barBottom - 8;
-			window.scrollTo({ top: Math.max(target, 0), behavior: scrollBehavior() });
-		}
+		if (isSheetOpen()) closeSheet();
+		else openSheet();
 	});
+	filtersClose?.addEventListener("click", () => closeSheet());
+	filtersBackdrop?.addEventListener("click", () => closeSheet());
+	sheetApply?.addEventListener("click", () => closeSheet(true));
+	document.addEventListener("keydown", (event) => {
+		if (event.key === "Escape" && isSheetOpen()) closeSheet();
+	});
+	// Растянули окно до десктопа со вскрытой шторкой — вернуть странице скролл:
+	// сайдбар там показывается всегда, а замок остался бы навечно.
+	isDesktopLayout.addEventListener("change", (event) => {
+		if (event.matches) closeSheet();
+	});
+
+	sortSelect?.addEventListener("change", () => {
+		sortMode = (sortSelect.value as CatalogSort) || "recency";
+		schedule(false);
+	});
+
+	for (const input of document.querySelectorAll<HTMLInputElement>("[data-facet-filter]")) {
+		const key = input.dataset.facetFilter ?? "";
+		input.addEventListener("input", () => {
+			facetQueries.set(key, input.value);
+			renderFacets();
+		});
+		// Клик по summary закрыл бы секцию, пока посетитель тянется к инпуту.
+		input.addEventListener("click", (event) => event.stopPropagation());
+	}
 
 	filtersResetButtons.forEach((button) => button.addEventListener("click", resetFilters));
 	searchClear?.addEventListener("click", clearSearchQuery);
@@ -532,6 +642,8 @@ export function initCardsToolbar() {
 	);
 	searchQuery = initial.search;
 	if (searchInput) searchInput.value = searchQuery;
+	sortMode = initial.sort;
+	if (sortSelect) sortSelect.value = sortMode;
 	filter.restore(initial);
 
 	renderFacets();

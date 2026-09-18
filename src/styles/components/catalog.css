@@ -26,3 +26,53 @@
 	--catalog-aside: 20rem;
 	--catalog-gap: 3rem;
 }
+
+/* --- Шторка фильтров на мобилке ------------------------------------------
+   На десктопе [data-filters-shell] — липкий сайдбар (правила выше по файлу
+   принудительно держат его видимым), на узких экранах тот же узел
+   раскрывается снизу поверх каталога. Открытие управляется атрибутом
+   data-sheet-open из centersToolbar.ts. */
+@media (max-width: 1023.98px) {
+	[data-filters-shell][data-sheet-open] {
+		display: flex;
+		flex-direction: column;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 50;
+		max-height: 85dvh;
+		background: var(--color-surface);
+		border-top-left-radius: var(--radius-catalog);
+		border-top-right-radius: var(--radius-catalog);
+		box-shadow: 0 -8px 32px -8px color-mix(in oklab, var(--color-shade) 24%, transparent);
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		[data-filters-shell][data-sheet-open] {
+			animation: catalog-sheet-in 0.28s cubic-bezier(0.32, 0.72, 0.24, 1);
+		}
+
+		[data-filters-backdrop]:not([hidden]) {
+			animation: catalog-backdrop-in 0.28s ease-out;
+		}
+	}
+}
+
+@keyframes catalog-sheet-in {
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+
+@keyframes catalog-backdrop-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

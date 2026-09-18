@@ -29,6 +29,7 @@ export interface FacetOption {
 
 export interface Facet {
   key: FacetKey;
+  titleKey: string;
   ariaKey: string;
   allKey: string;
   limit: number;
@@ -123,6 +124,7 @@ export function buildCenterFacets(
   const facets: Facet[] = [
     {
       key: "macro",
+      titleKey: "list.section.macro",
       ariaKey: "list.macro.aria",
       allKey: "list.allMacro",
       limit: 0,
@@ -134,6 +136,7 @@ export function buildCenterFacets(
     },
     {
       key: "okrug",
+      titleKey: "list.section.okrug",
       ariaKey: "list.okrug.aria",
       allKey: "list.allOkrug",
       limit: 0,
@@ -145,6 +148,7 @@ export function buildCenterFacets(
     },
     {
       key: "country",
+      titleKey: "list.section.country",
       ariaKey: "list.countries.aria",
       allKey: "list.all",
       limit: VISIBLE_LIMIT,
@@ -157,6 +161,7 @@ export function buildCenterFacets(
     },
     {
       key: "region",
+      titleKey: "list.section.region",
       ariaKey: "list.regions.aria",
       allKey: "list.allRegions",
       limit: VISIBLE_LIMIT,
@@ -168,6 +173,7 @@ export function buildCenterFacets(
     },
     {
       key: "city",
+      titleKey: "list.section.city",
       ariaKey: "list.cities.aria",
       allKey: "list.allCities",
       limit: VISIBLE_LIMIT,
@@ -179,6 +185,7 @@ export function buildCenterFacets(
     },
     {
       key: "category",
+      titleKey: "list.section.category",
       ariaKey: "list.categories.aria",
       allKey: "list.allCategories",
       limit: 0,
