@@ -234,15 +234,11 @@ const dict: Dictionary = {
 	"print.heading": "A catalog of Tatar, Bashkir, and Crimean Tatar centers",
 	"print.stats": "Centers: {count}. Countries: {countries}. Data as of {date}",
 	"print.full": "The full catalog, with search and filters - {url}",
-	"print.step1": "Step 1. Choose the countries",
-	"print.step1.hint":
+	"print.hint":
 		"You can tick several. Leave \u00abAll countries\u00bb to print the whole catalog.",
 	"print.countries.aria": "Filter by country",
 	"print.allCountries": "All countries",
 	"print.ready": "Ready to print: {count} centers",
-	"print.step2": "Step 2. Print or PDF",
-	"print.step2.hint":
-		"In the print dialog that opens, pick a printer - or choose \u00abSave as PDF\u00bb to get a file on your device.",
 	"print.open": "Open the print dialog",
 	"print.back": "Back to the catalog",
 

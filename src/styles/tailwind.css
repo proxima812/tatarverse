@@ -20,6 +20,7 @@
 @import "./components/card.css";
 @import "./components/save-button.css";
 @import "./components/home.css";
+@import "./components/anons.css";
 @import "./components/print.css";
 
 
@@ -29,10 +30,10 @@
   --font-sans: var(--font-country-flags), var(--font-inter), ui-sans-serif, system-ui,
     sans-serif;
 
-  --color-background: #F6F3F9;
-  --color-surface: #FBF9FD;
-  --color-muted: #E9E5EE;
-  --color-subtle: #E1DCE6;
+  --color-background: #FFFFFF;
+  --color-surface: #FCFCFC;
+  --color-muted: #F2F2F3;
+  --color-subtle: #E9E9EA;
 
 
   --color-surface-muted: color-mix(
@@ -46,7 +47,7 @@
     var(--color-surface-foreground)
   );
   --color-border: color-mix(in oklab, var(--color-surface) 80%, var(--color-surface-foreground));
-  --color-ring: #C4C0C9;
+  --color-ring: #CBCBCC;
 
 
   --color-catalog: color-mix(in oklab, var(--color-surface-muted) 70%, var(--color-surface));
@@ -54,24 +55,24 @@
   --color-foreground: #111012;
   --color-surface-foreground: #111012;
   --color-primary: #111012;
-  --color-primary-foreground: #FBF9FD;
+  --color-primary-foreground: #FCFCFC;
 
   --color-link: #1F53B8;
 
 
-  --color-muted-foreground: #534F56;
-  --color-subtle-foreground: #646067;
+  --color-muted-foreground: #545456;
+  --color-subtle-foreground: #656567;
 
 
   --color-link-decoration: #447BE4;
 
 
   --color-accent: #111012;
-  --color-accent-foreground: #FBF9FD;
+  --color-accent-foreground: #FCFCFC;
 
 
   --color-accent-vivid: #111012;
-  --color-accent-glow: #9C97A0;
+  --color-accent-glow: #9B9B9D;
 
 
   --color-accent-soft: color-mix(in oklab, var(--color-accent) 12%, var(--color-background));
@@ -83,10 +84,10 @@
   );
 
 
-  --color-shade: #090211;
+  --color-shade: #0A0A0B;
 
 
-  --color-lift: #FBF9FD;
+  --color-lift: #FCFCFC;
 
   --color-destructive: #B23A26;
 
@@ -95,12 +96,12 @@
 
 
   --color-depth-100: color-mix(in oklab, var(--color-surface) 84%, var(--color-surface-foreground));
-  --color-depth-200: #C0BBC4;
-  --color-depth-300: #9C97A0;
-  --color-depth-400: #78747C;
-  --color-depth-500: #5A565E;
-  --color-depth-600: #454149;
-  --color-depth-700: #312E35;
+  --color-depth-200: #C9C9CA;
+  --color-depth-300: #9B9B9D;
+  --color-depth-400: #777779;
+  --color-depth-500: #59595B;
+  --color-depth-600: #444446;
+  --color-depth-700: #313133;
 
 
   --radius-micro: 8px;
@@ -108,39 +109,7 @@
   --radius-card: 24px;
   --radius-catalog: 32px;
 
-  --animate-hero-pulse: hero-pulse 3s ease-in-out infinite;
-  --animate-hero-gray-drift: hero-gray-drift 14s ease-in-out infinite;
 
-
-
-  @keyframes hero-pulse {
-    0%,
-    100% {
-      filter: drop-shadow(
-        0 0 var(--hero-pulse-min-blur, 2px)
-          color-mix(in oklab, var(--color-accent-glow) var(--hero-pulse-min, 25%), transparent)
-      );
-    }
-
-    50% {
-      filter: drop-shadow(
-        0 0 var(--hero-pulse-max-blur, 10px)
-          color-mix(in oklab, var(--color-accent-glow) var(--hero-pulse-max, 65%), transparent)
-      );
-    }
-  }
-
-
-  @keyframes hero-gray-drift {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
-    }
-  }
 
 
   --animate-drawer-in: drawer-in 250ms cubic-bezier(0.32, 0.72, 0, 1);
@@ -235,10 +204,6 @@
   color-scheme: dark;
 
 
-  --hero-pulse-min: 12%;
-  --hero-pulse-max: 30%;
-  --hero-pulse-min-blur: 1px;
-  --hero-pulse-max-blur: 5px;
 
 
   --color-background: #111012;

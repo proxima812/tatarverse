@@ -21,6 +21,39 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
 	{
+		date: "2026-09-18",
+		title: {
+			ru: "Белая светлая тема, единая форма кнопок и переработанная печать",
+			en: "A white light theme, one button shape and a rebuilt print page",
+		},
+		items: {
+			ru: [
+				"Светлая тема переехала на белый холст: страница теперь #FFFFFF, а поверхности, плашки, границы и ступени глубины пересчитаны под него - карточка по-прежнему читается как объект на бумаге.",
+				"Из светлых серых убран фиолетовый подтон: вся нейтральная лестница стала ахроматической, от заливки карточки до самого тусклого текста. Тёмная тема свой фиолетовый оттенок сохранила.",
+				"Зелёный пресет перерисован: вместо ядовитого «денежного» зелёного - глубокий еловый, контраст вырос в обеих темах.",
+				"В подвале появился раздел «Сотрудничество» со ссылкой на почту проекта и бейдж Product Hunt.",
+				"Полоса анонсов над шапкой стала кликабельной целиком: теперь это плашка со стрелкой, а не текст с одной ссылкой внутри. Цель клика видно сразу.",
+				"У слова «своих» в заголовке главной осталась градиентная заливка, но пропала пульсация.",
+				"Форма кнопок собрана в одном месте: обводка, скругление и размеры больше не переписываются на каждой странице отдельно, поэтому кнопки на главной, в каталоге и на печати выглядят одинаково. Вторичные кнопки везде без теней.",
+				"Страница списка для печати переработана: экранная часть стала проще - подсказка, страны, две кнопки, - а на бумагу уходит чистый нумерованный список на линейках.",
+				"В печатной строке теперь больше данных: полная география (город, район, регион, страна), категория и тип, собственная ссылка центра и адрес карточки. У ссылок срезаны «https://» и «www» - на бумаге они только занимают место.",
+				"Страница статистики выровнена по одному контейнеру: блоки больше не выпирают за общие поля страницы.",
+			],
+			en: [
+				"The light theme moved onto a white canvas: the page is now #FFFFFF, and surfaces, bands, borders and depth steps were re-solved against it so a card still reads as an object on paper.",
+				"The violet cast is gone from the light grays: the whole neutral ladder is achromatic now, from a card fill to the quietest label. The dark theme keeps its violet.",
+				"The green preset was redrawn: instead of a harsh money green it is a deep evergreen, and contrast improved in both themes.",
+				"The footer gained a \"Collaboration\" section linking to the project's email, plus a Product Hunt badge.",
+				"The announcement strip above the header is now clickable as a whole: a plate with an arrow rather than text wrapped around a single link. The click target is obvious.",
+				"The word \"своих\" in the home headline keeps its gradient fill but lost the pulsing glow.",
+				"Button shape now lives in one place: the ring, the rounding and the sizes are no longer rewritten per page, so buttons on the home page, in the catalog and on the print page match. Secondary buttons carry no shadow anywhere.",
+				"The print list page was rebuilt: the screen part is simpler - a hint, the countries, two buttons - and what reaches paper is a plain numbered list on rules.",
+				"A printed entry now carries more: full geography (city, district, region, country), category and type, the center's own link and its catalog address. Printed URLs drop \"https://\" and \"www\" - on paper they only cost space.",
+				"The stats page was aligned to a single container: its blocks no longer stick out past the page margins.",
+			],
+		},
+	},
+	{
 		date: "2026-09-04",
 		title: {
 			ru: "Кыргызстан целиком, кнопки главной и пост об Играх кочевников",

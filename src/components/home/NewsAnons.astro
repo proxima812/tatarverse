@@ -5,7 +5,8 @@ import InstagramIcon from "../ui/InstagramIcon.astro";
 
 /**
  * Полоса анонсов над шапкой: четыре соцсети сменяют друг друга по три
- * секунды. Ссылкой сделан только хэндл — текст вокруг остаётся текстом.
+ * секунды. Кликабельна вся строка-плашка целиком (стили — `styles/components/anons.css`):
+ * цель клика видна сразу, а не только по хэндлу.
  * Иконки в фирменных цветах платформ: это единственное место наравне с
  * кнопкой главной, где цвет берётся не из токенов темы, а у бренда.
  * Смена — чистый CSS (@keyframes anons-cycle), без JS: все четыре строки
@@ -54,38 +55,34 @@ const items = [
 ---
 
 <section
-	class="flex h-12 w-full items-center justify-center bg-accent/5 px-5 text-center"
+	class="anons-bar flex w-full items-center justify-center px-5 text-center"
 	aria-label={t("anons.label", undefined, "Соцсети проекта")}
 >
 	<div class="grid w-full max-w-full grid-cols-1 grid-rows-1 place-items-center">
 		{
 			items.map((item, index) => (
-				<p
+				<a
 					data-anons-item
+					href={item.href}
+					target="_blank"
+					rel="noopener noreferrer"
 					style={`animation-delay: ${index * 3}s`}
-					class="col-start-1 row-start-1 inline-flex max-w-full items-center justify-center gap-1.5 truncate px-2 text-xs text-muted-foreground opacity-0 animate-anons-cycle sm:text-sm"
+					class="anons-chip col-start-1 row-start-1 inline-flex max-w-full items-center gap-2 truncate text-xs text-muted-foreground opacity-0 animate-anons-cycle sm:text-sm"
 				>
+					{item.icon ? (
+						<Icon
+							name={item.icon}
+							class={`h-4 w-4 shrink-0${item.iconColor ? "" : " text-foreground"}`}
+							style={item.iconColor ? `color: ${item.iconColor}` : undefined}
+							aria-hidden="true"
+						/>
+					) : (
+						<InstagramIcon class="h-4 w-4 shrink-0" />
+					)}
 					<span class="truncate">{t(`${item.key}.before`, undefined, item.before)}</span>
-					<a
-						href={item.href}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="shimmer shimmer-color-blue-600 shimmer-speed-70 shimmer-spread-70 shimmer-repeat-delay-1200 dark:shimmer-color-blue-300 inline-flex shrink-0 items-center gap-1 text-foreground underline decoration-dotted decoration-blue-600/45 underline-offset-4 dark:decoration-blue-300/45"
-					>
-						{item.icon ? (
-							<Icon
-								name={item.icon}
-								class={`h-4 w-4 shrink-0${item.iconColor ? "" : " text-foreground"}`}
-								style={item.iconColor ? `color: ${item.iconColor}` : undefined}
-								aria-hidden="true"
-							/>
-						) : (
-							<InstagramIcon class="h-4 w-4 shrink-0" />
-						)}
-						<span>{handle}</span>
-					</a>
-					<span class="truncate">{t(`${item.key}.after`, undefined, item.after)}</span>
-				</p>
+					<span class="anons-handle">{handle}</span>
+					<Icon name="mdi:arrow-top-right" class="anons-arrow h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+				</a>
 			))
 		}
 	</div>

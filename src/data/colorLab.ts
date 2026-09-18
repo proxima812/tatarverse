@@ -9,7 +9,7 @@
  * иначе демо начнёт врать.
  *
  * Контрасты посчитаны по WCAG 2.1 против собственного фона пресета:
- * `background` (#F6F3F9 в светлой, #111012 в тёмной) и `surface`. Варианты
+ * `background` (#FFFFFF в светлой, #111012 в тёмной) и `surface`. Варианты
  * решены в OKLCH: тон пресета сохранён, светлота подобрана под порог, хрома
  * подрезана до границы sRGB.
  */
@@ -57,42 +57,42 @@ export const AA_THRESHOLD = 4.5;
 export const NEUTRAL_TOKENS: TokenRow[] = [
 	{
 		"token": "background",
-		"light": "#F6F3F9",
+		"light": "#FFFFFF",
 		"dark": "#111012",
 		"usage": "Плоскость страницы",
 		"derived": false
 	},
 	{
 		"token": "muted",
-		"light": "#E9E5EE",
+		"light": "#F2F2F3",
 		"dark": "#181719",
 		"usage": "Утопленная полоса секции",
 		"derived": false
 	},
 	{
 		"token": "surface",
-		"light": "#FBF9FD",
+		"light": "#FCFCFC",
 		"dark": "#222123",
 		"usage": "Карточки, панели, поповеры",
 		"derived": false
 	},
 	{
 		"token": "surface-muted",
-		"light": "#EDEBEF",
+		"light": "#EDEDED",
 		"dark": "#292130",
 		"usage": "Выведен: surface 94.5% + чернила",
 		"derived": true
 	},
 	{
 		"token": "subtle",
-		"light": "#E1DCE6",
+		"light": "#E9E9EA",
 		"dark": "#333234",
 		"usage": "Самая тихая заливка",
 		"derived": false
 	},
 	{
 		"token": "catalog",
-		"light": "#EDEBEF",
+		"light": "#EDEDED",
 		"dark": "#181719",
 		"usage": "Полоса каталога: surface-muted / muted",
 		"derived": true
@@ -106,14 +106,14 @@ export const NEUTRAL_TOKENS: TokenRow[] = [
 	},
 	{
 		"token": "muted-foreground",
-		"light": "#534F56",
+		"light": "#545456",
 		"dark": "#A8A7A9",
 		"usage": "Второстепенный текст",
 		"derived": false
 	},
 	{
 		"token": "subtle-foreground",
-		"light": "#646067",
+		"light": "#656567",
 		"dark": "#939294",
 		"usage": "Самый тусклый текст",
 		"derived": false
@@ -127,77 +127,77 @@ export const NEUTRAL_TOKENS: TokenRow[] = [
 	},
 	{
 		"token": "primary-foreground",
-		"light": "#FBF9FD",
+		"light": "#FCFCFC",
 		"dark": "#111012",
 		"usage": "Текст на primary",
 		"derived": false
 	},
 	{
 		"token": "border",
-		"light": "#CAC7CC",
+		"light": "#C7C6C7",
 		"dark": "#443B4B",
 		"usage": "Выведен: surface 80% + чернила",
 		"derived": true
 	},
 	{
 		"token": "border-muted",
-		"light": "#D8D6DA",
+		"light": "#D6D6D7",
 		"dark": "#393040",
 		"usage": "Выведен: surface 86% + чернила",
 		"derived": true
 	},
 	{
 		"token": "ring",
-		"light": "#C4C0C9",
+		"light": "#CBCBCC",
 		"dark": "#545355",
 		"usage": "Кольца и инсеты",
 		"derived": false
 	},
 	{
 		"token": "depth-100",
-		"light": "#D3D1D6",
+		"light": "#D1D1D1",
 		"dark": "#3C3443",
 		"usage": "Выведен: тихая линия",
 		"derived": true
 	},
 	{
 		"token": "depth-200",
-		"light": "#C0BBC4",
+		"light": "#C9C9CA",
 		"dark": "#3F3E40",
 		"usage": "Ступень глубины",
 		"derived": false
 	},
 	{
 		"token": "depth-300",
-		"light": "#9C97A0",
+		"light": "#9B9B9D",
 		"dark": "#494849",
 		"usage": "Ступень глубины",
 		"derived": false
 	},
 	{
 		"token": "depth-400",
-		"light": "#78747C",
+		"light": "#777779",
 		"dark": "#555456",
 		"usage": "Ступень глубины",
 		"derived": false
 	},
 	{
 		"token": "depth-500",
-		"light": "#5A565E",
+		"light": "#59595B",
 		"dark": "#787779",
 		"usage": "Ступень глубины",
 		"derived": false
 	},
 	{
 		"token": "depth-600",
-		"light": "#454149",
+		"light": "#444446",
 		"dark": "#9D9C9F",
 		"usage": "Ступень глубины",
 		"derived": false
 	},
 	{
 		"token": "depth-700",
-		"light": "#312E35",
+		"light": "#313133",
 		"dark": "#C0BFC2",
 		"usage": "Ступень глубины",
 		"derived": false
@@ -232,14 +232,14 @@ export const NEUTRAL_TOKENS: TokenRow[] = [
 	},
 	{
 		"token": "shade",
-		"light": "#090211",
+		"light": "#0A0A0B",
 		"dark": "#090211",
 		"usage": "Тон тени",
 		"derived": false
 	},
 	{
 		"token": "lift",
-		"light": "#FBF9FD",
+		"light": "#FCFCFC",
 		"dark": "#FBF9FD",
 		"usage": "Тон верхней подсветки",
 		"derived": false
@@ -399,28 +399,28 @@ export const PALETTE_LAB: PaletteLab[] = [
 		"label": "Җаным Яшел",
 		"current": {
 			"light": {
-				"accent": "#00803A",
-				"accentForeground": "#FBF9FD",
-				"accentVivid": "#009143",
-				"accentGlow": "#58B772"
+				"accent": "#18734F",
+				"accentForeground": "#FCFCFC",
+				"accentVivid": "#1C8259",
+				"accentGlow": "#7CC5A6"
 			},
 			"dark": {
-				"accent": "#00BC5D",
+				"accent": "#45C79A",
 				"accentForeground": "#111012",
-				"accentVivid": "#00C361",
-				"accentGlow": "#6ADF8D"
+				"accentVivid": "#52D2A6",
+				"accentGlow": "#8FE3C3"
 			}
 		},
 		"currentContrast": {
 			"light": {
-				"onBackground": 4.61,
-				"onSurface": 4.84,
-				"foregroundOnAccent": 4.84
+				"onBackground": 5.83,
+				"onSurface": 5.68,
+				"foregroundOnAccent": 5.68
 			},
 			"dark": {
-				"onBackground": 8.12,
-				"onSurface": 6.88,
-				"foregroundOnAccent": 8.12
+				"onBackground": 8.94,
+				"onSurface": 7.55,
+				"foregroundOnAccent": 8.94
 			}
 		},
 		"variants": [

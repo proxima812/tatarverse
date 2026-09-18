@@ -3,33 +3,33 @@ name: Tatarverse
 description: Bilingual catalog of Tatar, Bashkir, Tatar-Bashkir, and Crimean Tatar centers.
 register: brand
 colors:
-  background: "#F6F3F9"
+  background: "#FFFFFF"
   foreground: "#1F1C21"
-  muted: "#E9E5EE"
-  muted-foreground: "#534F56"
-  subtle: "#E1DCE6"
-  subtle-foreground: "#646067"
-  surface: "#FBF9FD"
+  muted: "#F2F2F3"
+  muted-foreground: "#545456"
+  subtle: "#E9E9EA"
+  subtle-foreground: "#656567"
+  surface: "#FCFCFC"
   surface-foreground: "#1F1C21"
-  surface-muted: "#EDEBEF"
-  catalog: "#EDEBEF"
-  border: "#CAC7CC"
-  border-muted: "#D8D6DA"
-  ring: "#C4C0C9"
+  surface-muted: "#EDEDED"
+  catalog: "#EDEDED"
+  border: "#C7C6C7"
+  border-muted: "#D6D6D7"
+  ring: "#CBCBCC"
   primary: "#1F1C21"
-  primary-foreground: "#FBF9FD"
+  primary-foreground: "#FCFCFC"
   link: "#1F53B8"
   link-decoration: "#447BE4"
-  depth-100: "#D3D1D6"
-  depth-200: "#C0BBC4"
-  depth-300: "#9C97A0"
-  depth-400: "#78747C"
-  depth-500: "#5A565E"
-  depth-600: "#454149"
-  depth-700: "#312E35"
+  depth-100: "#D1D1D1"
+  depth-200: "#C9C9CA"
+  depth-300: "#9B9B9D"
+  depth-400: "#777779"
+  depth-500: "#59595B"
+  depth-600: "#444446"
+  depth-700: "#313133"
   accent: "#1F1C21"
-  accent-foreground: "#FBF9FD"
-  accent-glow: "#9C97A0"
+  accent-foreground: "#FCFCFC"
+  accent-glow: "#9B9B9D"
   destructive: "#B23A26"
   favorite: "#BD1F3F"
 typography:
@@ -252,15 +252,14 @@ so every `bg-surface` panel on the page — `Box`, MDX, project cards — was wh
 
 | theme | background | muted | surface | surface-muted | subtle |
 | --- | --- | --- | --- | --- | --- |
-| light (all six) | `#F6F3F9` | `#E9E5EE` | `#FBF9FD` | derived | `#E1DCE6` |
+| light (all six) | `#FFFFFF` | `#F2F2F3` | `#FCFCFC` | derived | `#E9E9EA` |
 | dark (all six) | `#111012` | `#181719` | `#222123` | derived | `#333234` |
 
-**Neither end of the ladder is neutral, and no end is pure.** The paper is `#FBF9FD` and
-the ink is `#111012` — a near-white and a near-black. The light ladder carries a violet hue
-(`H 308` in OKLCH). Pure `#FFFFFF` and pure `#000000` are gone from the project entirely:
-white paper glares next to a tinted interface, and a pure-black page kills every shadow
-while making any accent on top of it look detached. Every fill, every line and every depth
-step is now a step of that one hue at a different lightness and a decreasing chroma.
+**The light ladder is achromatic; the dark one keeps its violet.** In light the canvas is
+pure `#FFFFFF` and every fill, line, and depth step above it is a neutral gray — the violet
+cast the light steps used to carry read as dirty paper against a white page. In dark the ink
+is `#111012` and the ladder keeps the violet hue (`H 308` in OKLCH): pure `#000000` stays out
+of the project, because a black page kills every shadow and detaches any accent on top of it.
 
 The dark steps are **not** the old ones with a tint added. The old ladder stood on `L* 0`
 and could spend its whole range going up; this one starts at the ink's own lightness, so
@@ -351,9 +350,9 @@ accent — the hero badge and the active filter row in the desktop aside. They a
 authored per preset: each is a `color-mix()` over the current `accent` and neutrals, so
 all twelve theme × accent pairs follow for free.
 
-Two things are deliberate there. The text is **not** pure `accent` — on a 12% fill light
-green gives 3.9:1, below AA for 12px, so 25% `foreground` is mixed in and the worst pair
-lands at 5.6:1. And the dark fill takes 18% accent instead of 12%: on a near-black page
+Two things are deliberate there. The text is **not** pure `accent` — on a 12% fill the
+lightest presets sit just above the AA line for 12px, so 25% `foreground` is mixed in and
+the pairs land with margin (light green: 4.9:1 pure, 7.0:1 mixed). And the dark fill takes 18% accent instead of 12%: on a near-black page
 12% lifted the pill by only 6.7-8.4 in perceptual lightness, at or under the flatness
 threshold described below.
 
@@ -363,7 +362,7 @@ threshold described below.
 
 **The Accent Is A Signal.** The accent belongs to identity moments, focus, and active state only. It should never become a generic decoration.
 
-**Never Hardcode A Color.** Anything written as a literal hex or a Tailwind palette class (`bg-white`, `text-zinc-500`) will not survive a theme switch. `bg-white` and `text-black` are doubly wrong now: those two values do not exist in this project at all — the paper is `#FBF9FD` and the ink is `#111012`. The only exceptions are third-party brand colors — the platform tiles in the homepage link showcase and the social buttons are the sanctioned list, and they are brand marks, not interface color.
+**Never Hardcode A Color.** Anything written as a literal hex or a Tailwind palette class (`bg-white`, `text-zinc-500`) will not survive a theme switch. `bg-white` and `text-black` are doubly wrong now: `text-black` is still wrong — that value does not exist here, the ink is `#111012` — and `bg-white` only looks right in light theme, where `bg-background` already carries `#FFFFFF`, while in dark it burns a hole in the page. The only exceptions are third-party brand colors — the platform tiles in the homepage link showcase and the social buttons are the sanctioned list, and they are brand marks, not interface color.
 
 **No Cultural Color Pastiche.** Do not infer a palette from flags, ethnic motifs, or ornamental references. Cultural meaning comes from the content and source-backed data.
 
@@ -592,6 +591,28 @@ page. The animation should feel like a quick focus cue, not a dashboard metric s
 Buttons and chips use compact padding, squircle rounding, and semantic tokens. Primary
 buttons use `primary` and `primary-foreground`.
 
+**Every button in the project comes from one place.** The shape lives in
+`src/lib/button.ts` (`buttonClass`, `buttonVariants`, `buttonSizes`) and reaches markup
+through exactly two components: `ui/ButtonLink.astro` for anything that navigates and
+`ui/Button.astro` for anything that acts. A hand-rolled `<a>` or `<button>` with its own
+`rounded-full border border-border px-4 py-2 …` string is a regression, even when it looks
+right on its own page: those strings drift apart preset by preset and surface by surface.
+
+The variants are the vocabulary, and they are not interchangeable:
+
+| variant | when |
+| --- | --- |
+| `gradient` | the one primary action of a surface — catalog entry, print dialog |
+| `outline` | secondary actions standing next to it: transparent, one inset ring, **no shadow** |
+| `default` | solid ink action outside the accent world |
+| `surface` | only where a button must read as a raised object on a busy fill |
+| `ghost` | navigation rows in the header and the drawer |
+| `disabled` | present but not yet available |
+
+Secondary buttons on the homepage, `/centers` and `/centers/print` are all `outline`: a
+resting shadow under a row of equal-weight links makes each one ask for the same attention
+the primary already has.
+
 ### Catalog Filters
 
 The filter list has **two registers driven by one markup**, switched at `lg`.
@@ -643,6 +664,13 @@ MDX content should use the typography plugin tokens, readable line lengths, rest
 `/centers/print` is a separate layout with raw radii, no shadows, no accent, and no
 appearance state. Screen tokens do not apply there and screen fixes do not need to be
 mirrored into it — but a change to the card's content model does.
+
+Two registers live on that route. Everything inside `print:hidden` — the country filter and
+the two actions — is ordinary screen UI and uses the project's buttons unchanged. Everything
+that reaches paper is a plain numbered list: rules instead of boxes, no icons, no fills. Each
+entry prints its name, its full geography (city, district, region, country), its category and
+type, its own site or social link, and its `tatarverse.cc` address. Printed URLs drop
+`https://` and `www.` — the scheme costs a line on paper and nobody transcribes it.
 
 ## 8. Do And Do Not
 

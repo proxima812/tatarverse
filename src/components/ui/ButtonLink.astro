@@ -1,12 +1,12 @@
 ---
 import { getLocaleFromUrl, getLocalePathname, localizePath, useTranslations } from "@/i18n";
-import { cn } from "@/lib/cn";
+import { buttonClass, type ButtonSize, type ButtonVariant } from "@/lib/button";
 import { Icon } from "astro-icon/components";
 import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"a"> {
-	variant?: "default" | "gradient" | "outline" | "surface" | "ghost" | "disabled";
-	size?: "default" | "xs";
+	variant?: ButtonVariant;
+	size?: ButtonSize;
 	label?: string;
 	labelKey?: string;
 	href?: string;
@@ -28,23 +28,6 @@ const {
 	...props
 } = Astro.props as Props;
 
-const baseClass =
-	"inline-flex shrink-0 max-w-fit items-center gap-1.5 rounded-control corner-squircle font-medium transition";
-
-const variants = {
-	default: "bg-primary text-primary-foreground hover:bg-primary/80",
-	gradient: "btn-gradient text-accent-foreground",
-	outline: "bg-transparent text-primary/80 ring ring-primary/10 ring-inset hover:bg-primary/5",
-	surface: "bg-surface text-foreground surface-lift hover:bg-surface-muted",
-	ghost: "bg-transparent text-muted-foreground",
-	disabled: "bg-transparent text-muted-foreground",
-};
-
-const sizes = {
-	default: "px-4 py-2 text-sm",
-	xs: "px-2 py-1 text-xs sm:px-3 sm:py-1.5",
-};
-
 const isDisabled = variant === "disabled";
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
@@ -53,14 +36,15 @@ const isActive =
 	variant === "ghost" &&
 	!!localizedHref &&
 	getLocalePathname(Astro.url.pathname) === getLocalePathname(localizedHref);
-const classes = cn(
-	baseClass,
-	variants[variant] ?? variants.default,
-	isActive && "text-foreground",
-	sizes[size] ?? sizes.default,
-	isDisabled && "pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent",
+const classes = buttonClass({
+	variant,
+	size,
 	className,
-);
+	extra: [
+		isActive && "text-foreground",
+		isDisabled && "pointer-events-none cursor-not-allowed opacity-50 hover:bg-transparent",
+	],
+});
 const text = labelKey ? t(labelKey, undefined, label) : label;
 const soonText = t("nav.soon", undefined, "soon...");
 const rel = target === "_blank" && !relProp ? "noopener noreferrer" : relProp;

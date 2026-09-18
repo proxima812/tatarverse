@@ -6,12 +6,20 @@ import { localizedCenters } from "@/lib/center/collection";
 /** Страна не указана: такие карточки печатаются последней группой. */
 const UNKNOWN_COUNTRY = "Прочее";
 
+/** `https://www.example.com/x/` → `example.com/x/`: на бумаге схема не нужна. */
+function bareUrl(url: string): string {
+	return url.replace(/^https?:\/\//, "").replace(/^www\./, "");
+}
+
 export interface PrintEntry {
 	title: string;
+	/** Полная география: город, регион, район, страна — насколько её знает карточка. */
 	place: string;
 	kind: string;
-	/** Абсолютный адрес: с бумаги ссылку переписывают руками. */
+	/** Адрес карточки без схемы: с бумаги его переписывают руками, `https://` только мешает. */
 	href: string;
+	/** Собственный сайт или соцсеть центра, тоже без схемы. */
+	source: string;
 }
 
 export interface PrintCountry {
@@ -37,7 +45,12 @@ export async function buildPrintCatalog(
 
 	for (const center of centers) {
 		const country = center.data.location?.country ?? UNKNOWN_COUNTRY;
-		const place = [center.data.location?.city, center.data.location?.region]
+		const place = [
+			center.data.location?.city,
+			center.data.location?.district,
+			center.data.location?.region,
+			center.data.location?.country,
+		]
 			.filter(Boolean)
 			.filter((value, index, list) => list.indexOf(value) === index)
 			.join(", ");
@@ -46,7 +59,10 @@ export async function buildPrintCatalog(
 			title: center.data.title,
 			place,
 			kind: [center.data.category, center.data.type].filter(Boolean).join(" · "),
-			href: `${siteUrl}${localizePath(locale, getCenterPath(routeIds.get(center.id) ?? center.id))}`,
+			href: bareUrl(
+				`${siteUrl}${localizePath(locale, getCenterPath(routeIds.get(center.id) ?? center.id))}`,
+			),
+			source: center.data.source ? bareUrl(center.data.source) : "",
 		};
 
 		const group = groups.get(country);

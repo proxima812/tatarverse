@@ -1,0 +1,46 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { buttonClass, type ButtonSize, type ButtonVariant } from "@/lib/button";
+import { Icon } from "astro-icon/components";
+import type { HTMLAttributes } from "astro/types";
+
+/**
+ * Кнопка-действие. Та же форма, что у `ButtonLink`, но `<button>`: там, где
+ * нажатие не ведёт по адресу (печать, копирование, тумблеры).
+ */
+interface Props extends HTMLAttributes<"button"> {
+	variant?: ButtonVariant;
+	size?: ButtonSize;
+	label?: string;
+	labelKey?: string;
+	icon?: string;
+}
+
+const {
+	class: className,
+	variant = "default",
+	size = "default",
+	label = "label",
+	labelKey,
+	icon,
+	type = "button",
+	disabled,
+	...props
+} = Astro.props as Props;
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const classes = buttonClass({
+	variant,
+	size,
+	className,
+	extra: ["cursor-pointer", disabled && "cursor-not-allowed opacity-50"],
+});
+const text = labelKey ? t(labelKey, undefined, label) : label;
+---
+
+<button type={type} class={classes} disabled={disabled} {...props}>
+	{icon ? <Icon name={icon} class="w-4 h-4" aria-hidden="true" /> : <slot name="icon" />}
+	<span>{text}</span>
+	<slot />
+</button>

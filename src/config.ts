@@ -7,7 +7,7 @@ const siteThemeColors = {
   maskIcon: "#111012",
   tile: "#111012",
   theme: "#111012",
-  background: "#FBF9FD",
+  background: "#FFFFFF",
 } as const;
 
 export const config = {
