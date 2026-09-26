@@ -1,7 +1,7 @@
 {
 	"name": "tatarverse",
 	"type": "module",
-	"version": "14.0.83",
+	"version": "14.0.84",
 	"scripts": {
 		"dev": "astro dev",
 		"build": "astro build",
