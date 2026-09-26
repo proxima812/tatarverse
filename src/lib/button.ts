@@ -1,3 +1,5 @@
+import type { ClassValue } from "cn";
+
 import { cn } from "@/lib/cn";
 
 /**
@@ -43,8 +45,8 @@ export function buttonClass({
 }: {
 	variant?: ButtonVariant;
 	size?: ButtonSize;
-	className?: unknown;
-	extra?: unknown;
+	className?: ClassValue;
+	extra?: ClassValue;
 } = {}) {
 	return cn(
 		buttonBaseClass,
