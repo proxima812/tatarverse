@@ -23,47 +23,40 @@ const { formId, title, height = 1335 } = Astro.props;
 const src = `https://tally.so/embed/${formId}?alignLeft=1&hideTitle=1&dynamicHeight=1`;
 ---
 
-<div
-	class="not-prose overflow-hidden rounded-catalog corner-squircle"
->
-	<iframe
-		data-tally-src={src}
-		loading="lazy"
-		width="100%"
-		height={height}
-		title={title}
+<div class="not-prose overflow-hidden rounded-catalog corner-squircle">
+	<iframe data-tally-src={src} loading="lazy" width="100%" height={height} title={title}
 	></iframe>
 </div>
 
 <script is:inline>
-(function loadTallyEmbeds() {
-	var widgetSrc = "https://tally.so/widgets/embed.js";
-	var d = document;
+	(function loadTallyEmbeds() {
+		var widgetSrc = "https://tally.so/widgets/embed.js";
+		var d = document;
 
-	function fillEmbeds() {
+		function fillEmbeds() {
+			if (typeof Tally !== "undefined") {
+				Tally.loadEmbeds();
+				return;
+			}
+			for (const el of d.querySelectorAll("iframe[data-tally-src]:not([src])")) {
+				el.src = el.dataset.tallySrc;
+			}
+		}
+
 		if (typeof Tally !== "undefined") {
-			Tally.loadEmbeds();
+			fillEmbeds();
 			return;
 		}
-		for (const el of d.querySelectorAll("iframe[data-tally-src]:not([src])")) {
-			el.src = el.dataset.tallySrc;
+
+		/* Скрипт виджета общий на страницу - несколько форм не должны грузить его повторно. */
+		if (d.querySelector(`script[src="${widgetSrc}"]`) !== null) {
+			return;
 		}
-	}
 
-	if (typeof Tally !== "undefined") {
-		fillEmbeds();
-		return;
-	}
-
-	/* Скрипт виджета общий на страницу - несколько форм не должны грузить его повторно. */
-	if (d.querySelector(`script[src="${widgetSrc}"]`) !== null) {
-		return;
-	}
-
-	var s = d.createElement("script");
-	s.src = widgetSrc;
-	s.onload = fillEmbeds;
-	s.onerror = fillEmbeds;
-	d.body.appendChild(s);
-})();
+		var s = d.createElement("script");
+		s.src = widgetSrc;
+		s.onload = fillEmbeds;
+		s.onerror = fillEmbeds;
+		d.body.appendChild(s);
+	})();
 </script>
