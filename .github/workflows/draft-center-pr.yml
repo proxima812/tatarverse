@@ -1,0 +1,269 @@
+name: Draft center PR from submission issue
+
+# Триггер - метка draft-card на issue с card-submission (см.
+# tally-submission.yml). Достает исходный JSON заявки из спойлера в теле
+# issue, собирает черновик src/data/centers_formatted/tbk-<N>.mdx и открывает
+# draft PR. Названия полей ниже (LABELS) должны дословно совпадать с
+# вопросами формы Tally.
+#
+# Тип и направление, которые не сопоставились со схемой, бот не угадывает -
+# пишет `TODO`, и content-схема валит сборку, пока человек не поправит.
+# Проверка сведений по источникам, логотип и EN-версия
+# (src/data/centers_i18n/en/) - всегда руками.
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  draft-center:
+    if: github.event.label.name == 'draft-card'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Собрать черновик карточки и открыть PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const DRAFTED_LABEL = "card-drafted";
+
+            if (issue.labels.some((l) => l.name === DRAFTED_LABEL)) {
+              console.log("Черновик уже был собран для этого issue, пропускаю.");
+              return;
+            }
+
+            // Репозиторий публичный: метку ставит только человек с правами
+            // записи, но текст issue может написать кто угодно. Настоящие
+            // заявки всегда от github-actions[bot] - чужой issue с
+            // поддельным маркером и JSON в PR не превращаем.
+            if (issue.user.login !== "github-actions[bot]") {
+              core.setFailed(
+                `issue #${issue.number} создан не автоматикой tally-submission.yml (автор: ${issue.user.login}) - не собираю черновик из чужого содержимого.`,
+              );
+              return;
+            }
+
+            const bodyMatch = issue.body.match(/```json\n([\s\S]*?)\n```/);
+            const submissionIdMatch = issue.body.match(/<!-- tally-submission-id: (.+?) -->/);
+            if (!bodyMatch || !submissionIdMatch) {
+              core.setFailed(
+                "Не нашел JSON заявки или submissionId в теле issue - похоже, issue не от tally-submission.yml",
+              );
+              return;
+            }
+
+            const submissionId = submissionIdMatch[1];
+            const fields = JSON.parse(bodyMatch[1]);
+            const byLabel = new Map(fields.map((f) => [f.label || f.key, f]));
+
+            const LABELS = {
+              title: "Название центра",
+              type: "Тип",
+              category: "Направление",
+              summary: "Кратко о центре",
+              country: "Страна",
+              region: "Регион / область",
+              city: "Город",
+              address: "Адрес",
+              head: "Руководитель",
+              phone: "Телефон",
+              email: "Email",
+              site: "Сайт",
+              telegram: "Telegram",
+              vk: "ВКонтакте",
+              instagram: "Instagram",
+              otherLinks: "Другие ссылки",
+              about: "О центре",
+              features: "Особенности",
+              sources: "Источники",
+              logo: "Логотип или фото",
+            };
+            const CENTER_TYPES = ["Регион РФ", "Зарубежный", "Онлайн"];
+            const CENTER_CATEGORIES = ["Татарский", "Татаро-Башкирский", "Башкирский", "Крымотатарский"];
+
+            function text(key) {
+              const value = byLabel.get(LABELS[key])?.value;
+              return typeof value === "string" && value.trim() ? value.trim() : null;
+            }
+
+            function choice(key) {
+              const field = byLabel.get(LABELS[key]);
+              if (!field || field.value == null) return null;
+              const id = Array.isArray(field.value) ? field.value[0] : field.value;
+              const option = (field.options ?? []).find((o) => o.id === id);
+              return (option?.text ?? (typeof id === "string" ? id : "")).trim() || null;
+            }
+
+            function lines(key) {
+              return (text(key) ?? "")
+                .split("\n")
+                .map((line) => line.trim())
+                .filter(Boolean);
+            }
+
+            function isUrl(value) {
+              try {
+                return ["http:", "https:"].includes(new URL(value).protocol);
+              } catch {
+                return false;
+              }
+            }
+
+            // Пользовательский текст идет в MDX: `{` и `<` там - синтаксис
+            // JSX, без экранирования сломают сборку или вставят разметку.
+            function mdx(value) {
+              return value.replace(/\\/g, "\\\\").replace(/[{}]/g, "\\$&").replace(/</g, "&lt;");
+            }
+
+            function linkLine(value, title) {
+              if (!isUrl(value)) return `- ${mdx(title ? `${title}: ${value}` : value)}`;
+              return `- [${mdx(title ?? value)}](${value.replace(/\(/g, "%28").replace(/\)/g, "%29")})`;
+            }
+
+            const title = text("title") ?? `Заявка ${submissionId}`;
+            const type = choice("type");
+            const category = choice("category");
+            const sourceUrl = lines("sources").find(isUrl) ?? null;
+
+            const location = [
+              ["country", text("country")],
+              ["region", text("region")],
+              ["city", text("city")],
+            ].filter(([, value]) => value);
+
+            const frontmatter = [
+              "---",
+              `title: ${JSON.stringify(title)}`,
+              CENTER_TYPES.includes(type)
+                ? `type: ${type}`
+                : `# TODO: тип из заявки «${type ?? "-"}» не совпал со схемой - ${CENTER_TYPES.join(" / ")}\ntype: TODO`,
+              CENTER_CATEGORIES.includes(category)
+                ? `category: ${category}`
+                : `# TODO: направление из заявки «${category ?? "-"}» не совпало со схемой - ${CENTER_CATEGORIES.join(" / ")}\ncategory: TODO`,
+              sourceUrl ? `source: ${JSON.stringify(sourceUrl)}` : "# TODO: в заявке нет ссылки-источника - найти и вписать source",
+              text("summary") ? `summary: ${JSON.stringify(text("summary"))}` : "# TODO: нет краткого описания\nsummary: TODO",
+              `pubDate: "${new Date().toISOString().slice(0, 10)}"`,
+              location.length > 0
+                ? ["location:", ...location.map(([key, value]) => `  ${key}: ${JSON.stringify(value)}`)].join("\n")
+                : null,
+              "---",
+            ].filter((line) => line !== null);
+
+            const contacts = [
+              ["Руководитель", text("head")],
+              ["Телефон", text("phone")],
+              ["Email", text("email")],
+              ["Адрес", text("address")],
+            ]
+              .filter(([, value]) => value)
+              .map(([label, value]) => `- ${label}: ${mdx(value)}`);
+
+            const links = [
+              ["Сайт", text("site")],
+              ["Telegram", text("telegram")],
+              ["ВКонтакте", text("vk")],
+              ["Instagram", text("instagram")],
+            ]
+              .filter(([, value]) => value)
+              .map(([label, value]) => linkLine(value, label))
+              .concat(lines("otherLinks").map((value) => linkLine(value)));
+
+            function section(heading, body) {
+              return body.length > 0 ? ["", `## ${heading}`, "", ...body] : [];
+            }
+
+            const content = [
+              ...frontmatter,
+              ...section("Контакты", contacts),
+              ...section("Ссылки", links),
+              ...section("О центре", text("about") ? [mdx(text("about"))] : ["TODO: описания нет в заявке."]),
+              ...section("Особенности", text("features") ? [mdx(text("features"))] : []),
+              ...section("Источники", lines("sources").map((value) => linkLine(value))),
+              "",
+            ].join("\n");
+
+            const logoField = byLabel.get(LABELS.logo);
+            const logoUrl = Array.isArray(logoField?.value) ? logoField.value[0]?.url : null;
+
+            const { owner, repo } = context.repo;
+            const { data: repoData } = await github.rest.repos.get({ owner, repo });
+            const base = repoData.default_branch;
+
+            // id - следующий свободный tbk-N на момент сборки. Если до мержа
+            // кто-то займет номер, переименовать файл руками.
+            const { data: existing } = await github.rest.repos.getContent({
+              owner,
+              repo,
+              path: "src/data/centers_formatted",
+              ref: base,
+            });
+            const maxId = Math.max(
+              0,
+              ...existing.map((f) => Number(f.name.match(/^tbk-(\d+)\.mdx?$/)?.[1] ?? 0)),
+            );
+            const id = `tbk-${maxId + 1}`;
+            const path = `src/data/centers_formatted/${id}.mdx`;
+            const branch = `card-submission/${submissionId}`;
+
+            const { data: baseRef } = await github.rest.git.getRef({ owner, repo, ref: `heads/${base}` });
+            await github.rest.git.createRef({
+              owner,
+              repo,
+              ref: `refs/heads/${branch}`,
+              sha: baseRef.object.sha,
+            });
+            await github.rest.repos.createOrUpdateFileContents({
+              owner,
+              repo,
+              path,
+              branch,
+              message: `draft(centers): ${id} из заявки ${submissionId}`,
+              content: Buffer.from(content, "utf-8").toString("base64"),
+            });
+
+            const pr = await github.rest.pulls.create({
+              owner,
+              repo,
+              title: `Черновик карточки: ${title} (${id})`,
+              head: branch,
+              base,
+              body: [
+                `Черновик из заявки #${issue.number}, автоматически не публикуется.`,
+                "",
+                "Бот перенес поля формы как есть. **Доделать руками:**",
+                "- [ ] проверить сведения по источникам, дописать «О центре» в стиле остальных карточек",
+                "- [ ] закрыть все `TODO` во frontmatter и тексте",
+                `- [ ] регион РФ / страна проходят справочники (\`bun run build\` подскажет)`,
+                `- [ ] EN-версия: \`src/data/centers_i18n/en/${id}.mdx\``,
+                logoUrl
+                  ? `- [ ] логотип из заявки (ссылка временная): ${logoUrl}`
+                  : "- логотипа в заявке нет",
+                `- [ ] номер \`${id}\` не занят к моменту мержа`,
+                "",
+                `Closes #${issue.number}`,
+              ].join("\n"),
+              draft: true,
+            });
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: pr.data.number,
+              labels: ["needs-review"],
+            });
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: issue.number,
+              labels: [DRAFTED_LABEL],
+            });
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issue.number,
+              body: `Черновик карточки: ${pr.data.html_url}`,
+            });

@@ -1,0 +1,153 @@
+name: Tally submission intake
+
+# Триггерится через GitHub API (workflow_dispatch) из Cloudflare Worker,
+# который слушает вебхук Tally (workers/tally-intake). Здесь только шаг
+# "создать issue"; черновик карточки - draft-center-pr.yml по метке draft-card.
+#
+# Ручной прогон на dev (без воркера), пока формы вебхук еще не настроен:
+#   gh workflow run tally-submission.yml -f payload='{"submissionId":"test-1","formId":"test","formName":"tatarverse - центры","submittedAt":"2026-09-03T12:00:00.000Z","fields":[{"key":"q1","label":"Название центра","type":"INPUT_TEXT","value":"Тест"}]}'
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: >-
+          JSON одной строкой: {submissionId, formId, formName, submittedAt,
+          fields: [{key, label, type, value, options}]}. Присылает Worker
+          почти без изменений - у полей с выбором (чекбоксы, дропдаун)
+          `value` это id варианта из `options`, текст мэппится здесь, а не
+          в Worker. Вложенность - внутри строки, потому что у
+          workflow_dispatch нет типа "объект".
+        required: true
+        type: string
+
+permissions:
+  issues: write
+
+jobs:
+  create-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Разобрать payload и создать issue
+        uses: actions/github-script@v7
+        env:
+          PAYLOAD: ${{ inputs.payload }}
+        with:
+          script: |
+            const submission = JSON.parse(process.env.PAYLOAD);
+            const { submissionId, formId, formName, submittedAt, fields } = submission;
+
+            if (!submissionId || !Array.isArray(fields)) {
+              core.setFailed(
+                "payload обязан содержать submissionId и массив fields - проверь, что шлет Worker",
+              );
+              return;
+            }
+
+            // Значение поля мэппится по форме данных, а не по строке `type`
+            // (у Tally их много, и держать здесь исчерпывающий список хрупко):
+            //  - есть options - value это id варианта (или массив id) -
+            //    подставляем текст варианта;
+            //  - массив объектов (загруженные файлы: {name, url, ...}) -
+            //    ссылка на файл;
+            //  - любой другой массив/скаляр - как есть.
+            function renderFieldValue(field) {
+              const { value, options } = field;
+              if (value === null || value === undefined || value === "") return "-";
+
+              if (Array.isArray(options) && options.length > 0) {
+                const textById = new Map(options.map((o) => [o.id, o.text ?? o.id]));
+                if (Array.isArray(value)) {
+                  return value.map((id) => textById.get(id) ?? id).join(", ");
+                }
+                if (textById.has(value)) return textById.get(value);
+              }
+
+              if (Array.isArray(value)) {
+                return value
+                  .map((item) => {
+                    if (item && typeof item === "object") {
+                      return item.url && item.name ? `[${item.name}](${item.url})` : JSON.stringify(item);
+                    }
+                    return String(item);
+                  })
+                  .join(", ");
+              }
+
+              if (typeof value === "object") return JSON.stringify(value);
+
+              return String(value);
+            }
+
+            const CARD_SUBMISSION_LABEL = "card-submission";
+            const NEEDS_REVIEW_LABEL = "needs-review";
+            const marker = `<!-- tally-submission-id: ${submissionId} -->`;
+
+            // Метки создаются лениво и идемпотентно - первый прогон на dev
+            // не требует заводить их руками заранее.
+            for (const [name, color, description] of [
+              [CARD_SUBMISSION_LABEL, "0e8a16", "Заявка на добавление центра из формы Tally"],
+              [NEEDS_REVIEW_LABEL, "fbca04", "Требует ревью человека перед мержем"],
+            ]) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name,
+                  color,
+                  description,
+                });
+              } catch (error) {
+                if (error.status !== 422) throw error; // 422 - метка уже существует
+              }
+            }
+
+            // Дедуп: повторная доставка вебхука Tally (обычная реакция на
+            // не-200 ответ) не должна плодить второй issue на ту же заявку.
+            const existing = await github.rest.search.issuesAndPullRequests({
+              q: `repo:${context.repo.owner}/${context.repo.repo} is:issue "${submissionId}" in:body`,
+            });
+            if (existing.data.items.some((issue) => issue.body?.includes(marker))) {
+              console.log(`Issue для submissionId=${submissionId} уже существует, пропускаю.`);
+              return;
+            }
+
+            const fieldEntries = fields.map((field) => {
+              const label = field.label || field.key;
+              return `**${label}**\n${renderFieldValue(field)}\n`;
+            });
+
+            const body = [
+              marker,
+              `Заявка из формы «${formName ?? formId ?? "Tally"}».`,
+              "",
+              ...fieldEntries,
+              "---",
+              `submissionId: \`${submissionId}\``,
+              formId ? `formId: \`${formId}\`` : null,
+              submittedAt ? `submitted: ${submittedAt}` : null,
+              "",
+              "Проверить сведения по источникам; черновик карточки - метка `draft-card`.",
+              "",
+              "<details><summary>Сырой JSON (на случай, если рендер выше ошибся)</summary>",
+              "",
+              "```json",
+              JSON.stringify(fields, null, 2),
+              "```",
+              "",
+              "</details>",
+            ]
+              .filter((line) => line !== null)
+              .join("\n");
+
+            const centerName = fields.find((f) => f.label === "Название центра")?.value;
+            const titleName = typeof centerName === "string" && centerName.trim() ? `${centerName.trim()} ` : "";
+
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Заявка на добавление центра: ${titleName}(${submissionId})`,
+              body,
+              labels: [CARD_SUBMISSION_LABEL, NEEDS_REVIEW_LABEL],
+            });
+
+            console.log(`Создан issue #${issue.data.number}: ${issue.data.html_url}`);

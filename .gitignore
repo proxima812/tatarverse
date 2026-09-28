@@ -55,3 +55,9 @@ tools/vk-publish/state.json
 # черновики текстов для внешних площадок: пишутся под конкретную публикацию
 # и живут только локально
 /article-publish/
+
+# Локальные секреты для `wrangler dev` (workers/tally-intake)
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.wrangler/

@@ -22,6 +22,7 @@
     ".netlify",
     "dist",
     ".wrangler",
-    "article-publish"
+    "article-publish",
+    "workers"
   ]
 }

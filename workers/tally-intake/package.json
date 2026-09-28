@@ -1,0 +1,15 @@
+{
+	"name": "tatarverse-tally-intake",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "wrangler dev",
+		"deploy": "wrangler deploy",
+		"typecheck": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20250101.0",
+		"typescript": "^6.0.2",
+		"wrangler": "^4.0.0"
+	}
+}

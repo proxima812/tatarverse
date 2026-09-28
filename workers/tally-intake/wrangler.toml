@@ -1,0 +1,13 @@
+name = "tatarverse-tally-intake"
+main = "src/index.ts"
+compatibility_date = "2026-09-28"
+
+# Не секреты - id репозитория и workflow, который нужно задиспатчить.
+# Секреты (TALLY_SIGNING_SECRET, GITHUB_TOKEN) сюда не идут - см. README.md:
+# `wrangler secret put` для прод, `.dev.vars` (не коммитится) для локального
+# `wrangler dev`.
+[vars]
+GITHUB_OWNER = "proxima812"
+GITHUB_REPO = "tatarverse"
+GITHUB_WORKFLOW_ID = "tally-submission.yml"
+GITHUB_REF = "main"
