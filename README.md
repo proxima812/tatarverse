@@ -97,5 +97,6 @@ This repository uses separate licenses for code and content:
 ## Current Issues
 
 <!-- open-issues:start -->
-- No open issues.
+- Issues #15: [Заявка на добавление центра: ТЕСТ пайплайна — удалить (pipeline-test-1)](https://github.com/proxima812/tatarverse/issues/15)
 <!-- open-issues:end -->
+
