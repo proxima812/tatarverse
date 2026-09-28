@@ -39,10 +39,12 @@ const translatedPostIds = idsFromGlob(import.meta.glob("../data/posts_i18n/en/*.
  * Маршруты, у которых английской версии нет вовсе.
  *
  * Благодарности остаются только по-русски: это личные слова конкретным
- * людям, а не интерфейс, и переводить их за них не нам.
+ * людям, а не интерфейс, и переводить их за них не нам. Форма «Добавить
+ * центр» тоже только по-русски: вопросы Tally завязаны на русские названия.
  */
 const ruOnlyRoutes: Array<{ pattern: RegExp; switcher: "stay" | "hub" }> = [
 	{ pattern: /^thanks$/, switcher: "hub" },
+	{ pattern: /^add$/, switcher: "hub" },
 	{ pattern: /^colors$/, switcher: "hub" },
 ];
 

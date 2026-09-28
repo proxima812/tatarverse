@@ -67,6 +67,7 @@ export default defineConfig({
           "/nearby",
           "/en/nearby",
           "/en/thanks",
+          "/en/add",
           "/centers/print",
           "/en/centers/print",
           "/colors",

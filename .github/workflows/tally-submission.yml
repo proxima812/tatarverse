@@ -139,7 +139,7 @@ jobs:
               .filter((line) => line !== null)
               .join("\n");
 
-            const centerName = fields.find((f) => f.label === "Название центра")?.value;
+            const centerName = fields.find((f) => /^Название центра\s*\*?$/.test(f.label ?? ""))?.value;
             const titleName = typeof centerName === "string" && centerName.trim() ? `${centerName.trim()} ` : "";
 
             const issue = await github.rest.issues.create({

@@ -8,7 +8,7 @@ Cloudflare Worker: принимает вебхук Tally с формы «Доб�
 Отдельный деплой, не часть сборки Astro: папка `workers/` исключена из
 корневого `tsconfig.json`.
 
-Поля, в названии которых есть «не публикуется» (контакт заявителя), воркер
+Поле «Контакт для связи» и поля с «не публикуется» в названии воркер
 вырезает - репозиторий публичный, они остаются только в Tally.
 
 ## Локальная разработка
@@ -40,15 +40,18 @@ curl -i http://localhost:8787 -H "Tally-Signature: <sig>" -H "Content-Type: appl
 
 ## Прод-деплой
 
+`-c wrangler.toml` обязателен: иначе wrangler подхватывает корневой
+`wrangler.jsonc` сайта.
+
 ```bash
 bun run deploy
-bunx wrangler secret put TALLY_SIGNING_SECRET
-bunx wrangler secret put GITHUB_TOKEN
+bunx wrangler secret put TALLY_SIGNING_SECRET -c wrangler.toml
+bunx wrangler secret put GITHUB_TOKEN -c wrangler.toml
 ```
 
 `GITHUB_TOKEN` - fine-grained PAT, только репозиторий `proxima812/tatarverse`,
 единственное право - `Actions: Read and write`. Issue и PR создает встроенный
 токен workflow, не этот.
 
-URL воркера (`https://tatarverse-tally-intake.<subdomain>.workers.dev`) -
+URL воркера (`https://tatarverse-tally-intake.kamil-mirikhan.workers.dev`) -
 в Tally: Integrations → Webhooks, там же signing secret.

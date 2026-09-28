@@ -3,8 +3,8 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "wrangler dev",
-		"deploy": "wrangler deploy",
+		"dev": "wrangler dev -c wrangler.toml",
+		"deploy": "wrangler deploy -c wrangler.toml",
 		"typecheck": "tsc --noEmit"
 	},
 	"devDependencies": {

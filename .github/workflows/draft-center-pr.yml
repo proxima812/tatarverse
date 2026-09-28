@@ -58,7 +58,9 @@ jobs:
 
             const submissionId = submissionIdMatch[1];
             const fields = JSON.parse(bodyMatch[1]);
-            const byLabel = new Map(fields.map((f) => [f.label || f.key, f]));
+            // «Название центра *» и «Название центра» - один вопрос: звездочка
+            // в тексте вопроса остается, если форму собирали импортом.
+            const byLabel = new Map(fields.map((f) => [(f.label || f.key).replace(/\s*\*\s*$/, ""), f]));
 
             const LABELS = {
               title: "Название центра",

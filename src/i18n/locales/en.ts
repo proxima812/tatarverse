@@ -270,6 +270,7 @@ const dict: Dictionary = {
 	"anons.label": "Project social media",
 
 	"nav.nearby": "Near you",
+	"nav.add": "Add",
 	"nearby.title": "Centers nearby",
 	"nearby.description":
 		"We detect your country from your connection and show TBC center cards from there, with a city filter.",

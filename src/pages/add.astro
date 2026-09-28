@@ -1,0 +1,28 @@
+---
+import TallyForm from "@/components/forms/TallyForm.astro";
+import Layout from "@/layouts/Layout.astro";
+
+/**
+ * Форма «Добавить центр» - только по-русски (см. ruOnlyRoutes в src/i18n).
+ * Заявка уходит вебхуком в workers/tally-intake и становится issue в GitHub.
+ * Названия вопросов в Tally менять синхронно с LABELS в
+ * .github/workflows/draft-center-pr.yml.
+ */
+const TALLY_FORM_ID = "Zj0xxB";
+---
+
+<Layout
+	title="Добавить центр"
+	description="Расскажите о татарском, башкирском или крымскотатарском центре — мы проверим сведения и добавим его в каталог."
+>
+	<main class="mx-auto max-w-2xl space-y-6">
+		<div class="space-y-3 text-center">
+			<h1 class="text-3xl font-bold tracking-tight sm:text-4xl">Добавить центр</h1>
+			<p class="text-muted-foreground">
+				Знаете центр, общество или сообщество, которого нет в каталоге? Заполните форму — мы
+				проверим сведения по источникам и добавим карточку.
+			</p>
+		</div>
+		<TallyForm formId={TALLY_FORM_ID} title="Добавить центр на tatarverse" height={3483} />
+	</main>
+</Layout>
