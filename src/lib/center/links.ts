@@ -71,6 +71,23 @@ const PLATFORMS: Platform[] = [
 const MAP_PATHS = /^\/maps(\/|$)/;
 const MAP_HOSTS = /(^|\.)(google\.[a-z.]+|yandex\.[a-z.]+)$/;
 
+/**
+ * Справочники, реестры, СМИ и энциклопедии. Они подтверждают, что центр
+ * существует, и годятся в `source` и «Источники», но каналом самого центра не
+ * являются: главная ВКТ в `source` у двухсот карточек иначе выдавала себя за
+ * их «Сайт» в каталоге и за `url` организации в JSON-LD.
+ */
+const DIRECTORY_HOSTS =
+	/(^|\.)(tatar-congress\.org|tatars\.kz|addnrb\.ru|korsovet\.kg|mosobltatar\.ru|kurultai\.ru|lnkba\.lv|assembly\.kz|ariregister\.rik\.ee|integratsioon\.ee|wikipedia\.org|tatarica\.org|tatar-inform\.ru|milliard\.tatar|otyrar\.kz|kulturarb\.ru|astanatimes\.com|zhaikpress\.kz|inform\.kz|bashinform\.ru|rusprofile\.ru|list-org\.com|weproject\.media)$/;
+
+export function isDirectoryUrl(href: string): boolean {
+	try {
+		return DIRECTORY_HOSTS.test(new URL(href).hostname.toLowerCase());
+	} catch {
+		return false;
+	}
+}
+
 const LINKS_SECTION = /^##\s+(Ссылки|Links)\s*$/im;
 const MARKDOWN_LINK = /\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/g;
 
@@ -126,6 +143,7 @@ export function getCenterLinks(body: string | undefined, source?: string): Cente
 	const found = new Map<CenterLinkKind, CenterLink>();
 
 	const collect = (href: string) => {
+		if (isDirectoryUrl(href)) return;
 		const classified = classify(href);
 		if (!classified || found.has(classified.kind)) return;
 		found.set(classified.kind, { ...classified, href });

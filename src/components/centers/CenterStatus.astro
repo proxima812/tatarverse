@@ -1,0 +1,61 @@
+---
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { config } from "@/config";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import type { CenterCompleteness } from "@/lib/center/completeness";
+import { Icon } from "astro-icon/components";
+
+/**
+ * Полнота карточки: «заполнена» или «данные неполные» со списком пробелов и
+ * просьбой помочь. Статус считается при сборке из самой карточки
+ * (getCenterCompleteness), руками не ставится.
+ *
+ * Страница рисует компонент дважды: в боковой колонке на десктопе и под
+ * текстом на мобильном, чтобы блок не отодвигал содержимое карточки. Видна
+ * всегда одна копия, поэтому id заголовка зависит от `placement`.
+ */
+interface Props {
+	completeness: CenterCompleteness;
+	placement: "aside" | "inline";
+	class?: string;
+}
+
+const { completeness, placement, class: className } = Astro.props as Props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const titleId = `center-status-${placement}`;
+const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
+---
+
+{
+	completeness.complete ? (
+		<p class:list={["not-prose flex items-start gap-2 text-sm", className]}>
+			<Icon name="tabler:circle-check" class="mt-0.5 size-4 shrink-0 text-foreground" aria-hidden="true" />
+			<span>
+				<span class="block font-medium text-foreground">{t("detail.status.complete")}</span>
+				<span class="block text-xs text-subtle-foreground">{t("detail.status.completeHint")}</span>
+			</span>
+		</p>
+	) : (
+		<section
+			class:list={["not-prose space-y-3 rounded-catalog border border-depth-100 p-4 text-sm", className]}
+			aria-labelledby={titleId}
+		>
+			<h2 id={titleId} class="flex items-center gap-2 text-sm font-medium text-foreground">
+				<Icon name="tabler:circle-dashed" class="size-4 shrink-0" aria-hidden="true" />
+				{t("detail.status.incomplete")}
+			</h2>
+			<p class="text-foreground">{t("detail.status.missing", { gaps })}</p>
+			<p class="text-xs text-subtle-foreground">{t("detail.status.help")}</p>
+			<ButtonLink
+				href={config.feedbackUrl}
+				target="_blank"
+				variant="outline"
+				size="xs"
+				icon="mdi:telegram"
+				label={t("detail.status.cta")}
+			/>
+		</section>
+	)
+}

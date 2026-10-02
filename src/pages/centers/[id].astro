@@ -3,6 +3,7 @@ import CenterFacts from "@/components/centers/CenterFacts.astro";
 import CenterHeader from "@/components/centers/CenterHeader.astro";
 import CenterPagination from "@/components/centers/CenterPagination.astro";
 import CenterRelated from "@/components/centers/CenterRelated.astro";
+import CenterStatus from "@/components/centers/CenterStatus.astro";
 import { markdownComponents } from "@/components/markdown/markdownComponents";
 import SkipNode from "@/components/markdown/SkipNode.astro";
 import ButtonLink from "@/components/ui/ButtonLink.astro";
@@ -70,6 +71,7 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 		<div class="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-12">
 			<div class="prose min-w-0 max-w-[68ch]">
 				<Content components={{ ...markdownComponents, h1: SkipNode }} />
+				<CenterStatus completeness={detail.completeness} placement="inline" class="mt-8 lg:hidden" />
 				<ContentDates
 					publishedDate={detail.publishedDate}
 					modifiedDate={detail.modifiedDate}
@@ -81,6 +83,7 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 				facts={detail.facts}
 				sourceUrl={detail.sourceUrl}
 				sourceLabel={detail.sourceLabel}
+				completeness={detail.completeness}
 			/>
 		</div>
 

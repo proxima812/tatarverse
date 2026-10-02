@@ -1,14 +1,18 @@
 ---
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import type { CenterFact } from "@/lib/center/detail";
+import type { CenterCompleteness } from "@/lib/center/completeness";
+import CenterStatus from "./CenterStatus.astro";
 
 interface Props {
 	facts: CenterFact[];
 	sourceUrl?: string | null;
 	sourceLabel?: string | null;
+	/** Статус полноты: в колонке только на десктопе, на мобильном он под текстом. */
+	completeness?: CenterCompleteness;
 }
 
-const { facts, sourceUrl, sourceLabel } = Astro.props as Props;
+const { facts, sourceUrl, sourceLabel, completeness } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
@@ -39,6 +43,9 @@ const t = useTranslations(locale);
 					</div>
 				)}
 			</dl>
+			{completeness && (
+				<CenterStatus completeness={completeness} placement="aside" class="mt-4 hidden lg:flex lg:flex-col" />
+			)}
 		</aside>
 	)
 }

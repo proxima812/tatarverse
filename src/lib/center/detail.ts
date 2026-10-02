@@ -1,7 +1,9 @@
 import { getCountryLabel } from "@/data/worldCountries";
 import { localizePath, type AppLocale, type Translate } from "@/i18n";
 import { createCenterRouteIdMap, getCenterPath } from "@/lib/center/centers";
+import { getCenterCompleteness, type CenterCompleteness } from "@/lib/center/completeness";
 import { centerDescription } from "@/lib/center/description";
+import { isDirectoryUrl } from "@/lib/center/links";
 import { centerJsonLd } from "@/lib/center/jsonLd";
 import { byRecency } from "@/lib/center/order";
 import type { CenterEntry } from "@/lib/center/collection";
@@ -25,6 +27,8 @@ export interface CenterDetail {
 	facts: CenterFact[];
 	sourceUrl: string | null;
 	sourceLabel: string | null;
+	/** Полнота карточки — по русской записи, общая для обеих локалей. */
+	completeness: CenterCompleteness;
 	canonicalURL: string;
 	markdownURL?: string;
 	alternates: Array<{ hreflang: string; href: string }>;
@@ -127,6 +131,7 @@ export async function buildCenterDetail({
 		facts,
 		sourceUrl,
 		sourceLabel: sourceUrl ? hostnameOf(sourceUrl) : null,
+		completeness: getCenterCompleteness(entry),
 		canonicalURL: localizePath(locale, centerPath),
 		markdownURL: locale === "ru" ? `${centerPath}.md` : undefined,
 		alternates: [
@@ -161,7 +166,9 @@ export async function buildCenterDetail({
 		jsonLd: centerJsonLd({
 			name: title,
 			description: summary,
-			url: sourceUrl ?? localizePath(locale, centerPath),
+			// Справочник в source — не сайт организации: тогда её адрес — наша страница.
+			url:
+				sourceUrl && !isDirectoryUrl(sourceUrl) ? sourceUrl : localizePath(locale, centerPath),
 			country,
 			region,
 			city,
