@@ -133,6 +133,18 @@ const dict: Dictionary = {
 	"stats.byCountry.hint":
 		"Countries are grouped by world region; the number on the right is the entry count. Select a country to open the catalog with that filter.",
 	"stats.withoutCountry": "Online projects with no country: {count}.",
+	"stats.completeness.title": "Card completeness",
+	"stats.completeness.hint": "{complete} of {total} cards are complete: they have contacts, a description, a location and sources. {incomplete} more need help — if you know a center on the list, tell us what's missing.",
+	"stats.completeness.gap.contacts": "No contacts",
+	"stats.completeness.gap.about": "No description",
+	"stats.completeness.gap.city": "No city or region",
+	"stats.completeness.gap.sources": "No sources",
+	"stats.completeness.short.contacts": "contacts",
+	"stats.completeness.short.about": "description",
+	"stats.completeness.short.city": "city",
+	"stats.completeness.short.sources": "sources",
+	"stats.completeness.list": "Cards that need help ({count})",
+	"stats.completeness.online": "Online, no country",
 	"stats.groupSummary": "countries: {countries} · entries: {centers}",
 	"stats.missingLabel": "No centers yet ({count}):",
 	"stats.missingNote":

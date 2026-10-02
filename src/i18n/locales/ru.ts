@@ -136,6 +136,18 @@ const dict: Dictionary = {
 	"stats.byCountry.hint":
 		"Страны сгруппированы по регионам мира; число справа — количество карточек. Нажмите на страну, чтобы открыть каталог с этим фильтром.",
 	"stats.withoutCountry": "Онлайн-проектов без страны: {count}.",
+	"stats.completeness.title": "Полнота карточек",
+	"stats.completeness.hint": "Заполнено {complete} из {total}: у них есть контакты, описание, место и источники. Ещё {incomplete} ждут помощи — если знаете центр из списка, пришлите, чего не хватает.",
+	"stats.completeness.gap.contacts": "Без контактов",
+	"stats.completeness.gap.about": "Без описания",
+	"stats.completeness.gap.city": "Без города или региона",
+	"stats.completeness.gap.sources": "Без источников",
+	"stats.completeness.short.contacts": "контакты",
+	"stats.completeness.short.about": "описание",
+	"stats.completeness.short.city": "город",
+	"stats.completeness.short.sources": "источники",
+	"stats.completeness.list": "Карточки, которым нужна помощь ({count})",
+	"stats.completeness.online": "Онлайн, без страны",
 	"stats.groupSummary": "стран: {countries} · карточек: {centers}",
 	"stats.missingLabel": "Пока нет центров ({count}):",
 	"stats.missingNote":
