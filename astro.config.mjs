@@ -7,6 +7,7 @@ import icon from "astro-icon";
 import metaTags from "astro-meta-tags";
 import { defineConfig, fontProviders } from "astro/config";
 import { config } from "./src/config.ts";
+import { centerRedirects } from "./src/data/centerRedirects.ts";
 import aiTxt from "./src/lib/integrations/aiTxt.ts";
 import { buildHomeMarkdown } from "./src/lib/integrations/homeMarkdown.ts";
 import indexNow from "./src/lib/integrations/indexNow.ts";
@@ -16,6 +17,8 @@ import { includeAssets, manifest, workbox } from "./src/lib/site/pwaSettings.ts"
 
 export default defineConfig({
   site: config.site.url,
+  // Слитые дубли центров: старый tbk-N ведёт на оставшуюся карточку.
+  redirects: centerRedirects(),
   fonts: [
     {
       provider: fontProviders.local(),
