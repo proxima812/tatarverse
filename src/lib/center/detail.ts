@@ -3,7 +3,7 @@ import { localizePath, type AppLocale, type Translate } from "@/i18n";
 import { createCenterRouteIdMap, getCenterPath } from "@/lib/center/centers";
 import { getCenterCompleteness, type CenterCompleteness } from "@/lib/center/completeness";
 import { centerDescription } from "@/lib/center/description";
-import { isDirectoryUrl } from "@/lib/center/links";
+import { getCenterLinks } from "@/lib/center/links";
 import { centerJsonLd } from "@/lib/center/jsonLd";
 import { byRecency } from "@/lib/center/order";
 import type { CenterEntry } from "@/lib/center/collection";
@@ -166,9 +166,10 @@ export async function buildCenterDetail({
 		jsonLd: centerJsonLd({
 			name: title,
 			description: summary,
-			// Справочник в source — не сайт организации: тогда её адрес — наша страница.
+			// Сайт организации из «Ссылок»; source — это справочник или статья.
 			url:
-				sourceUrl && !isDirectoryUrl(sourceUrl) ? sourceUrl : localizePath(locale, centerPath),
+				getCenterLinks(entry.body, entry.data.source).find((link) => link.kind === "website")?.href ??
+				localizePath(locale, centerPath),
 			country,
 			region,
 			city,

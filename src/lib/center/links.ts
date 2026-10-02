@@ -73,14 +73,13 @@ const MAP_HOSTS = /(^|\.)(google\.[a-z.]+|yandex\.[a-z.]+)$/;
 
 /**
  * Справочники, реестры, СМИ и энциклопедии. Они подтверждают, что центр
- * существует, и годятся в `source` и «Источники», но каналом самого центра не
- * являются: главная ВКТ в `source` у двухсот карточек иначе выдавала себя за
- * их «Сайт» в каталоге и за `url` организации в JSON-LD.
+ * существует, и годятся в «Источники», но каналом самого центра не являются,
+ * даже если по ошибке попали в «Ссылки».
  */
 const DIRECTORY_HOSTS =
-	/(^|\.)(tatar-congress\.org|tatars\.kz|addnrb\.ru|korsovet\.kg|mosobltatar\.ru|kurultai\.ru|lnkba\.lv|assembly\.kz|ariregister\.rik\.ee|integratsioon\.ee|wikipedia\.org|tatarica\.org|tatar-inform\.ru|milliard\.tatar|otyrar\.kz|kulturarb\.ru|astanatimes\.com|zhaikpress\.kz|inform\.kz|bashinform\.ru|rusprofile\.ru|list-org\.com|weproject\.media)$/;
+	/(^|\.)(tatar-congress\.org|congress\.tatar|tatars\.kz|addnrb\.ru|korsovet\.kg|mosobltatar\.ru|kurultai\.ru|lnkba\.lv|assembly\.kz|ariregister\.rik\.ee|integratsioon\.ee|wikipedia\.org|tatarica\.org|tatar-inform\.ru|milliard\.tatar|otyrar\.kz|kulturarb\.ru|astanatimes\.com|zhaikpress\.kz|inform\.kz|bashinform\.ru|rusprofile\.ru|list-org\.com|weproject\.media)$/;
 
-export function isDirectoryUrl(href: string): boolean {
+function isDirectoryUrl(href: string): boolean {
 	try {
 		return DIRECTORY_HOSTS.test(new URL(href).hostname.toLowerCase());
 	} catch {
@@ -153,7 +152,10 @@ export function getCenterLinks(body: string | undefined, source?: string): Cente
 		collect(match[1]);
 	}
 
-	if (source) collect(source);
+	// `source` — откуда взяты сведения: чаще справочник или статья, чем сайт
+	// центра. Из него берём только соцсети; собственный сайт обязан стоять в
+	// «Ссылках». Иначе главная ВКТ у двухсот карточек выдавала себя за их «Сайт».
+	if (source && classify(source)?.kind !== "website") collect(source);
 
 	const order: CenterLinkKind[] = ["website", ...PLATFORMS.map((platform) => platform.kind)];
 
