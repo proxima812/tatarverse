@@ -51,6 +51,12 @@ bun run cf:preview
 bun run cf:deploy
 ```
 
+## Public API
+
+The read-only catalog is available as static JSON at `/api/v1/centers.json`,
+with country listings, statistics and an OpenAPI 3.1 schema at `/openapi.json`.
+See [Public API documentation](./docs/API.md) for endpoints, caching and license details.
+
 ## Contributing
 
 Keep contributions focused and easy to review. Use the guide in the language most convenient for you:
