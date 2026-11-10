@@ -24,6 +24,7 @@ const {
 	codeLicense: codeLicenseHref,
 	contentLicense: contentLicenseHref,
 	suggestChange: suggestChangeHref,
+	apiDocs: apiDocsHref,
 } = siteLinks;
 const updatedAtLabel = new Intl.DateTimeFormat(locale, {
 	day: "numeric",
@@ -166,6 +167,11 @@ const footerSections: FooterSection[] = [
 			{
 				href: suggestChangeHref,
 				label: t("footer.suggestChange"),
+				props: externalProps,
+			},
+			{
+				href: apiDocsHref,
+				label: "API",
 				props: externalProps,
 			},
 			{

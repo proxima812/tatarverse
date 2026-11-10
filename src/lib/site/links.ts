@@ -18,6 +18,7 @@ export const siteLinks = {
 	suggestChange: `${repository}/issues/new`,
 	codeLicense: `${repository}/blob/main/LICENSE`,
 	contentLicense: `${repository}/blob/main/CONTENT-LICENSE.md`,
+	apiDocs: `${repository}/blob/main/docs/API.md`,
 } as const;
 
 /** Атрибуты для ссылки, уводящей с сайта. */
