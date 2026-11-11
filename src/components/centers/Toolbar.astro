@@ -64,7 +64,7 @@ const GATES: Record<string, string> = {
 				))
 			}
 
-			<div class="flex flex-wrap items-center gap-1.5 border-t border-depth-100 pt-4">
+			<div class="flex flex-wrap items-center gap-1.5  pt-4">
 				<ButtonLink
 					href="/stats"
 					labelKey="list.stat.link"
@@ -102,7 +102,7 @@ const GATES: Record<string, string> = {
 </aside>
 
 <script>
-	import { initCardsToolbar } from "@/lib/scripts/centersToolbar";
+	import { initCardsToolbar } from "@/lib/client/centersToolbar";
 
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", initCardsToolbar, { once: true });

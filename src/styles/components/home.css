@@ -1,6 +1,5 @@
 /**
- * Главная — `components/home/HomeHeroBadge.astro`, `HomeHeroTitle.astro`,
- * `HomeFollowersCarousel.astro`.
+ * Главная — `components/home/HomeHeroBadge.astro`, `HomeHeroTitle.astro`.
  */
 
 @media (prefers-reduced-motion: no-preference) {
@@ -21,25 +20,6 @@
 	}
 }
 
-.hero-badge-item {
-	will-change: transform, opacity;
-}
-
-.hero-badge-item[data-state="in"] {
-	opacity: 1;
-	transform: none;
-}
-
-.hero-badge-item[data-state="out"] {
-	opacity: 0;
-	transform: translateY(-8px);
-}
-
-.hero-badge-item[data-state="idle"] {
-	opacity: 0;
-	transform: translateY(8px);
-}
-
 .hero-accent {
 	color: transparent;
 	background-clip: text;
@@ -50,25 +30,4 @@
 		color-mix(in oklab, var(--color-accent-glow) 70%, var(--color-accent-vivid)),
 		var(--color-accent-vivid)
 	);
-}
-
-.followers-carousel-track {
-	animation: followers-carousel-scroll 500s linear infinite;
-}
-
-.followers-carousel-track-reverse {
-	animation-direction: reverse;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.followers-carousel-track {
-		animation: none;
-		width: auto;
-	}
-}
-
-@keyframes followers-carousel-scroll {
-	to {
-		transform: translateX(-50%);
-	}
 }

@@ -17,11 +17,7 @@ export const GET: APIRoute = () =>
       title: "tatarverse Public Catalog API",
       version: "1.0.0",
       description:
-        "Static, read-only catalog generated during the Astro build. Center content is CC BY 4.0 and requires attribution.",
-      license: {
-        name: "CC BY 4.0 (content)",
-        url: "https://creativecommons.org/licenses/by/4.0/",
-      },
+        "Static, read-only catalog generated during the Astro build.",
     },
     servers: [{ url: "https://tatarverse.cc" }],
     paths: {

@@ -95,32 +95,6 @@ const SourceCenterSchema = CenterSchema.superRefine((data, ctx) => {
 	validateCenterLocation(data.location, ctx);
 });
 
-const PostSchema = z
-	.object({
-		title: z.string().min(1),
-		description: z.string().min(1),
-		pubDate: z.coerce.date(),
-		author: z.string().min(1),
-		tags: z.array(z.string()).default([]),
-		category: z.string().min(1),
-		ogImage: z.string().optional(),
-	})
-	.strict()
-	.transform((data) => ({
-		...data,
-		publishedDate: data.pubDate,
-	}));
-
-const ThanksSchema = z
-  .object({
-    name: z.string().min(1).optional(),
-    instagram: z.url().optional(),
-    telegram: z.url().optional(),
-    social: z.url().optional(),
-    sortOrder: z.number().default(0),
-  })
-  .strict();
-
 const centers = defineCollection({
 	loader: glob({
 		pattern: "**/*.{md,mdx}",
@@ -137,41 +111,12 @@ const centersEn = defineCollection({
 	schema: CenterSchema,
 });
 
-const posts = defineCollection({
-	loader: glob({
-		pattern: "**/*.{md,mdx}",
-		base: "./src/data/posts",
-	}),
-	schema: PostSchema,
-});
-
-const postsEn = defineCollection({
-	loader: glob({
-		pattern: "**/*.{md,mdx}",
-		base: "./src/data/posts_i18n/en",
-	}),
-	schema: PostSchema,
-});
-
-const thanks = defineCollection({
-	loader: glob({
-		pattern: "**/*.{md,mdx}",
-		base: "./src/data/thanks",
-	}),
-	schema: ThanksSchema,
-});
-
 export const collections = {
 	centers,
 	centersEn,
-	posts,
-	postsEn,
-	thanks,
 };
 
 export type CenterCategory = z.infer<typeof CenterCategorySchema>;
 export type CenterType = z.infer<typeof CenterTypeSchema>;
 export type CenterLocation = z.infer<typeof CenterLocationSchema>;
 export type CenterData = z.infer<typeof CenterSchema>;
-export type PostData = z.infer<typeof PostSchema>;
-export type ThanksData = z.infer<typeof ThanksSchema>;

@@ -1,10 +1,10 @@
 /**
  * Контракт `data-*` карточки центра — единственное объявление.
  *
- * Карточка рендерится на сборке (`CardItem.astro`), а читают её три
+ * Карточка рендерится на сборке (`CenterCard.astro`), а читают её три
  * независимых потребителя в браузере: фильтры каталога
- * (`lib/scripts/centersToolbar.ts`), сохранённые центры
- * (`lib/scripts/savedCentersUi.ts`) и страница `/saved`. Раньше имена атрибутов
+ * (`lib/client/centersToolbar.ts`), сохранённые центры
+ * (`lib/client/savedCentersUi.ts`) и страница `/saved`. Раньше имена атрибутов
  * жили в этих файлах строковыми литералами — переименование ловилось только
  * грепом и падало в рантайме, потому что ни `astro check`, ни TypeScript
  * ничего не знали о связи.
@@ -80,7 +80,7 @@ export const closestCard = (element: Element): HTMLElement | null =>
 /**
  * Части карточки, которые заполняются на клиенте.
  *
- * Нужны странице `/saved`: она клонирует `CardItem`, отрендеренный в
+ * Нужны странице `/saved`: она клонирует `CenterCard`, отрендеренный в
  * `<template>`, и подставляет в него сохранённые значения. Раньше у `/saved`
  * была своя копия всей разметки карточки с собственными хуками
  * `data-saved-*` — правка дизайна карточки до неё не доходила.
@@ -97,7 +97,6 @@ export const CARD_PART = {
 	summary: "data-card-summary",
 	category: "data-card-category",
 	type: "data-card-type",
-	date: "data-card-date",
 } as const;
 
 export type CardPart = keyof typeof CARD_PART;

@@ -4,7 +4,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { config } from "@/config";
-import { getPostId } from "@/lib/post/posts";
 
 type LlmsEntry = {
 	title: string;
@@ -140,37 +139,7 @@ function renderSection(title: string, entries: LlmsEntry[]) {
 }
 
 async function getMarkdownEntries(site: URL): Promise<LlmsEntry[]> {
-	const { getCollection } = await import("astro:content");
-	const posts = await getCollection("posts");
-
-	const entries = posts
-		.map((post) => {
-			const id = getPostId(post.id);
-			return {
-				title: post.data.title,
-				description: post.data.description,
-				section: "Markdown",
-				url: new URL(`posts/${id}.md`, site).href,
-			};
-		})
-		.sort((a, b) => a.url.localeCompare(b.url));
-
-	return [
-		{
-			title: "Посты tatarverse",
-			description: "Список всех постов одним markdown-файлом",
-			section: "Markdown",
-			url: new URL("posts.md", site).href,
-		},
-		{
-			title: "Центры tatarverse",
-			description:
-				"Каталог центров одним markdown-файлом; карточка каждого центра доступна как /centers/tbk-N.md",
-			section: "Markdown",
-			url: new URL("centers.md", site).href,
-		},
-		...entries,
-	];
+ return [{ title: "Центры tatarverse", description: "Каталог центров в markdown", section: "Markdown", url: new URL("centers.md", site).href }];
 }
 
 async function getLlmsTxt(site: URL) {

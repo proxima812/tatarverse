@@ -45,13 +45,7 @@
   Link: </index.md>; rel="alternate"; type="text/markdown"
   Vary: Accept
 
-/posts/:slug
-  Link: </posts/:slug.md>; rel="alternate"; type="text/markdown"
-  Vary: Accept
 
-/posts
-  Link: </posts.md>; rel="alternate"; type="text/markdown"
-  Vary: Accept
 
 /centers/:id
   Link: </centers/:id.md>; rel="alternate"; type="text/markdown"
@@ -73,8 +67,6 @@
 /centers/search-index.json
   ! Link
 
-/posts/rss.xml
-  ! Link
 
 /ai.txt
   ! Cache-Control

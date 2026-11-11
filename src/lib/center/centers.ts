@@ -11,30 +11,6 @@ export type CenterTranslationCollection =
 
 export const getCenterPath = (routeId: string) => `/centers/${routeId}`;
 
-const MARK_GOLDEN_ANGLE = 137.50776405003785;
-
-const hashSeed = (value: string) => {
-	let hash = 0x811c9dc5;
-	for (let i = 0; i < value.length; i++) {
-		hash ^= value.charCodeAt(i);
-		hash = Math.imul(hash, 0x01000193);
-	}
-
-	hash ^= hash >>> 16;
-	hash = Math.imul(hash, 0x85ebca6b);
-	hash ^= hash >>> 13;
-	hash = Math.imul(hash, 0xc2b2ae35);
-	hash ^= hash >>> 16;
-
-	return hash >>> 0;
-};
-
-export const getCenterMarkHue = (id: string) => {
-	const seed = isCenterRouteId(id) ? centerRouteNumber(id) : hashSeed(id);
-
-	return Math.round((seed * MARK_GOLDEN_ANGLE) % 360);
-};
-
 export const getCenterTranslationCollection = (locale: string) =>
 	CENTER_TRANSLATION_COLLECTIONS[locale as CenterTranslationLocale];
 

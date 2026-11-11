@@ -1,0 +1,183 @@
+---
+import { centerAvatarMarkup } from "@/lib/center/avatar";
+import { cardDataset, cardPart } from "@/lib/site/cardAttributes";
+import { CARD_RESERVE_ATTR } from "@/lib/site/cardTemplate";
+import { normalizeCity, type CenterGeo } from "@/data/geo";
+import { countryFlagsByRu, getCountryLabel } from "@/data/worldCountries";
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { getCenterPath } from "@/lib/center/centers";
+import { Icon } from "astro-icon/components";
+import SaveCenterButton from "./SaveCenterButton.astro";
+
+interface Location {
+	flag?: string;
+	city?: string;
+	country?: string;
+}
+
+interface Props {
+	id: string;
+	routeId?: string;
+	title?: string;
+	summary?: string;
+	type?: string;
+	category?: string;
+	location?: Location;
+	region?: string;
+	geo?: CenterGeo;
+	pubDate?: string;
+	/**
+	 * Режим заготовки для `<template>` на `/saved`: все необязательные блоки
+	 * рендерятся пустыми, чтобы клиенту было куда подставить значения.
+	 * Иначе пришлось бы держать вторую копию разметки карточки.
+	 */
+	template?: boolean;
+	/**
+	 * Что за кнопка займёт угол карточки: обычная закладка или широкая
+	 * «удалить» на `/saved`. Отсюда ширина отступа, который под неё оставляют.
+	 * Раньше заготовка всегда резервировала место под «удалить», а `/nearby`
+	 * возвращала отступ каталога уже в браузере, правя Tailwind-класс из
+	 * скрипта.
+	 */
+	templateAction?: "bookmark" | "remove";
+}
+
+const {
+	id,
+	routeId,
+	title,
+	summary,
+	type,
+	category,
+	location,
+	region,
+	geo,
+	pubDate,
+	template = false,
+	templateAction = "bookmark",
+} = Astro.props as Props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const centerPath = getCenterPath(routeId ?? id);
+
+const cleanCity = geo ? geo.city || undefined : normalizeCity(location?.city);
+const cleanCountry = geo ? geo.country || undefined : location?.country?.trim() || undefined;
+const cleanRegion = geo ? geo.region : (region ?? "");
+const cleanFlag =
+	location?.flag?.trim() || (cleanCountry ? countryFlagsByRu[cleanCountry] : undefined);
+const displayCountry = cleanCountry ? getCountryLabel(cleanCountry, locale) : undefined;
+const countryKey = cleanCountry ?? "Прочее";
+const displayTitle = title ?? "—";
+const displaySummary = summary?.trim();
+const displayLocation =
+	cleanFlag || cleanCity || displayCountry
+		? { flag: cleanFlag, city: cleanCity, country: displayCountry }
+		: null;
+/** Единственное место, где живёт ширина места под кнопку в углу. */
+const reserveClass = templateAction === "remove" ? "pr-24" : "pr-9";
+
+// Единственное место, где карточка объявляет свой DOM-контракт. Имена
+// атрибутов — в @/lib/site/cardAttributes, там же их читают фильтры и /saved.
+const dataset = cardDataset({
+	id,
+	scope: geo?.scope ?? "",
+	macro: geo?.macro ?? "",
+	okrug: geo?.okrug ?? "",
+	country: countryKey,
+	region: cleanRegion,
+	city: cleanCity ?? "",
+	type: type ?? "",
+	category: category ?? "",
+	title: displayTitle,
+	summary: summary ?? "",
+	flag: cleanFlag ?? "",
+	pubDate: pubDate ?? "",
+	href: centerPath,
+});
+---
+
+<article
+	{...dataset}
+	{...(template ? { [CARD_RESERVE_ATTR]: reserveClass } : {})}
+	class="catalog-card group"
+>
+	<slot name="action"><SaveCenterButton title={template ? undefined : displayTitle} /></slot>
+
+	{
+		(template || displayLocation) && (
+			<p
+				{...cardPart("location", template)}
+				class:list={["catalog-card-location", reserveClass]}
+			>
+				{(template || displayLocation?.flag) && (
+					<span {...cardPart("flag", template)} class="catalog-card-flag">
+						{displayLocation?.flag}
+					</span>
+				)}
+				{(template || displayLocation?.city) && (
+					<span {...cardPart("city", template)}>{displayLocation?.city}</span>
+				)}
+				{(template || (displayLocation?.city && displayLocation?.country)) && (
+					<span {...cardPart("separator", template)} aria-hidden="true">
+						&#10625;
+					</span>
+				)}
+				{(template || displayLocation?.country) && (
+					<span {...cardPart("country", template)}>{displayLocation?.country}</span>
+				)}
+			</p>
+		)
+	}
+	<div class="catalog-card-title-row">
+		<center-avatar
+   {...cardPart("mark", template)}
+   class="center-avatar catalog-card-mark"
+   aria-hidden="true"
+   set:html={template ? "" : centerAvatarMarkup(id)}
+  />
+		<h2
+			{...cardPart("heading", template)}
+			class:list={["catalog-card-heading", !template && !displayLocation && reserveClass]}
+		>
+			<a
+				data-card-link
+				href={template ? "#" : localizePath(locale, centerPath)}
+				class="catalog-card-link"
+			>
+				{displayTitle}
+			</a>
+		</h2>
+	</div>
+
+	{
+		(template || displaySummary) && (
+			<p {...cardPart("summary", template)} class="catalog-card-summary">
+				{displaySummary}
+			</p>
+		)
+	}
+	<div class="catalog-card-meta">
+		<div class="flex min-w-0 flex-1 flex-wrap gap-x-3 gap-y-1.5">
+			{(template || category) && (
+				<span class="catalog-card-chip">
+					<Icon name="mdi:tag-multiple-outline" class="size-3.5 shrink-0" aria-hidden="true" />
+					<span {...cardPart("category", template)}>{category}</span>
+				</span>
+			)}
+			{(template || type) && (
+				<span class="catalog-card-chip">
+					<Icon name="mdi:tag-multiple-outline" class="size-3.5 shrink-0" aria-hidden="true" />
+					<span {...cardPart("type", template)}>{type}</span>
+				</span>
+			)}
+		</div>
+  <span class="catalog-card-more" aria-hidden="true">
+   <span>{t("card.details")}</span>
+   <Icon name="mdi:arrow-top-right" />
+  </span>
+ </div>
+</article>
+
+<script>
+ import "@/lib/client/centerAvatars";
+</script>

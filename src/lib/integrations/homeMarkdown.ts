@@ -67,16 +67,13 @@ export function buildHomeMarkdown(siteUrl: string): string {
 
 - [Каталог центров](${base}/centers) — карточки центров по странам, регионам, городам и категориям
 - [Статистика](${base}/stats) — покрытие каталога по странам и регионам
-- [Посты](${base}/posts) — редакционные заметки о культуре, языке и сообществах
 - [Переводы](${base}/translations) — статус перевода сайта и как помочь
 - [Источники](${base}/sources) — откуда берутся данные каталога
-- [Благодарности](${base}/thanks) — кто помогает проекту
 - [Политика](${base}/policy) — политика конфиденциальности
 
 ## Машиночитаемые версии
 
 - [/centers.md](${base}/centers.md) — весь каталог центров в markdown
-- [/posts.md](${base}/posts.md) — все посты в markdown
 - [/llms.txt](${base}/llms.txt) — карта сайта для языковых моделей
 - [/sitemap-index.xml](${base}/sitemap-index.xml) — карта сайта
 `;

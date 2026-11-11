@@ -33,34 +33,12 @@ const idsFromGlob = (files: Record<string, unknown>) =>
 	);
 
 const translatedCenterIds = idsFromGlob(import.meta.glob("../data/centers_i18n/en/*.mdx"));
-const translatedPostIds = idsFromGlob(import.meta.glob("../data/posts_i18n/en/*.mdx"));
-
-/**
- * Маршруты, у которых английской версии нет вовсе.
- *
- * Благодарности остаются только по-русски: это личные слова конкретным
- * людям, а не интерфейс, и переводить их за них не нам. Форма «Добавить
- * центр» тоже только по-русски: вопросы Tally завязаны на русские названия.
- */
-const ruOnlyRoutes: Array<{ pattern: RegExp; switcher: "stay" | "hub" }> = [
-	{ pattern: /^thanks$/, switcher: "hub" },
-	{ pattern: /^add$/, switcher: "hub" },
-	{ pattern: /^colors$/, switcher: "hub" },
-];
-
-function findRuOnlyRoute(relativePath: string) {
-	return ruOnlyRoutes.find((route) => route.pattern.test(relativePath));
-}
 
 export function hasLocalizedRoute(locale: AppLocale, relativePath: string): boolean {
 	if (locale === defaultLocale) return true;
-	if (findRuOnlyRoute(relativePath)) return false;
 
 	const centerId = relativePath.match(/^centers\/([^/.]+)$/)?.[1];
 	if (centerId && !translatedCenterIds.has(centerId)) return false;
-
-	const postId = relativePath.match(/^posts\/([^/.]+)$/)?.[1];
-	if (postId && !translatedPostIds.has(postId)) return false;
 
 	return true;
 }
@@ -70,6 +48,8 @@ export function isAppLocale(value: string | null | undefined): value is AppLocal
 }
 
 export function getLocaleFromUrl(url: URL): AppLocale {
+	// API documentation has one English-only route.
+	if (/^\/api\/?$/.test(url.pathname)) return "en";
 	const segment = url.pathname.split("/").filter(Boolean)[0];
 	return isAppLocale(segment) ? segment : defaultLocale;
 }
@@ -116,12 +96,9 @@ function nearestLocalizedHub(locale: AppLocale, relativePath: string): string {
 
 export function getSwitcherHref(locale: AppLocale, url: URL): string {
 	const currentPath = getLocalePathname(url.pathname);
+	if (currentPath === "api") return "/api/";
 	if (currentPath === "404") {
 		return getRelativeLocaleUrl(locale, "");
-	}
-
-	if (findRuOnlyRoute(currentPath)?.switcher === "stay") {
-		return `/${currentPath}/${url.search}${url.hash}`;
 	}
 
 	if (!hasLocalizedRoute(locale, currentPath)) {

@@ -1,0 +1,38 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	title?: string;
+}
+
+const { title } = Astro.props as Props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+// В data-* лежат только глаголы: имя центра скрипт берёт из `data-title`
+// карточки, а `title` ставит сам при синхронизации. Раньше название
+// повторялось в кнопке четыре раза, и на /centers/ это была почти половина
+// веса каждой карточки.
+const saveLabel = title ? `${t("saved.save")}: ${title}` : t("saved.save");
+---
+
+<button
+	type="button"
+	data-save-center
+	data-label-save={t("saved.save")}
+	data-label-remove={t("saved.remove")}
+	aria-pressed="false"
+	aria-label={saveLabel}
+	class="save-center"
+>
+	<Icon name="tabler:bookmark" class="save-center-off" aria-hidden="true" />
+	<Icon name="tabler:bookmark-filled" class="save-center-on" aria-hidden="true" />
+</button>
+
+
+<script>
+	import { initSavedCenters } from "@/lib/client/savedCentersUi";
+
+	initSavedCenters();
+</script>

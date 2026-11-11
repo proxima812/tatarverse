@@ -21,6 +21,15 @@ export default defineConfig({
   redirects: centerRedirects(),
   fonts: [
     {
+      provider: fontProviders.google(),
+      name: "Google Sans",
+      cssVariable: "--font-google-sans",
+      weights: ["400 700"],
+      styles: ["normal", "italic"],
+      subsets: ["latin", "cyrillic"],
+      display: "swap",
+    },
+    {
       provider: fontProviders.local(),
       name: "Inter",
       cssVariable: "--font-inter",
@@ -69,11 +78,8 @@ export default defineConfig({
           "/en/saved",
           "/nearby",
           "/en/nearby",
-          "/en/thanks",
-          "/en/add",
           "/centers/print",
           "/en/centers/print",
-          "/colors",
         ]);
         return !excluded.has(path);
       },
@@ -87,16 +93,6 @@ export default defineConfig({
     dualmark({
       siteUrl: config.site.url.replace(/\/$/, ""),
       collections: {
-        posts: {
-          converter: "blog",
-          route: "posts",
-          slugStrategy: "single",
-          listingMetadata: {
-            title: "Посты tatarverse",
-            description:
-              "Редакционные заметки tatarverse о культуре, языке и сообществах.",
-          },
-        },
         centers: {
           converter: "docs",
           route: "centers",
@@ -128,7 +124,7 @@ export default defineConfig({
         indexNow({
           key: config.indexNow.key,
           siteUrl: config.site.url,
-          collections: ["centers", "posts"],
+          collections: ["centers"],
           maxUrls: 500,
         }),
       ]

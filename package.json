@@ -1,42 +1,40 @@
 {
-	"name": "tatarverse",
-	"type": "module",
-	"version": "14.0.92",
-	"scripts": {
-		"dev": "astro dev",
-		"build": "astro build",
-		"preview": "astro preview",
-		"astro": "astro",
-		"cf:preview": "bun run build && wrangler pages dev ./dist",
-		"cf:deploy": "bun run build && bun run cf:deploy:dist",
-		"cf:deploy:dist": "CLOUDFLARE_ACCOUNT_ID=711d25ce64e87b4faeb50022b3e63631 wrangler pages deploy --branch main",
-		"release:bump": "node scripts/release-bump.js",
-		"vk:publish": "bun run tools/vk-publish/index.ts"
-	},
-	"dependencies": {
-		"@astrojs/check": "0.9.10",
-		"@astrojs/mdx": "7.0.8",
-		"@astrojs/rss": "4.0.19",
-		"@astrojs/sitemap": "3.7.3",
-		"@dualmark/astro": "^0.9.0",
-		"@dualmark/core": "^0.7.0",
-		"@tailwindcss/vite": "^4.0.9",
-		"@toolwind/corner-shape": "^0.0.8-3",
-		"astro": "7.2.9",
-		"astro-icon": "^1.1.5",
-		"astro-meta-tags": "^0.3.1",
-		"cn": "^0.2.5",
-		"fuse.js": "^7.3.0",
-		"tailwindcss": "^4.0.9",
-		"tw-shimmer": "^0.4.12"
-	},
-	"devDependencies": {
-		"@iconify-json/mdi": "^1.2.3",
-		"@iconify-json/tabler": "^1.2.33",
-		"@tailwindcss/typography": "^0.5.16",
-		"@vite-pwa/astro": "^1.2.0",
-		"typescript": "^6.0.2",
-		"wrangler": "^4.92.0",
-		"yaml": "^2.7.0"
-	}
+  "name": "tatarverse",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "cf:preview": "bun run build && wrangler pages dev ./dist",
+    "cf:deploy": "bun run build && bun run cf:deploy:dist",
+    "cf:deploy:dist": "CLOUDFLARE_ACCOUNT_ID=711d25ce64e87b4faeb50022b3e63631 wrangler pages deploy --branch main",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "0.9.12",
+    "@astrojs/mdx": "8.1.4",
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.4",
+    "@dualmark/astro": "^0.9.0",
+    "@dualmark/core": "^0.7.0",
+    "@tailwindcss/vite": "^4.0.9",
+    "@toolwind/corner-shape": "^0.0.8-3",
+    "astro": "7.4.10",
+    "astro-icon": "^1.1.5",
+    "astro-meta-tags": "^0.3.1",
+    "blobatar": "2.7.0",
+    "cn": "^0.2.5",
+    "fuse.js": "^7.3.0",
+    "tailwindcss": "^4.0.9"
+  },
+  "devDependencies": {
+    "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/tabler": "^1.2.33",
+    "@tailwindcss/typography": "^0.5.16",
+    "@vite-pwa/astro": "^1.2.0",
+    "typescript": "^6.0.2",
+    "wrangler": "^4.92.0"
+  },
+  "private": true
 }

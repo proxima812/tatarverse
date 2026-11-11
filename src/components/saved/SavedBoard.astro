@@ -1,5 +1,5 @@
 ---
-import CardItem from "@/components/ui/CardItem.astro";
+import CenterCard from "@/components/centers/CenterCard.astro";
 import EmptyState from "@/components/ui/EmptyState.astro";
 import PageHero from "@/components/ui/PageHero.astro";
 import { defaultLocale, getLocaleFromUrl, hasLocalizedRoute, localizePath, useTranslations } from "@/i18n";
@@ -68,7 +68,7 @@ const untranslatedCenters =
 	hidden class="grid min-w-0 grid-cols-1 gap-6 md:grid-cols-2"></section>
 
 <template data-saved-card>
-	<CardItem id="" template templateAction="remove">
+	<CenterCard id="" template templateAction="remove">
 		<button
 			slot="action"
 			type="button"
@@ -78,11 +78,11 @@ const untranslatedCenters =
 			<Icon name="tabler:trash" class="size-3.5 shrink-0" aria-hidden="true" />
 			<span>{t("saved.delete")}</span>
 		</button>
-	</CardItem>
+	</CenterCard>
 </template>
 
 <script>
-	import { initSavedPage } from "@/lib/scripts/savedPage";
+	import { initSavedPage } from "@/lib/client/savedPage";
 
 	initSavedPage();
 </script>

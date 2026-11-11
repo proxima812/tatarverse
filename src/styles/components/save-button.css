@@ -1,7 +1,18 @@
 /**
  * Кнопка «сохранить центр» — `components/ui/SaveCenterButton.astro`.
  * Состояние живет в `aria-pressed`, иконки переключаются им же.
+ * Утилиты здесь, а не в разметке: кнопка стоит на каждой из сотен карточек
+ * каталога (см. `card.css`).
  */
+
+.save-center {
+	@apply absolute right-3 top-3 z-10 inline-flex size-9 cursor-pointer items-center justify-center rounded-full text-subtle-foreground transition-colors hover:bg-surface-muted hover:text-foreground aria-pressed:text-favorite aria-pressed:hover:text-favorite;
+}
+
+.save-center-off,
+.save-center-on {
+	@apply size-5;
+}
 
 .save-center-on,
 [aria-pressed="true"] .save-center-off {

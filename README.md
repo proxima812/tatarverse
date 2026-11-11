@@ -1,110 +1,28 @@
 # tatarverse.cc
 
-Static multilingual Astro catalog of Tatar, Bashkir, Tatar-Bashkir, and Crimean Tatar communities, centers, sources, translations, and reference materials.
+Private Astro catalog of Tatar, Bashkir, and Crimean Tatar communities.
+All rights reserved. Source code and project materials are not licensed for redistribution.
 
-## Status
+## Development
 
-The project is prepared for focused open-source contributions. The most useful changes are verified center-data updates, English translations, source references, accessibility fixes, and small UI improvements that preserve the existing visual language.
-
-Current public locale surface:
-
-- `ru` - default source routes and source center entries.
-- `en` - localized routes and translated center entries.
-
-## Stack
-
-- Astro 7 static output.
-- MDX content collections.
-- Tailwind CSS v4 through `@tailwindcss/vite`.
-- Bun as the preferred package manager.
-- Cloudflare Pages deployment through Wrangler.
-
-## Project Structure
-
-```txt
-src/
-  components/          Astro UI components
-  data/centers_formatted/
-                       Russian source MDX files for center pages
-  data/centers_i18n/en/
-                       English center translations
-  data/posts/          editorial posts
-  i18n/locales/        UI translation dictionaries
-  layouts/             page layouts
-  pages/               Astro pages and localized routes
-  styles/tailwind.css  Tailwind v4 theme tokens and global utilities
-```
-
-## Commands
-
-```bash
+```sh
 bun install
 bun run dev
+bun run check
 bun run build
-bun run preview
 ```
 
-Cloudflare helpers:
+## Structure
 
-```bash
-bun run cf:preview
-bun run cf:deploy
-```
+- `src/pages/` — routes and static API endpoints
+- `src/components/` — UI grouped by purpose
+- `src/layouts/` — shared page layouts
+- `src/lib/` — catalog logic, browser scripts, SEO and build integrations
+- `src/data/` — catalog content and reference data
+- `src/i18n/` — Russian and English UI dictionaries
+- `src/styles/` — Tailwind v4 tokens, palettes and component styles
+- `functions/` — Cloudflare Pages runtime handlers
+- `public/` — public static assets
 
-## Public API
-
-The read-only catalog is available as static JSON at `/api/v1/centers.json`,
-with country listings, statistics and an OpenAPI 3.1 schema at `/openapi.json`.
-See [Public API documentation](./docs/API.md) for endpoints, caching and license details.
-
-## Contributing
-
-Keep contributions focused and easy to review. Use the guide in the language most convenient for you:
-
-- [Русский](./CONTRIBUTING.ru.md)
-- [English](./CONTRIBUTING.en.md)
-
-## Translations
-
-UI dictionaries live in `src/i18n/locales`. Center translations live in `src/data/centers_i18n/en`.
-
-When adding a UI string:
-
-1. Add the same key to every active locale file.
-2. Use an existing key namespace such as `nav.*`, `list.*`, `detail.*`, `copy.*`, or `feedback.*`.
-3. In components, use `useTranslations(locale)` and `t("key.name")`.
-4. Do not leave hardcoded user-facing text in components.
-
-## Content And SEO
-
-- Preserve stable `tbk-*` slugs.
-- Preserve canonical route behavior and localized links.
-- Keep headings meaningful and structured.
-- Preserve source links and factual intent.
-- Avoid broad MDX formatting churn.
-- Be careful with metadata, robots behavior, structured data, and visible page titles.
-
-## Additional Docs
-
-- [Product notes](./PRODUCT.md)
-- [Design system](./DESIGN.md)
-- [Content license](./CONTENT-LICENSE.md) ([Русский](./CONTENT-LICENSE.ru.md))
-- [UI/UX review archive](./UI-UX-REVIEW.md)
-- [UI/UX plan archive](./plan-ui-ux.md)
-
-## License
-
-This repository uses separate licenses for code and content:
-
-- Code is licensed under the [MIT License](./LICENSE).
-- Content, center data, translations, and documentation are licensed under [CC BY 4.0](./CONTENT-LICENSE.md), unless otherwise noted.
-- The `tatarverse.cc` name, logos, brand assets, visual identity, and recognizable site design are not licensed for reuse without written permission.
-
-## Current Issues
-
-<!-- open-issues:start -->
-- No open issues.
-<!-- open-issues:end -->
-
-
-
+Keep stable `tbk-*` URLs, localized routes and source references intact.
+The static catalog API is documented in [docs/API.md](docs/API.md).

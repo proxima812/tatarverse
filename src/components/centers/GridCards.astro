@@ -1,9 +1,8 @@
 ---
 import type { CenterGeo } from "@/data/geo";
 import { createCenterRouteIdMap } from "@/lib/center/centers";
-import { getCenterLinks } from "@/lib/center/links";
 import type { CollectionEntry } from "astro:content";
-import CardItem from "../ui/CardItem.astro";
+import CenterCard from "@/components/centers/CenterCard.astro";
 
 interface Props {
 	cards: CollectionEntry<"centers" | "centersEn">[];
@@ -20,7 +19,7 @@ const routeIds = createCenterRouteIdMap(cards);
 >
 	{
 		cards.map((card) => (
-			<CardItem
+			<CenterCard
 				id={card.id}
 				routeId={routeIds.get(card.id)}
 				title={card.data.title}
@@ -31,7 +30,6 @@ const routeIds = createCenterRouteIdMap(cards);
 				region={card.data.location?.region}
 				geo={geoByCardId?.get(card.id)}
 				pubDate={card.data.pubDate}
-				links={getCenterLinks(card.body, card.data.source)}
 			/>
 		))
 	}

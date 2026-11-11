@@ -1,16 +1,14 @@
 ---
 import { pressMentions } from "@/data/press";
-import release from "@/data/release.json";
+import { updatedAt } from "@/data/siteUpdated";
 import { byRecency } from "@/lib/center/order";
-import { byNewest, localizedPosts } from "@/lib/post/collection";
-import { externalLinkProps, siteLinks } from "@/lib/site/links";
+import { externalLinkProps } from "@/lib/site/links";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import {
 	createCenterRouteIdMap,
 	getCenterPath,
 	getCenterTranslationCollection,
 } from "@/lib/center/centers";
-import { getPostPath } from "@/lib/post/posts";
 import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
 import Container from "./Container.astro";
@@ -19,13 +17,6 @@ import LogoMark from "./LogoMark.astro";
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const policyHref = localizePath(locale, "/policy");
-const {
-	repository: repositoryHref,
-	codeLicense: codeLicenseHref,
-	contentLicense: contentLicenseHref,
-	suggestChange: suggestChangeHref,
-	apiDocs: apiDocsHref,
-} = siteLinks;
 const updatedAtLabel = new Intl.DateTimeFormat(locale, {
 	day: "numeric",
 	month: "long",
@@ -34,7 +25,7 @@ const updatedAtLabel = new Intl.DateTimeFormat(locale, {
 	minute: "2-digit",
 	hour12: false,
 	timeZone: "Asia/Almaty",
-}).format(new Date(release.updatedAt));
+}).format(new Date(updatedAt));
 
 const allCenters = await getCollection("centers");
 const centerRouteIds = createCenterRouteIdMap(allCenters);
@@ -48,7 +39,6 @@ const centerTitle = (entry: (typeof allCenters)[number]) =>
 	translatedCenters.find((translation) => translation.id === entry.id)?.data.title ??
 	entry.data.title;
 
-const recentPosts = byNewest(await localizedPosts(locale)).slice(0, 4);
 
 const baseStyle =
 	"text-[var(--footer-fg-muted)] transition-colors hover:text-[var(--footer-fg)]";
@@ -83,24 +73,16 @@ const footerSections: FooterSection[] = [
 				href: localizePath(locale, "/stats"),
 				label: t("nav.stats"),
 			},
-			{
-				href: localizePath(locale, "/thanks"),
-				label: t("nav.thanks"),
-			},
-			{
-				href: localizePath(locale, "/posts"),
-				label: t("nav.posts"),
-			},
-			{
-				href: localizePath(locale, "/changelog"),
-				label: t("nav.changelog"),
-			},
 		],
 	},
 	{
 		id: "materials",
 		title: t("footer.materials.title"),
 		links: [
+			{
+				href: "/api",
+				label: "API",
+			},
 			{
 				href: localizePath(locale, "/translations"),
 				label: t("nav.translations"),
@@ -147,46 +129,6 @@ const footerSections: FooterSection[] = [
 		})),
 	},
 	{
-		id: "posts",
-		title: t("footer.posts.title"),
-		clamp: true,
-		links: recentPosts.map((entry) => ({
-			href: localizePath(locale, getPostPath(entry.id)),
-			label: entry.data.title,
-		})),
-	},
-	{
-		id: "open-source",
-		title: t("footer.openSource.title"),
-		links: [
-			{
-				href: repositoryHref,
-				label: t("footer.repository"),
-				props: externalProps,
-			},
-			{
-				href: suggestChangeHref,
-				label: t("footer.suggestChange"),
-				props: externalProps,
-			},
-			{
-				href: apiDocsHref,
-				label: "API",
-				props: externalProps,
-			},
-			{
-				href: codeLicenseHref,
-				label: t("footer.codeLicense"),
-				props: externalProps,
-			},
-			{
-				href: contentLicenseHref,
-				label: t("footer.contentLicense"),
-				props: externalProps,
-			},
-		],
-	},
-	{
 		id: "collab",
 		title: t("footer.collab.title"),
 		links: [
@@ -204,7 +146,7 @@ const footerSections: FooterSection[] = [
 		links: [
 			{
 				href: "mailto:kamil.mirikhan@gmail.com",
-				label: "почта",
+				label: locale === "en" ? "Email" : "почта",
 				icon: "mdi:email-outline",
 				nowrap: true,
 			},
@@ -239,8 +181,8 @@ const footerSections: FooterSection[] = [
 const sectionById = new Map(footerSections.map((section) => [section.id, section]));
 const footerColumns: FooterSection[][] = [
 	["navigation", "materials", "about"],
-	["posts", "added"],
-	["contacts", "open-source", "collab"],
+	["added"],
+	["contacts", "collab"],
 ].map((ids) => ids.map((id) => sectionById.get(id)).filter((s): s is FooterSection => !!s));
 ---
 
@@ -258,21 +200,6 @@ const footerColumns: FooterSection[][] = [
 					<span class="font-bold">tatarverse</span>
 				</a>
 				<p class="max-w-md leading-6">{t("footer.description")}</p>
-				<p class="max-w-md leading-6">{t("footer.openSource.text")}</p>
-				<a
-					href="https://www.producthunt.com/products/tatarverse?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-tatarverse"
-					class="inline-flex"
-					{...externalProps}
-				>
-					<img
-						src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1250662&theme=neutral&t=1789416806871"
-						alt="tatarverse - catalog | Product Hunt"
-						width="250"
-						height="54"
-						loading="lazy"
-						decoding="async"
-					/>
-				</a>
 			</div>
 
 			<nav aria-label={t("footer.links")} class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -331,17 +258,9 @@ const footerColumns: FooterSection[][] = [
 				&copy; tatarverse.cc {new Date().getFullYear()} · {t("footer.legalNote")}
 			</p>
 			<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-				<a
-					href={repositoryHref}
-					class={`inline-flex min-w-0 max-w-full text-sm items-center gap-1.5 text-base ${baseStyle}`}
-					{...externalProps}
-				>
-					<Icon name="mdi:github" class="size-4" aria-hidden="true" />
-					<span class="min-w-0 wrap-anywhere">{t("footer.openSource.short")}</span>
-				</a>
 
 				<p class="text-sm text-[var(--footer-fg-muted)]">
-					v{release.version} · {t("footer.updated", { date: updatedAtLabel })}
+					{t("footer.updated", { date: updatedAtLabel })}
 				</p>
 			</div>
 		</div>

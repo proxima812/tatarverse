@@ -60,6 +60,13 @@ export function createCatalogFilter(
 	);
 	let scope: CenterScope = "";
 	let searchMatchIds: Set<string> | null = null;
+	const facetCounts = new Map<FacetKey, Map<string, number>>();
+	let scopeCounts: Map<string, number> | null = null;
+
+	function invalidateCounts() {
+		facetCounts.clear();
+		scopeCounts = null;
+	}
 
 	const groupOf = (key: FacetKey) => selections.get(key);
 
@@ -84,6 +91,8 @@ export function createCatalogFilter(
 	}
 
 	function countFacet(key: FacetKey) {
+		const cached = facetCounts.get(key);
+		if (cached) return cached;
 		// Себя и своих потомков не учитываем: иначе выбор страны обнулил бы
 		// счётчики всех остальных стран и группа схлопнулась бы до одной.
 		const skip = [key, ...(FACET_CHILDREN[key] ?? [])];
@@ -96,6 +105,7 @@ export function createCatalogFilter(
 			counts.set(value, (counts.get(value) ?? 0) + 1);
 		}
 
+		facetCounts.set(key, counts);
 		return counts;
 	}
 
@@ -114,6 +124,7 @@ export function createCatalogFilter(
 			facetKeys.reduce((total, key) => total + (groupOf(key)?.size ?? 0), 0) + (scope ? 1 : 0),
 
 		setScope(next) {
+			invalidateCounts();
 			scope = scope === next ? "" : next;
 			// География привязана к области: выбранная страна не переживает
 			// переключение «Россия / зарубеж / онлайн».
@@ -123,6 +134,7 @@ export function createCatalogFilter(
 		toggle(key, value) {
 			const group = groupOf(key);
 			if (!group) return;
+			invalidateCounts();
 
 			const wasActive = group.has(value);
 			group.clear();
@@ -131,16 +143,20 @@ export function createCatalogFilter(
 		},
 
 		resetGroup(key) {
+			invalidateCounts();
 			groupOf(key)?.clear();
 			clearDescendants(key);
 		},
 
 		reset() {
+			invalidateCounts();
 			for (const group of selections.values()) group.clear();
 			scope = "";
 		},
 
 		limitTo(ids) {
+			if (ids === searchMatchIds) return;
+			invalidateCounts();
 			searchMatchIds = ids;
 		},
 
@@ -149,6 +165,7 @@ export function createCatalogFilter(
 		countFacet,
 
 		countScopes() {
+			if (scopeCounts) return scopeCounts;
 			// Считаем по негеографическим фасетам: иначе выбранная страна
 			// обнулила бы счётчик у соседних областей.
 			const counts = new Map<string, number>();
@@ -165,6 +182,7 @@ export function createCatalogFilter(
 				if (fits) counts.set(record.scope, (counts.get(record.scope) ?? 0) + 1);
 			}
 
+			scopeCounts = counts;
 			return counts;
 		},
 
@@ -179,6 +197,7 @@ export function createCatalogFilter(
 				for (const value of [...group]) {
 					if ((counts.get(value) ?? 0) === 0) {
 						group.delete(value);
+						invalidateCounts();
 						pruned = true;
 					}
 				}
@@ -216,6 +235,7 @@ export function createCatalogFilter(
 		}),
 
 		restore(next) {
+			invalidateCounts();
 			scope = next.scope;
 			for (const key of facetKeys) {
 				const group = groupOf(key);

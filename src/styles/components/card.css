@@ -1,5 +1,5 @@
 /**
- * Карточка центра (`ui/CardItem.astro`) и чип фильтра
+ * Карточка центра (`centers/CenterCard.astro`) и чип фильтра
  * (`centers/FilterChip.astro`).
  *
  * Классы вынесены из разметки не ради красоты: на /centers/ карточка
@@ -26,11 +26,11 @@
 }
 
 .catalog-card-mark {
-	@apply size-9 shrink-0 rounded-full;
+	@apply inline-block size-9 shrink-0;
 }
 
 .catalog-card-heading {
-	@apply min-w-0 wrap-anywhere font-bold leading-snug tracking-tight;
+	@apply min-w-0 wrap-anywhere font-heading font-bold leading-snug tracking-tight;
 }
 
 .catalog-card-link {
@@ -42,27 +42,19 @@
 }
 
 .catalog-card-meta {
-	@apply mt-auto flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 pt-1 text-xs text-muted-foreground;
+	@apply mt-auto flex min-w-0 items-center gap-3 pt-2 text-xs text-muted-foreground;
 }
 
 .catalog-card-chip {
-	@apply inline-flex min-w-0 items-center rounded-micro corner-squircle bg-surface-muted px-2 py-1;
-}
-
-.catalog-card-date {
-	@apply ml-auto shrink-0 tabular-nums text-subtle-foreground;
-}
-
-.catalog-card-links {
-	@apply flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 pt-1;
-}
-
-.catalog-quick-link {
-	@apply relative z-10 inline-flex min-w-0 items-center gap-1 text-xs font-medium text-muted-foreground no-underline transition hover:text-foreground;
+	@apply inline-flex min-w-0 max-w-full items-center gap-1 text-xs font-medium leading-4 wrap-anywhere has-[[hidden]]:hidden;
 }
 
 .catalog-card-more {
 	@apply ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full corner-squircle bg-surface-muted px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors group-hover:bg-accent group-hover:text-accent-foreground;
+}
+
+.catalog-card-more > svg {
+	@apply size-3.5 shrink-0;
 }
 
 .catalog-filter-chip {
@@ -71,4 +63,13 @@
 
 .catalog-filter-count {
 	@apply shrink-0 text-xs tabular-nums text-subtle-foreground group-data-[active]:text-current lg:ml-auto lg:pl-2;
+}
+
+/* Pause ambient motion offscreen, in background tabs, or under reduced motion. */
+.center-avatar:not([data-active]) .mo-root,
+.center-avatar:not([data-active]) .mo-root * {
+ animation-play-state: paused;
+}
+.center-avatar:not([data-active]) .mo-root {
+ --mo-amp: 0;
 }

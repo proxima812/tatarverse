@@ -1,23 +1,17 @@
 ---
-import release from "@/data/release.json";
-import { byNewest, localizedPosts } from "@/lib/post/collection";
 import { latestCenter } from "@/lib/center/order";
-import { siteLinks } from "@/lib/site/links";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import {
 	createCenterRouteIdMap,
 	getCenterPath,
 	getCenterTranslationCollection,
 } from "@/lib/center/centers";
-import { getPostPath } from "@/lib/post/posts";
 import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
-// Берём посты под локаль: иначе на /en/ в бейдже висел русский заголовок.
-const latestPost = byNewest(await localizedPosts(locale))[0];
 
 const centers = await getCollection("centers");
 const centerRouteIds = createCenterRouteIdMap(centers);
@@ -29,122 +23,13 @@ const localizedCenter = centerTranslations
 	: undefined;
 const newestCenterTitle = localizedCenter?.data.title ?? newestCenter?.data.title;
 
-const items = [
-	latestPost && {
-		icon: "tabler:news",
-		label: t("home.badge.post", { title: latestPost.data.title }),
-		href: localizePath(locale, getPostPath(latestPost.id)),
-		external: false,
-	},
-	newestCenter && {
-		icon: "tabler:map-pin",
-		label: t("home.badge.center", { title: newestCenterTitle ?? "" }),
-		href: localizePath(
-			locale,
-			getCenterPath(centerRouteIds.get(newestCenter.id) ?? newestCenter.id),
-		),
-		external: false,
-	},
-	{
-		icon: "tabler:sparkles",
-		label: t("home.badge.release", { version: release.version }),
-		href: siteLinks.releases,
-		external: true,
-	},
-].filter(Boolean) as {
-	icon: string;
-	label: string;
-	href: string;
-	external: boolean;
-}[];
 ---
 
-<div class="hero-badge relative flex h-6 items-center justify-center" data-hero-badge>
-	{
-		items.map((item, index) => (
-			<a
-				class="hero-badge-item absolute inset-0 mx-auto flex w-fit max-w-full items-center justify-center gap-1.5 rounded-full bg-accent-soft px-2 py-1 text-xs text-accent-soft-foreground transition-[background-color,opacity,transform] duration-300 ease-out hover:bg-accent-soft-hover"
-				href={item.href}
-				target={item.external ? "_blank" : undefined}
-				rel={item.external ? "noopener noreferrer" : undefined}
-				aria-label={item.label}
-				data-hero-badge-item
-				data-state={index === 0 ? "in" : "idle"}
-				inert={index === 0 ? undefined : true}
-			>
-				<Icon name={item.icon} class="size-3 shrink-0" aria-hidden="true" />
-				<span class="max-w-60 truncate sm:max-w-full">{item.label}</span>
-			</a>
-		))
-	}
-</div>
-
-
-<script>
-	const root = document.querySelector<HTMLElement>("[data-hero-badge]");
-	const items = root ? [...root.querySelectorAll<HTMLElement>("[data-hero-badge-item]")] : [];
-
-	if (root && items.length > 1) {
-		const INTERVAL = 4500;
-		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-		let current = 0;
-		let timer = 0;
-		let hovered = false;
-		let focused = false;
-
-		const show = (next: number) => {
-			items.forEach((item, index) => {
-				const state = index === next ? "in" : index === current ? "out" : "idle";
-				item.dataset.state = state;
-				item.inert = index !== next;
-			});
-
-			current = next;
-		};
-
-		const canRotate = () =>
-			!reduceMotion.matches &&
-			!document.hidden &&
-			!hovered &&
-			!focused;
-
-		const stop = () => {
-			if (timer) {
-				window.clearInterval(timer);
-				timer = 0;
-			}
-		};
-
-		const start = () => {
-			stop();
-			if (canRotate()) {
-				timer = window.setInterval(() => show((current + 1) % items.length), INTERVAL);
-			}
-		};
-
-		items.forEach((item) => {
-			item.addEventListener("pointerenter", () => {
-				hovered = true;
-				stop();
-			});
-
-			item.addEventListener("pointerleave", () => {
-				hovered = false;
-				start();
-			});
-		});
-
-		root.addEventListener("focusin", () => {
-			focused = true;
-			stop();
-		});
-		root.addEventListener("focusout", () => {
-			focused = false;
-			start();
-		});
-		document.addEventListener("visibilitychange", start);
-		reduceMotion.addEventListener("change", start);
-
-		start();
-	}
-</script>
+{newestCenter && (
+ <div class="hero-badge flex h-6 items-center justify-center">
+  <a class="flex w-fit max-w-full items-center gap-1.5 rounded-full bg-accent-soft px-2 py-1 text-xs text-accent-soft-foreground transition-colors hover:bg-accent-soft-hover" href={localizePath(locale, getCenterPath(centerRouteIds.get(newestCenter.id) ?? newestCenter.id))}>
+   <Icon name="tabler:map-pin" class="size-3 shrink-0" aria-hidden="true" />
+   <span class="max-w-60 truncate sm:max-w-full">{t("home.badge.center", { title: newestCenterTitle ?? "" })}</span>
+  </a>
+ </div>
+)}

@@ -1,0 +1,113 @@
+---
+import { Code } from "astro:components";
+import Layout from "@/layouts/Layout.astro";
+import PageHero from "@/components/ui/PageHero.astro";
+import { config } from "@/config";
+import { API_VERSION, serializeCenter } from "@/lib/api/catalog";
+import { getCollection } from "astro:content";
+
+const base = config.site.url.replace(/\/$/, "");
+const centers = await getCollection("centersEn");
+const example = centers.find((center) => center.id === "tbk-1") ?? centers[0];
+const exampleJson = JSON.stringify({ version: API_VERSION, language: "en", total: example ? 1 : 0, data: example ? [serializeCenter(example, "en")] : [] }, null, 2);
+const endpoints = [
+ ["/api/v1/centers.json", "All Russian source entries, sorted by title."],
+ ["/api/v1/centers.en.json", "All available English translations, sorted by title."],
+ ["/api/v1/centers/{id}.json", "One Russian source entry by stable ID, for example tbk-1."],
+ ["/api/v1/countries.json", "Countries, entry counts and relative URLs for country datasets."],
+ ["/api/v1/countries/{country}.json", "Russian source entries for one country, sorted by title."],
+ ["/api/v1/stats.json", "Statistics for the Russian source catalog."],
+ ["/openapi.json", "OpenAPI 3.1 specification with response schemas."],
+];
+const fields = [
+ ["id", "string", "Stable catalog identifier, such as tbk-1. Join Russian and English datasets by this value."],
+ ["language", '"ru" | "en"', "Language of the entry."],
+ ["title", "string", "Display name of the center or community."],
+ ["type", "string | null", "Source classification. Values remain in Russian, including in English records."],
+ ["category", "string | null", "Cultural category. Values remain in Russian, including in English records."],
+ ["summary", "string | null", "Short description, when supplied."],
+ ["source", "string | null", "Source URL, when supplied. Not a complete list of the entry’s links."],
+ ["pubDate", "string | null", "Publication date as stored in the catalog. May be absent; not a dataset update timestamp."],
+ ["location", "object | null", "Optional flag, country, region, district and city strings. Individual properties may be omitted."],
+ ["url", "string", "Absolute URL of the full entry on the website."],
+];
+const curl = `# All English entries\ncurl --fail --show-error '${base}/api/v1/centers.en.json'\n\n# One Russian entry\ncurl --fail --show-error '${base}/api/v1/centers/tbk-1.json'\n\n# Countries and statistics\ncurl --fail --show-error '${base}/api/v1/countries.json'\ncurl --fail --show-error '${base}/api/v1/stats.json'`;
+const javascript = `const base = "${base}";\n\nasync function getJson(path) {\n  const response = await fetch(new URL(path, base));\n  if (!response.ok) {\n    throw new Error(\`API request failed: \${response.status}\`);\n  }\n  return response.json();\n}\n\nconst catalog = await getJson("/api/v1/centers.en.json");\nconsole.log(\`Loaded \${catalog.total} English entries\`);\n\n// Filtering happens in your application, not through query parameters.\nconst matches = catalog.data.filter((center) =>\n  center.location?.country === "Kazakhstan"\n);\nconsole.log(matches.map(({ id, title, url }) => ({ id, title, url })));\n\n// Country names and routes use the Russian source dataset.\n// Follow the supplied URL rather than inventing a country slug.\nconst countries = await getJson("/api/v1/countries.json");\nconst country = countries.data.find((item) => item.name === "Казахстан");\nif (country) {\n  const countryCatalog = await getJson(country.url);\n  console.log(countryCatalog.country, countryCatalog.total);\n}`;
+const python = `import json\nfrom urllib.error import HTTPError, URLError\nfrom urllib.request import urlopen\n\nBASE = "${base}"\n\ndef get_json(path):\n    with urlopen(BASE + path, timeout=20) as response:\n        return json.load(response)\n\ntry:\n    catalog = get_json("/api/v1/centers.en.json")\n    for center in catalog["data"]:\n        location = center.get("location") or {}\n        print(center["id"], center["title"], location.get("city", ""))\nexcept HTTPError as error:\n    print(f"API returned HTTP {error.code}")\nexcept URLError as error:\n    print(f"Network request failed: {error.reason}")`;
+const sections = [["quick-start", "Quick start"], ["endpoints", "Endpoints"], ["responses", "Responses & fields"], ["examples", "Code examples"], ["behavior", "Languages, caching & errors"], ["usage", "Usage"]];
+---
+
+<Layout title="Public Catalog API — Documentation" description="Use the public tatarverse JSON API: endpoints, response fields, language support, caching, errors, and examples in cURL, JavaScript and Python." keywords={["tatarverse API", "JSON API", "catalog API", "OpenAPI"]}>
+ <main class="mx-auto min-w-0 w-full max-w-4xl space-y-10" lang="en">
+  <PageHero title="Public Catalog API" intro="Read the tatarverse catalog of Tatar, Bashkir and Crimean Tatar centers and communities as JSON. Public access, no account or API key required." />
+  <nav aria-label="API documentation sections" class="flex flex-wrap gap-x-5 gap-y-3 text-sm text-link">
+   {sections.map(([id, label]) => <a href={`#${id}`} class="underline underline-offset-4">{label}</a>)}
+  </nav>
+  <article class="prose min-w-0 max-w-none wrap-anywhere prose-pre:max-w-full prose-pre:overflow-x-auto prose-table:text-sm">
+   <section id="quick-start" class="scroll-mt-8">
+    <h2>Quick start</h2>
+    <p>Base URL: <code>{base}</code>. Use HTTP GET. All endpoints are HTTPS URLs ending in <code>.json</code> and return UTF-8 JSON on success.</p>
+    <p>Start with <a href="/api/v1/centers.en.json">the English dataset</a>, or download <a href="/openapi.json">the OpenAPI specification</a> to inspect all schemas in your API tooling.</p>
+    <Code code={curl} lang="bash" />
+    <p>The API serves static files generated with the website. It has no database query layer, authentication flow or write operations.</p>
+   </section>
+   <section id="endpoints" class="scroll-mt-8">
+    <h2>Endpoints</h2>
+    <div class="overflow-x-auto">
+     <table><thead><tr><th scope="col">GET path</th><th scope="col">Returns</th></tr></thead>
+      <tbody>{endpoints.map(([path, description]) => <tr><td>{path.includes("{") ? <code>{path}</code> : <a href={path}><code>{path}</code></a>}</td><td>{description}</td></tr>)}</tbody>
+     </table>
+    </div>
+    <p>Replace <code>{"{id}"}</code> with an existing identifier. For countries, request <code>/api/v1/countries.json</code> and follow each item’s <code>url</code>. Country names are Russian and URL-encoded in the supplied paths; they are not ISO country codes or English slugs.</p>
+    <p>There are no individual English-entry endpoints or English country endpoints. Find an English entry by ID, or filter by country, within <code>/api/v1/centers.en.json</code>.</p>
+   </section>
+   <section id="responses" class="scroll-mt-8">
+    <h2>Responses and fields</h2>
+    <p>Center lists contain <code>version</code>, <code>language</code>, <code>total</code> and a <code>data</code> array. <code>version</code> is the API schema version (currently <code>{API_VERSION}</code>), independent of the website. The following example contains one real English record; its <code>total</code> describes this shortened example, not the full dataset.</p>
+    <Code code={exampleJson} lang="json" />
+    <div class="overflow-x-auto">
+     <table><thead><tr><th scope="col">Center field</th><th scope="col">Type</th><th scope="col">Meaning</th></tr></thead>
+      <tbody>{fields.map(([name, type, description]) => <tr><th scope="row"><code>{name}</code></th><td><code>{type}</code></td><td>{description}</td></tr>)}</tbody>
+     </table>
+    </div>
+    <p>Missing optional top-level fields are <code>null</code>. If <code>location</code> is present, its individual fields are optional. A record with no location may therefore have <code>location: null</code>; a location object need not include a city or region.</p>
+    <p>Only structured metadata is included. Full descriptions, contact lists and citations remain on the linked website pages. <code>source</code> may be null even when the full page contains links.</p>
+    <h3>Other response envelopes</h3>
+    <ul>
+     <li><strong>Single center:</strong> <code>version</code> and <code>data</code>, where <code>data</code> is one center object.</li>
+     <li><strong>Countries:</strong> <code>version</code>, <code>total</code> and <code>data</code>. Each country has <code>name</code>, <code>count</code> and a relative <code>url</code>.</li>
+     <li><strong>Country centers:</strong> <code>version</code>, <code>country</code>, <code>total</code> and a <code>data</code> array of Russian center objects.</li>
+     <li><strong>Statistics:</strong> <code>version</code> and <code>data</code>. Statistics include <code>count</code> (all source entries), <code>countries</code> (distinct country names), <code>regions</code> (distinct region names), <code>withoutCountry</code> (entries without a country), and <code>byCountry</code> (objects with <code>country</code> and <code>count</code>).</li>
+    </ul>
+    <p>Country lists exclude entries without a country. Counts and geographic coverage describe the catalog, not the total number of communities in the world.</p>
+   </section>
+   <section id="examples" class="scroll-mt-8">
+    <h2>Code examples</h2>
+    <h3>JavaScript: load, filter and follow country links</h3>
+    <p>Works in modern browsers and JavaScript runtimes with the Fetch API. Check the HTTP status before parsing JSON.</p>
+    <Code code={javascript} lang="javascript" />
+    <h3>Python: read entries with the standard library</h3>
+    <p>No third-party dependencies are needed.</p>
+    <Code code={python} lang="python" />
+   </section>
+   <section id="behavior" class="scroll-mt-8">
+    <h2>Languages, caching and errors</h2>
+    <h3>Language support</h3>
+    <p>Russian is the source dataset. English translations are published separately and may not cover every source entry. The English endpoint does not automatically fill gaps with Russian records. Join datasets by <code>id</code> if your application needs its own fallback.</p>
+    <p>English titles, summaries and location names are localized where provided. The <code>type</code> and <code>category</code> fields retain their Russian classification values. <code>type</code> values are <code>Регион РФ</code>, <code>Зарубежный</code> or <code>Онлайн</code>; categories are <code>Татарский</code>, <code>Татаро-Башкирский</code>, <code>Башкирский</code> or <code>Крымотатарский</code>. Either field may be null.</p>
+    <h3>Filtering and updates</h3>
+    <p>No server-side search, pagination, sorting options or query filters are supported. Parameters such as <code>?country=Kazakhstan</code> do not filter results. Download a dataset once, then search or filter it locally. Data changes when a new site build is deployed.</p>
+    <h3>CORS and caching</h3>
+    <p>The deployment configuration sets <code>Access-Control-Allow-Origin: *</code> for API JSON and the OpenAPI specification, allowing public browser GET requests without credentials. It also sets <code>Cache-Control: public, max-age=3600</code>, so a cached response can remain valid for one hour. Reuse downloaded data instead of polling on every render.</p>
+    <h3>Error handling</h3>
+    <p>An unknown center ID or country returns a static-file <code>404</code>. Error bodies are not guaranteed to be JSON and may be an HTML error page. Check <code>response.ok</code> or the HTTP status before decoding the body. Handle network failures and use timeouts where supported.</p>
+    <p>There is no application-level rate-limit contract, uptime guarantee or write API. Hosting-level protection may still apply. Do not rely on POST, PUT, PATCH or DELETE.</p>
+   </section>
+   <section id="usage" class="scroll-mt-8">
+    <h2>Usage and feedback</h2>
+    <p>The API is publicly accessible. The project repository is private; public API access does not grant a license to redistribute the project’s code or materials. For reuse questions, contact <a href="mailto:kamil.mirikhan@gmail.com">kamil.mirikhan@gmail.com</a>. Third-party sources retain their respective rights.</p>
+    <p>Catalog information can become outdated. Verify important details through each organization’s official sources. Report incorrect data or integration issues through <a href={config.feedbackUrl}>the project’s feedback channel</a>, including the endpoint and affected center ID.</p>
+   </section>
+  </article>
+ </main>
+</Layout>

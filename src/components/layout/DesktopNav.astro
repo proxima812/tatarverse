@@ -1,4 +1,5 @@
 ---
+import { isActiveRoute } from "@/lib/site/navigation";
 import ButtonLink from "../ui/ButtonLink.astro";
 import { links } from "@/data/links";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
@@ -7,12 +8,12 @@ const currentLocale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(currentLocale);
 
 const materialHrefs = new Set(["/translations", "/sources", "/policy"]);
-const otherHrefs = new Set(["/posts", "/thanks", "/changelog"]);
+
 const topLevelLinks = links.filter(
-	(item) => !materialHrefs.has(item.href) && !otherHrefs.has(item.href),
+	(item) => !materialHrefs.has(item.href),
 );
 const materialLinks = links.filter((item) => materialHrefs.has(item.href));
-const otherLinks = links.filter((item) => otherHrefs.has(item.href));
+
 
 const printLink = {
 	href: "/centers/print",
@@ -20,18 +21,9 @@ const printLink = {
 	labelKey: "nav.print",
 	target: undefined,
 };
-const otherDropdownItems = [...otherLinks, printLink];
+const otherDropdownItems = [printLink];
 
-const currentPath = Astro.url.pathname.replace(/^\/(?:ru|en)(?=\/|$)/, "") || "/";
-const normalizePath = (path: string) => (path === "/" ? "/" : path.replace(/\/+$/, ""));
-const isActivePath = (href: string) => {
-	const itemPath = normalizePath(href);
-	const pagePath = normalizePath(currentPath);
-
-	return itemPath === "/"
-		? pagePath === "/"
-		: pagePath === itemPath || pagePath.startsWith(`${itemPath}/`);
-};
+const isActivePath = (href: string) => isActiveRoute(Astro.url.pathname, href);
 
 const dropdowns = [
 	{ id: "materials", labelKey: "menu.materials", items: materialLinks },

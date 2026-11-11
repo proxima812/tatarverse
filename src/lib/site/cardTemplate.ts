@@ -1,4 +1,4 @@
-import { getCenterMarkHue } from "@/lib/center/centers";
+import { centerAvatarMarkup } from "@/lib/center/avatar";
 import { CARD_ATTR, CARD_PART, cardDataset, type CardFields } from "@/lib/site/cardAttributes";
 
 /**
@@ -9,7 +9,7 @@ import { CARD_ATTR, CARD_PART, cardDataset, type CardFields } from "@/lib/site/c
  * заполнение заготовки было переписано дважды — на `/saved` и на `/nearby`, —
  * и копии успели разойтись. Одна прятала строку расположения целиком, вторая
  * нет; одна форматировала дату по локали страницы, вторая по захардкоженной
- * «ru»; обе правили Tailwind-классы, выбранные в `CardItem.astro`.
+ * «ru»; обе правили Tailwind-классы, выбранные в `CenterCard.astro`.
  *
  * Теперь расхождение невозможно: заполняет одно место, а различия страниц
  * приезжают параметрами. Кнопку действия модуль не трогает — она у страниц
@@ -20,7 +20,7 @@ import { CARD_ATTR, CARD_PART, cardDataset, type CardFields } from "@/lib/site/c
  */
 
 /**
- * Класс отступа под кнопку в углу. Его выбирает `CardItem.astro` и объявляет
+ * Класс отступа под кнопку в углу. Его выбирает `CenterCard.astro` и объявляет
  * прямо в заготовке: имя утилитарного класса не должно существовать в
  * клиентском скрипте, иначе переименование в разметке снова начнёт ломать
  * вёрстку молча.
@@ -46,15 +46,6 @@ function fillPart(root: ParentNode, part: keyof typeof CARD_PART, value: string)
 	node.hidden = value.length === 0;
 }
 
-function formatDate(value: string, locale: string) {
-	if (!value) return "";
-
-	const date = new Date(value);
-	if (Number.isNaN(date.getTime())) return "";
-
-	return new Intl.DateTimeFormat(locale, { month: "short", year: "numeric" }).format(date);
-}
-
 /**
  * Клонирует заготовку и подставляет значения. Возвращает `null`, если в
  * заготовке нет карточки или ссылки — подставлять тогда некуда.
@@ -75,9 +66,8 @@ export function fillCard(
 		article.setAttribute(name, value);
 	}
 
-	article
-		.querySelector<HTMLElement>(`[${CARD_PART.mark}]`)
-		?.style.setProperty("--mark-hue", String(getCenterMarkHue(fields.id)));
+	const avatar = article.querySelector<HTMLElement>(`[${CARD_PART.mark}]`);
+ if (avatar) avatar.innerHTML = centerAvatarMarkup(fields.id);
 
 	link.href = options.linkHref;
 	link.textContent = fields.title;
@@ -88,7 +78,6 @@ export function fillCard(
 	fillPart(node, "summary", fields.summary);
 	fillPart(node, "category", fields.category);
 	fillPart(node, "type", fields.type);
-	fillPart(node, "date", formatDate(fields.pubDate, options.locale));
 
 	const separator = article.querySelector<HTMLElement>(`[${CARD_PART.separator}]`);
 	if (separator) separator.hidden = !(fields.city && fields.country);

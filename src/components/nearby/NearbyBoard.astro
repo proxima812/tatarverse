@@ -1,6 +1,6 @@
 ---
 import NearbyCountrySelect from "@/components/nearby/NearbyCountrySelect.astro";
-import CardItem from "@/components/ui/CardItem.astro";
+import CenterCard from "@/components/centers/CenterCard.astro";
 import EmptyState from "@/components/ui/EmptyState.astro";
 import PageHero from "@/components/ui/PageHero.astro";
 import { defaultLocale, getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
@@ -91,12 +91,12 @@ const chipClass =
 	</template>
 
 	<template data-nearby-card>
-		<CardItem id="" title="" template />
+		<CenterCard id="" title="" template />
 	</template>
 </div>
 
 <script>
-	import { initNearby } from "@/lib/scripts/nearby";
+	import { initNearby } from "@/lib/client/nearby";
 
 	initNearby();
 </script>
