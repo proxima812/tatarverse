@@ -1,16 +1,10 @@
 ---
-import { Icon } from "astro-icon/components";
 import { getLocaleFromUrl, useTranslations, type AppLocale } from "@/i18n";
+import { Icon } from "astro-icon/components";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
-/**
- * Сетка 3×2: крупные слова призыва («Найди своих рядом») стоят шахматкой с
- * тремя темами, у каждой темы — знак народа на плашке акцентного цвета.
- * Визуально порядок слов перемешан, поэтому сетка скрыта от скринридеров,
- * а сам `<h1>` читается из `sr-only` строки в нормальном порядке.
- */
 type Cell = { key: string; icon?: string };
 
 const cells: Cell[] = [
@@ -22,71 +16,33 @@ const cells: Cell[] = [
 	{ key: "home.hero.7", icon: "bs" },
 ];
 
-/**
- * Оба слова в колонке одной ширины: более узкое увеличено до ширины широкого.
- * Множители — отношение собственных ширин ячеек (в em, шрифт Inter, вместе с
- * плашкой знака): в колонке «Культура ⧉ / СВОИХ» это 5.514 / 3.647 и т. д.
- * Ячейки без записи остаются 1em.
- *
- * Меняешь текст, трекинг или размер плашки — перемеряй: ширина ячейки
- * с `width: max-content`, делённая на font-size `<h1>`.
- */
-const fit: Record<AppLocale, Record<string, number>> = {
-	ru: { "home.hero.5": 1.1302, "home.hero.2": 1.5121, "home.hero.7": 1.0226 },
-	en: { "home.hero.1": 2.4442, "home.hero.6": 1.5318 },
-};
-const fitFor = fit[locale] ?? fit.ru;
-
 const label = `${t("home.hero.1")} ${t("home.hero.2")} ${t("home.hero.3")}. ${t("home.hero.5")} ${t("home.hero.6")} ${t("home.hero.7")}`;
 
-/**
- * Размер тянется за шириной, а не прыгает по брейкпоинтам — и у каждого языка
- * он свой: самая широкая строка сетки (вместе с подгонкой `fit`) у русского
- * ~14em, у английского ~17em («Language · YOUR PEOPLE · People»).
- *
- * Литералы записаны целиком: Tailwind сканирует исходник, и класс, собранный
- * из переменной, до него не дойдёт.
- *
- * Меняешь текст заголовка — перемеряй: наклон = 100 / ширина с запасом ~5%,
- * потолок = 984 / ширина, нижняя граница = 280 / ширина (280px — контент на
- * экране шириной 320).
- */
 const heroSizeClass: Record<AppLocale, string> = {
-	ru: "text-[clamp(1.2rem,calc(6.6vw-3px),4.25rem)]",
-	en: "text-[clamp(1rem,calc(5.6vw-3px),3.5rem)]",
+	ru: "text-[clamp(1.15rem,calc(6.3vw-3px),4rem)]",
+	en: "text-[clamp(0.94rem,calc(5.1vw-3px),3.25rem)]",
 };
 ---
 
 <h1
-	class:list={[
-		"relative select-none leading-none",
-		heroSizeClass[locale] ?? heroSizeClass.ru,
-	]}
+	class:list={["relative select-none leading-none", heroSizeClass[locale] ?? heroSizeClass.ru]}
 >
 	<span class="sr-only">{label}</span>
 	<span
 		aria-hidden="true"
-		class="mx-auto grid w-fit grid-cols-[repeat(3,auto)] items-center justify-center justify-items-center gap-x-[0.4em] gap-y-[0.18em]"
+		class="mx-auto grid w-fit grid-cols-[repeat(3,auto)] items-center justify-center justify-items-center whitespace-nowrap gap-x-[0.4em] gap-y-[0.18em]"
 	>
 		{
 			cells.map(({ key, icon }) =>
 				icon ? (
-					<span
-						style={{ fontSize: `${fitFor[key] ?? 1}em` }}
-						class="inline-flex items-center gap-[0.18em] font-bold tracking-[-0.03em] text-foreground/45"
-					>
+					<span class="inline-flex uppercase items-center gap-[0.18em] font-bold tracking-[-0.03em] text-foreground/45">
 						{t(key).replace(/\.$/, "")}
 						<span class="hero-sign">
 							<Icon name={icon} />
 						</span>
 					</span>
 				) : (
-					<span
-						style={{ fontSize: `${fitFor[key] ?? 1}em` }}
-						class="font-black uppercase tracking-[-0.02em] text-foreground"
-					>
-						{t(key)}
-					</span>
+					<span class="font-black uppercase tracking-[-0.02em] text-foreground">{t(key)}</span>
 				),
 			)
 		}
