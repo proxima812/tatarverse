@@ -6,7 +6,7 @@
 .site-header-bar {
 	--logo-mark-color: #2e2e2f;
 
-	background: rgb(17 16 18 / 0.06);
+	background: rgb(255 255 255 / 0.2);
 	box-shadow:
 		inset 0 0 0 1px rgb(255 255 255 / 0.22),
 		inset 0 1px 0 rgb(255 255 255 / 0.45),
@@ -17,7 +17,7 @@
 :root.dark .site-header-bar {
 	--logo-mark-color: #edebef;
 
-	background: rgb(0 0 0 / 0.18);
+	background: rgb(255 255 255 / 0.06);
 	box-shadow:
 		inset 0 0 0 1px rgb(255 255 255 / 0.1),
 		inset 0 1px 0 rgb(255 255 255 / 0.16);

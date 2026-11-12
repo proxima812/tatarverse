@@ -22,27 +22,21 @@ export default defineConfig({
   fonts: [
     {
       provider: fontProviders.google(),
-      name: "Google Sans",
-      cssVariable: "--font-google-sans",
+      name: "Onest",
+      cssVariable: "--font-onest",
       weights: ["400 700"],
-      styles: ["normal", "italic"],
+      styles: ["normal"],
       subsets: ["latin", "cyrillic"],
       display: "swap",
     },
     {
-      provider: fontProviders.local(),
-      name: "Inter",
-      cssVariable: "--font-inter",
-      options: {
-        variants: [
-          {
-            src: ["./src/assets/fonts/inter.woff2"],
-            weight: "100 900",
-            style: "normal",
-            display: "optional",
-          },
-        ],
-      },
+      provider: fontProviders.google(),
+      name: "Geologica",
+      cssVariable: "--font-geologica",
+      weights: ["700"],
+      styles: ["normal"],
+      subsets: ["latin", "cyrillic"],
+      display: "swap",
     },
     {
       provider: fontProviders.local(),
