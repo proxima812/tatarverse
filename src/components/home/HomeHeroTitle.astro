@@ -18,11 +18,11 @@ const cells: Cell[] = [
 
 /** Знаки народов слева от «своих», флаги стран диаспоры — справа. */
 const signs = ["bs", "qt", "tt"];
-// Полосатые флаги градиентами (по hypercolor.dev/flags): Украина, Германия, Румыния.
+// Полосатые флаги градиентами в стиле hypercolor.dev/flags: Россия, Украина, Германия.
 const flags = [
+	"linear-gradient(180deg, #FFF 33.333%, #0039A6 33.333% 66.666%, #D52B1E 66.666%)",
 	"linear-gradient(180deg, #005BBB 50%, #FFD500 50%)",
 	"linear-gradient(180deg, #000 33.333%, #FF0000 33.333% 66.666%, #FFCC00 66.666%)",
-	"linear-gradient(90deg, #002B7F 33.333%, #FCD116 33.333% 66.666%, #CE1126 66.666%)",
 ];
 
 const label = `${t("home.hero.1")} ${t("home.hero.2")} ${t("home.hero.3")}. ${t("home.hero.5")} ${t("home.hero.6")} ${t("home.hero.7")}`;
