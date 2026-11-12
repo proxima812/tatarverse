@@ -1,8 +1,6 @@
 ---
-import present from "@/assets/images/catalog-present-img.png";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { catalogStats } from "@/lib/center/stats";
-import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -15,17 +13,8 @@ const {
 } = catalogStats(await getCollection("centers"));
 ---
 
-<section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-8">
-	<Image
-		src={present}
-		alt={t("home.present.imageAlt")}
-		widths={[400, 640, 768, 1200]}
-		sizes="(min-width: 768px) 50vw, 100vw"
-		loading="eager"
-		fetchpriority="high"
-		class="h-full w-full rounded-card object-cover md:order-2"
-	/>
-	<div class="space-y-6 md:order-1">
+<section class="flex h-full flex-col">
+	<div class="space-y-6">
 		<h2 class="text-3xl font-bold tracking-tight">{t("home.present.title")}</h2>
 		<p
 			class="leading-7 text-muted-foreground"

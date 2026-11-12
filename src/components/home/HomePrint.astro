@@ -1,8 +1,6 @@
 ---
-import printImage from "@/assets/images/print-list-logic-img.png";
 import ButtonLink from "@/components/ui/ButtonLink.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
-import { Image } from "astro:assets";
 
 /** Каталог на бумаге: обещание раздела `/centers/print`. */
 
@@ -10,8 +8,8 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section class="flex h-full flex-col gap-6">
-	<div class="order-2 space-y-6">
+<section class="flex h-full flex-col">
+	<div class="space-y-6">
 		<h2 class="text-3xl font-bold tracking-tight">{t("home.print.title")}</h2>
 		<p class="leading-7 text-muted-foreground">{t("home.print.text1")}</p>
 		<p class="leading-7 text-muted-foreground">{t("home.print.text2")}</p>
@@ -23,12 +21,4 @@ const t = useTranslations(locale);
 			variant="gradient"
 		/>
 	</div>
-
-	<Image
-		src={printImage}
-		alt={t("home.print.imageAlt")}
-		widths={[400, 640, 768, 1200]}
-		sizes="(min-width: 1024px) 50vw, 100vw"
-		class="order-1 w-full rounded-card"
-	/>
 </section>

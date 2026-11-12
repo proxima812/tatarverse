@@ -1,14 +1,12 @@
 ---
-import searchImage from "@/assets/images/search-present-img.png";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
-import { Image } from "astro:assets";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section class="flex h-full flex-col gap-6">
-	<div class="order-2 space-y-6">
+<section class="flex h-full flex-col">
+	<div class="space-y-6">
 		<h2 class="text-3xl font-bold tracking-tight">
 			{t("home.search.title")}
 		</h2>
@@ -21,11 +19,4 @@ const t = useTranslations(locale);
 			{t("home.search.text2")}
 		</p>
 	</div>
-	<Image
-		src={searchImage}
-		alt={t("home.search.imageAlt")}
-		widths={[400, 640, 768, 1200]}
-		sizes="(min-width: 1024px) 50vw, 100vw"
-		class="order-1 h-full w-full rounded-card object-cover"
-	/>
 </section>

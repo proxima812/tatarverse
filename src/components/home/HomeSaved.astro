@@ -1,8 +1,6 @@
 ---
-import savedImage from "@/assets/images/save-logic-img.png";
 import ButtonLink from "@/components/ui/ButtonLink.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
-import { Image } from "astro:assets";
 
 /** Сохранённые центры: обещание раздела `/saved`. */
 
@@ -10,8 +8,8 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section class="flex h-full flex-col gap-6">
-	<div class="order-2 space-y-6">
+<section class="flex h-full flex-col">
+	<div class="space-y-6">
 		<h2 class="text-3xl font-bold tracking-tight">{t("home.saved.title")}</h2>
 		<p class="leading-7 text-muted-foreground">{t("home.saved.text1")}</p>
 		<p class="leading-7 text-muted-foreground">{t("home.saved.text2")}</p>
@@ -23,12 +21,4 @@ const t = useTranslations(locale);
 			variant="gradient"
 		/>
 	</div>
-
-	<Image
-		src={savedImage}
-		alt={t("home.saved.imageAlt")}
-		widths={[400, 640, 768, 1200]}
-		sizes="(min-width: 1024px) 50vw, 100vw"
-		class="order-1 w-full rounded-card"
-	/>
 </section>
