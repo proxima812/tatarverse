@@ -9,10 +9,9 @@ import SavedLink from "./SavedLink.astro";
 
 <header class="sticky top-3 z-[88] isolate w-full px-3 md:top-4">
 	<div
-		data-header-bar
 		class="site-header-bar glass glass-strength-20 glass-chromatic-5 glass-blur-4 glass-saturation-180 glass-brightness-110 mx-auto w-full max-w-[780px] rounded-full py-2 pr-2 pl-5"
 	>
-		<div class="flex items-center justify-between gap-4">
+		<div class="site-header-content flex items-center justify-between gap-4">
 			<div class="flex min-w-0 shrink-0 items-center gap-4 lg:flex-1">
 				<Logotype />
 			</div>
@@ -36,61 +35,3 @@ import SavedLink from "./SavedLink.astro";
 	</div>
 </header>
 
-<script>
-	// Определяем тон фона под шапкой, чтобы ссылки не сливались с ним.
-	const bar = document.querySelector<HTMLElement>("[data-header-bar]");
-
-	const parse = (color: string) => {
-		const m = color.match(/[\d.]+/g);
-		if (!m || m.length < 3) return null;
-		const [r, g, b, a = "1"] = m;
-		return { r: +r, g: +g, b: +b, a: +a };
-	};
-
-	const backdropLuminance = (x: number, y: number) => {
-		for (const el of document.elementsFromPoint(x, y)) {
-			if (bar?.contains(el) || el.closest("header")) continue;
-			let node: Element | null = el;
-			while (node) {
-				const c = parse(getComputedStyle(node).backgroundColor);
-				if (c && c.a > 0.5) {
-					const lin = (v: number) => {
-						const s = v / 255;
-						return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-					};
-					return 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b);
-				}
-				node = node.parentElement;
-			}
-		}
-		return null;
-	};
-
-	let frame = 0;
-	const update = () => {
-		frame = 0;
-		if (!bar) return;
-		const rect = bar.getBoundingClientRect();
-		const y = rect.top + rect.height / 2;
-		const samples = [0.15, 0.5, 0.85]
-			.map((f) => backdropLuminance(rect.left + rect.width * f, y))
-			.filter((v): v is number => v !== null);
-		if (!samples.length) return bar.removeAttribute("data-tone");
-		const avg = samples.reduce((a, b) => a + b, 0) / samples.length;
-		bar.dataset.tone = avg < 0.18 ? "dark" : "light";
-	};
-
-	const schedule = () => {
-		if (!frame) frame = requestAnimationFrame(update);
-	};
-
-	if (bar) {
-		addEventListener("scroll", schedule, { passive: true });
-		addEventListener("resize", schedule);
-		new MutationObserver(schedule).observe(document.documentElement, {
-			attributes: true,
-			attributeFilter: ["class", "data-accent"],
-		});
-		update();
-	}
-</script>

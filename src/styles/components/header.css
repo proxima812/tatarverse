@@ -23,17 +23,27 @@
 		inset 0 1px 0 rgb(255 255 255 / 0.16);
 }
 
-/* Тон фона под шапкой ставит скрипт в Header.astro: тёмный текст на тёмном
-   фоне (и наоборот) переключается на контрастный. */
-.site-header-bar[data-tone="dark"] {
-	--logo-mark-color: #edebef;
-	--color-foreground: #edebef;
-	--color-muted-foreground: #a8a7a9;
-	--color-subtle-foreground: #939294;
+/* Контраст с фоном даёт `mix-blend-mode: difference` (Tailwind `mix-blend-difference`):
+   светлые цвета инвертируются относительно того, что под стеклом, — на белом
+   выходят тёмными, на тёмном остаются светлыми. Значения — инверсия токенов
+   светлой темы, так что на белом фоне цвета совпадают с обычными
+   (лого #D1D1D0 → #2E2E2F). */
+.site-header-content {
+	--logo-mark-color: #d1d1d0;
+	--color-foreground: #eeefed;
+	--color-muted-foreground: #ababa9;
+	--color-subtle-foreground: #9a9a98;
 	--color-border-muted: rgb(255 255 255 / 0.18);
+
+	mix-blend-mode: difference;
 }
 
-.site-header-bar[data-tone="light"] {
+/* Открытое меню рисуется на своей поверхности — смешивание и инверсию снимаем. */
+.site-header-content:has([aria-expanded="true"]) {
+	mix-blend-mode: normal;
+}
+
+:root:not(.dark) .site-header-content:has([aria-expanded="true"]) {
 	--logo-mark-color: #2e2e2f;
 	--color-foreground: #111012;
 	--color-muted-foreground: #545456;
@@ -41,15 +51,8 @@
 	--color-border-muted: rgb(0 0 0 / 0.1);
 }
 
-/* Выпадающие меню живут на своей поверхности — возвращаем им токены темы. */
-:root:not(.dark) .site-header-bar[data-tone] [class*="bg-surface"] {
-	--color-foreground: #111012;
-	--color-muted-foreground: #545456;
-	--color-subtle-foreground: #656567;
-	--color-border-muted: rgb(0 0 0 / 0.1);
-}
-
-:root.dark .site-header-bar[data-tone] [class*="bg-surface"] {
+:root.dark .site-header-content:has([aria-expanded="true"]) {
+	--logo-mark-color: #edebef;
 	--color-foreground: #edebef;
 	--color-muted-foreground: #a8a7a9;
 	--color-subtle-foreground: #939294;
