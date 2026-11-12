@@ -18,7 +18,12 @@ const cells: Cell[] = [
 
 /** Знаки народов слева от «своих», флаги стран диаспоры — справа. */
 const signs = ["bs", "qt", "tt"];
-const flags = ["flag:tr-1x1", "flag:us-1x1", "flag:kz-1x1"];
+// Полосатые флаги градиентами (по hypercolor.dev/flags): Украина, Германия, Румыния.
+const flags = [
+	"linear-gradient(180deg, #005BBB 50%, #FFD500 50%)",
+	"linear-gradient(180deg, #000 33.333%, #FF0000 33.333% 66.666%, #FFCC00 66.666%)",
+	"linear-gradient(90deg, #002B7F 33.333%, #FCD116 33.333% 66.666%, #CE1126 66.666%)",
+];
 
 const label = `${t("home.hero.1")} ${t("home.hero.2")} ${t("home.hero.3")}. ${t("home.hero.5")} ${t("home.hero.6")} ${t("home.hero.7")}`;
 
@@ -63,9 +68,7 @@ const heroSizeClass: Record<AppLocale, string> = {
 						{word}
 						<span class="hero-stack">
 							{flags.map((flag) => (
-								<span class="hero-tile hero-tile--flag">
-									<Icon name={flag} />
-								</span>
+								<span class="hero-tile" style={{ background: flag }} />
 							))}
 						</span>
 					</span>
