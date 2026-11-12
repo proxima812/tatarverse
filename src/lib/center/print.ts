@@ -11,6 +11,29 @@ function bareUrl(url: string): string {
 	return url.replace(/^https?:\/\//, "").replace(/^www\./, "");
 }
 
+/** Пункты «Контактов», которые нужны на бумаге: адрес, телефон, почта. */
+const CONTACT_KEY = /^(адрес|офис|телефон|email|e-mail|почта|для связи|address|office|phone|contact)/i;
+const ADDRESS_KEY = /^(адрес|офис|address|office)/i;
+
+/**
+ * Адрес, телефоны и почта из раздела «Контакты» тела карточки.
+ * Markdown-ссылки сворачиваются в текст: на печати они не кликаются.
+ */
+function printContacts(body: string | undefined): string[] {
+	const section = body?.match(/^## (?:Контакты|Contacts)\s*\n([\s\S]*?)(?=^## |$(?![\s\S]))/m)?.[1];
+	if (!section) return [];
+	const lines = section
+		.split("\n")
+		.map((line) => line.match(/^- (.+)$/)?.[1]?.trim())
+		.filter((line): line is string => !!line)
+		.map((line) => line.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1"))
+		.filter((line) => CONTACT_KEY.test(line));
+	return [
+		...lines.filter((line) => ADDRESS_KEY.test(line)),
+		...lines.filter((line) => !ADDRESS_KEY.test(line)),
+	];
+}
+
 export interface PrintEntry {
 	title: string;
 	/** Полная география: город, регион, район, страна — насколько её знает карточка. */
@@ -18,8 +41,10 @@ export interface PrintEntry {
 	kind: string;
 	/** Адрес карточки без схемы: с бумаги его переписывают руками, `https://` только мешает. */
 	href: string;
-	/** Собственный сайт или соцсеть центра, тоже без схемы. */
+	/** Собственный сайт или соцсеть центра, тоже без схемы; только если контактов нет. */
 	source: string;
+	/** Адрес, телефоны, почта — строки вида «Телефон: …». */
+	contacts: string[];
 }
 
 export interface PrintCountry {
@@ -62,8 +87,10 @@ export async function buildPrintCatalog(
 			href: bareUrl(
 				`${siteUrl}${localizePath(locale, getCenterPath(routeIds.get(center.id) ?? center.id))}`,
 			),
-			source: center.data.source ? bareUrl(center.data.source) : "",
+			contacts: printContacts(center.body),
+			source: "",
 		};
+		if (!entry.contacts.length && center.data.source) entry.source = bareUrl(center.data.source);
 
 		const group = groups.get(country);
 		if (group) group.push(entry);

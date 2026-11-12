@@ -29,6 +29,13 @@ const { countries } = Astro.props as Props;
 								{entry.kind && (
 									<p class="mt-0.5 text-sm text-muted-foreground print:text-xs">{entry.kind}</p>
 								)}
+								{entry.contacts.length > 0 && (
+									<ul class="mt-1.5 space-y-0.5 text-sm wrap-anywhere print:text-xs">
+										{entry.contacts.map((line) => (
+											<li>{line}</li>
+										))}
+									</ul>
+								)}
 								<p class="mt-1.5 text-sm break-all text-subtle-foreground print:text-xs">
 									{entry.source && (
 										<>
