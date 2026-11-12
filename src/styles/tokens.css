@@ -4,7 +4,7 @@
   --font-sans: var(--font-country-flags), var(--font-onest), ui-sans-serif, system-ui,
     sans-serif;
 
-  --font-heading: var(--font-country-flags), var(--font-geologica), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-country-flags), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   --color-background: #FFFFFF;
   --color-surface: #FCFCFC;
