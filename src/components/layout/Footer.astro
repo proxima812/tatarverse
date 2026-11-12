@@ -58,7 +58,6 @@ const footerSections: FooterSection[] = [
 			{
 				href: localizePath(locale, "/centers/print"),
 				label: t("nav.print"),
-				icon: "mdi:printer-outline",
 				nowrap: true,
 			},
 			{ href: "/api", label: "API" },
@@ -176,10 +175,19 @@ const footerColumns: FooterSection[][] = [
 														class:list={[
 															"min-w-0",
 															link.nowrap ? "whitespace-nowrap" : "wrap-anywhere",
+															link.props &&
+																"underline decoration-dotted decoration-white underline-offset-4",
 														]}
 													>
 														{link.label}
 													</span>
+													{link.props && (
+														<Icon
+															name="mdi:open-in-new"
+															class="size-3.5 shrink-0 translate-y-0.5"
+															aria-hidden="true"
+														/>
+													)}
 												</a>
 											</li>
 										))}
