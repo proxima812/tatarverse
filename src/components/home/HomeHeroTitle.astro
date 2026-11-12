@@ -22,12 +22,27 @@ const cells: Cell[] = [
 	{ key: "home.hero.7", icon: "bs" },
 ];
 
+/**
+ * Оба слова в колонке одной ширины: более узкое увеличено до ширины широкого.
+ * Множители — отношение собственных ширин ячеек (в em, шрифт Inter, вместе с
+ * плашкой знака): в колонке «Культура ⧉ / СВОИХ» это 5.514 / 3.647 и т. д.
+ * Ячейки без записи остаются 1em.
+ *
+ * Меняешь текст, трекинг или размер плашки — перемеряй: ширина ячейки
+ * с `width: max-content`, делённая на font-size `<h1>`.
+ */
+const fit: Record<AppLocale, Record<string, number>> = {
+	ru: { "home.hero.5": 1.1302, "home.hero.2": 1.5121, "home.hero.7": 1.0226 },
+	en: { "home.hero.1": 2.4442, "home.hero.6": 1.5318 },
+};
+const fitFor = fit[locale] ?? fit.ru;
+
 const label = `${t("home.hero.1")} ${t("home.hero.2")} ${t("home.hero.3")}. ${t("home.hero.5")} ${t("home.hero.6")} ${t("home.hero.7")}`;
 
 /**
  * Размер тянется за шириной, а не прыгает по брейкпоинтам — и у каждого языка
- * он свой: самая длинная строка сетки у русского ~14em, у английского ~17em
- * («Language · YOUR PEOPLE · People»).
+ * он свой: самая широкая строка сетки (вместе с подгонкой `fit`) у русского
+ * ~14em, у английского ~17em («Language · YOUR PEOPLE · People»).
  *
  * Литералы записаны целиком: Tailwind сканирует исходник, и класс, собранный
  * из переменной, до него не дойдёт.
@@ -56,14 +71,22 @@ const heroSizeClass: Record<AppLocale, string> = {
 		{
 			cells.map(({ key, icon }) =>
 				icon ? (
-					<span class="inline-flex items-center gap-[0.18em] font-bold tracking-[-0.03em] text-foreground/45">
+					<span
+						style={{ fontSize: `${fitFor[key] ?? 1}em` }}
+						class="inline-flex items-center gap-[0.18em] font-bold tracking-[-0.03em] text-foreground/45"
+					>
 						{t(key).replace(/\.$/, "")}
 						<span class="hero-sign">
 							<Icon name={icon} />
 						</span>
 					</span>
 				) : (
-					<span class="font-black uppercase tracking-[-0.02em] text-foreground">{t(key)}</span>
+					<span
+						style={{ fontSize: `${fitFor[key] ?? 1}em` }}
+						class="font-black uppercase tracking-[-0.02em] text-foreground"
+					>
+						{t(key)}
+					</span>
 				),
 			)
 		}
