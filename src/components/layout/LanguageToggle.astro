@@ -31,7 +31,7 @@ const items = locales.map((locale) => ({
 })) satisfies readonly LanguageItem[];
 
 const triggerClass = cn(
-	"inline-flex h-8 min-w-14 items-center justify-between gap-2 rounded-full sm:border border-border-muted bg-background/70 backdrop-blur-md px-3 tracking-tight text-xs font-medium text-subtle-foreground transition-colors hover:text-foreground",
+	"inline-flex h-8 items-center gap-0.5 rounded-full sm:border border-border-muted bg-background/70 backdrop-blur-md pl-2 pr-1.5 tracking-tight text-xs font-medium text-subtle-foreground transition-colors hover:text-foreground",
 	bare && "sm:border-transparent bg-transparent backdrop-blur-none hover:bg-subtle",
 );
 
@@ -48,7 +48,20 @@ const buttonClass =
 		aria-expanded="false"
 		data-language-trigger
 	>
-		<span data-language-current>{localeLabels[currentLocale].short}</span>
+		<svg
+			aria-hidden="true"
+			data-language-current
+			viewBox="0 0 24 24"
+			class="size-[18px] shrink-0"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="1.5"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		>
+			<circle cx="12" cy="12" r="9"></circle>
+			<path d="M3 12h18M12 3c2.5 2.7 3.75 5.7 3.75 9S14.5 18.3 12 21c-2.5-2.7-3.75-5.7-3.75-9S9.5 5.7 12 3z"></path>
+		</svg>
 
 		<svg
 			aria-hidden="true"
