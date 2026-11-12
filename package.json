@@ -26,7 +26,8 @@
     "blobatar": "2.7.0",
     "cn": "^0.2.5",
     "fuse.js": "^7.3.0",
-    "tailwindcss": "^4.0.9"
+    "tailwindcss": "^4.0.9",
+    "tw-glass": "^0.0.5"
   },
   "devDependencies": {
     "@iconify-json/mdi": "^1.2.3",

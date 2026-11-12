@@ -1,6 +1,5 @@
 ---
 import AppearanceMenu from "./AppearanceMenu.astro";
-import Container from "./Container.astro";
 import DesktopNav from "./DesktopNav.astro";
 import LanguageToggle from "./LanguageToggle.astro";
 import Logotype from "./Logotype.astro";
@@ -8,36 +7,30 @@ import Menu from "./Menu.astro";
 import SavedLink from "./SavedLink.astro";
 ---
 
-<header class="sticky top-0 z-[88] isolate w-full lg:static">
+<header class="sticky top-3 z-[88] isolate w-full px-3 md:top-4">
 	<div
-		aria-hidden="true"
-		class="pointer-events-none absolute inset-0 z-0 bg-background/70 backdrop-blur-md lg:hidden"
+		class="glass glass-surface glass-strength-10 glass-blur-8 mx-auto w-full max-w-[780px] rounded-full py-2 pr-2 pl-5"
 	>
-	</div>
-
-	<div class="relative z-10 py-3.5 md:py-5">
-		<Container container class="max-w-7xl">
-			<div class="flex items-center justify-between gap-4">
-				<div class="flex min-w-0 shrink-0 items-center gap-4 lg:flex-1">
-					<Logotype />
-				</div>
-
-				<DesktopNav />
-
-				<div class="flex shrink-0 items-center gap-4 lg:flex-1 lg:justify-end">
-					<div
-						class="hidden h-10 items-center rounded-full border border-border-muted px-1 lg:inline-flex"
-					>
-						<SavedLink bare />
-						<span aria-hidden="true" class="mx-1 h-5 w-px shrink-0 bg-border-muted"></span>
-						<AppearanceMenu bare />
-						<span aria-hidden="true" class="mx-1 h-5 w-px shrink-0 bg-border-muted"></span>
-						<LanguageToggle bare />
-					</div>
-
-					<Menu />
-				</div>
+		<div class="flex items-center justify-between gap-4">
+			<div class="flex min-w-0 shrink-0 items-center gap-4 lg:flex-1">
+				<Logotype />
 			</div>
-		</Container>
+
+			<DesktopNav />
+
+			<div class="flex shrink-0 items-center gap-4 lg:flex-1 lg:justify-end">
+				<div
+					class="hidden h-10 items-center rounded-full border border-border-muted px-1 lg:inline-flex"
+				>
+					<SavedLink bare />
+					<span aria-hidden="true" class="mx-1 h-5 w-px shrink-0 bg-border-muted"></span>
+					<AppearanceMenu bare />
+					<span aria-hidden="true" class="mx-1 h-5 w-px shrink-0 bg-border-muted"></span>
+					<LanguageToggle bare />
+				</div>
+
+				<Menu />
+			</div>
+		</div>
 	</div>
 </header>
