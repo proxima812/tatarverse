@@ -14,6 +14,7 @@
 
 /* Компонентные стили: в `.astro` тегов `<style>` нет, всё живёт здесь. */
 @import "./components/logo.css";
+@import "./components/header.css";
 @import "./components/footer.css";
 @import "./components/appearance.css";
 @import "./components/catalog.css";

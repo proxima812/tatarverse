@@ -1,0 +1,57 @@
+/**
+ * Липкая стеклянная шапка — `components/layout/Header.astro`.
+ * Рефракцию даёт `glass` из tw-glass; поверхность своя, без внешней тени.
+ */
+
+.site-header-bar {
+	--logo-mark-color: #2e2e2f;
+
+	background: rgb(255 255 255 / 0.12);
+	box-shadow:
+		inset 0 0 0 1px rgb(255 255 255 / 0.22),
+		inset 0 1px 0 rgb(255 255 255 / 0.45),
+		inset 0 -1px 0 rgb(0 0 0 / 0.04);
+	transition: background-color 200ms ease;
+}
+
+:root.dark .site-header-bar {
+	--logo-mark-color: #edebef;
+
+	background: rgb(255 255 255 / 0.05);
+	box-shadow:
+		inset 0 0 0 1px rgb(255 255 255 / 0.1),
+		inset 0 1px 0 rgb(255 255 255 / 0.16);
+}
+
+/* Тон фона под шапкой ставит скрипт в Header.astro: тёмный текст на тёмном
+   фоне (и наоборот) переключается на контрастный. */
+.site-header-bar[data-tone="dark"] {
+	--logo-mark-color: #edebef;
+	--color-foreground: #edebef;
+	--color-muted-foreground: #a8a7a9;
+	--color-subtle-foreground: #939294;
+	--color-border-muted: rgb(255 255 255 / 0.18);
+}
+
+.site-header-bar[data-tone="light"] {
+	--logo-mark-color: #2e2e2f;
+	--color-foreground: #111012;
+	--color-muted-foreground: #545456;
+	--color-subtle-foreground: #656567;
+	--color-border-muted: rgb(0 0 0 / 0.1);
+}
+
+/* Выпадающие меню живут на своей поверхности — возвращаем им токены темы. */
+:root:not(.dark) .site-header-bar[data-tone] [class*="bg-surface"] {
+	--color-foreground: #111012;
+	--color-muted-foreground: #545456;
+	--color-subtle-foreground: #656567;
+	--color-border-muted: rgb(0 0 0 / 0.1);
+}
+
+:root.dark .site-header-bar[data-tone] [class*="bg-surface"] {
+	--color-foreground: #edebef;
+	--color-muted-foreground: #a8a7a9;
+	--color-subtle-foreground: #939294;
+	--color-border-muted: rgb(255 255 255 / 0.12);
+}
