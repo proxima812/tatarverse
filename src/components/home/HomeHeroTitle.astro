@@ -5,11 +5,15 @@ import { getLocaleFromUrl, useTranslations, type AppLocale } from "@/i18n";
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
-type Cell = { key: string; muted?: boolean; stacks?: boolean };
+/**
+ * `wide` — слово над строкой со стопками: трекинг без сжатия, чтобы оно было
+ * не уже «⧉ СВОИХ ⧉» и края обеих строк средней колонки совпадали.
+ */
+type Cell = { key: string; muted?: boolean; wide?: boolean; stacks?: boolean };
 
 const cells: Cell[] = [
 	{ key: "home.hero.1" },
-	{ key: "home.hero.6", muted: true },
+	{ key: "home.hero.6", muted: true, wide: true },
 	{ key: "home.hero.3" },
 	{ key: "home.hero.5", muted: true },
 	{ key: "home.hero.2", stacks: true },
@@ -42,14 +46,15 @@ const heroSizeClass: Record<AppLocale, string> = {
 		class="mx-auto grid w-fit grid-cols-[repeat(3,auto)] items-center justify-center justify-items-center whitespace-nowrap gap-x-[0.4em] gap-y-[0.18em]"
 	>
 		{
-			cells.map(({ key, muted, stacks }) => {
+			cells.map(({ key, muted, wide, stacks }) => {
 				const word = (
 					<span
 						class:list={[
 							"uppercase",
 							muted
-								? "font-bold tracking-[-0.03em] text-foreground/45"
+								? "font-bold text-foreground/45"
 								: "font-black tracking-[-0.02em] text-foreground",
+							muted && (wide ? "tracking-normal" : "tracking-[-0.03em]"),
 						]}
 					>
 						{t(key).replace(/\.$/, "")}
@@ -57,7 +62,7 @@ const heroSizeClass: Record<AppLocale, string> = {
 				);
 				if (!stacks) return word;
 				return (
-					<span class="inline-flex items-center gap-[0.22em]">
+					<span class="flex items-center justify-between gap-[0.12em] justify-self-stretch">
 						<span class="hero-stack">
 							{signs.map((name) => (
 								<span class="hero-tile">
@@ -68,7 +73,7 @@ const heroSizeClass: Record<AppLocale, string> = {
 						{word}
 						<span class="hero-stack">
 							{flags.map((flag) => (
-								<span class="hero-tile" style={{ background: flag }} />
+								<span class="hero-tile hero-tile--flag" style={{ background: flag }} />
 							))}
 						</span>
 					</span>
