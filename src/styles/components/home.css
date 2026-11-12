@@ -21,29 +21,33 @@
 }
 
 
-/* Три плитки внахлёст: верхняя по центру, две снизу веером. */
+/*
+ * Три плитки пирамидкой: верхняя по центру, две снизу зеркально веером.
+ * Высота стопки (~0.8em) чуть больше прописных Inter (0.73em), а при line-height: 1 их
+ * середина приходится ровно на середину строки — стопка встаёт по центру букв.
+ */
 .hero-stack {
+	--tile: 0.46em;
 	position: relative;
 	flex-shrink: 0;
-	width: 1.1em;
-	height: 1em;
+	width: calc(var(--tile) * 1.84);
+	height: calc(var(--tile) * 1.72);
 
 	& > :nth-child(1) {
-		top: -0.06em;
-		left: 0.25em;
-		rotate: -4deg;
+		top: 0;
+		left: calc(var(--tile) * 0.42);
 	}
 
 	& > :nth-child(2) {
-		top: 0.38em;
-		left: 0.5em;
+		bottom: 0;
+		right: 0;
 		rotate: 8deg;
 	}
 
 	& > :nth-child(3) {
-		top: 0.42em;
+		bottom: 0;
 		left: 0;
-		rotate: -9deg;
+		rotate: -8deg;
 	}
 }
 
@@ -51,16 +55,16 @@
 	position: absolute;
 	display: grid;
 	place-items: center;
-	width: 0.6em;
-	height: 0.6em;
-	border-radius: 0.16em;
+	width: var(--tile);
+	height: var(--tile);
+	border-radius: calc(var(--tile) * 0.26);
 	overflow: hidden;
 	color: var(--color-accent-foreground);
 	background: var(--color-accent);
-	box-shadow: 0 0 0 0.035em var(--color-background);
+	box-shadow: 0 0 0 0.03em var(--color-background);
 
 	& svg {
-		width: 0.44em;
-		height: 0.44em;
+		width: 72%;
+		height: 72%;
 	}
 }
