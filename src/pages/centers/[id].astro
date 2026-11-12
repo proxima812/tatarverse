@@ -7,7 +7,6 @@ import CenterStatus from "@/components/centers/CenterStatus.astro";
 import { markdownComponents } from "@/components/markdown/markdownComponents";
 import SkipNode from "@/components/markdown/SkipNode.astro";
 import ButtonLink from "@/components/ui/ButtonLink.astro";
-import ContentDates from "@/components/ui/ContentDates.astro";
 import CopyPageMenu from "@/components/ui/CopyPageMenu.astro";
 import TranslationFeedbackCard from "@/components/ui/TranslationFeedbackCard.astro";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
@@ -71,15 +70,11 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 		<div class="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-12">
 			<div class="prose min-w-0 max-w-[68ch]">
 				<Content components={{ ...markdownComponents, h1: SkipNode }} />
-				<CenterStatus completeness={detail.completeness} placement="inline" class="mt-8 lg:hidden" />
-				<ContentDates
-					publishedDate={detail.publishedDate}
-					modifiedDate={detail.modifiedDate}
-					class="mt-8 text-xs text-subtle-foreground"
-				/>
+				<CenterStatus centerTitle={detail.title} completeness={detail.completeness} placement="inline" class="mt-8 lg:hidden" />
 			</div>
 
 			<CenterFacts
+				centerTitle={detail.title}
 				facts={detail.facts}
 				sourceUrl={detail.sourceUrl}
 				sourceLabel={detail.sourceLabel}

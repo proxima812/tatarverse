@@ -1,6 +1,6 @@
 ---
-import ButtonLink from "@/components/ui/ButtonLink.astro";
 import { config } from "@/config";
+import ButtonLink from "@/components/ui/ButtonLink.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import type { CenterCompleteness } from "@/lib/center/completeness";
 import { Icon } from "astro-icon/components";
@@ -16,13 +16,20 @@ import { Icon } from "astro-icon/components";
  */
 interface Props {
 	completeness: CenterCompleteness;
+	centerTitle: string;
 	placement: "aside" | "inline";
 	class?: string;
 }
 
-const { completeness, placement, class: className } = Astro.props as Props;
+const { completeness, centerTitle, placement, class: className } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
+
+const centerId = Astro.params.id ?? "";
+const cardUrl = new URL(Astro.url.pathname, config.site.url).href;
+const message = t("detail.status.message", { id: centerId, title: centerTitle, url: cardUrl });
+const telegramUrl = `https://t.me/mirikhan1?text=${encodeURIComponent(message)}`;
+const whatsappUrl = `https://wa.me/79172975109?text=${encodeURIComponent(message)}`;
 
 const titleId = `center-status-${placement}`;
 const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
@@ -39,7 +46,7 @@ const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 		</p>
 	) : (
 		<section
-			class:list={["not-prose space-y-3 rounded-catalog border border-depth-100 p-4 text-sm", className]}
+			class:list={["not-prose space-y-3 rounded-catalog border border-depth-100 bg-white p-4 text-sm", className]}
 			aria-labelledby={titleId}
 		>
 			<h2 id={titleId} class="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -48,14 +55,35 @@ const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 			</h2>
 			<p class="text-foreground">{t("detail.status.missing", { gaps })}</p>
 			<p class="text-xs text-subtle-foreground">{t("detail.status.help")}</p>
+			<div class="flex flex-wrap gap-2">
 			<ButtonLink
-				href={config.feedbackUrl}
+				href="https://t.me/the_tatarverse/57"
 				target="_blank"
-				variant="outline"
+				variant="default"
+				class="bg-[#0088cc]! text-white! hover:bg-[#0077b5]!"
 				size="xs"
 				icon="mdi:telegram"
 				label={t("detail.status.cta")}
 			/>
+			<ButtonLink
+				href={telegramUrl}
+				target="_blank"
+				variant="default"
+				class="bg-[#0088cc]! text-white! hover:bg-[#0077b5]!"
+				size="xs"
+				icon="mdi:telegram"
+				label={t("detail.status.telegram")}
+			/>
+			<ButtonLink
+				href={whatsappUrl}
+				target="_blank"
+				variant="default"
+				class="bg-[#25d366]! text-white! hover:bg-[#1da851]!"
+				size="xs"
+				icon="mdi:whatsapp"
+				label={t("detail.status.whatsapp")}
+			/>
+			</div>
 		</section>
 	)
 }

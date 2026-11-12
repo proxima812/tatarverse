@@ -6,13 +6,14 @@ import CenterStatus from "./CenterStatus.astro";
 
 interface Props {
 	facts: CenterFact[];
+	centerTitle: string;
 	sourceUrl?: string | null;
 	sourceLabel?: string | null;
 	/** Статус полноты: в колонке только на десктопе, на мобильном он под текстом. */
 	completeness?: CenterCompleteness;
 }
 
-const { facts, sourceUrl, sourceLabel, completeness } = Astro.props as Props;
+const { centerTitle, facts, sourceUrl, sourceLabel, completeness } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
@@ -44,7 +45,7 @@ const t = useTranslations(locale);
 				)}
 			</dl>
 			{completeness && (
-				<CenterStatus completeness={completeness} placement="aside" class="mt-4 hidden lg:flex lg:flex-col" />
+				<CenterStatus centerTitle={centerTitle} completeness={completeness} placement="aside" class="mt-4 hidden lg:flex lg:flex-col" />
 			)}
 		</aside>
 	)

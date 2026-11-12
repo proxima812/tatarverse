@@ -11,18 +11,18 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
 const aiPlatforms = [
-	{ name: "ChatGPT", base: "https://chatgpt.com", mark: "C" },
-	{ name: "Claude", base: "https://claude.ai/new", mark: "Cl" },
-	{ name: "Gemini", base: "https://gemini.google.com/app", mark: "G" },
-	{ name: "Grok", base: "https://grok.com", mark: "X" },
-	{ name: "HuggingChat", base: "https://huggingface.co/chat", mark: "H" },
-	{ name: "DeepSeek", base: "https://chat.deepseek.com", mark: "D" },
-	{ name: "T3 Chat", base: "https://t3.chat", mark: "T3" },
+	{ name: "ChatGPT", base: "https://chatgpt.com", icon: "/icons/ai/chatgpt.svg" },
+	{ name: "Claude", base: "https://claude.ai/new", icon: "/icons/ai/claude.svg" },
+	{ name: "Gemini", base: "https://gemini.google.com/app", icon: "/icons/ai/gemini.svg" },
+	{ name: "Grok", base: "https://grok.com", icon: "/icons/ai/grok.svg" },
+	{ name: "HuggingChat", base: "https://huggingface.co/chat", icon: "/icons/ai/huggingchat.svg" },
+	{ name: "DeepSeek", base: "https://chat.deepseek.com", icon: "/icons/ai/deepseek.svg" },
+	{ name: "T3 Chat", base: "https://t3.chat", icon: "/icons/ai/t3chat.ico" },
 ] as const;
 ---
 
 <div class={cn("relative inline-flex", className)} data-copy-page-menu data-locale={locale}>
-	<div class="group relative flex rounded-micro bg-muted">
+	<div class="group relative flex rounded-micro bg-white">
 		<button
 			type="button"
 			class="inline-flex text-sm h-9 max-w-fit items-center gap-1.5 rounded-l-micro pl-2.5 pr-2.5 text-[0.8rem] font-medium text-foreground transition-colors hover:bg-border/60"
@@ -97,10 +97,10 @@ const aiPlatforms = [
 						data-prompt-base={platform.base}
 					>
 						<span
-							class="grid size-5 shrink-0 place-items-center rounded-micro bg-muted text-[0.58rem] font-semibold leading-none text-muted-foreground ring ring-depth-100"
+							class="grid size-5 shrink-0 place-items-center"
 							aria-hidden="true"
 						>
-							{platform.mark}
+							<img src={platform.icon} alt="" width="20" height="20" class="size-5 object-contain" />
 						</span>
 						{t("copy.openInPlatform", { name: platform.name }, `Open in ${platform.name}`)}
 					</a>

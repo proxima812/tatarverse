@@ -26,7 +26,7 @@ export const buttonBaseClass =
 export const buttonVariants: Record<ButtonVariant, string> = {
 	default: "bg-primary text-primary-foreground hover:bg-primary/80",
 	gradient: "btn-gradient text-accent-foreground",
-	outline: "bg-transparent text-primary/80 ring ring-primary/10 ring-inset hover:bg-primary/5",
+	outline: "bg-white text-primary/80 ring ring-primary/10 ring-inset hover:bg-primary/5",
 	surface: "bg-surface text-foreground surface-lift hover:bg-surface-muted",
 	ghost: "bg-transparent text-muted-foreground",
 	disabled: "bg-transparent text-muted-foreground",
