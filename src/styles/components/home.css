@@ -20,3 +20,53 @@
 	}
 }
 
+
+/* Три плитки внахлёст: верхняя по центру, две снизу веером. */
+.hero-stack {
+	position: relative;
+	flex-shrink: 0;
+	width: 1.1em;
+	height: 1em;
+
+	& > :nth-child(1) {
+		top: -0.06em;
+		left: 0.25em;
+		rotate: -4deg;
+	}
+
+	& > :nth-child(2) {
+		top: 0.38em;
+		left: 0.5em;
+		rotate: 8deg;
+	}
+
+	& > :nth-child(3) {
+		top: 0.42em;
+		left: 0;
+		rotate: -9deg;
+	}
+}
+
+.hero-tile {
+	position: absolute;
+	display: grid;
+	place-items: center;
+	width: 0.6em;
+	height: 0.6em;
+	border-radius: 0.16em;
+	overflow: hidden;
+	color: var(--color-accent-foreground);
+	background: var(--color-accent);
+	box-shadow: 0 0 0 0.035em var(--color-background);
+
+	& svg {
+		width: 0.44em;
+		height: 0.44em;
+	}
+}
+
+/* Флаг заливает плитку целиком, без отступов. */
+.hero-tile--flag svg {
+	width: 100%;
+	height: 100%;
+}

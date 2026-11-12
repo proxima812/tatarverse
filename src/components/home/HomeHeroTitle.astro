@@ -1,25 +1,30 @@
 ---
+import { Icon } from "astro-icon/components";
 import { getLocaleFromUrl, useTranslations, type AppLocale } from "@/i18n";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
-type Cell = { key: string; muted?: boolean };
+type Cell = { key: string; muted?: boolean; stacks?: boolean };
 
 const cells: Cell[] = [
 	{ key: "home.hero.1" },
 	{ key: "home.hero.6", muted: true },
 	{ key: "home.hero.3" },
 	{ key: "home.hero.5", muted: true },
-	{ key: "home.hero.2" },
+	{ key: "home.hero.2", stacks: true },
 	{ key: "home.hero.7", muted: true },
 ];
+
+/** Знаки народов слева от «своих», флаги стран диаспоры — справа. */
+const signs = ["bs", "qt", "tt"];
+const flags = ["flag:tr-1x1", "flag:us-1x1", "flag:kz-1x1"];
 
 const label = `${t("home.hero.1")} ${t("home.hero.2")} ${t("home.hero.3")}. ${t("home.hero.5")} ${t("home.hero.6")} ${t("home.hero.7")}`;
 
 const heroSizeClass: Record<AppLocale, string> = {
-	ru: "text-[clamp(1.25rem,calc(6.9vw-3px),4.4rem)]",
-	en: "text-[clamp(1rem,calc(5.6vw-3px),3.6rem)]",
+	ru: "text-[clamp(1.1rem,calc(6.1vw-3px),3.9rem)]",
+	en: "text-[clamp(0.89rem,calc(4.85vw-3px),3.1rem)]",
 };
 ---
 
@@ -32,18 +37,40 @@ const heroSizeClass: Record<AppLocale, string> = {
 		class="mx-auto grid w-fit grid-cols-[repeat(3,auto)] items-center justify-center justify-items-center whitespace-nowrap gap-x-[0.4em] gap-y-[0.18em]"
 	>
 		{
-			cells.map(({ key, muted }) => (
-				<span
-					class:list={[
-						"uppercase",
-						muted
-							? "font-bold tracking-[-0.03em] text-foreground/45"
-							: "font-black tracking-[-0.02em] text-foreground",
-					]}
-				>
-					{t(key).replace(/\.$/, "")}
-				</span>
-			))
+			cells.map(({ key, muted, stacks }) => {
+				const word = (
+					<span
+						class:list={[
+							"uppercase",
+							muted
+								? "font-bold tracking-[-0.03em] text-foreground/45"
+								: "font-black tracking-[-0.02em] text-foreground",
+						]}
+					>
+						{t(key).replace(/\.$/, "")}
+					</span>
+				);
+				if (!stacks) return word;
+				return (
+					<span class="inline-flex items-center gap-[0.22em]">
+						<span class="hero-stack">
+							{signs.map((name) => (
+								<span class="hero-tile">
+									<Icon name={name} />
+								</span>
+							))}
+						</span>
+						{word}
+						<span class="hero-stack">
+							{flags.map((flag) => (
+								<span class="hero-tile hero-tile--flag">
+									<Icon name={flag} />
+								</span>
+							))}
+						</span>
+					</span>
+				);
+			})
 		}
 	</span>
 </h1>
