@@ -118,11 +118,11 @@ const cells = Array.from({ length: CELLS }, (_, index) => bySlot.get(index) ?? n
 ---
 
 <section
-	class="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-12"
+	class="flex h-full flex-col gap-6"
 	aria-labelledby="home-links-showcase"
 >
-	<div class="space-y-6 md:order-2">
-		<h2 id="home-links-showcase" class="text-4xl font-bold tracking-tight">
+	<div class="order-2 space-y-6">
+		<h2 id="home-links-showcase" class="text-3xl font-bold tracking-tight">
 			{t("home.contacts.title")}
 		</h2>
 		<p class="leading-7 text-muted-foreground" set:html={t("home.contacts.text", { links })} />
@@ -138,7 +138,7 @@ const cells = Array.from({ length: CELLS }, (_, index) => bySlot.get(index) ?? n
 
 	<div class="md:order-1">
 		<ul
-			class="mx-auto grid max-w-md grid-cols-5 gap-2.5 sm:gap-3 md:max-w-none"
+			class="mx-auto grid max-w-md grid-cols-5 gap-2.5 sm:gap-3"
 			role="list"
 		>
 			{

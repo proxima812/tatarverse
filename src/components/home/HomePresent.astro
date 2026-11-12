@@ -15,7 +15,7 @@ const {
 } = catalogStats(await getCollection("centers"));
 ---
 
-<section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
+<section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-8">
 	<Image
 		src={present}
 		alt={t("home.present.imageAlt")}
@@ -26,7 +26,7 @@ const {
 		class="h-full w-full rounded-card object-cover md:order-2"
 	/>
 	<div class="space-y-6 md:order-1">
-		<h2 class="text-4xl font-bold tracking-tight">{t("home.present.title")}</h2>
+		<h2 class="text-3xl font-bold tracking-tight">{t("home.present.title")}</h2>
 		<p
 			class="leading-7 text-muted-foreground"
 			set:html={t("home.present.caption", {

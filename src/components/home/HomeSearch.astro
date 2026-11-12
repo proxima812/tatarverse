@@ -7,9 +7,9 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
+<section class="flex h-full flex-col gap-6">
 	<div class="order-2 space-y-6">
-		<h2 class="text-4xl font-bold tracking-tight">
+		<h2 class="text-3xl font-bold tracking-tight">
 			{t("home.search.title")}
 		</h2>
 
@@ -25,7 +25,7 @@ const t = useTranslations(locale);
 		src={searchImage}
 		alt={t("home.search.imageAlt")}
 		widths={[400, 640, 768, 1200]}
-		sizes="(min-width: 768px) 50vw, 100vw"
+		sizes="(min-width: 1024px) 50vw, 100vw"
 		class="order-1 h-full w-full rounded-card object-cover"
 	/>
 </section>

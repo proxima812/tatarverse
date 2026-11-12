@@ -21,9 +21,9 @@ const sizes = "(min-width: 768px) 50vw, 100vw";
 const widths = [400, 640, 768, 1200];
 ---
 
-<section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
-	<div class="order-2 space-y-6 md:order-1">
-		<h2 class="text-4xl font-bold tracking-tight">{t("home.nearby.title")}</h2>
+<section class="flex h-full flex-col gap-6">
+	<div class="order-2 space-y-6">
+		<h2 class="text-3xl font-bold tracking-tight">{t("home.nearby.title")}</h2>
 		<p class="leading-7 text-muted-foreground">{t("home.nearby.text1")}</p>
 		<p class="leading-7 text-muted-foreground">{t("home.nearby.text2")}</p>
 		<ButtonLink
@@ -35,5 +35,5 @@ const widths = [400, 640, 768, 1200];
 		/>
 	</div>
 
-	<Image src={image} alt={alt} widths={widths} sizes={sizes} class="order-1 w-full rounded-card md:order-2" />
+	<Image src={image} alt={alt} widths={widths} sizes={sizes} class="order-1 w-full rounded-card" />
 </section>

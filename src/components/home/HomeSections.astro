@@ -6,14 +6,22 @@ import HomePresent from "@/components/home/HomePresent.astro";
 import HomePrint from "@/components/home/HomePrint.astro";
 import HomeSaved from "@/components/home/HomeSaved.astro";
 import HomeSearch from "@/components/home/HomeSearch.astro";
+
+/**
+ * Секции главной — bento-сетка: на lg шесть колонок, плитки разной ширины.
+ * Ряды: каталог 4 + числа 2, ссылки 3 + рядом 3, сохранённые/печать/поиск по 2.
+ * Ниже lg плитки идут одна под другой.
+ */
+
+const tile = "rounded-card corner-squircle bg-surface p-6 ring-1 ring-border-muted md:p-8";
 ---
 
-<div id="sections" class="space-y-20 py-12 md:space-y-32 md:py-20">
-	<HomePresent />
-	<HomeLinksShowcase />
-	<HomeNearby />
-	<HomePeopleStats />
-	<HomeSaved />
-	<HomePrint />
-	<HomeSearch />
+<div id="sections" class="grid grid-cols-1 gap-4 py-12 md:gap-6 md:py-20 lg:grid-cols-6">
+	<div class:list={[tile, "lg:col-span-4"]}><HomePresent /></div>
+	<div class:list={[tile, "lg:col-span-2"]}><HomePeopleStats /></div>
+	<div class:list={[tile, "lg:col-span-3"]}><HomeLinksShowcase /></div>
+	<div class:list={[tile, "lg:col-span-3"]}><HomeNearby /></div>
+	<div class:list={[tile, "lg:col-span-2"]}><HomeSaved /></div>
+	<div class:list={[tile, "lg:col-span-2"]}><HomePrint /></div>
+	<div class:list={[tile, "lg:col-span-2"]}><HomeSearch /></div>
 </div>
