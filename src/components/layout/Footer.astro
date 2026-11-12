@@ -1,16 +1,9 @@
 ---
 import { pressMentions } from "@/data/press";
 import { updatedAt } from "@/data/siteUpdated";
-import { byRecency } from "@/lib/center/order";
 import { externalLinkProps } from "@/lib/site/links";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
-import {
-	createCenterRouteIdMap,
-	getCenterPath,
-	getCenterTranslationCollection,
-} from "@/lib/center/centers";
 import { Icon } from "astro-icon/components";
-import { getCollection } from "astro:content";
 import Container from "./Container.astro";
 import LogoMark from "./LogoMark.astro";
 
@@ -27,19 +20,6 @@ const updatedAtLabel = new Intl.DateTimeFormat(locale, {
 	timeZone: "Asia/Almaty",
 }).format(new Date(updatedAt));
 
-const allCenters = await getCollection("centers");
-const centerRouteIds = createCenterRouteIdMap(allCenters);
-const recentCenters = byRecency(allCenters).slice(0, 5);
-
-const centerTranslationCollection = getCenterTranslationCollection(locale);
-const translatedCenters = centerTranslationCollection
-	? await getCollection(centerTranslationCollection)
-	: [];
-const centerTitle = (entry: (typeof allCenters)[number]) =>
-	translatedCenters.find((translation) => translation.id === entry.id)?.data.title ??
-	entry.data.title;
-
-
 const baseStyle =
 	"text-[var(--footer-fg-muted)] transition-colors hover:text-[var(--footer-fg)]";
 
@@ -55,52 +35,50 @@ type FooterSection = {
 	id: string;
 	title: string;
 	links: FooterLink[];
-	clamp?: boolean;
 };
 
 const externalProps = externalLinkProps;
+
+const social = (href: string, network: string, icon: string): FooterLink => ({
+	href,
+	label: t("footer.social.on", { network }),
+	icon,
+	props: externalProps,
+});
 
 const footerSections: FooterSection[] = [
 	{
 		id: "navigation",
 		title: t("footer.navigation.title"),
 		links: [
-			{
-				href: localizePath(locale, "/centers"),
-				label: t("nav.centers"),
-			},
-			{
-				href: localizePath(locale, "/stats"),
-				label: t("nav.stats"),
-			},
-		],
-	},
-	{
-		id: "materials",
-		title: t("footer.materials.title"),
-		links: [
-			{
-				href: "/api",
-				label: "API",
-			},
-			{
-				href: localizePath(locale, "/translations"),
-				label: t("nav.translations"),
-			},
-			{
-				href: localizePath(locale, "/sources"),
-				label: t("nav.sources"),
-			},
+			{ href: localizePath(locale, "/centers"), label: t("nav.viewCenters") },
+			{ href: localizePath(locale, "/stats"), label: t("nav.stats") },
+			{ href: localizePath(locale, "/nearby"), label: t("nav.nearby") },
+			{ href: localizePath(locale, "/saved"), label: t("saved.title") },
 			{
 				href: localizePath(locale, "/centers/print"),
 				label: t("nav.print"),
 				icon: "mdi:printer-outline",
 				nowrap: true,
 			},
-			{
-				href: policyHref,
-				label: t("footer.privacy"),
-			},
+			{ href: "/api", label: "API" },
+		],
+	},
+	{
+		id: "developers",
+		title: t("footer.developers.title"),
+		links: [
+			{ href: "/api", label: t("footer.developers.docs"), icon: "mdi:api" },
+			{ href: "/openapi.json", label: "OpenAPI (JSON)", icon: "mdi:code-json" },
+		],
+	},
+	{
+		id: "materials",
+		title: t("footer.materials.title"),
+		links: [
+			{ href: localizePath(locale, "/translations"), label: t("nav.translations") },
+			{ href: localizePath(locale, "/sources"), label: t("nav.sources") },
+			{ href: policyHref, label: t("footer.privacy") },
 		],
 	},
 	{
@@ -120,13 +98,14 @@ const footerSections: FooterSection[] = [
 		],
 	},
 	{
-		id: "added",
-		title: t("footer.added.title"),
-		clamp: true,
-		links: recentCenters.map((entry) => ({
-			href: localizePath(locale, getCenterPath(centerRouteIds.get(entry.id) ?? entry.id)),
-			label: centerTitle(entry),
-		})),
+		id: "social",
+		title: t("footer.social.title"),
+		links: [
+			social("https://t.me/the_tatarverse", "Telegram", "mdi:telegram"),
+			social("https://www.instagram.com/the_tatarverse/", "Instagram", "mdi:instagram"),
+			social("https://vk.ru/the_tatarverse", t("footer.social.vk"), "mdi:vk"),
+			social("https://www.threads.com/@the_tatarverse", "Threads", "tabler:brand-threads"),
+		],
 	},
 	{
 		id: "collab",
@@ -140,49 +119,13 @@ const footerSections: FooterSection[] = [
 			},
 		],
 	},
-	{
-		id: "contacts",
-		title: t("footer.contacts.title"),
-		links: [
-			{
-				href: "mailto:kamil.mirikhan@gmail.com",
-				label: locale === "en" ? "Email" : "почта",
-				icon: "mdi:email-outline",
-				nowrap: true,
-			},
-			{
-				href: "https://www.instagram.com/the_tatarverse/",
-				label: "@the_tatarverse",
-				icon: "mdi:instagram",
-				props: externalProps,
-			},
-			{
-				href: "https://t.me/the_tatarverse",
-				label: "@the_tatarverse",
-				icon: "mdi:telegram",
-				props: externalProps,
-			},
-			{
-				href: "https://www.threads.com/@the_tatarverse",
-				label: "@the_tatarverse",
-				icon: "tabler:brand-threads",
-				props: externalProps,
-			},
-			{
-				href: "https://vk.ru/the_tatarverse",
-				label: "@the_tatarverse",
-				icon: "mdi:vk",
-				props: externalProps,
-			},
-		],
-	},
 ];
 
 const sectionById = new Map(footerSections.map((section) => [section.id, section]));
 const footerColumns: FooterSection[][] = [
-	["navigation", "materials", "about"],
-	["added"],
-	["contacts", "collab"],
+	["navigation", "developers"],
+	["materials", "about"],
+	["social", "collab"],
 ].map((ids) => ids.map((id) => sectionById.get(id)).filter((s): s is FooterSection => !!s));
 ---
 
@@ -233,7 +176,6 @@ const footerColumns: FooterSection[][] = [
 														class:list={[
 															"min-w-0",
 															link.nowrap ? "whitespace-nowrap" : "wrap-anywhere",
-															section.clamp && "line-clamp-2",
 														]}
 													>
 														{link.label}
