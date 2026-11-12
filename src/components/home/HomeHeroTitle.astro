@@ -5,18 +5,18 @@ import { getLocaleFromUrl, useTranslations, type AppLocale } from "@/i18n";
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
-/** Стопка плиток рядом со словом: знаки народов после «языка», флаги перед «людьми». */
-type Cell = { key: string; muted?: boolean; stack?: "after" | "before" };
+type Cell = { key: string; muted?: boolean; stacks?: boolean };
 
 const cells: Cell[] = [
 	{ key: "home.hero.1" },
 	{ key: "home.hero.6", muted: true },
 	{ key: "home.hero.3" },
-	{ key: "home.hero.5", muted: true, stack: "after" },
-	{ key: "home.hero.2" },
-	{ key: "home.hero.7", muted: true, stack: "before" },
+	{ key: "home.hero.5", muted: true },
+	{ key: "home.hero.2", stacks: true },
+	{ key: "home.hero.7", muted: true },
 ];
 
+/** Знаки народов слева от «своих», флаги стран диаспоры — справа. */
 const signs = ["bs", "qt", "tt"];
 // Флаги градиентами в стиле hypercolor.dev/flags: Россия, Финляндия, Польша.
 const flags = [
@@ -42,7 +42,7 @@ const heroSizeClass: Record<AppLocale, string> = {
 		class="mx-auto grid w-fit grid-cols-[repeat(3,auto)] items-center justify-center justify-items-center whitespace-nowrap gap-x-[0.4em] gap-y-[0.18em]"
 	>
 		{
-			cells.map(({ key, muted, stack }) => {
+			cells.map(({ key, muted, stacks }) => {
 				const word = (
 					<span
 						class:list={[
@@ -55,9 +55,9 @@ const heroSizeClass: Record<AppLocale, string> = {
 						{t(key).replace(/\.$/, "")}
 					</span>
 				);
-				if (!stack) return word;
-				const tiles =
-					stack === "after" ? (
+				if (!stacks) return word;
+				return (
+					<span class="inline-flex items-center gap-[0.22em]">
 						<span class="hero-stack">
 							{signs.map((name) => (
 								<span class="hero-tile">
@@ -65,18 +65,12 @@ const heroSizeClass: Record<AppLocale, string> = {
 								</span>
 							))}
 						</span>
-					) : (
+						{word}
 						<span class="hero-stack">
 							{flags.map((flag) => (
-								<span class="hero-tile hero-tile--flag" style={{ background: flag }} />
+								<span class="hero-tile" style={{ background: flag }} />
 							))}
 						</span>
-					);
-				return (
-					<span class="flex items-center gap-[0.3em]">
-						{stack === "before" && tiles}
-						{word}
-						{stack === "after" && tiles}
 					</span>
 				);
 			})

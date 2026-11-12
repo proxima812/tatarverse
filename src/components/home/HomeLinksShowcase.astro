@@ -1,29 +1,128 @@
 ---
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
-import { getCenterLinks } from "@/lib/center/links";
+import { getCenterLinks, type CenterLinkKind } from "@/lib/center/links";
+import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
 import ButtonLink from "../ui/ButtonLink.astro";
 
 /**
- * Каналы связи: сколько ссылок собрано в каталоге. Считает тем же
- * `getCenterLinks`, что рисует ссылки в карточке центра.
+ * Витрина каналов связи: справа обещание, слева сетка платформ.
+ *
+ * Плитка рисуется, только если такая ссылка в каталоге правда есть —
+ * присутствие считается тем же `getCenterLinks`, что рисует ссылки в
+ * карточке центра. Числа рядом с иконками не показываем: рядом с «368» у
+ * сайта двойка у YouTube читается как «тут пусто», хотя канал живой.
+ *
+ * Почта и телефон живут в разделе «Контакты», а не в «Ссылках», поэтому
+ * их наличие проверяется по схеме ссылки, а не через getCenterLinks.
  */
+
+type Tile = { key: string; label: string; icon: string; tone: string };
+
+const PLATFORMS: Array<Tile & { kind: CenterLinkKind }> = [
+	{ kind: "website", key: "website", label: "Сайт", icon: "mdi:web", tone: "text-accent" },
+	{ kind: "vk", key: "vk", label: "VK", icon: "mdi:vk", tone: "text-[#0077ff]" },
+	{
+		kind: "telegram",
+		key: "telegram",
+		label: "Telegram",
+		icon: "mdi:telegram",
+		tone: "text-[#2aabee]",
+	},
+	{
+		kind: "instagram",
+		key: "instagram",
+		label: "Instagram",
+		icon: "mdi:instagram",
+		tone: "text-[#d6249f]",
+	},
+	{
+		kind: "facebook",
+		key: "facebook",
+		label: "Facebook",
+		icon: "mdi:facebook",
+		tone: "text-[#1877f2]",
+	},
+	{ kind: "ok", key: "ok", label: "OK", icon: "mdi:odnoklassniki", tone: "text-[#ee8208]" },
+	{
+		kind: "youtube",
+		key: "youtube",
+		label: "YouTube",
+		icon: "mdi:youtube",
+		tone: "text-[#ff0033]",
+	},
+	{
+		kind: "tiktok",
+		key: "tiktok",
+		label: "TikTok",
+		icon: "tabler:brand-tiktok",
+		tone: "text-foreground",
+	},
+	{ kind: "twitter", key: "twitter", label: "X", icon: "tabler:brand-x", tone: "text-foreground" },
+	{
+		kind: "whatsapp",
+		key: "whatsapp",
+		label: "WhatsApp",
+		icon: "mdi:whatsapp",
+		tone: "text-[#25d366]",
+	},
+	{ kind: "maps", key: "maps", label: "Карты", icon: "mdi:map-marker", tone: "text-[#ea4335]" },
+];
+
+const CONTACTS: Array<Tile & { pattern: RegExp }> = [
+	{
+		key: "email",
+		label: "Почта",
+		icon: "mdi:email",
+		tone: "text-accent",
+		pattern: /\]\(mailto:/,
+	},
+	{
+		key: "phone",
+		label: "Телефон",
+		icon: "mdi:phone",
+		tone: "text-accent",
+		pattern: /\]\(tel:/,
+	},
+];
+
+/** Куда в сетке 5x4 садятся плитки: остальные клетки остаются пустыми. */
+const SLOTS = [0, 2, 3, 6, 7, 9, 10, 11, 13, 14, 16, 17, 18];
+const CELLS = 20;
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
+const kinds = new Set<CenterLinkKind>();
+const contacts = new Set<string>();
 let links = 0;
+
 for (const center of await getCollection("centers")) {
-	links += getCenterLinks(center.body, center.data.source).length;
+	for (const link of getCenterLinks(center.body, center.data.source)) {
+		kinds.add(link.kind);
+		links += 1;
+	}
+
+	for (const contact of CONTACTS) {
+		if (contact.pattern.test(center.body ?? "")) contacts.add(contact.key);
+	}
 }
+
+const tiles: Tile[] = [
+	...PLATFORMS.filter((platform) => kinds.has(platform.kind)),
+	...CONTACTS.filter((contact) => contacts.has(contact.key)),
+];
+
+const bySlot = new Map(tiles.map((tile, index) => [SLOTS[index] ?? CELLS, tile]));
+const cells = Array.from({ length: CELLS }, (_, index) => bySlot.get(index) ?? null);
 ---
 
 <section
-	class="flex h-full flex-col"
+	class="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-12"
 	aria-labelledby="home-links-showcase"
 >
-	<div class="space-y-6">
-		<h2 id="home-links-showcase" class="text-3xl font-bold tracking-tight">
+	<div class="space-y-6 md:order-2">
+		<h2 id="home-links-showcase" class="text-4xl font-bold tracking-tight">
 			{t("home.contacts.title")}
 		</h2>
 		<p class="leading-7 text-muted-foreground" set:html={t("home.contacts.text", { links })} />
@@ -35,5 +134,31 @@ for (const center of await getCollection("centers")) {
 			icon="mdi:link-variant"
 			variant="gradient"
 		/>
+	</div>
+
+	<div class="md:order-1">
+		<ul
+			class="mx-auto grid max-w-md grid-cols-5 gap-2.5 sm:gap-3 md:max-w-none"
+			role="list"
+		>
+			{
+				cells.map((tile) =>
+					tile ? (
+						<li
+							class="flex aspect-square items-center justify-center rounded-control corner-squircle bg-surface ring-1 ring-border-muted surface-lift transition hover:-translate-y-0.5"
+							title={tile.label}
+						>
+							<Icon name={tile.icon} class={`h-6 w-6 ${tile.tone}`} aria-hidden="true" />
+							<span class="sr-only">{tile.label}</span>
+						</li>
+					) : (
+						<li
+							aria-hidden="true"
+							class="aspect-square rounded-control corner-squircle ring-1 ring-border-muted/60"
+						/>
+					),
+				)
+			}
+		</ul>
 	</div>
 </section>
