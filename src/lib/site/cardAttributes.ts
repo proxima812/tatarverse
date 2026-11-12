@@ -1,16 +1,16 @@
 /**
- * Контракт `data-*` карточки центра — единственное объявление.
+ * Контракт `data-*` карточки центра - единственное объявление.
  *
  * Карточка рендерится на сборке (`CenterCard.astro`), а читают её три
  * независимых потребителя в браузере: фильтры каталога
  * (`lib/client/centersToolbar.ts`), сохранённые центры
  * (`lib/client/savedCentersUi.ts`) и страница `/saved`. Раньше имена атрибутов
- * жили в этих файлах строковыми литералами — переименование ловилось только
+ * жили в этих файлах строковыми литералами - переименование ловилось только
  * грепом и падало в рантайме, потому что ни `astro check`, ни TypeScript
  * ничего не знали о связи.
  *
  * Теперь имя атрибута существует один раз. Пишущая сторона зовёт
- * `cardDataset`, читающие — `readCard`; расхождение становится ошибкой типов.
+ * `cardDataset`, читающие - `readCard`; расхождение становится ошибкой типов.
  *
  * Модуль попадает в клиентский бандл: никаких Node-зависимостей.
  */
@@ -65,7 +65,7 @@ export function cardDataset(fields: CardFields): Record<string, string> {
 	return dataset;
 }
 
-/** Обратная операция: карточка из DOM. Отсутствующий атрибут — пустая строка. */
+/** Обратная операция: карточка из DOM. Отсутствующий атрибут - пустая строка. */
 export function readCard(element: Element): CardFields {
 	const fields = {} as CardFields;
 	for (const field of FIELDS) fields[field] = element.getAttribute(CARD_ATTR[field]) ?? "";
@@ -73,7 +73,7 @@ export function readCard(element: Element): CardFields {
 	return fields;
 }
 
-/** Ближайшая карточка вверх по дереву — общий способ для всех обработчиков. */
+/** Ближайшая карточка вверх по дереву - общий способ для всех обработчиков. */
 export const closestCard = (element: Element): HTMLElement | null =>
 	element.closest<HTMLElement>(`[${CARD_ATTR.id}]`);
 
@@ -83,7 +83,7 @@ export const closestCard = (element: Element): HTMLElement | null =>
  * Нужны странице `/saved`: она клонирует `CenterCard`, отрендеренный в
  * `<template>`, и подставляет в него сохранённые значения. Раньше у `/saved`
  * была своя копия всей разметки карточки с собственными хуками
- * `data-saved-*` — правка дизайна карточки до неё не доходила.
+ * `data-saved-*` - правка дизайна карточки до неё не доходила.
  */
 export const CARD_PART = {
 	location: "data-card-location",
@@ -103,7 +103,7 @@ export type CardPart = keyof typeof CARD_PART;
 
 /**
  * Хук ставится только в заготовке. В каталоге 420 карточек, и одиннадцать
- * лишних атрибутов на каждой — вес страницы без единого потребителя:
+ * лишних атрибутов на каждой - вес страницы без единого потребителя:
  * фильтры читают поля с самого `<article>`, а не с его частей.
  */
 export const cardPart = (part: CardPart, enabled: boolean) =>

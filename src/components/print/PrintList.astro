@@ -13,7 +13,7 @@ const { countries } = Astro.props as Props;
 		countries.map((group) => (
 			<section data-print-group={group.country} class="mt-10 first:mt-0 print:mt-6">
 				<h2 class="text-sm font-semibold tracking-wide uppercase text-muted-foreground print:text-xs">
-					{group.label} — {group.entries.length}
+					{group.label} - {group.entries.length}
 				</h2>
 				<ol class="mt-4 divide-y divide-border-muted border-t border-border-muted">
 					{group.entries.map((entry, index) => (

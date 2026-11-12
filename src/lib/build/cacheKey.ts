@@ -15,14 +15,14 @@ function hash(input: string): string {
 /**
  * Отпечаток записи коллекции.
  *
- * `digest` проставляет loader, но у части записей его нет — тогда падаем на
+ * `digest` проставляет loader, но у части записей его нет - тогда падаем на
  * сериализацию frontmatter. Тело файла в data не входит, но у glob-loader
  * digest считается по всему файлу, так что правка текста ключ меняет.
  */
 export const entryFingerprint = (entry: AnyEntry): string =>
 	String(entry.digest ?? hash(`${entry.id}:${JSON.stringify(entry.data ?? null)}`));
 
-/** Общий отпечаток набора записей — для страниц, зависящих от всей коллекции. */
+/** Общий отпечаток набора записей - для страниц, зависящих от всей коллекции. */
 export const collectionFingerprint = (entries: AnyEntry[]): string =>
 	hash(
 		[...entries]

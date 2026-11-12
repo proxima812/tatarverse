@@ -36,11 +36,16 @@ const t = useTranslations(locale);
 	]}
 >
 	<main class="space-y-12">
-		<div class="space-y-5">
-			<HomeHeroBadge />
-			<HomeHeroTitle />
-		</div>
 		<div>
+			<div class="space-y-5">
+				<HomeHeroBadge />
+				<HomeHeroTitle />
+			</div>
+			<p class="mx-auto mt-6 max-w-2xl text-balance text-center text-[17px] sm:text-[20px] leading-snug text-subtle-foreground">
+				{t("home.hero.description")}
+			</p>
+		</div>
+		<div class="!mt-10">
 			<HomeLinks />
 		</div>
 

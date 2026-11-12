@@ -7,7 +7,7 @@ import type { CollectionEntry } from "astro:content";
 type SourceCenter = CollectionEntry<"centers">;
 
 export interface CountryRow {
-	/** Русское название страны — ключ группировки и значение фильтра каталога. */
+	/** Русское название страны - ключ группировки и значение фильтра каталога. */
 	country: string;
 	label: string;
 	flag: string;
@@ -16,9 +16,9 @@ export interface CountryRow {
 
 export interface MacroCountryGroup {
 	macro: MacroRegion;
-	/** Страны, где центры есть, — по убыванию количества. */
+	/** Страны, где центры есть, - по убыванию количества. */
 	present: CountryRow[];
-	/** Страны без единого центра — по алфавиту. Это и есть карта пробелов. */
+	/** Страны без единого центра - по алфавиту. Это и есть карта пробелов. */
 	missing: CountryRow[];
 	total: number;
 }
@@ -67,6 +67,6 @@ export function groupCountriesByMacroRegion(
 	}).filter((group) => group.present.length > 0 || group.missing.length > 0);
 }
 
-/** Сколько стран из справочника остались без центров — строка под таблицей. */
+/** Сколько стран из справочника остались без центров - строка под таблицей. */
 export const countMissingCountries = (groups: readonly MacroCountryGroup[]) =>
 	groups.reduce((sum, group) => sum + group.missing.length, 0);

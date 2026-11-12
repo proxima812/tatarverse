@@ -201,7 +201,7 @@ for (const [locale, values] of Object.entries(worldCountriesByLocale)) {
 	if (values.length !== worldCountriesRu.length) {
 		throw new Error(
 			`worldCountries: список «${locale}» (${values.length}) рассинхронизирован ` +
-				`с русским (${worldCountriesRu.length}) — переводы съедут по индексу.`,
+				`с русским (${worldCountriesRu.length}) - переводы съедут по индексу.`,
 		);
 	}
 }

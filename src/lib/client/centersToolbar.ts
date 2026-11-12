@@ -15,13 +15,13 @@ import type {
 /**
  * Вид каталога: читает разметку, слушает события, показывает результат.
  *
- * Решения принимаются не здесь. Что показать — считает `filterState`, в каком
- * порядке — `search`, что положить в адрес — `query`, как вести себя списку
- * подсказок — `suggestions`. Этот файл переводит их ответы в DOM и обратно.
+ * Решения принимаются не здесь. Что показать - считает `filterState`, в каком
+ * порядке - `search`, что положить в адрес - `query`, как вести себя списку
+ * подсказок - `suggestions`. Этот файл переводит их ответы в DOM и обратно.
  */
 
 const SEARCH_DEBOUNCE_MS = 150;
-/** Клик по подсказке приходит после blur — даём ему успеть. */
+/** Клик по подсказке приходит после blur - даём ему успеть. */
 const SUGGESTION_BLUR_DELAY_MS = 120;
 const MIN_SUGGESTION_QUERY = 2;
 const MAX_SUGGESTIONS = 6;
@@ -376,7 +376,7 @@ export function initCardsToolbar() {
 
 		const needle = normalizeSearchText(query);
 		const results = await runSearch(query);
-		// Пока ждали, посетитель мог дописать запрос — эта выдача уже неактуальна.
+		// Пока ждали, посетитель мог дописать запрос - эта выдача уже неактуальна.
 		if (query !== searchQuery.trim()) return;
 
 		const values = new Set<string>();
@@ -517,7 +517,7 @@ export function initCardsToolbar() {
 			),
 		);
 
-		// Пока открыта шторка, страница под ней заблокирована — прокрутка к
+		// Пока открыта шторка, страница под ней заблокирована - прокрутка к
 		// сетке случится при закрытии, из sheet-кнопки «Показать».
 		if (shouldScroll && !isDesktopLayout.matches && !isSheetOpen()) {
 			cardsGrid.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
@@ -577,7 +577,7 @@ export function initCardsToolbar() {
 	document.addEventListener("keydown", (event) => {
 		if (event.key === "Escape" && isSheetOpen()) closeSheet();
 	});
-	// Растянули окно до десктопа со вскрытой шторкой — вернуть странице скролл:
+	// Растянули окно до десктопа со вскрытой шторкой - вернуть странице скролл:
 	// сайдбар там показывается всегда, а замок остался бы навечно.
 	isDesktopLayout.addEventListener("change", (event) => {
 		if (event.matches) closeSheet();

@@ -3,7 +3,7 @@ import type { AppLocale } from "@/i18n";
 /**
  * Описание страницы центра для `<meta name="description">`.
  *
- * Если у карточки есть своё `summary` — берём его. Иначе собираем из
+ * Если у карточки есть своё `summary` - берём его. Иначе собираем из
  * названия и географии, укладываясь в 160 символов: длинное название
  * усекается посередине, чтобы в выдаче остались и начало, и хвост с
  * уточнением вроде «(Казахстан)».
@@ -48,7 +48,7 @@ function shorten(title: string, limit: number) {
 export function centerDescription(parts: DescriptionParts, locale: AppLocale): string {
 	if (parts.summary) return parts.summary;
 
-	// В английской версии категория и тип остаются русскими — в описание их не берём.
+	// В английской версии категория и тип остаются русскими - в описание их не берём.
 	const details =
 		locale === "en"
 			? [parts.city, parts.region, parts.country]

@@ -1,5 +1,5 @@
 /**
- * Липкая стеклянная шапка — `components/layout/Header.astro`.
+ * Липкая стеклянная шапка - `components/layout/Header.astro`.
  * Рефракцию даёт `glass` из tw-glass; поверхность своя, без внешней тени.
  */
 

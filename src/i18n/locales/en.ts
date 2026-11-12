@@ -42,12 +42,16 @@ const dict: Dictionary = {
 	"theme.light.short": "Light",
 	"theme.dark.short": "Dark",
 	"home.hero.1": "Find",
-	"home.hero.2": "your people",
+	"home.hero.2": "yours",
 	"home.hero.3": "nearby",
-	"home.hero.5": "Language.",
+	"home.hero.5": "Lang.",
 	"home.hero.6": "Culture.",
 	"home.hero.7": "People.",
-	"home.badge.center": "New center — {title}",
+	"home.hero.description":
+		"Tatar, Bashkir, and Crimean Tatar centers worldwide · language · culture · connections",
+	"home.cta.view": "Explore",
+	"home.cta.nearby": "Center nearby",
+	"home.badge.center": "New center",
 	"home.meta.title": "Tatars, Bashkirs, and Crimean Tatars",
 	"home.meta.description":
 		"tatarverse helps people find Tatar, Bashkir, and Crimean Tatar centers around the world: for new connections, friends, relationships, language learning, cultural reconnection, and shared values.",
@@ -57,17 +61,17 @@ const dict: Dictionary = {
 	"home.present.caption":
 		"<strong>{centers}</strong> points on the map: centers, communities, and initiatives across <strong>{countries}</strong> countries and <strong>{regions}</strong> regions.",
 	"home.present.text1":
-		"Wherever you are, your people are already somewhere close — a neighborhood away, or a couple of messages away. Language, songs, and memory are held not by archives but by people who found each other.",
+		"Wherever you are, your people are already somewhere close - a neighborhood away, or a couple of messages away. Language, songs, and memory are held not by archives but by people who found each other.",
 	"home.present.text2":
-		"Find the ones nearby — or the ones far away. With kindness. With love. With acceptance.",
+		"Find the ones nearby - or the ones far away. With kindness. With love. With acceptance.",
 	"home.contacts.title": "Links, not just addresses",
 	"home.contacts.text":
-		"Links in the cards: <strong>{links}</strong> — websites, social profiles, and channels where communities actually reply.",
+		"Links in the cards: <strong>{links}</strong> - websites, social profiles, and channels where communities actually reply.",
 	"home.contacts.text2":
-		"No need to hunt for contacts online — open a card and write directly.",
+		"No need to hunt for contacts online - open a card and write directly.",
 	"home.nearby.title": "Search by geolocation",
 	"home.nearby.text1":
-		"Allow the browser to detect your location, and the catalog will sort centers by distance — nearest first.",
+		"Allow the browser to detect your location, and the catalog will sort centers by distance - nearest first.",
 	"home.nearby.text2":
 		"Your coordinates stay in the browser: the page computes distances on your device and sends them nowhere.",
 	"home.nearby.imageAlt": "Center cards with country flags under a “Search by geolocation” heading",
@@ -101,7 +105,7 @@ const dict: Dictionary = {
 	"list.description":
 		"TBK directory: {count} cards about Tatars, Bashkirs, and Crimean Tatars across all countries, regions, cities, types, and categories. The database currently covers {countries} countries and {regions} regions; use search and filters to find centers and reference information.",
 	"list.heroIntro":
-		"Find centers, communities, and initiatives near you or abroad — to meet friends, relationships, and even relatives.",
+		"Find centers, communities, and initiatives near you or abroad - to meet friends, relationships, and even relatives.",
 	"list.stat.centers": "centers",
 	"list.stat.total": "total",
 	"list.stat.countries": "countries",
@@ -124,7 +128,7 @@ const dict: Dictionary = {
 		"Countries are grouped by world region; the number on the right is the entry count. Select a country to open the catalog with that filter.",
 	"stats.withoutCountry": "Online projects with no country: {count}.",
 	"stats.completeness.title": "Card completeness",
-	"stats.completeness.hint": "{complete} of {total} cards are complete: they have contacts, a description, a location and sources. {incomplete} more need help — if you know a center on the list, tell us what's missing.",
+	"stats.completeness.hint": "{complete} of {total} cards are complete: they have contacts, a description, a location and sources. {incomplete} more need help - if you know a center on the list, tell us what's missing.",
 	"stats.completeness.gap.contacts": "No contacts",
 	"stats.completeness.gap.about": "No description",
 	"stats.completeness.gap.city": "No city or region",
@@ -138,7 +142,7 @@ const dict: Dictionary = {
 	"stats.groupSummary": "countries: {countries} · entries: {centers}",
 	"stats.missingLabel": "No centers yet ({count}):",
 	"stats.missingNote":
-		"Countries without a single center: {count}. That does not mean no Tatars live there — it means the catalog has no source-backed organisation for them yet. If you know one, tell us.",
+		"Countries without a single center: {count}. That does not mean no Tatars live there - it means the catalog has no source-backed organisation for them yet. If you know one, tell us.",
 	"kind.centers": "centers",
 	"kind.autonomies": "cultural autonomies",
 	"kind.communities": "societies & associations",
@@ -226,7 +230,7 @@ const dict: Dictionary = {
 	"footer.about.press": "Article on {outlet}",
 	"footer.about.story": "The full tatarverse story on vc.ru",
 	"footer.legalNote": "All rights reserved.",
-	"notFound.title": "404 — page not found",
+	"notFound.title": "404 - page not found",
 	"notFound.description": "Page not found. It may have been removed or moved.",
 	"link.open": "Open link: {value}",
 	"link.mail": "Send email: {value}",

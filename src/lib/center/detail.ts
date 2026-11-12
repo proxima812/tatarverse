@@ -22,12 +22,12 @@ export interface CenterFact {
 export interface CenterDetail {
 	title: string;
 	summary: string | null;
-	/** Категория и тип — надзаголовочная строка. */
+	/** Категория и тип - надзаголовочная строка. */
 	badges: string[];
 	facts: CenterFact[];
 	sourceUrl: string | null;
 	sourceLabel: string | null;
-	/** Полнота карточки — по русской записи, общая для обеих локалей. */
+	/** Полнота карточки - по русской записи, общая для обеих локалей. */
 	completeness: CenterCompleteness;
 	canonicalURL: string;
 	markdownURL?: string;
@@ -63,7 +63,7 @@ const hostnameOf = (url: string) => {
  * Всё, что странице центра нужно знать помимо самого текста: шапка, факты,
  * соседи по каталогу, похожие карточки, канониклы и JSON-LD.
  *
- * Читает коллекции сама — страница остаётся разметкой. Переводимые подписи
+ * Читает коллекции сама - страница остаётся разметкой. Переводимые подписи
  * приходят через `t`, потому что зависят от локали, а не от данных.
  */
 export async function buildCenterDetail({
@@ -166,7 +166,7 @@ export async function buildCenterDetail({
 		jsonLd: centerJsonLd({
 			name: title,
 			description: summary,
-			// Сайт организации из «Ссылок»; source — это справочник или статья.
+			// Сайт организации из «Ссылок»; source - это справочник или статья.
 			url:
 				getCenterLinks(entry.body, entry.data.source).find((link) => link.kind === "website")?.href ??
 				localizePath(locale, centerPath),

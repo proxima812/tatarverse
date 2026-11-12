@@ -28,8 +28,8 @@ const newestCenterTitle = localizedCenter?.data.title ?? newestCenter?.data.titl
 {newestCenter && (
  <div class="hero-badge flex h-6 items-center justify-center">
   <a class="flex w-fit max-w-full items-center gap-1.5 rounded-full bg-accent-soft px-2 py-1 text-xs text-accent-soft-foreground transition-colors hover:bg-accent-soft-hover" href={localizePath(locale, getCenterPath(centerRouteIds.get(newestCenter.id) ?? newestCenter.id))}>
-   <Icon name="tabler:map-pin" class="size-3 shrink-0" aria-hidden="true" />
-   <span class="max-w-60 truncate sm:max-w-full">{t("home.badge.center", { title: newestCenterTitle ?? "" })}</span>
+   <Icon name="mdi:layers-plus" class="size-3 shrink-0" aria-hidden="true" />
+   <span class="max-w-60 truncate sm:max-w-full">{t("home.badge.center")} - <span class="font-medium">{newestCenterTitle}</span></span>
   </a>
  </div>
 )}

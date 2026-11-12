@@ -2,17 +2,17 @@ import { centerAvatarMarkup } from "@/lib/center/avatar";
 import { CARD_ATTR, CARD_PART, cardDataset, type CardFields } from "@/lib/site/cardAttributes";
 
 /**
- * Операция «данные карточки + заготовка → готовый узел» — единственное
+ * Операция «данные карточки + заготовка → готовый узел» - единственное
  * объявление.
  *
  * `cardAttributes` закрывает *имена* контракта, но не саму операцию: раньше
- * заполнение заготовки было переписано дважды — на `/saved` и на `/nearby`, —
+ * заполнение заготовки было переписано дважды - на `/saved` и на `/nearby`, -
  * и копии успели разойтись. Одна прятала строку расположения целиком, вторая
  * нет; одна форматировала дату по локали страницы, вторая по захардкоженной
  * «ru»; обе правили Tailwind-классы, выбранные в `CenterCard.astro`.
  *
  * Теперь расхождение невозможно: заполняет одно место, а различия страниц
- * приезжают параметрами. Кнопку действия модуль не трогает — она у страниц
+ * приезжают параметрами. Кнопку действия модуль не трогает - она у страниц
  * разная по смыслу («удалить» против «сохранить»), и знание о ней принадлежит
  * странице, а не карточке.
  *
@@ -48,7 +48,7 @@ function fillPart(root: ParentNode, part: keyof typeof CARD_PART, value: string)
 
 /**
  * Клонирует заготовку и подставляет значения. Возвращает `null`, если в
- * заготовке нет карточки или ссылки — подставлять тогда некуда.
+ * заготовке нет карточки или ссылки - подставлять тогда некуда.
  */
 export function fillCard(
 	template: HTMLTemplateElement,
@@ -86,7 +86,7 @@ export function fillCard(
 	const location = article.querySelector<HTMLElement>(`[${CARD_PART.location}]`);
 	if (location) location.hidden = !hasLocation;
 
-	// Без строки расположения заголовок сам обходит кнопку в углу — тем
+	// Без строки расположения заголовок сам обходит кнопку в углу - тем
 	// отступом, который заготовка объявила в `data-card-reserve`.
 	const reserve = article.getAttribute(CARD_RESERVE_ATTR);
 	const heading = article.querySelector<HTMLElement>(`[${CARD_PART.heading}]`);

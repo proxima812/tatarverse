@@ -5,31 +5,28 @@ import { getLocaleFromUrl, useTranslations, type AppLocale } from "@/i18n";
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
-type Cell = { key: string; muted?: boolean; stacks?: boolean };
+type Cell = { key: string; muted?: boolean; stack?: "signs" | "flags" | "faces" };
 
-const cells: Cell[] = [
-	{ key: "home.hero.1" },
-	{ key: "home.hero.6", muted: true },
-	{ key: "home.hero.3" },
-	{ key: "home.hero.5", muted: true },
-	{ key: "home.hero.2", stacks: true },
-	{ key: "home.hero.7", muted: true },
+const rows: Cell[][] = [
+	[{ key: "home.hero.1" }, { key: "home.hero.6", muted: true }, { key: "home.hero.3" }],
+	[
+		{ key: "home.hero.5", muted: true, stack: "signs" },
+		{ key: "home.hero.2", stack: "flags" },
+		{ key: "home.hero.7", muted: true, stack: "faces" },
+	],
 ];
 
-/** Знаки народов слева от «своих», флаги стран диаспоры — справа. */
+/** Стопки плиток справа от слов второй строки: знаки народов, флаги стран диаспоры, лица. */
 const signs = ["bs", "qt", "tt"];
-// Флаги градиентами в стиле hypercolor.dev/flags: Россия, Финляндия, Польша.
-const flags = [
-	"linear-gradient(180deg, #FFF 33.333%, #0039A6 33.333% 66.666%, #D52B1E 66.666%)",
-	"linear-gradient(90deg, transparent 28%, #002F6C 28% 46%, transparent 46%), linear-gradient(180deg, #FFF 41%, #002F6C 41% 59%, #FFF 59%)",
-	"linear-gradient(180deg, #FFF 50%, #DC143C 50%)",
-];
+// Флаги эмодзи: Казахстан, Украина, Россия.
+const flags = ["🇰🇿", "🇺🇦", "🇷🇺"];
+const faces = ["😀", "😊", "😎"];
 
 const label = `${t("home.hero.1")} ${t("home.hero.2")} ${t("home.hero.3")}. ${t("home.hero.5")} ${t("home.hero.6")} ${t("home.hero.7")}`;
 
 const heroSizeClass: Record<AppLocale, string> = {
-	ru: "text-[clamp(1.1rem,calc(6.1vw-3px),3.9rem)]",
-	en: "text-[clamp(0.89rem,calc(4.85vw-3px),3.1rem)]",
+	ru: "text-[clamp(1.2rem,calc(6.6vw-3px),3.9rem)]",
+	en: "text-[clamp(1.2rem,calc(6.6vw-3px),3.9rem)]",
 };
 ---
 
@@ -39,10 +36,11 @@ const heroSizeClass: Record<AppLocale, string> = {
 	<span class="sr-only">{label}</span>
 	<span
 		aria-hidden="true"
-		class="mx-auto grid w-fit grid-cols-[repeat(3,auto)] items-center justify-center justify-items-center whitespace-nowrap gap-x-[0.4em] gap-y-[0.18em]"
+		class="flex flex-col items-center gap-y-[0.18em] whitespace-nowrap"
 	>
-		{
-			cells.map(({ key, muted, stacks }) => {
+		{rows.map((row) => (
+			<span class="flex items-center justify-center gap-x-[0.4em]">
+				{row.map(({ key, muted, stack }) => {
 				const word = (
 					<span
 						class:list={[
@@ -55,25 +53,32 @@ const heroSizeClass: Record<AppLocale, string> = {
 						{t(key).replace(/\.$/, "")}
 					</span>
 				);
-				if (!stacks) return word;
+				if (!stack) return word;
 				return (
 					<span class="inline-flex items-center gap-[0.22em]">
-						<span class="hero-stack">
-							{signs.map((name) => (
-								<span class="hero-tile">
-									<Icon name={name} />
-								</span>
-							))}
-						</span>
 						{word}
 						<span class="hero-stack">
-							{flags.map((flag) => (
-								<span class="hero-tile" style={{ background: flag }} />
-							))}
+							{stack === "signs" &&
+								signs.map((name) => (
+									<span class="hero-tile">
+										<Icon name={name} />
+									</span>
+								))}
+							{stack === "flags" &&
+								flags.map((flag) => (
+									<span class="hero-tile hero-tile--emoji">
+										<span>{flag}</span>
+									</span>
+								))}
+							{stack === "faces" &&
+								faces.map((face) => (
+									<span class="hero-tile hero-tile--emoji"><span>{face}</span></span>
+								))}
 						</span>
 					</span>
 				);
-			})
-		}
+				})}
+			</span>
+		))}
 	</span>
 </h1>

@@ -67,7 +67,7 @@ const cleanFlag =
 	location?.flag?.trim() || (cleanCountry ? countryFlagsByRu[cleanCountry] : undefined);
 const displayCountry = cleanCountry ? getCountryLabel(cleanCountry, locale) : undefined;
 const countryKey = cleanCountry ?? "Прочее";
-const displayTitle = title ?? "—";
+const displayTitle = title ?? "-";
 const displaySummary = summary?.trim();
 const displayLocation =
 	cleanFlag || cleanCity || displayCountry
@@ -77,7 +77,7 @@ const displayLocation =
 const reserveClass = templateAction === "remove" ? "pr-24" : "pr-9";
 
 // Единственное место, где карточка объявляет свой DOM-контракт. Имена
-// атрибутов — в @/lib/site/cardAttributes, там же их читают фильтры и /saved.
+// атрибутов - в @/lib/site/cardAttributes, там же их читают фильтры и /saved.
 const dataset = cardDataset({
 	id,
 	scope: geo?.scope ?? "",

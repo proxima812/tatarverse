@@ -22,7 +22,7 @@ export function relatedCenters(
 	const category = clean(entry.data.category);
 
 	// Страна ближе, чем категория: «ещё центры в Германии» полезнее, чем
-	// «ещё татарские центры» — последних в каталоге сотни.
+	// «ещё татарские центры» - последних в каталоге сотни.
 	const isRelated = (candidate: CollectionEntry<"centers">) => {
 		if (candidate.id === entry.id) return false;
 		if (country) return candidate.data.location?.country === country;
@@ -37,6 +37,6 @@ export function relatedCenters(
 		.map((candidate) => localizedById.get(candidate.id) ?? candidate);
 }
 
-/** По стране родство или по категории — от этого зависит заголовок блока. */
+/** По стране родство или по категории - от этого зависит заголовок блока. */
 export const relatedByCountry = (entry: CollectionEntry<"centers">) =>
 	Boolean(clean(entry.data.location?.country));

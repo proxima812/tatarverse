@@ -11,6 +11,6 @@ export const isCenterRouteId = (id: string) => CENTER_ROUTE_ID_PATTERN.test(id);
 
 export const centerRouteId = (index: number) => `${CENTER_ROUTE_PREFIX}${index}`;
 
-/** Номер из `tbk-42` → 42. Для чужого id — `-1`, чтобы он уезжал в конец. */
+/** Номер из `tbk-42` → 42. Для чужого id - `-1`, чтобы он уезжал в конец. */
 export const centerRouteNumber = (id: string) =>
 	isCenterRouteId(id) ? Number(id.slice(CENTER_ROUTE_PREFIX.length)) : -1;

@@ -39,7 +39,7 @@ function validateCenterLocation(
 			ctx.addIssue({
 				code: "custom",
 				path: ["location", key],
-				message: `«${value}» — это заглушка, а не значение. Уберите поле целиком.`,
+				message: `«${value}» - это заглушка, а не значение. Уберите поле целиком.`,
 			});
 		}
 	}
@@ -69,7 +69,7 @@ function validateCenterLocation(
 			path: ["location", "country"],
 			message:
 				`страна «${country}» не отнесена ни к одному макрорегиону ` +
-				`(src/data/geo/macroRegions.ts) — без этого она не попадёт в фильтры.`,
+				`(src/data/geo/macroRegions.ts) - без этого она не попадёт в фильтры.`,
 		});
 	}
 }

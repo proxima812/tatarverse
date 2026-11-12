@@ -152,7 +152,7 @@ export function getCenterLinks(body: string | undefined, source?: string): Cente
 		collect(match[1]);
 	}
 
-	// `source` — откуда взяты сведения: чаще справочник или статья, чем сайт
+	// `source` - откуда взяты сведения: чаще справочник или статья, чем сайт
 	// центра. Из него берём только соцсети; собственный сайт обязан стоять в
 	// «Ссылках». Иначе главная ВКТ у двухсот карточек выдавала себя за их «Сайт».
 	if (source && classify(source)?.kind !== "website") collect(source);

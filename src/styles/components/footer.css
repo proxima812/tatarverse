@@ -1,5 +1,5 @@
 /**
- * Подвал — `components/layout/Footer.astro`.
+ * Подвал - `components/layout/Footer.astro`.
  */
 
 .site-footer {
@@ -12,7 +12,7 @@
 	--footer-border: color-mix(in oklab, var(--footer-fg) 15%, transparent);
 
 	/* Подвал темный при обеих темах, поэтому марка здесь не следует за
-	   акцентом: берем бумагу проекта — единственный светлый тон, который
+	   акцентом: берем бумагу проекта - единственный светлый тон, который
 	   держится на этой плашке при любом пресете. */
 	--logo-mark-color: var(--color-lift);
 

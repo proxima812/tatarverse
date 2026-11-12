@@ -1,5 +1,5 @@
 /**
- * Главная — `components/home/HomeHeroBadge.astro`, `HomeHeroTitle.astro`.
+ * Главная - `components/home/HomeHeroBadge.astro`, `HomeHeroTitle.astro`.
  */
 
 @media (prefers-reduced-motion: no-preference) {
@@ -24,7 +24,7 @@
 /*
  * Три плитки пирамидкой: верхняя по центру, две снизу зеркально веером.
  * Высота стопки (~0.8em) чуть больше прописных Inter (0.73em), а при line-height: 1 их
- * середина приходится ровно на середину строки — стопка встаёт по центру букв.
+ * середина приходится ровно на середину строки - стопка встаёт по центру букв.
  */
 .hero-stack {
 	--tile: 0.46em;
@@ -67,4 +67,14 @@
 		width: 72%;
 		height: 72%;
 	}
+}
+
+/* Размер эмодзи - на вложенном span: --tile задан в em и пересчитался бы от font-size самой плитки. */
+.hero-tile--emoji {
+	background: #e4e4e7;
+}
+
+.hero-tile--emoji > span {
+	font-size: calc(var(--tile) * 0.7);
+	line-height: 1;
 }

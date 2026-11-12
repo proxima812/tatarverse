@@ -4,7 +4,7 @@ import type { CenterScope, FacetKey } from "@/lib/types";
 /**
  * Состояние каталога ⇄ строка запроса.
  *
- * Отдельно от фильтра и от DOM: обе функции — чистые, на вход строка и
+ * Отдельно от фильтра и от DOM: обе функции - чистые, на вход строка и
  * словарь допустимых значений, на выходе состояние или новая строка. Читать и
  * писать URL умеет только вызывающий (`history.replaceState`).
  */
@@ -50,7 +50,7 @@ export function readCatalogQuery(
 	const selections: Record<FacetKey, string[]> = {};
 	for (const key of facetKeys) {
 		const valid = allowed(key);
-		// Фасеты — одиночный выбор: берём первое пригодное значение.
+		// Фасеты - одиночный выбор: берём первое пригодное значение.
 		const value = params.getAll(key).find((candidate) => valid.has(candidate));
 		selections[key] = value ? [value] : [];
 	}

@@ -22,7 +22,7 @@ export async function getStaticPaths() {
 	);
 
 	// Локализованная страница центра существует только там, где есть перевод:
-	// подставлять русский текст под /en/ нельзя — canonical и hreflang врут.
+	// подставлять русский текст под /en/ нельзя - canonical и hreflang врут.
 	return secondaryLocales().flatMap((locale) =>
 		entries.flatMap((entry) => {
 			const localizedEntry = translationsByLocale.get(locale)?.get(entry.id);

@@ -65,7 +65,7 @@ const ACCENT_OPTIONS: AppearanceOption[] = ACCENT_PRESETS.map((preset) => ({
 }));
 
 /**
- * Порядок важен: тёмная тема — значение по умолчанию, его же ставит
+ * Порядок важен: тёмная тема - значение по умолчанию, его же ставит
  * блокирующий скрипт в `Layout.astro` до первой отрисовки.
  */
 export const APPEARANCE_SPECS: Record<AppearanceGroup, AppearanceGroupSpec> = {

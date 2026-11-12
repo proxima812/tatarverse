@@ -5,7 +5,7 @@ import { defaultLocale, locales } from "@/i18n";
  *
  * Русский отдаётся без префикса (`prefixDefaultLocale: false`), поэтому
  * динамический сегмент собирается только из остальных локалей. Один и тот же
- * `filter(...).map(...)` был скопирован в десять файлов — добавление третьей
+ * `filter(...).map(...)` был скопирован в десять файлов - добавление третьей
  * локали означало десять одинаковых правок.
  */
 export const secondaryLocales = () => locales.filter((locale) => locale !== defaultLocale);

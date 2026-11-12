@@ -74,7 +74,7 @@ const format = new Intl.NumberFormat(locale === "en" ? "en-US" : "ru-RU");
 	/**
 	 * Числа набегают снизу вверх, когда секция попадает в кадр.
 	 *
-	 * Разметка уже содержит готовое значение — анимация только переписывает
+	 * Разметка уже содержит готовое значение - анимация только переписывает
 	 * его на время. Без JS, при `prefers-reduced-motion` и в поиске виден
 	 * финальный результат, а не ноль.
 	 */
@@ -108,7 +108,7 @@ const format = new Intl.NumberFormat(locale === "en" ? "en-US" : "ru-RU");
 
 			requestAnimationFrame(frame);
 			// Вкладка может уйти в фон и заморозить кадры на середине отсчёта:
-			// возвращаемся — показываем итог, а не случайное промежуточное число.
+			// возвращаемся - показываем итог, а не случайное промежуточное число.
 			document.addEventListener("visibilitychange", () => {
 				if (document.hidden) return;
 				if (performance.now() - started >= DURATION) write(1);

@@ -1,7 +1,7 @@
 import type { CenterScope, FacetKey, FilterGate, FilterRecord } from "@/lib/types";
 
 /**
- * Отбор карточек каталога — без единого обращения к DOM.
+ * Отбор карточек каталога - без единого обращения к DOM.
  *
  * Раньше эти правила жили внутри 900-строчной `initCardsToolbar` вперемешку
  * с рендером чипов, скроллом и обработчиками клавиатуры: ни проверить, ни
@@ -32,14 +32,14 @@ export interface CatalogFilter {
 	readonly scope: CenterScope;
 	readonly facetKeys: readonly FacetKey[];
 	selected(key: FacetKey): ReadonlySet<string>;
-	/** Сколько фильтров активно — область считается за один. */
+	/** Сколько фильтров активно - область считается за один. */
 	activeCount(): number;
 	setScope(next: CenterScope): void;
 	/** Чипы одиночного выбора: повторный клик по активному снимает его. */
 	toggle(key: FacetKey, value: string): void;
 	resetGroup(key: FacetKey): void;
 	reset(): void;
-	/** Ограничить выдачу результатами поиска; `null` — поиск не активен. */
+	/** Ограничить выдачу результатами поиска; `null` - поиск не активен. */
 	limitTo(ids: Set<string> | null): void;
 	matches(record: FilterRecord): boolean;
 	countFacet(key: FacetKey): Map<string, number>;

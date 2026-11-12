@@ -5,7 +5,7 @@ type SourceCenter = CollectionEntry<"centers">;
 /**
  * Объявлено через `type`, а не `interface`, намеренно: только у псевдонима
  * типа есть неявная индексная сигнатура, без которой объект не передать в
- * `t(key, values)` — тот принимает `Record<string, string | number>`.
+ * `t(key, values)` - тот принимает `Record<string, string | number>`.
  */
 export type CatalogStats = {
 	/** Всего карточек в каталоге. */
@@ -23,7 +23,7 @@ const distinct = (values: readonly (string | undefined)[]) =>
  * Цифры «центров / стран / регионов» под шапки, SEO-описания и /stats.
  *
  * Считались независимо в четырёх местах (главная, HomeSections, каталог,
- * /stats) — и разъезжались бы при первой же правке правила подсчёта.
+ * /stats) - и разъезжались бы при первой же правке правила подсчёта.
  */
 export function catalogStats(centers: readonly SourceCenter[]): CatalogStats {
 	return {
@@ -33,7 +33,7 @@ export function catalogStats(centers: readonly SourceCenter[]): CatalogStats {
 	};
 }
 
-/** Карточек по странам — основа таблицы на /stats. */
+/** Карточек по странам - основа таблицы на /stats. */
 export function countByCountry(centers: readonly SourceCenter[]): Map<string, number> {
 	const counts = new Map<string, number>();
 
@@ -46,6 +46,6 @@ export function countByCountry(centers: readonly SourceCenter[]): Map<string, nu
 	return counts;
 }
 
-/** Карточки без указанной страны — их не видно ни в одном макрорегионе. */
+/** Карточки без указанной страны - их не видно ни в одном макрорегионе. */
 export const withoutCountry = (centers: readonly SourceCenter[]) =>
 	centers.filter((center) => !center.data.location?.country).length;
