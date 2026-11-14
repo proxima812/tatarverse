@@ -29,6 +29,16 @@ const message = t("detail.status.message", { id: centerId, title: centerTitle, u
 const telegramUrl = `https://t.me/mirikhan1?text=${encodeURIComponent(message)}`;
 const whatsappUrl = `https://wa.me/79172975109?text=${encodeURIComponent(message)}`;
 
+/*
+ * Кнопки мессенджеров - та же акцентная схема (btn-gradient), что у
+ * остальных: градиент, блик, обводка в тон, свечение - только в цветах
+ * Telegram и WhatsApp. Зелёный темнее фирменного #25D366: на нём белый
+ * текст не читался. Классы целиком литералами: Tailwind ищет их в исходнике.
+ */
+const brandClass = "[--accent-lift:18%] [--accent-glow-amount:35%] [--color-accent-foreground:#fff]";
+const telegramClass = `${brandClass} [--color-accent:#1E8FD6]`;
+const whatsappClass = `${brandClass} [--color-accent:#1DA851]`;
+
 const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 ---
 
@@ -61,8 +71,8 @@ const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 					<ButtonLink
 						href="https://t.me/the_tatarverse/57"
 						target="_blank"
-						variant="default"
-						class="bg-[#0088cc]! text-white! hover:bg-[#0077b5]!"
+						variant="gradient"
+						class={telegramClass}
 						size="xs"
 						icon="mdi:telegram"
 						label={t("detail.status.cta")}
@@ -70,8 +80,8 @@ const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 					<ButtonLink
 						href={telegramUrl}
 						target="_blank"
-						variant="default"
-						class="bg-[#0088cc]! text-white! hover:bg-[#0077b5]!"
+						variant="gradient"
+						class={telegramClass}
 						size="xs"
 						icon="mdi:telegram"
 						label={t("detail.status.telegram")}
@@ -79,8 +89,8 @@ const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 					<ButtonLink
 						href={whatsappUrl}
 						target="_blank"
-						variant="default"
-						class="bg-[#25d366]! text-white! hover:bg-[#1da851]!"
+						variant="gradient"
+						class={whatsappClass}
 						size="xs"
 						icon="mdi:whatsapp"
 						label={t("detail.status.whatsapp")}
