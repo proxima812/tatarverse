@@ -6,8 +6,8 @@
 
   --font-heading: var(--font-country-flags), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --color-background: #F4F4F4;
-  --color-surface: #FCFCFC;
+  --color-background: #FBFBFB;
+  --color-surface: #FFFFFF;
   --color-muted: #F2F2F3;
   --color-subtle: #E9E9EA;
 
@@ -25,8 +25,14 @@
   --color-border: color-mix(in oklab, var(--color-surface) 80%, var(--color-surface-foreground));
   --color-ring: #CBCBCC;
 
+  /* Контуры плашек и поля поиска, как у дашборда Cloudflare. */
+  --color-outline: #E5E5E5;
+  --color-outline-strong: #DEDEDE;
+  --color-well: #F8F8F8;
 
-  --color-catalog: color-mix(in oklab, var(--color-surface-muted) 70%, var(--color-surface));
+
+  /* Каталог на том же фоне, что и страница: плашки отделяет контур, а не подложка. */
+  --color-catalog: var(--color-background);
 
   --color-foreground: #111012;
   --color-surface-foreground: #111012;
@@ -152,6 +158,10 @@
   --color-subtle: #333234;
   --color-catalog: color-mix(in oklab, var(--color-muted) 70%, var(--color-surface));
   --color-ring: #545355;
+
+  --color-outline: color-mix(in oklab, var(--color-lift) 9%, transparent);
+  --color-outline-strong: color-mix(in oklab, var(--color-lift) 13%, transparent);
+  --color-well: var(--color-muted);
 
 
   --color-foreground: #EDEBEF;

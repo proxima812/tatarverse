@@ -73,6 +73,27 @@
   }
 }
 
+/* Белая плашка с контуром 1px вместо тени - как карточки Cloudflare. */
+@utility card-outline {
+  box-shadow: 0 0 0 1px var(--color-outline);
+}
+
+/*
+ * Поле поиска как у Cloudflare: светлый колодец с контуром, внутри белое
+ * поле с контуром чуть темнее и короткой тенью снизу.
+ */
+@utility field-well {
+  background-color: var(--color-well);
+  box-shadow: 0 0 0 1px var(--color-outline);
+}
+
+@utility field-lift {
+  box-shadow:
+    0 0 0 1px var(--color-outline-strong),
+    0 1px 3px 0 color-mix(in oklab, var(--color-shade) 8%, transparent),
+    0 1px 1px 0 color-mix(in oklab, var(--color-shade) 4%, transparent);
+}
+
 @utility surface-lift {
   box-shadow:
     0 1px 2px 0 color-mix(in oklab, var(--color-shade) 6%, transparent),
