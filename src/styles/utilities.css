@@ -3,35 +3,48 @@
 }
 
 
+/*
+ * Акцентная кнопка по схеме синего пузыря Medusa: вертикальный градиент
+ * от светлого верха к акценту, блик по верхней кромке, обводка темнее
+ * заливки, короткая тень и мягкое свечение цвета палитры снизу. Всё
+ * считается от `--color-accent`, поэтому каждая палитра получает свои цвета.
+ */
 @utility btn-gradient {
-  background-image: linear-gradient(
-    135deg,
-    var(--color-accent),
-    color-mix(in oklab, var(--color-accent) 88%, var(--color-shade))
-  );
+  --btn-top: color-mix(in oklab, var(--color-accent) 80%, white);
+  --btn-edge: color-mix(in oklab, var(--color-accent) 75%, black);
+  --btn-glow: color-mix(in oklab, var(--color-accent) 45%, transparent);
+
+  background-image: linear-gradient(180deg, var(--btn-top), var(--color-accent));
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.3),
+    0 0 0 1px var(--btn-edge),
+    0 1px 2px 0 color-mix(in oklab, var(--btn-edge) 35%, transparent),
+    0 8px 20px -6px var(--btn-glow);
 
   &:hover {
     background-image: linear-gradient(
-      135deg,
-      color-mix(in oklab, var(--color-accent) 92%, var(--color-shade)),
-      color-mix(in oklab, var(--color-accent) 80%, var(--color-shade))
+      180deg,
+      color-mix(in oklab, var(--color-accent) 88%, white),
+      color-mix(in oklab, var(--color-accent) 92%, black)
     );
   }
 
-  @variant dark {
+  &:active {
     background-image: linear-gradient(
-      135deg,
+      180deg,
       var(--color-accent),
-      color-mix(in oklab, var(--color-accent) 88%, var(--color-lift))
+      color-mix(in oklab, var(--color-accent) 88%, black)
     );
+    box-shadow:
+      inset 0 1px 2px 0 rgb(0 0 0 / 0.15),
+      0 0 0 1px var(--btn-edge);
+  }
 
-    &:hover {
-      background-image: linear-gradient(
-        135deg,
-        color-mix(in oklab, var(--color-accent) 92%, var(--color-lift)),
-        color-mix(in oklab, var(--color-accent) 80%, var(--color-lift))
-      );
-    }
+  /* В тёмной теме акценты светлые: верх светлеет меньше, свечение тише. */
+  @variant dark {
+    --btn-top: color-mix(in oklab, var(--color-accent) 85%, white);
+    --btn-edge: color-mix(in oklab, var(--color-accent) 70%, black);
+    --btn-glow: color-mix(in oklab, var(--color-accent) 25%, transparent);
   }
 }
 

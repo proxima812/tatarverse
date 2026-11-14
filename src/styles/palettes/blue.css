@@ -1,8 +1,8 @@
 :root[data-accent="blue"] {
-  --color-accent: #4F63DC;
+  --color-accent: #3478F0;
   --color-accent-foreground: #FBF9FD;
-  --color-accent-vivid: #596FFA;
-  --color-accent-glow: #8AA1FF;
+  --color-accent-vivid: #4A8BF8;
+  --color-accent-glow: #9CC0FF;
 }
 
 :root.dark[data-accent="blue"] {
