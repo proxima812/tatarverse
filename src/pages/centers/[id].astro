@@ -82,12 +82,12 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 			routeIds={detail.routeIds}
 		/>
 
-		<CenterStatus centerTitle={detail.title} completeness={detail.completeness} />
-
 		{/* Раздел «Ссылки» из текста спрятан (card.css): его строки уже стоят колонкой выше. */}
 		<div class="center-prose prose mx-auto w-full max-w-3xl min-w-0">
 			<Content components={{ ...markdownComponents, h1: SkipNode }} />
 		</div>
+
+		<CenterStatus centerTitle={detail.title} completeness={detail.completeness} />
 
 		<CenterPagination
 			previousEntry={detail.previousEntry}
