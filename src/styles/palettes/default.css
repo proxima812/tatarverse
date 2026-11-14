@@ -3,6 +3,9 @@
   --color-accent-foreground: #FCFCFC;
   --color-accent-vivid: #292929;
   --color-accent-glow: #4A4A4C;
+  /* Чёрная кнопка почти плоская, как inverted у Medusa: без свечения и яркого верха. */
+  --accent-lift: 8%;
+  --accent-glow-amount: 0%;
 }
 
 :root.dark[data-accent="default"] {

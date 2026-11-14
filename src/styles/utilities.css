@@ -8,15 +8,17 @@
  * от светлого верха к акценту, блик по верхней кромке, обводка темнее
  * заливки, короткая тень и мягкое свечение цвета палитры снизу. Всё
  * считается от `--color-accent`, поэтому каждая палитра получает свои цвета.
+ * Палитра может приглушить подсветку верха (`--accent-lift`) и свечение
+ * (`--accent-glow-amount`) - так делает чёрная дефолтная.
  */
 @utility btn-gradient {
-  --btn-top: color-mix(in oklab, var(--color-accent) 80%, white);
+  --btn-top: color-mix(in oklab, var(--color-accent), white var(--accent-lift, 20%));
   /*
    * Обводка лишь чуть темнее заливки: на 25% чёрного она читалась тёмной
    * рамкой, а полупрозрачная смешивалась со светлым фоном и выходила светлее кнопки.
    */
   --btn-edge: color-mix(in oklab, var(--color-accent) 90%, black);
-  --btn-glow: color-mix(in oklab, var(--color-accent) 45%, transparent);
+  --btn-glow: color-mix(in oklab, var(--color-accent) var(--accent-glow-amount, 45%), transparent);
 
   background-image: linear-gradient(180deg, var(--btn-top), var(--color-accent));
   box-shadow:
