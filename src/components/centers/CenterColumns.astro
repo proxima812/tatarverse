@@ -1,0 +1,140 @@
+---
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { centerAvatarMarkup } from "@/lib/center/avatar";
+import { getCenterPath } from "@/lib/center/centers";
+import type { CenterEntry } from "@/lib/center/collection";
+import type { CenterFact } from "@/lib/center/detail";
+import type { CenterLinkRow } from "@/lib/center/links";
+import { Icon } from "astro-icon/components";
+
+/**
+ * Три колонки под шапкой центра, как списки на главной Cloudflare:
+ * приглушённый заголовок колонки, строки на всю ширину с тонкими
+ * разделителями и шевроном. Ссылки - каналы связи, сведения - место и
+ * дата, похожие - соседние центры. Пустая колонка не рисуется, остальные
+ * делят ширину поровну.
+ */
+interface Props {
+	linkRows: CenterLinkRow[];
+	facts: CenterFact[];
+	sourceUrl?: string | null;
+	sourceLabel?: string | null;
+	related: CenterEntry[];
+	relatedTitle: string;
+	routeIds: Map<string, string>;
+}
+
+const { linkRows, facts, sourceUrl, sourceLabel, related, relatedTitle, routeIds } =
+	Astro.props as Props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const columns = [linkRows.length > 0, facts.length > 0 || !!sourceUrl, related.length > 0].filter(
+	Boolean,
+).length;
+
+const headingClass = "flex items-center justify-between gap-3 pb-1 text-sm text-muted-foreground";
+const listClass = "divide-y divide-outline";
+const rowClass =
+	"group flex min-h-13 min-w-0 items-center gap-3 py-2.5 text-sm text-foreground no-underline";
+const chevronClass =
+	"size-4 shrink-0 text-subtle-foreground transition group-hover:translate-x-0.5 group-hover:text-foreground";
+---
+
+<div
+	class="grid min-w-0 grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-(--columns)"
+	style={`--columns: repeat(${columns}, minmax(0, 1fr))`}
+>
+	{
+		linkRows.length > 0 && (
+			<section class="min-w-0" aria-labelledby="center-links">
+				<h2 id="center-links" class={headingClass}>
+					{t("detail.links")}
+					<span class="tabular-nums text-subtle-foreground">{linkRows.length}</span>
+				</h2>
+				<ul class={listClass}>
+					{linkRows.map((link) => (
+						<li>
+							<a href={link.href} target="_blank" rel="nofollow noreferrer noopener" class={rowClass}>
+								<Icon name={link.icon} class="size-4.5 shrink-0 text-subtle-foreground" aria-hidden="true" />
+								<span class="min-w-0 flex-1">
+									<span class="block truncate font-medium">{link.title}</span>
+									<span class="block truncate text-xs text-subtle-foreground">{link.display}</span>
+								</span>
+								<Icon name="tabler:arrow-up-right" class={chevronClass} aria-hidden="true" />
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+
+	{
+		(facts.length > 0 || sourceUrl) && (
+			<section class="min-w-0" aria-labelledby="center-facts">
+				<h2 id="center-facts" class={headingClass}>{t("detail.facts")}</h2>
+				<dl class={listClass}>
+					{facts.map((fact) => (
+						<div class={rowClass}>
+							<dt class="shrink-0 text-muted-foreground">{fact.label}</dt>
+							<dd class="ml-auto min-w-0 truncate text-right font-medium">{fact.value}</dd>
+						</div>
+					))}
+					{sourceUrl && (
+						<div class={rowClass}>
+							<dt class="shrink-0 text-muted-foreground">{t("detail.source")}</dt>
+							<dd class="ml-auto min-w-0 truncate text-right">
+								<a
+									href={sourceUrl}
+									target="_blank"
+									rel="nofollow noreferrer noopener"
+									class="font-medium text-link underline decoration-link-decoration underline-offset-4"
+								>
+									{sourceLabel}
+								</a>
+							</dd>
+						</div>
+					)}
+				</dl>
+			</section>
+		)
+	}
+
+	{
+		related.length > 0 && (
+			<section class="min-w-0" aria-labelledby="center-related">
+				<h2 id="center-related" class={headingClass}>{relatedTitle}</h2>
+				<ul class={listClass}>
+					{related.slice(0, 5).map((entry) => (
+						<li>
+							<a
+								href={localizePath(locale, getCenterPath(routeIds.get(entry.id) ?? entry.id))}
+								class={rowClass}
+							>
+								<center-avatar
+									class="center-avatar size-7 shrink-0 [&_svg]:size-full"
+									aria-hidden="true"
+									set:html={centerAvatarMarkup(entry.id)}
+								/>
+								<span class="min-w-0 flex-1">
+									<span class="block truncate font-medium">{entry.data.title}</span>
+									{entry.data.location?.city && (
+										<span class="block truncate text-xs text-subtle-foreground">
+											{entry.data.location.city}
+										</span>
+									)}
+								</span>
+								<Icon name="tabler:chevron-right" class={chevronClass} aria-hidden="true" />
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+</div>
+
+<script>
+	import "@/lib/client/centerAvatars";
+</script>

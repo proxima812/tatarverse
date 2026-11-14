@@ -1,18 +1,41 @@
 ---
+import { centerAvatarMarkup } from "@/lib/center/avatar";
+
+/**
+ * Шапка страницы центра по центру колонки, как на главной Cloudflare:
+ * плашка с лицом центра и местом, под ней крупный заголовок, описание
+ * и категории.
+ */
 interface Props {
+	id: string;
 	title: string;
 	summary?: string | null;
 	/** Категория и тип центра. */
 	badges?: string[];
+	place: { flag: string | null; city: string | null; country: string | null };
 }
 
-const { title, summary, badges = [] } = Astro.props as Props;
+const { id, title, summary, badges = [], place } = Astro.props as Props;
+const placeText = [place.city, place.country].filter(Boolean).join(", ");
 ---
 
-<header class="flex w-full min-w-0 flex-col gap-4">
+<header class="flex w-full min-w-0 flex-col items-center gap-5 text-center">
+	<p
+		class="card-outline inline-flex max-w-full items-center gap-2 rounded-full bg-surface py-1.5 pr-4 pl-1.5 text-sm font-medium text-foreground"
+	>
+		<center-avatar class="center-avatar size-7 shrink-0 [&_svg]:size-full" set:html={centerAvatarMarkup(id)} />
+		{place.flag && <span class="shrink-0 text-base leading-none">{place.flag}</span>}
+		{placeText && <span class="min-w-0 truncate">{placeText}</span>}
+	</p>
+	<h1
+		class="max-w-3xl text-balance break-words text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl"
+	>
+		{title}
+	</h1>
+	{summary && <p class="max-w-2xl text-balance text-base leading-7 text-muted-foreground sm:text-lg">{summary}</p>}
 	{
 		badges.length > 0 && (
-			<p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-muted-foreground">
+			<p class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs font-medium text-subtle-foreground">
 				{badges.map((badge, index) => (
 					<>
 						{index > 0 && <span aria-hidden="true">·</span>}
@@ -22,10 +45,8 @@ const { title, summary, badges = [] } = Astro.props as Props;
 			</p>
 		)
 	}
-	<h1
-		class="max-w-4xl text-balance break-words text-3xl font-semibold leading-tight text-foreground sm:text-4xl lg:text-5xl"
-	>
-		{title}
-	</h1>
-	{summary && <p class="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">{summary}</p>}
 </header>
+
+<script>
+	import "@/lib/client/centerAvatars";
+</script>

@@ -163,3 +163,40 @@ export function getCenterLinks(body: string | undefined, source?: string): Cente
 		.map((kind) => found.get(kind))
 		.filter((link): link is CenterLink => Boolean(link));
 }
+
+export interface CenterLinkRow {
+	/** Подпись ссылки из Markdown, а если её нет - название платформы. */
+	title: string;
+	/** Адрес без схемы, укороченный: виден под подписью. */
+	display: string;
+	icon: string;
+	href: string;
+}
+
+const MARKDOWN_LINK_WITH_TEXT = /\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g;
+
+/**
+ * Все ссылки раздела «Ссылки» по порядку, как их написал автор карточки.
+ *
+ * В отличие от `getCenterLinks` здесь нет отбора «одна на платформу» и
+ * справочники не выкидываются: страница центра показывает этот список
+ * вместо самого раздела, и потерять из него ничего нельзя.
+ */
+export function getCenterLinkRows(body: string | undefined): CenterLinkRow[] {
+	const rows: CenterLinkRow[] = [];
+	const seen = new Set<string>();
+
+	for (const [, text, href] of extractSection(body ?? "").matchAll(MARKDOWN_LINK_WITH_TEXT)) {
+		if (seen.has(href)) continue;
+		seen.add(href);
+		const kind = classify(href);
+		rows.push({
+			title: text.trim() || kind?.label || href,
+			display: formatCenterLinkLabel(href, 32),
+			icon: kind?.icon ?? "mdi:web",
+			href,
+		});
+	}
+
+	return rows;
+}

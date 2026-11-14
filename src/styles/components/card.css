@@ -73,3 +73,12 @@
 .center-avatar:not([data-active]) .mo-root {
  --mo-amp: 0;
 }
+
+/*
+ * Страница центра (`pages/centers/[id].astro`): ссылки из раздела «Ссылки»
+ * показывает колонка `CenterColumns`, в тексте они были бы дублем.
+ */
+.center-prose :is(h2#ссылки, h2#links),
+.center-prose :is(h2#ссылки, h2#links) + ul {
+	display: none;
+}

@@ -1,8 +1,7 @@
 ---
-import CenterFacts from "@/components/centers/CenterFacts.astro";
+import CenterColumns from "@/components/centers/CenterColumns.astro";
 import CenterHeader from "@/components/centers/CenterHeader.astro";
 import CenterPagination from "@/components/centers/CenterPagination.astro";
-import CenterRelated from "@/components/centers/CenterRelated.astro";
 import CenterStatus from "@/components/centers/CenterStatus.astro";
 import { markdownComponents } from "@/components/markdown/markdownComponents";
 import SkipNode from "@/components/markdown/SkipNode.astro";
@@ -65,28 +64,30 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 			<CopyPageMenu class="max-w-full justify-self-start sm:justify-self-end" />
 		</nav>
 
-		<CenterHeader title={detail.title} summary={detail.summary} badges={detail.badges} />
+		<CenterHeader
+			id={entry.id}
+			title={detail.title}
+			summary={detail.summary}
+			badges={detail.badges}
+			place={detail.place}
+		/>
 
-		<div class="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-12">
-			<div class="prose min-w-0 max-w-[68ch]">
-				<Content components={{ ...markdownComponents, h1: SkipNode }} />
-				<CenterStatus centerTitle={detail.title} completeness={detail.completeness} placement="inline" class="mt-8 lg:hidden" />
-			</div>
-
-			<CenterFacts
-				centerTitle={detail.title}
-				facts={detail.facts}
-				sourceUrl={detail.sourceUrl}
-				sourceLabel={detail.sourceLabel}
-				completeness={detail.completeness}
-			/>
-		</div>
-
-		<CenterRelated
-			title={detail.relatedTitle}
-			entries={detail.related}
+		<CenterColumns
+			linkRows={detail.linkRows}
+			facts={detail.facts}
+			sourceUrl={detail.sourceUrl}
+			sourceLabel={detail.sourceLabel}
+			related={detail.related}
+			relatedTitle={detail.relatedTitle}
 			routeIds={detail.routeIds}
 		/>
+
+		<CenterStatus centerTitle={detail.title} completeness={detail.completeness} />
+
+		{/* Раздел «Ссылки» из текста спрятан (card.css): его строки уже стоят колонкой выше. */}
+		<div class="center-prose prose mx-auto w-full max-w-3xl min-w-0">
+			<Content components={{ ...markdownComponents, h1: SkipNode }} />
+		</div>
 
 		<CenterPagination
 			previousEntry={detail.previousEntry}

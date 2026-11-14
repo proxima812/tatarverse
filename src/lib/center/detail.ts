@@ -1,9 +1,9 @@
-import { getCountryLabel } from "@/data/worldCountries";
+import { countryFlagsByRu, getCountryLabel } from "@/data/worldCountries";
 import { localizePath, type AppLocale, type Translate } from "@/i18n";
 import { createCenterRouteIdMap, getCenterPath } from "@/lib/center/centers";
 import { getCenterCompleteness, type CenterCompleteness } from "@/lib/center/completeness";
 import { centerDescription } from "@/lib/center/description";
-import { getCenterLinks } from "@/lib/center/links";
+import { getCenterLinkRows, getCenterLinks, type CenterLinkRow } from "@/lib/center/links";
 import { centerJsonLd } from "@/lib/center/jsonLd";
 import { byRecency } from "@/lib/center/order";
 import type { CenterEntry } from "@/lib/center/collection";
@@ -24,6 +24,10 @@ export interface CenterDetail {
 	summary: string | null;
 	/** Категория и тип - надзаголовочная строка. */
 	badges: string[];
+	/** Место для плашки над заголовком: флаг, город, страна на языке страницы. */
+	place: { flag: string | null; city: string | null; country: string | null };
+	/** Все ссылки раздела «Ссылки» - колонка страницы показывает их вместо раздела. */
+	linkRows: CenterLinkRow[];
 	facts: CenterFact[];
 	sourceUrl: string | null;
 	sourceLabel: string | null;
@@ -147,6 +151,12 @@ export async function buildCenterDetail({
 			{ title, summary, city, region, country: localizedCountry, category: clean(data.category), type: clean(data.type) },
 			locale,
 		),
+		place: {
+			flag: flag ?? countryFlagsByRu[clean(entry.data.location?.country) ?? ""] ?? null,
+			city,
+			country: localizedCountry ?? country,
+		},
+		linkRows: getCenterLinkRows(contentEntry.body),
 		publishedDate,
 		modifiedDate,
 		previousEntry: currentIndex > 0 ? centerEntries[currentIndex - 1] : null,

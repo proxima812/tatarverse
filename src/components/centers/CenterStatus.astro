@@ -10,18 +10,16 @@ import { Icon } from "astro-icon/components";
  * просьбой помочь. Статус считается при сборке из самой карточки
  * (getCenterCompleteness), руками не ставится.
  *
- * Страница рисует компонент дважды: в боковой колонке на десктопе и под
- * текстом на мобильном, чтобы блок не отодвигал содержимое карточки. Видна
- * всегда одна копия, поэтому id заголовка зависит от `placement`.
+ * Неполная карточка - баннер в светлой рамке, как промо-блок на главной
+ * Cloudflare: значок слева, текст, кнопки справа.
  */
 interface Props {
 	completeness: CenterCompleteness;
 	centerTitle: string;
-	placement: "aside" | "inline";
 	class?: string;
 }
 
-const { completeness, centerTitle, placement, class: className } = Astro.props as Props;
+const { completeness, centerTitle, class: className } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
@@ -31,13 +29,12 @@ const message = t("detail.status.message", { id: centerId, title: centerTitle, u
 const telegramUrl = `https://t.me/mirikhan1?text=${encodeURIComponent(message)}`;
 const whatsappUrl = `https://wa.me/79172975109?text=${encodeURIComponent(message)}`;
 
-const titleId = `center-status-${placement}`;
 const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 ---
 
 {
 	completeness.complete ? (
-		<p class:list={["not-prose flex items-start gap-2 text-sm", className]}>
+		<p class:list={["not-prose flex items-start justify-center gap-2 text-sm", className]}>
 			<Icon name="tabler:circle-check" class="mt-0.5 size-4 shrink-0 text-foreground" aria-hidden="true" />
 			<span>
 				<span class="block font-medium text-foreground">{t("detail.status.complete")}</span>
@@ -46,43 +43,49 @@ const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 		</p>
 	) : (
 		<section
-			class:list={["not-prose space-y-3 rounded-catalog border border-depth-100 bg-white p-4 text-sm", className]}
-			aria-labelledby={titleId}
+			class:list={["not-prose field-well rounded-catalog corner-squircle p-1.5 text-sm", className]}
+			aria-labelledby="center-status"
 		>
-			<h2 id={titleId} class="flex items-center gap-2 text-sm font-medium text-foreground">
-				<Icon name="tabler:circle-dashed" class="size-4 shrink-0" aria-hidden="true" />
-				{t("detail.status.incomplete")}
-			</h2>
-			<p class="text-foreground">{t("detail.status.missing", { gaps })}</p>
-			<p class="text-xs text-subtle-foreground">{t("detail.status.help")}</p>
-			<div class="flex flex-wrap gap-2">
-			<ButtonLink
-				href="https://t.me/the_tatarverse/57"
-				target="_blank"
-				variant="default"
-				class="bg-[#0088cc]! text-white! hover:bg-[#0077b5]!"
-				size="xs"
-				icon="mdi:telegram"
-				label={t("detail.status.cta")}
-			/>
-			<ButtonLink
-				href={telegramUrl}
-				target="_blank"
-				variant="default"
-				class="bg-[#0088cc]! text-white! hover:bg-[#0077b5]!"
-				size="xs"
-				icon="mdi:telegram"
-				label={t("detail.status.telegram")}
-			/>
-			<ButtonLink
-				href={whatsappUrl}
-				target="_blank"
-				variant="default"
-				class="bg-[#25d366]! text-white! hover:bg-[#1da851]!"
-				size="xs"
-				icon="mdi:whatsapp"
-				label={t("detail.status.whatsapp")}
-			/>
+			<div class="field-lift flex flex-col gap-4 rounded-[calc(var(--radius-catalog)-6px)] corner-squircle bg-surface p-4 sm:p-5 lg:flex-row lg:items-center">
+				<span class="grid size-12 shrink-0 place-items-center rounded-control corner-squircle bg-muted text-foreground">
+					<Icon name="tabler:circle-dashed" class="size-6" aria-hidden="true" />
+				</span>
+				<div class="min-w-0 flex-1 space-y-1">
+					<h2 id="center-status" class="text-base font-semibold text-foreground">
+						{t("detail.status.incomplete")}{" "}
+						<span class="font-normal text-muted-foreground">- {t("detail.status.missing", { gaps })}</span>
+					</h2>
+					<p class="text-subtle-foreground">{t("detail.status.help")}</p>
+				</div>
+				<div class="flex shrink-0 flex-wrap gap-2">
+					<ButtonLink
+						href="https://t.me/the_tatarverse/57"
+						target="_blank"
+						variant="default"
+						class="bg-[#0088cc]! text-white! hover:bg-[#0077b5]!"
+						size="xs"
+						icon="mdi:telegram"
+						label={t("detail.status.cta")}
+					/>
+					<ButtonLink
+						href={telegramUrl}
+						target="_blank"
+						variant="default"
+						class="bg-[#0088cc]! text-white! hover:bg-[#0077b5]!"
+						size="xs"
+						icon="mdi:telegram"
+						label={t("detail.status.telegram")}
+					/>
+					<ButtonLink
+						href={whatsappUrl}
+						target="_blank"
+						variant="default"
+						class="bg-[#25d366]! text-white! hover:bg-[#1da851]!"
+						size="xs"
+						icon="mdi:whatsapp"
+						label={t("detail.status.whatsapp")}
+					/>
+				</div>
 			</div>
 		</section>
 	)
