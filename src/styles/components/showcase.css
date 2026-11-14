@@ -25,6 +25,15 @@
 		0 2px 4px 0 color-mix(in oklab, var(--color-shade) 6%, transparent),
 		0 24px 48px -16px color-mix(in oklab, var(--color-shade) 28%, transparent);
 
+	/*
+	 * Макет нейтральный: акцент внутри сцены всегда дефолтный, какую бы
+	 * палитру ни выбрал посетитель, - иначе розовые бейджи и кнопки спорят
+	 * с акцентом самой страницы.
+	 */
+	--color-accent: var(--color-primary);
+	--color-accent-foreground: var(--color-primary-foreground);
+	--logo-mark-color: var(--color-primary);
+
 	position: relative;
 	container-type: inline-size;
 	overflow: hidden;
@@ -987,14 +996,16 @@
 	white-space: nowrap;
 }
 
+/* Кнопка печати - нейтральная outline, как на `/centers/print`. */
 .sc-print-button {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.45em;
 	padding: 0.6em 1em;
 	border-radius: 999px;
-	background: var(--color-accent);
-	color: var(--color-accent-foreground);
+	background: var(--color-surface);
+	color: var(--color-surface-foreground);
+	box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-surface-foreground) 14%, transparent);
 	font-size: 0.85em;
 	font-weight: 600;
 	white-space: nowrap;
