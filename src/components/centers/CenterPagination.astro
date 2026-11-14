@@ -1,9 +1,15 @@
 ---
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { centerAvatarMarkup } from "@/lib/center/avatar";
 import { getCenterPath } from "@/lib/center/centers";
 import { Icon } from "astro-icon/components";
 import type { CollectionEntry } from "astro:content";
 
+/**
+ * Соседние центры - две белые плашки с контуром, как остальные на сайте:
+ * подпись «предыдущий/следующий», лицо и полное название (в две строки).
+ * «Следующий» всегда в правой колонке, даже когда предыдущего нет.
+ */
 interface Props {
 	previousEntry: CollectionEntry<"centers"> | null;
 	nextEntry: CollectionEntry<"centers"> | null;
@@ -14,39 +20,44 @@ const { previousEntry, nextEntry, routeIds } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
-const trimTitle = (value: string) =>
-	value.length > 20 ? `${value.slice(0, 20).trim()}...` : value;
-
 const getEntryPath = (entry: CollectionEntry<"centers">) =>
 	localizePath(locale, getCenterPath(routeIds.get(entry.id) ?? entry.id));
+
+const cardClass =
+	"card-outline group flex min-w-0 items-center gap-3 rounded-card corner-squircle bg-surface p-4 no-underline transition hover:bg-surface-muted";
+const arrowClass =
+	"size-4.5 shrink-0 text-subtle-foreground transition group-hover:text-foreground";
 ---
 
 {
 	(previousEntry || nextEntry) && (
-		<nav
-			aria-label={t("detail.pagination")}
-			class="bg-surface p-1 flex items-center justify-between rounded-card corner-squircle shadow-2xs ring ring-depth-100 gap-1.5"
-		>
+		<nav aria-label={t("detail.pagination")} class="grid grid-cols-1 gap-3 sm:grid-cols-2">
 			{previousEntry ? (
-				<a
-					href={getEntryPath(previousEntry)}
-					class="bg-muted inline-flex min-w-0 items-center gap-2 rounded-control corner-squircle  px-4 py-3 text-sm font-medium text-primary/80 transition hover:bg-subtle ring-[0.5px] ring-depth-200"
-				>
-					<Icon name="mdi:arrow-left" class="size-4 shrink-0" aria-hidden="true" />
-					<span class="min-w-0 truncate">{trimTitle(previousEntry.data.title)}</span>
+				<a href={getEntryPath(previousEntry)} rel="prev" class={cardClass}>
+					<Icon name="tabler:arrow-left" class:list={[arrowClass, "group-hover:-translate-x-0.5"]} aria-hidden="true" />
+					<center-avatar class="center-avatar size-8 shrink-0 [&_svg]:size-full" aria-hidden="true" set:html={centerAvatarMarkup(previousEntry.id)} />
+					<span class="min-w-0">
+						<span class="block text-xs text-subtle-foreground">{t("detail.previous")}</span>
+						<span class="line-clamp-2 text-sm font-medium text-foreground">{previousEntry.data.title}</span>
+					</span>
 				</a>
 			) : (
-				<span aria-hidden="true" />
+				<span class="hidden sm:block" aria-hidden="true" />
 			)}
 			{nextEntry && (
-				<a
-					href={getEntryPath(nextEntry)}
-					class="bg-muted inline-flex min-w-0 items-center justify-end gap-2 rounded-control corner-squircle  px-4 py-3 text-right text-sm font-medium text-primary/80  transition hover:bg-subtle ring-[0.5px] ring-depth-200"
-				>
-					<span class="min-w-0 truncate">{trimTitle(nextEntry.data.title)}</span>
-					<Icon name="mdi:arrow-right" class="size-4 shrink-0" aria-hidden="true" />
+				<a href={getEntryPath(nextEntry)} rel="next" class:list={[cardClass, "justify-end text-right"]}>
+					<span class="min-w-0">
+						<span class="block text-xs text-subtle-foreground">{t("detail.next")}</span>
+						<span class="line-clamp-2 text-sm font-medium text-foreground">{nextEntry.data.title}</span>
+					</span>
+					<center-avatar class="center-avatar size-8 shrink-0 [&_svg]:size-full" aria-hidden="true" set:html={centerAvatarMarkup(nextEntry.id)} />
+					<Icon name="tabler:arrow-right" class:list={[arrowClass, "group-hover:translate-x-0.5"]} aria-hidden="true" />
 				</a>
 			)}
 		</nav>
 	)
 }
+
+<script>
+	import "@/lib/client/centerAvatars";
+</script>

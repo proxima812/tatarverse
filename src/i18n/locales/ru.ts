@@ -220,6 +220,8 @@ const dict: Dictionary = {
 	"detail.gap.about": "описания деятельности",
 	"detail.gap.city": "города",
 	"detail.gap.sources": "источников",
+	"detail.previous": "Предыдущий центр",
+	"detail.next": "Следующий центр",
 	"detail.pagination": "Навигация между центрами",
 	"content.published": "Опубликовано",
 	"content.updated": "Обновлено",

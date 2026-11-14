@@ -220,6 +220,8 @@ const dict: Dictionary = {
 	"detail.gap.about": "a description of its activities",
 	"detail.gap.city": "the city",
 	"detail.gap.sources": "sources",
+	"detail.previous": "Previous center",
+	"detail.next": "Next center",
 	"detail.pagination": "Center navigation",
 	"content.published": "Published",
 	"content.updated": "Updated",
