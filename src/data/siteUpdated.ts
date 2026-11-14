@@ -1,2 +1,2 @@
 // Дата последнего обновления сайта.
-export const updatedAt = "2026-11-14T17:06:15Z";
+export const updatedAt = "2026-11-14T17:07:37Z";

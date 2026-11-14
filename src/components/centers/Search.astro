@@ -14,10 +14,10 @@ const searchIndexUrl =
 	data-search-form
 	data-search-index-url={searchIndexUrl}
 	role="search"
-	class="field-well relative z-40 rounded-catalog corner-squircle p-1.5 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent"
+	class="field-well relative z-40 rounded-catalog corner-squircle p-1 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent"
 >
 	{/* Колодец и белое поле внутри - как поиск Cloudflare. */}
-	<div class="field-lift flex items-center gap-1 rounded-[calc(var(--radius-catalog)-6px)] corner-squircle bg-surface p-1">
+	<div class="field-lift flex items-center gap-1 rounded-[calc(var(--radius-catalog)-4px)] corner-squircle bg-surface p-0.5">
 		<label class="relative z-50 min-w-0 flex-1" for="centers-search">
 			<span class="sr-only">{t("list.search.placeholder")}</span>
 			<input
@@ -32,14 +32,14 @@ const searchIndexUrl =
 				aria-expanded="false"
 				aria-haspopup="listbox"
 				autocomplete="off"
-				class="min-h-11 w-full bg-transparent px-2 pr-11 text-sm text-surface-foreground outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
+				class="min-h-10 w-full bg-transparent px-2 pr-10 text-sm text-surface-foreground outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
 			/>
 			<button
 				type="button"
 				data-search-clear
 				aria-label={t("list.clearSearch")}
 				hidden
-				class="absolute right-0 top-1/2 grid size-11 -translate-y-1/2 cursor-pointer place-content-center rounded-full text-subtle-foreground transition hover:bg-muted hover:text-foreground"
+				class="absolute right-0 top-1/2 grid size-10 -translate-y-1/2 cursor-pointer place-content-center rounded-full text-subtle-foreground transition hover:bg-muted hover:text-foreground"
 			>
 				<Icon name="mdi:close" class="size-4" aria-hidden="true" />
 			</button>
@@ -51,7 +51,7 @@ const searchIndexUrl =
 			aria-label={t("list.filters")}
 			aria-expanded="false"
 			aria-controls="filters-panel"
-			class="relative grid size-11 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground transition hover:bg-subtle lg:hidden"
+			class="relative grid size-10 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground transition hover:bg-subtle lg:hidden"
 		>
 			<Icon name="mdi:tune" class="size-4" aria-hidden="true" />
 			<span
@@ -65,7 +65,7 @@ const searchIndexUrl =
 			data-search-submit
 			aria-label={t("list.submitSearch")}
 			disabled
-			class="grid size-11 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition enabled:cursor-pointer enabled:hover:bg-depth-700 enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-muted disabled:text-depth-300"
+			class="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition enabled:cursor-pointer enabled:hover:bg-depth-700 enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-muted disabled:text-depth-300"
 		>
 			<Icon name="mdi:arrow-up" class="size-5" aria-hidden="true" />
 		</button>

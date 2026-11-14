@@ -4,21 +4,21 @@ import { Icon } from "astro-icon/components";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
+
+/*
+ * Только выбранные фильтры и запрос. Счётчик найденного живёт один - в
+ * строке над карточками (`ListCards`); здесь он его дублировал. Пустая
+ * плашка спрятана: скрипт открывает её, когда есть что показать.
+ */
 ---
 
 <div
 	data-active-filters-bar
 	data-remove-label={t("list.removeFilter")}
 	aria-label={t("list.activeFilters")}
-	class="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-control corner-squircle bg-surface px-3 py-2"
+	hidden
+	class="card-outline flex flex-wrap items-center gap-x-4 gap-y-3 rounded-control corner-squircle bg-surface px-3 py-2 [&[hidden]]:hidden"
 >
-	<span
-		data-results-count
-		data-results-template={t("list.results", { count: "__COUNT__" })}
-		role="status"
-		class="shrink-0 text-sm font-medium text-foreground tabular-nums"
-	>
-	</span>
 	<div
 		data-active-filters-tokens
 		class="flex min-w-0 flex-1 flex-wrap items-center gap-1.5"

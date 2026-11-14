@@ -345,6 +345,7 @@ export function initCardsToolbar() {
 		filtersResetButtons.forEach((button) => {
 			setHidden(button, !hasAnything);
 		});
+		if (activeFiltersBar) setHidden(activeFiltersBar, !hasAnything);
 	}
 
 	function syncSearchActions() {
