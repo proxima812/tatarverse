@@ -57,9 +57,16 @@ const socialByHost: Record<string, string> = {
 	"facebook.com": "facebook",
 };
 
-const baseLinkClass =
-	"inline-flex min-w-0 max-w-full flex-wrap items-center gap-1.5 align-baseline text-link underline decoration-dotted decoration-link-decoration decoration-2 underline-offset-4 transition-colors wrap-anywhere hover:decoration-solid hover:decoration-link";
-const iconClass = "h-4 w-4 shrink-0 text-current opacity-70";
+/*
+ * Ссылка - обычный строчный элемент, а не inline-flex: длинная подпись
+ * переносится как текст, а иконка остаётся в начале первой строки.
+ * С flex-wrap подпись целиком уезжала на новую строку под иконку.
+ * Подчёркнут только текст - пунктиром, при наведении сплошной линией.
+ */
+const baseLinkClass = "group inline text-link transition-colors wrap-anywhere";
+const labelClass =
+	"inline underline decoration-dotted decoration-link-decoration decoration-2 underline-offset-4 wrap-anywhere group-hover:decoration-solid group-hover:decoration-link";
+const iconClass = "mr-1.5 inline-block size-4 shrink-0 align-[-0.2em] text-current opacity-70";
 
 const defaultView = (value: string): LinkView => ({
 	label: rawText || value,
@@ -141,8 +148,8 @@ const ariaLabel = t(view.ariaKey, { value: view.ariaValue }, view.ariaLabel);
 			variant="link"
 			iconSize={16}
 			class={cn(baseLinkClass, className)}
-			labelClass="min-w-0 leading-normal wrap-anywhere"
-			iconClass="text-current opacity-70"
+			labelClass={cn(labelClass, "leading-normal")}
+			iconClass={iconClass}
 			{...externalAttrs}
 		/>
 	) : (
@@ -153,7 +160,7 @@ const ariaLabel = t(view.ariaKey, { value: view.ariaValue }, view.ariaLabel);
 			{...externalAttrs}
 		>
 			<Icon name={view.icon} class={iconClass} />
-			<span class="min-w-0 wrap-anywhere">{view.label}</span>
+			<span class={labelClass}>{view.label}</span>
 		</a>
 	)
 }
