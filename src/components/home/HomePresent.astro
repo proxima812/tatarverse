@@ -1,9 +1,8 @@
 ---
-import present from "@/assets/images/catalog-present-img.png";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { catalogStats } from "@/lib/center/stats";
-import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
+import MockCatalog from "./showcase/MockCatalog.astro";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
@@ -15,27 +14,22 @@ const {
 } = catalogStats(await getCollection("centers"));
 ---
 
-<section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
-	<Image
-		src={present}
-		alt={t("home.present.imageAlt")}
-		widths={[400, 640, 768, 1200]}
-		sizes="(min-width: 768px) 50vw, 100vw"
-		loading="eager"
-		fetchpriority="high"
-		class="h-full w-full rounded-card object-cover md:order-2"
-	/>
-	<div class="space-y-6 md:order-1">
+<section class="space-y-8 md:space-y-12">
+	<div class="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-12">
 		<h2 class="text-4xl font-bold tracking-tight">{t("home.present.title")}</h2>
-		<p
-			class="leading-7 text-muted-foreground"
-			set:html={t("home.present.caption", {
-				centers,
-				countries: countriesCount,
-				regions: regionsCount,
-			})}
-		/>
-		<p class="leading-7 text-muted-foreground">{t("home.present.text1")}</p>
-		<p class="leading-7 text-muted-foreground">{t("home.present.text2")}</p>
+		<div class="space-y-6">
+			<p
+				class="leading-7 text-muted-foreground"
+				set:html={t("home.present.caption", {
+					centers,
+					countries: countriesCount,
+					regions: regionsCount,
+				})}
+			/>
+			<p class="leading-7 text-muted-foreground">{t("home.present.text1")}</p>
+			<p class="leading-7 text-muted-foreground">{t("home.present.text2")}</p>
+		</div>
 	</div>
+
+	<MockCatalog />
 </section>

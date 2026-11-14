@@ -1,0 +1,47 @@
+---
+import { cn } from "@/lib/cn";
+
+/**
+ * Сцена для макета интерфейса на главной.
+ *
+ * Внутри всё размечено в `em`, а размер шрифта сцены считается от её
+ * ширины (`showcase.css`), поэтому макет масштабируется целиком, как
+ * картинка, но остаётся текстом на языке страницы и в теме сайта.
+ *
+ * Для скринридера это одна картинка с подписью `label`; сам макет скрыт
+ * и инертен - в нём нет ни ссылок, ни кнопок, только их изображения.
+ *
+ * Без JS и при reduced motion видно финальное состояние сцены - кадр,
+ * который рассказывает историю сам. Скрипт «заряжает» анимацию (сцена
+ * встаёт в начальный кадр) и запускает её, когда сцена в экране.
+ * `once` - сыграть один раз и остаться в финале; иначе петля ставится
+ * на паузу за экраном.
+ */
+interface Props {
+	label: string;
+	scene: string;
+	once?: boolean;
+	class?: string;
+}
+
+const { label, scene, once = false, class: className } = Astro.props as Props;
+---
+
+<figure
+	data-showcase
+	data-scene={scene}
+	data-once={once ? "" : undefined}
+	role="img"
+	aria-label={label}
+	class={cn("showcase", className)}
+>
+	<div class="showcase-scene" aria-hidden="true" inert>
+		<slot />
+	</div>
+</figure>
+
+<script>
+	import { initShowcases } from "@/lib/client/showcase";
+
+	initShowcases();
+</script>

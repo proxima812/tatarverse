@@ -56,7 +56,7 @@ const dict: Dictionary = {
 	"home.meta.description":
 		"tatarverse helps people find Tatar, Bashkir, and Crimean Tatar centers around the world: for new connections, friends, relationships, language learning, cultural reconnection, and shared values.",
 	"home.present.imageAlt":
-		"Greetings in Tatar, Bashkir, and Crimean Tatar beside the emblems of each people",
+		"A grid of center cards from different countries, the newest one in focus",
 	"home.present.title": "Everywhere. Always. For everyone.",
 	"home.present.caption":
 		"<strong>{centers}</strong> points on the map: centers, communities, and initiatives across <strong>{countries}</strong> countries and <strong>{regions}</strong> regions.",
@@ -67,6 +67,8 @@ const dict: Dictionary = {
 	"home.contacts.title": "Links, not just addresses",
 	"home.contacts.text":
 		"Links in the cards: <strong>{links}</strong> - websites, social profiles, and channels where communities actually reply.",
+	"home.contacts.imageAlt":
+		"A center card listing its channels: social networks, messengers, website",
 	"home.contacts.text2":
 		"No need to hunt for contacts online - open a card and write directly.",
 	"home.nearby.title": "Search by geolocation",
@@ -74,7 +76,8 @@ const dict: Dictionary = {
 		"Allow the browser to detect your location, and the catalog will sort centers by distance - nearest first.",
 	"home.nearby.text2":
 		"Your coordinates stay in the browser: the page computes distances on your device and sends them nowhere.",
-	"home.nearby.imageAlt": "Center cards with country flags under a “Search by geolocation” heading",
+	"home.nearby.imageAlt":
+		"The “Centers nearby” page on a phone: the detected city, city chips and the nearest center cards",
 	"home.people.title": "There are more of us than it seems",
 	"home.people.text":
 		"We do not disappear when we leave: the language, the songs, and the holidays travel with us. The catalog shows where they are kept alive.",
@@ -88,19 +91,22 @@ const dict: Dictionary = {
 		"A center you liked stays in your own list - no need to hunt for it in the catalog again.",
 	"home.saved.text2":
 		"A handy way to gather your own: the ones you are meeting this week and the ones waiting in another city.",
-	"home.saved.imageAlt": "A center card with an active bookmark next to the saved page",
+	"home.saved.imageAlt":
+		"A cursor clicks the bookmark on a center card and the saved counter in the header goes up",
 	"home.print.title": "The catalog on paper",
 	"home.print.text1":
 		"Pick the countries and print the list of centers with cities and links - or save it as a PDF in one click.",
 	"home.print.text2":
 		"Useful where there is no internet: at a meetup, on the road, or on the desk of someone who prefers paper.",
-	"home.print.imageAlt": "The catalog print page with a country filter and a list of centers",
+	"home.print.imageAlt":
+		"A stack of printed pages listing centers and a panel with the chosen country and the print button",
 	"home.search.title": "Communities on the world map",
 	"home.search.text1":
 		"Choose a country, city, or region and find nearby cultural centers, public associations, youth initiatives, language clubs, and local communities.",
 	"home.search.text2":
 		"The catalog helps you quickly understand where meetings, events, holidays, and educational programs take place.",
-	"home.search.imageAlt": "Close-up of the Tatar, Bashkir, and Crimean Tatar emblems",
+	"home.search.imageAlt":
+		"The catalog search field with suggestions: countries, cities and regions",
 	"list.title": "Directory of Tatar, Bashkir, and Crimean Tatar centers",
 	"list.description":
 		"TBK directory: {count} cards about Tatars, Bashkirs, and Crimean Tatars across all countries, regions, cities, types, and categories. The database currently covers {countries} countries and {regions} regions; use search and filters to find centers and reference information.",

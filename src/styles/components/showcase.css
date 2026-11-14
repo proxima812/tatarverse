@@ -1,0 +1,1381 @@
+/**
+ * Макеты интерфейса на главной - `components/home/showcase/`.
+ *
+ * Сцена - колодец цвета фона страницы внутри белой плашки секции. Всё
+ * внутри размечено в `em`, а шрифт сцены считается от её ширины: обычная
+ * сцена рассчитана на 30 × 25 em, широкая - на 60 em. Поэтому макет
+ * масштабируется целиком, а режется только то, что уходит за край.
+ *
+ * Состояния без анимаций - финальный кадр (его видят без JS и при
+ * reduced motion). Анимации включаются атрибутом `data-armed` на паузе
+ * в первом кадре и идут при `data-play` (`lib/client/showcase.ts`).
+ */
+
+.showcase {
+	--sc-ease: cubic-bezier(0.32, 0.72, 0, 1);
+	--sc-line: color-mix(in oklab, var(--color-surface-foreground) 9%, transparent);
+	--sc-bar: color-mix(in oklab, var(--color-surface-foreground) 9%, var(--color-surface));
+	--sc-bar-strong: color-mix(in oklab, var(--color-surface-foreground) 16%, var(--color-surface));
+	--sc-shadow:
+		0 0 0 1px var(--sc-line),
+		0 1px 2px 0 color-mix(in oklab, var(--color-shade) 5%, transparent),
+		0 12px 32px -12px color-mix(in oklab, var(--color-shade) 18%, transparent);
+	--sc-shadow-hero:
+		0 0 0 1px var(--sc-line),
+		0 2px 4px 0 color-mix(in oklab, var(--color-shade) 6%, transparent),
+		0 24px 48px -16px color-mix(in oklab, var(--color-shade) 28%, transparent);
+
+	position: relative;
+	container-type: inline-size;
+	overflow: hidden;
+	aspect-ratio: 6 / 5;
+	margin: 0;
+	border-radius: var(--radius-card);
+	background: var(--color-background);
+	color: var(--color-surface-foreground);
+}
+
+.dark .showcase {
+	--sc-line: color-mix(in oklab, var(--color-lift) 9%, transparent);
+	--sc-shadow:
+		0 0 0 1px var(--sc-line),
+		0 16px 32px -12px rgb(0 0 0 / 0.5);
+	--sc-shadow-hero:
+		0 0 0 1px var(--sc-line),
+		0 24px 48px -16px rgb(0 0 0 / 0.7);
+}
+
+.showcase-scene {
+	position: absolute;
+	inset: 0;
+	font-size: clamp(11px, calc(100cqw / 30), 18px);
+	line-height: 1.35;
+	user-select: none;
+	pointer-events: none;
+}
+
+.showcase--wide {
+	aspect-ratio: 4 / 3;
+
+	& .showcase-scene {
+		font-size: clamp(11px, calc(100cqw / 60), 16px);
+	}
+
+	@media (min-width: 768px) {
+		aspect-ratio: 5 / 2;
+	}
+}
+
+/* --- общие детали -------------------------------------------------------- */
+
+.sc-bar {
+	display: block;
+	flex-shrink: 0;
+	height: 0.5em;
+	border-radius: 999px;
+	background: var(--sc-bar);
+}
+
+.sc-bar--strong {
+	height: 0.6em;
+	background: var(--sc-bar-strong);
+}
+
+.sc-lines {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 0.45em;
+	min-width: 0;
+}
+
+.sc-flag {
+	flex-shrink: 0;
+	font-size: 1.1em;
+	line-height: 1;
+}
+
+.sc-avatar {
+	display: block;
+	flex-shrink: 0;
+	width: 2.25em;
+	height: 2.25em;
+
+	& svg {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.sc-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75em;
+	min-width: 0;
+	padding: 1.15em;
+	border-radius: 1.5em;
+	corner-shape: squircle;
+	background: var(--color-surface);
+	box-shadow: var(--sc-shadow);
+}
+
+.sc-card-place {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	min-width: 0;
+	margin: 0;
+	padding-right: 2.25em;
+	font-size: 0.75em;
+	color: var(--color-muted-foreground);
+	white-space: nowrap;
+}
+
+.sc-card-place-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sc-sep {
+	margin: 0 0.35em;
+	opacity: 0.6;
+}
+
+.sc-card-title-row {
+	display: flex;
+	align-items: center;
+	gap: 0.75em;
+	min-width: 0;
+}
+
+.sc-card-title {
+	display: -webkit-box;
+	overflow: hidden;
+	margin: 0;
+	font-family: var(--font-heading);
+	font-size: 0.95em;
+	font-weight: 700;
+	line-height: 1.3;
+	letter-spacing: -0.01em;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.sc-card-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 0.25em;
+}
+
+.sc-card-more {
+	width: 5.5em;
+	height: 1.75em;
+	border-radius: 999px;
+	background: var(--color-surface-muted);
+}
+
+.sc-cursor {
+	position: absolute;
+	z-index: 20;
+	width: 1.6em;
+	height: 1.6em;
+	margin: -0.15em 0 0 -0.4em;
+	filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.25));
+
+	& svg {
+		width: 100%;
+		height: 100%;
+		fill: #111012;
+		stroke: #fcfcfc;
+		stroke-width: 1.4;
+		stroke-linejoin: round;
+	}
+}
+
+/* Пока сцена заряжена, но вне экрана, анимации стоят в первом кадре. */
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed]:not([data-play]) * {
+		animation-play-state: paused !important;
+	}
+}
+
+/* --- «Везде»: много одинаковых ---------------------------------------------- */
+
+.sc-many {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	display: grid;
+	grid-template-columns: repeat(5, 15em);
+	gap: 1.25em;
+	translate: -50% -50%;
+
+	& .sc-card:not(.sc-many-focus) {
+		opacity: 0.85;
+	}
+}
+
+.sc-many-focus {
+	z-index: 1;
+	scale: 1.06;
+	box-shadow: var(--sc-shadow-hero);
+}
+
+/* --- «Ссылки»: карточка и её каналы ----------------------------------------- */
+
+.sc-links-card {
+	position: absolute;
+	top: 2.5em;
+	left: 2.5em;
+	right: 2.5em;
+	display: flex;
+	flex-direction: column;
+	gap: 0.9em;
+	padding: 1.4em 1.4em 3em;
+	border-radius: 1.75em;
+	corner-shape: squircle;
+	background: var(--color-surface);
+	box-shadow: var(--sc-shadow-hero);
+
+	& .sc-card-title {
+		font-size: 1.1em;
+	}
+}
+
+.sc-links {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35em;
+	margin: 0.4em 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sc-link {
+	display: flex;
+	align-items: center;
+	gap: 0.75em;
+	min-width: 0;
+	padding: 0.55em 0.75em 0.55em 0.55em;
+	border-radius: 1em;
+	corner-shape: squircle;
+	font-size: 0.85em;
+
+	&[data-hover] {
+		background: var(--color-surface-muted);
+	}
+}
+
+.sc-link-icon {
+	display: grid;
+	flex-shrink: 0;
+	place-items: center;
+	width: 2.2em;
+	height: 2.2em;
+	border-radius: 0.75em;
+	corner-shape: squircle;
+	background: var(--color-surface-muted);
+
+	& svg {
+		width: 1.2em;
+		height: 1.2em;
+	}
+
+	[data-hover] > & {
+		background: var(--color-accent);
+		color: var(--color-accent-foreground);
+	}
+}
+
+.sc-link-label {
+	flex-shrink: 0;
+	font-weight: 600;
+}
+
+.sc-link-href {
+	overflow: hidden;
+	min-width: 0;
+	color: var(--color-subtle-foreground);
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.sc-link-go {
+	flex-shrink: 0;
+	width: 1.1em;
+	height: 1.1em;
+	margin-left: auto;
+	color: var(--color-subtle-foreground);
+}
+
+/* Остриё - на правом краю подсвеченной первой строки. */
+.sc-links-cursor {
+	top: 10.9em;
+	left: 22em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-link {
+			animation: sc-rise 500ms var(--sc-ease) calc(150ms + var(--i) * 70ms) both;
+		}
+
+		& .sc-link[data-hover] {
+			animation:
+				sc-rise 500ms var(--sc-ease) 150ms both,
+				sc-hover-in 300ms ease-out 1100ms both;
+		}
+
+		& .sc-link[data-hover] > .sc-link-icon {
+			animation: sc-accent-in 300ms ease-out 1100ms both;
+		}
+
+		& .sc-links-cursor {
+			animation: sc-links-cursor 1100ms var(--sc-ease) 200ms both;
+		}
+	}
+}
+
+@keyframes sc-hover-in {
+	from {
+		background: transparent;
+	}
+}
+
+@keyframes sc-accent-in {
+	from {
+		background: var(--color-surface-muted);
+		color: var(--color-surface-foreground);
+	}
+}
+
+@keyframes sc-links-cursor {
+	from {
+		opacity: 0;
+		translate: 7em 8em;
+	}
+
+	30% {
+		opacity: 1;
+	}
+}
+
+/* --- «Рядом»: телефон ------------------------------------------------------- */
+
+.sc-phone {
+	position: absolute;
+	top: 2.25em;
+	left: 50%;
+	width: 19.5em;
+	height: 30em;
+	padding: 0.55em;
+	translate: -50% 0;
+	border-radius: 3.1em;
+	background: #1b1a1c;
+	box-shadow:
+		inset 0 0 0 1px rgb(255 255 255 / 0.12),
+		var(--sc-shadow-hero);
+}
+
+.sc-phone-screen {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.7em;
+	height: 100%;
+	overflow: hidden;
+	padding: 3.2em 1.1em 0;
+	border-radius: 2.6em;
+	background: var(--color-background);
+}
+
+.sc-phone-island {
+	position: absolute;
+	top: 0.75em;
+	left: 50%;
+	width: 6em;
+	height: 1.75em;
+	translate: -50% 0;
+	border-radius: 999px;
+	background: #000;
+}
+
+.sc-phone-title {
+	margin: 0;
+	font-family: var(--font-heading);
+	font-size: 1.5em;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+.sc-place {
+	display: inline-flex;
+	align-items: center;
+	align-self: flex-start;
+	gap: 0.45em;
+	margin: 0;
+	padding: 0.45em 0.85em;
+	border-radius: 999px;
+	background: var(--color-surface);
+	font-size: 0.8em;
+	font-weight: 600;
+	box-shadow: 0 0 0 1px var(--sc-line);
+}
+
+.sc-place-icon {
+	width: 1.1em;
+	height: 1.1em;
+	color: var(--color-subtle-foreground);
+}
+
+.sc-status {
+	display: grid;
+	margin: 0;
+	font-size: 0.75em;
+	color: var(--color-subtle-foreground);
+
+	& > * {
+		grid-area: 1 / 1;
+	}
+}
+
+.sc-status-detecting {
+	opacity: 0;
+}
+
+.sc-chips {
+	display: flex;
+	gap: 0.35em;
+	margin-right: -1.1em;
+	white-space: nowrap;
+}
+
+.sc-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	padding: 0.4em 0.8em;
+	border-radius: 999px;
+	background: var(--color-surface);
+	font-size: 0.75em;
+	font-weight: 500;
+	color: var(--color-muted-foreground);
+
+	&[data-active] {
+		background: var(--color-accent);
+		color: var(--color-accent-foreground);
+	}
+}
+
+.sc-chip-count {
+	font-size: 0.85em;
+	opacity: 0.7;
+}
+
+.sc-nearby-cards {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6em;
+	margin-top: 0.2em;
+
+	& .sc-card {
+		font-size: 0.92em;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-status-detecting {
+			animation: sc-detecting 1300ms linear both;
+		}
+
+		& .sc-status-count {
+			animation: sc-fade-in 300ms ease-out 1300ms both;
+		}
+
+		& .sc-place {
+			animation: sc-pop 450ms var(--sc-ease) 1300ms both;
+		}
+
+		& .sc-chip {
+			animation: sc-rise 450ms var(--sc-ease) calc(1450ms + var(--i) * 60ms) both;
+		}
+
+		& .sc-nearby-card {
+			animation: sc-rise 600ms var(--sc-ease) calc(1650ms + var(--i) * 120ms) both;
+		}
+	}
+}
+
+@keyframes sc-detecting {
+	0%,
+	92% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+	}
+}
+
+/* --- «Сохранённые»: окно, закладка, счётчик ------------------------------- */
+
+.sc-window {
+	position: absolute;
+	overflow: hidden;
+	border-radius: 1.5em;
+	corner-shape: squircle;
+	background: var(--color-background);
+	box-shadow: var(--sc-shadow-hero);
+}
+
+.sc-saved-window {
+	top: 2.5em;
+	left: 2.5em;
+	width: 36em;
+	height: 26em;
+}
+
+.sc-site-header {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 1em;
+	height: 3em;
+	padding: 0 1.25em;
+	background: var(--color-surface);
+	box-shadow: 0 1px 0 var(--sc-line);
+}
+
+.sc-logo {
+	--mark-size: 1.5em !important;
+}
+
+/* Ссылка «Сохранённые» стоит на фиксированном месте: к ней летит закладка. */
+.sc-saved-link {
+	position: absolute;
+	top: 0.3em;
+	left: 20.5em;
+	display: grid;
+	place-items: center;
+	width: 2.4em;
+	height: 2.4em;
+	border-radius: 999px;
+	box-shadow: inset 0 0 0 1px var(--sc-line);
+
+	& ~ .sc-bar {
+		position: absolute;
+		left: 24em;
+	}
+}
+
+.sc-saved-link-icon {
+	width: 1.15em;
+	height: 1.15em;
+}
+
+.sc-badge {
+	position: absolute;
+	top: 0.05em;
+	right: -0.1em;
+	overflow: hidden;
+	height: 1.1em;
+	min-width: 1.1em;
+	border-radius: 999px;
+	background: var(--color-accent);
+	color: var(--color-accent-foreground);
+	font-size: 0.65em;
+	font-weight: 700;
+	line-height: 1.1em;
+	text-align: center;
+	box-shadow: 0 0 0 0.2em var(--color-surface);
+}
+
+.sc-badge-track {
+	display: flex;
+	flex-direction: column;
+	translate: 0 -1.1em;
+}
+
+.sc-saved-grid {
+	position: absolute;
+	top: 4.25em;
+	left: 1.25em;
+	display: grid;
+	grid-template-columns: repeat(2, 15em);
+	gap: 1em;
+}
+
+.sc-bookmark {
+	position: absolute;
+	top: 0.75em;
+	right: 0.75em;
+	display: grid;
+	place-items: center;
+	width: 2em;
+	height: 2em;
+	color: var(--color-subtle-foreground);
+
+	& svg {
+		grid-area: 1 / 1;
+		width: 1.25em;
+		height: 1.25em;
+	}
+}
+
+.sc-bookmark-off {
+	opacity: 0;
+}
+
+.sc-bookmark-on {
+	color: var(--color-favorite);
+}
+
+.sc-flyer {
+	position: absolute;
+	top: 8.5em;
+	left: 17em;
+	width: 1.25em;
+	height: 1.25em;
+	margin: -0.625em 0 0 -0.625em;
+	color: var(--color-favorite);
+	opacity: 0;
+
+	& svg {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.sc-saved-cursor {
+	top: 8.7em;
+	left: 17.3em;
+}
+
+/*
+ * Петля 8 с: курсор приходит, жмёт закладку (27%), закладка летит в
+ * шапку, счётчик 2 → 3 (40%); второй клик (82%) убирает центр, 3 → 2,
+ * курсор уходит. Конец петли совпадает с началом.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-saved-cursor {
+			animation: sc-saved-cursor 8s var(--sc-ease) infinite both;
+		}
+
+		& .sc-bookmark {
+			animation: sc-press 8s infinite both;
+		}
+
+		& .sc-bookmark-on {
+			animation: sc-saved-on 8s infinite both;
+		}
+
+		& .sc-bookmark-off {
+			animation: sc-saved-off 8s infinite both;
+		}
+
+		& .sc-flyer {
+			animation: sc-flyer 8s infinite both;
+		}
+
+		& .sc-badge-track {
+			animation: sc-badge-roll 8s var(--sc-ease) infinite both;
+		}
+
+		& .sc-badge {
+			animation: sc-badge-pop 8s infinite both;
+		}
+	}
+}
+
+@keyframes sc-saved-cursor {
+	0% {
+		opacity: 0;
+		translate: 6em 9em;
+	}
+
+	8% {
+		opacity: 1;
+		translate: 6em 9em;
+	}
+
+	24% {
+		translate: 0 0;
+		scale: 1;
+	}
+
+	26% {
+		scale: 0.85;
+	}
+
+	28% {
+		scale: 1;
+	}
+
+	40% {
+		translate: 0.6em 1.2em;
+	}
+
+	76% {
+		translate: 0.6em 1.2em;
+		scale: 1;
+	}
+
+	80% {
+		translate: 0 0;
+		scale: 0.85;
+	}
+
+	82% {
+		scale: 1;
+		opacity: 1;
+		translate: 0 0;
+	}
+
+	96%,
+	100% {
+		opacity: 0;
+		translate: 6em 9em;
+	}
+}
+
+@keyframes sc-press {
+	0%,
+	25%,
+	29%,
+	79%,
+	83%,
+	100% {
+		scale: 1;
+	}
+
+	27%,
+	81% {
+		scale: 0.82;
+	}
+}
+
+@keyframes sc-saved-on {
+	0%,
+	26.9% {
+		opacity: 0;
+		scale: 0.6;
+	}
+
+	27% {
+		opacity: 1;
+		scale: 0.6;
+	}
+
+	31% {
+		scale: 1.25;
+	}
+
+	35%,
+	80.9% {
+		opacity: 1;
+		scale: 1;
+	}
+
+	81%,
+	100% {
+		opacity: 0;
+	}
+}
+
+@keyframes sc-saved-off {
+	0%,
+	26.9% {
+		opacity: 1;
+	}
+
+	27%,
+	80.9% {
+		opacity: 0;
+	}
+
+	81%,
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes sc-flyer {
+	0%,
+	27% {
+		opacity: 0;
+		translate: 0 0;
+		scale: 1;
+	}
+
+	28% {
+		opacity: 1;
+	}
+
+	38% {
+		opacity: 1;
+		translate: 7.2em -4.5em;
+		scale: 0.7;
+	}
+
+	40%,
+	100% {
+		opacity: 0;
+		translate: 7.2em -4.5em;
+		scale: 0.5;
+	}
+}
+
+@keyframes sc-badge-roll {
+	0%,
+	38% {
+		translate: 0 0;
+	}
+
+	42%,
+	81% {
+		translate: 0 -1.1em;
+	}
+
+	85%,
+	100% {
+		translate: 0 -2.2em;
+	}
+}
+
+@keyframes sc-badge-pop {
+	0%,
+	38%,
+	46%,
+	100% {
+		scale: 1;
+	}
+
+	41% {
+		scale: 1.3;
+	}
+}
+
+/* --- «Печать»: стопка листов ------------------------------------------------ */
+
+.sc-paper-stack {
+	position: absolute;
+	top: 2.5em;
+	left: 50%;
+	width: 17em;
+	height: 24em;
+	translate: -30% 0;
+}
+
+.sc-paper {
+	position: absolute;
+	inset: 0;
+	border-radius: 0.4em;
+	background: #fcfcfc;
+	box-shadow:
+		0 0 0 1px rgb(0 0 0 / 0.06),
+		0 2px 4px rgb(0 0 0 / 0.06),
+		0 16px 32px -12px rgb(0 0 0 / 0.25);
+	rotate: var(--r);
+}
+
+.sc-paper--top {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	padding: 1.6em 1.5em;
+	color: #111012;
+}
+
+.sc-paper-heading {
+	margin: 0;
+	font-family: var(--font-heading);
+	font-size: 1.05em;
+	font-weight: 700;
+	line-height: 1.25;
+	text-wrap: balance;
+}
+
+.sc-paper-meta {
+	margin: 0;
+	font-size: 0.65em;
+	color: #656567;
+}
+
+.sc-paper-group {
+	margin: 0.6em 0 0;
+	padding-bottom: 0.5em;
+	border-bottom: 1px solid #e3e3e4;
+	font-size: 0.65em;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #545456;
+}
+
+.sc-paper-list {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	& li {
+		display: grid;
+		grid-template-columns: 1.6em 1fr;
+		padding: 0.65em 0;
+		border-bottom: 1px solid #e3e3e4;
+	}
+
+	& .sc-bar {
+		margin-top: 0.4em;
+		height: 0.4em;
+		background: #ececed;
+	}
+}
+
+.sc-paper-index {
+	font-size: 0.7em;
+	color: #9b9b9d;
+}
+
+.sc-paper-entry {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.sc-paper-title {
+	font-size: 0.78em;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.sc-paper-place {
+	margin-top: 0.15em;
+	font-size: 0.68em;
+	color: #545456;
+}
+
+/* Панель печати - спутник на левом краю стопки, наполовину снаружи. */
+.sc-print-panel {
+	position: absolute;
+	top: 18.5em;
+	left: 2.5em;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.6em;
+	padding: 0.9em;
+	border-radius: 1.25em;
+	corner-shape: squircle;
+	background: var(--color-surface);
+	box-shadow: var(--sc-shadow-hero);
+}
+
+.sc-print-chip {
+	padding: 0.35em 0.8em;
+	border-radius: 999px;
+	background: var(--color-primary);
+	color: var(--color-primary-foreground);
+	font-size: 0.75em;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+.sc-print-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45em;
+	padding: 0.6em 1em;
+	border-radius: 999px;
+	background: var(--color-accent);
+	color: var(--color-accent-foreground);
+	font-size: 0.85em;
+	font-weight: 600;
+	white-space: nowrap;
+
+	& svg {
+		width: 1.15em;
+		height: 1.15em;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-paper {
+			animation: sc-fan 800ms var(--sc-ease) calc(100ms + var(--i) * 90ms) both;
+		}
+
+		& .sc-print-panel {
+			animation: sc-rise 600ms var(--sc-ease) 500ms both;
+		}
+
+		& .sc-print-button {
+			animation: sc-click 400ms ease-out 1300ms both;
+		}
+	}
+}
+
+@keyframes sc-fan {
+	from {
+		opacity: 0;
+		rotate: 0deg;
+		translate: 0 1.5em;
+	}
+}
+
+@keyframes sc-click {
+	50% {
+		scale: 0.92;
+	}
+}
+
+/* --- «Поиск»: строка крупным планом ------------------------------------------ */
+
+.sc-search-backdrop {
+	position: absolute;
+	inset: 9em -2em 0 2.5em;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1em;
+	opacity: 0.6;
+	filter: blur(1.5px);
+}
+
+.sc-ghost-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6em;
+	height: 9em;
+	padding: 1.2em;
+	border-radius: 1.5em;
+	background: var(--color-surface);
+}
+
+.sc-search {
+	position: absolute;
+	top: 3em;
+	left: 2.5em;
+	right: 2.5em;
+	font-size: 1.2em;
+}
+
+.sc-search-field {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	padding: 0.3em 0.3em 0.3em 0.9em;
+	border-radius: 999px;
+	background: var(--color-surface);
+	box-shadow: var(--sc-shadow-hero);
+}
+
+.sc-search-icon {
+	flex-shrink: 0;
+	width: 1.15em;
+	height: 1.15em;
+	color: var(--color-subtle-foreground);
+}
+
+.sc-search-text {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	min-width: 0;
+	font-size: 0.95em;
+}
+
+.sc-caret {
+	width: 1.5px;
+	height: 1.15em;
+	margin-left: 1px;
+	background: var(--color-surface-foreground);
+}
+
+.sc-search-clear,
+.sc-search-submit {
+	display: grid;
+	flex-shrink: 0;
+	place-items: center;
+	width: 2.2em;
+	height: 2.2em;
+	border-radius: 999px;
+
+	& svg {
+		width: 1em;
+		height: 1em;
+	}
+}
+
+.sc-search-clear {
+	color: var(--color-subtle-foreground);
+}
+
+.sc-search-submit {
+	background: var(--color-primary);
+	color: var(--color-primary-foreground);
+}
+
+.sc-suggestions {
+	display: flex;
+	flex-direction: column;
+	margin: 0.5em 0 0;
+	padding: 0.35em;
+	border-radius: 1.1em;
+	corner-shape: squircle;
+	background: var(--color-surface);
+	box-shadow: var(--sc-shadow-hero);
+	list-style: none;
+	font-size: 0.8em;
+}
+
+.sc-suggestion {
+	padding: 0.6em 0.85em;
+	border-radius: 0.8em;
+	color: var(--color-muted-foreground);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	& strong {
+		font-weight: 700;
+		color: var(--color-surface-foreground);
+	}
+
+	&:nth-child(2) {
+		background: var(--color-muted);
+	}
+}
+
+/*
+ * Петля 9 с: три буквы набираются (8-20%), раскрываются подсказки
+ * (24%), подсветка спускается по первым двум строкам; крестик очистки
+ * (86%) стирает запрос, и список прячется.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-typed {
+			animation: sc-typed-0 9s linear infinite both;
+		}
+
+		& .sc-typed:nth-child(2) {
+			animation-name: sc-typed-1;
+		}
+
+		& .sc-typed:nth-child(3) {
+			animation-name: sc-typed-2;
+		}
+
+		& .sc-caret {
+			animation: sc-blink 1s steps(1) infinite;
+		}
+
+		& .sc-suggestions {
+			animation: sc-suggestions 9s var(--sc-ease) infinite both;
+		}
+
+		& .sc-suggestion:nth-child(-n + 2) {
+			animation: sc-highlight-1 9s steps(1) infinite both;
+		}
+
+		& .sc-suggestion:nth-child(2) {
+			animation-name: sc-highlight-2;
+		}
+
+		& .sc-search-clear {
+			animation: sc-clear 9s infinite both;
+		}
+
+		& .sc-search-submit {
+			animation: sc-submit 9s infinite both;
+		}
+	}
+}
+
+/* Буквы появляются по одной (8, 12, 16%) и стираются вместе на 87%. */
+@keyframes sc-typed-0 {
+	0%,
+	7.9% {
+		font-size: 0;
+	}
+
+	8%,
+	86.9% {
+		font-size: 1em;
+	}
+
+	87%,
+	100% {
+		font-size: 0;
+	}
+}
+
+@keyframes sc-typed-1 {
+	0%,
+	11.9% {
+		font-size: 0;
+	}
+
+	12%,
+	86.9% {
+		font-size: 1em;
+	}
+
+	87%,
+	100% {
+		font-size: 0;
+	}
+}
+
+@keyframes sc-typed-2 {
+	0%,
+	15.9% {
+		font-size: 0;
+	}
+
+	16%,
+	86.9% {
+		font-size: 1em;
+	}
+
+	87%,
+	100% {
+		font-size: 0;
+	}
+}
+
+@keyframes sc-blink {
+	50% {
+		opacity: 0;
+	}
+}
+
+@keyframes sc-suggestions {
+	0%,
+	24% {
+		opacity: 0;
+		translate: 0 -0.4em;
+		scale: 0.98;
+	}
+
+	28%,
+	86% {
+		opacity: 1;
+		translate: 0 0;
+		scale: 1;
+	}
+
+	89%,
+	100% {
+		opacity: 0;
+		translate: 0 -0.4em;
+	}
+}
+
+@keyframes sc-highlight-1 {
+	0%,
+	39.9%,
+	52%,
+	100% {
+		background: transparent;
+	}
+
+	40%,
+	51.9% {
+		background: var(--color-muted);
+	}
+}
+
+@keyframes sc-highlight-2 {
+	0%,
+	51.9% {
+		background: transparent;
+	}
+
+	52%,
+	88% {
+		background: var(--color-muted);
+	}
+
+	88.1%,
+	100% {
+		background: transparent;
+	}
+}
+
+@keyframes sc-clear {
+	0%,
+	12% {
+		opacity: 0;
+		background: transparent;
+	}
+
+	14%,
+	83% {
+		opacity: 1;
+		background: transparent;
+	}
+
+	85% {
+		background: var(--color-muted);
+		scale: 0.9;
+	}
+
+	87% {
+		opacity: 1;
+		scale: 1;
+	}
+
+	89%,
+	100% {
+		opacity: 0;
+		background: transparent;
+	}
+}
+
+@keyframes sc-submit {
+	0%,
+	9% {
+		background: var(--color-muted);
+		color: var(--color-depth-300);
+	}
+
+	11%,
+	86% {
+		background: var(--color-primary);
+		color: var(--color-primary-foreground);
+	}
+
+	88%,
+	100% {
+		background: var(--color-muted);
+		color: var(--color-depth-300);
+	}
+}
+
+/* --- общие движения ------------------------------------------------------- */
+
+@keyframes sc-rise {
+	from {
+		opacity: 0;
+		translate: 0 0.8em;
+	}
+}
+
+@keyframes sc-pop {
+	from {
+		opacity: 0;
+		scale: 0.85;
+	}
+}
+
+@keyframes sc-fade-in {
+	from {
+		opacity: 0;
+	}
+}

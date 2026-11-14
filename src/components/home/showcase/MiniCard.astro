@@ -1,0 +1,67 @@
+---
+import { centerAvatarMarkup } from "@/lib/center/avatar";
+import { cn } from "@/lib/cn";
+
+/**
+ * Карточка каталога в миниатюре: та же анатомия, что у `CenterCard`
+ * (место, лицо центра, название, описание, «Подробнее»), но в `em`.
+ *
+ * `words={false}` - карточка-фон: флаг и лицо остаются, слова уходят в
+ * плашки. Слова только там, куда должен смотреть глаз.
+ */
+interface Props {
+	id: string;
+	title?: string;
+	flag?: string;
+	city?: string;
+	country?: string;
+	words?: boolean;
+	class?: string;
+	style?: string;
+}
+
+const { id, title, flag, city, country, words = true, class: className, style } = Astro.props as Props;
+---
+
+<div class={cn("sc-card", className)} style={style}>
+	<slot name="corner" />
+	<p class="sc-card-place">
+		{flag && <span class="sc-flag">{flag}</span>}
+		{
+			words ? (
+				<span class="sc-card-place-text">
+					{city}
+					{city && country && <span class="sc-sep">&#10625;</span>}
+					{country}
+				</span>
+			) : (
+				<span class="sc-bar" style="width: 5.5em" />
+			)
+		}
+	</p>
+	<div class="sc-card-title-row">
+		<center-avatar class="center-avatar sc-avatar" set:html={centerAvatarMarkup(id)} />
+		{
+			words ? (
+				<p class="sc-card-title">{title}</p>
+			) : (
+				<span class="sc-lines">
+					<span class="sc-bar sc-bar--strong" style="width: 90%" />
+					<span class="sc-bar sc-bar--strong" style="width: 55%" />
+				</span>
+			)
+		}
+	</div>
+	<span class="sc-lines">
+		<span class="sc-bar" style="width: 100%"></span>
+		<span class="sc-bar" style="width: 72%"></span>
+	</span>
+	<span class="sc-card-meta">
+		<span class="sc-bar" style="width: 4em"></span>
+		<span class="sc-card-more"></span>
+	</span>
+</div>
+
+<script>
+	import "@/lib/client/centerAvatars";
+</script>

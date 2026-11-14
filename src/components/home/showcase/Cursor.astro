@@ -1,0 +1,18 @@
+---
+import { cn } from "@/lib/cn";
+
+/** Стрелка курсора для макетов. Остриё - в левом верхнем углу элемента. */
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props as Props;
+---
+
+<span class={cn("sc-cursor", className)}>
+	<svg viewBox="0 0 24 24" aria-hidden="true">
+		<path
+			d="M4.5 2.8v16.6c0 .6.7.9 1.1.5l3.9-3.7 2.6 5.9c.2.4.7.6 1.1.4l2-.9c.4-.2.6-.7.4-1.1l-2.6-5.8h5.4c.6 0 .9-.7.5-1.1L5.6 2.3c-.4-.4-1.1-.1-1.1.5Z"
+		></path>
+	</svg>
+</span>

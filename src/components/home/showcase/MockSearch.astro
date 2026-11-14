@@ -1,0 +1,70 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { searchSuggestions } from "@/lib/home/showcase";
+import { Icon } from "astro-icon/components";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * Поиск крупным планом: строка каталога, в неё набирается начало
+ * названия, под ней раскрываются настоящие подсказки - страна, город,
+ * регион, - и подсветка спускается по списку. Петлю закрывает крестик
+ * очистки: поле пустеет, список прячется.
+ *
+ * Раскладка - крупный план: строка поиска во всю ширину с отступами,
+ * список подсказок уходит за нижний край над размытым каталогом.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const query = locale === "en" ? "Kaz" : "Каз";
+const suggestions = await searchSuggestions(locale, query, 5);
+const needle = query.toLocaleLowerCase();
+
+/** «Казахстан» → ["", "Каз", "ахстан"]: совпадение жирным, как подсветка в живом поиске. */
+function split(value: string) {
+	const at = value.toLocaleLowerCase().indexOf(needle);
+	if (at < 0) return [value, "", ""];
+	return [value.slice(0, at), value.slice(at, at + query.length), value.slice(at + query.length)];
+}
+---
+
+<ShowcaseStage scene="search" label={t("home.search.imageAlt")}>
+	<div class="sc-search-backdrop">
+		{
+			Array.from({ length: 4 }, () => (
+				<span class="sc-ghost-card">
+					<span class="sc-bar" style="width: 40%" />
+					<span class="sc-bar sc-bar--strong" style="width: 80%" />
+					<span class="sc-bar" style="width: 65%" />
+				</span>
+			))
+		}
+	</div>
+
+	<div class="sc-search">
+		<div class="sc-search-field">
+			<Icon name="mdi:magnify" class="sc-search-icon" />
+			<span class="sc-search-text">
+				{[...query].map((char, index) => <span class="sc-typed" style={`--i: ${index}`}>{char}</span>)}
+				<span class="sc-caret"></span>
+			</span>
+			<span class="sc-search-clear"><Icon name="mdi:close" /></span>
+			<span class="sc-search-submit"><Icon name="mdi:arrow-up" /></span>
+		</div>
+
+		<ul class="sc-suggestions">
+			{
+				suggestions.map((value, index) => {
+					const [before, match, after] = split(value);
+					return (
+						<li class="sc-suggestion" style={`--i: ${index}`}>
+							{before}
+							<strong>{match}</strong>
+							{after}
+						</li>
+					);
+				})
+			}
+		</ul>
+	</div>
+</ShowcaseStage>

@@ -1,0 +1,64 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { printShowcase } from "@/lib/home/showcase";
+import { Icon } from "astro-icon/components";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Каталог на бумаге»: стопка листов A4, верхний - настоящая первая
+ * страница списка для печати (шапка, страна, пронумерованные центры).
+ * Сбоку, на краю стопки, - панель печати: выбранная страна и кнопка.
+ *
+ * Раскладка - стопка под наклоном: единственное место, где наклон
+ * оправдан, потому что это бумага. Слова только на верхнем листе.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const { group, total, countries } = await printShowcase(locale, Astro.site?.toString() ?? "");
+const date = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "ru-RU", {
+	day: "numeric",
+	month: "long",
+	year: "numeric",
+}).format(new Date());
+---
+
+<ShowcaseStage scene="print" once label={t("home.print.imageAlt")}>
+	<div class="sc-paper-stack">
+		<span class="sc-paper sc-paper--back" style="--r: -6deg; --i: 0"></span>
+		<span class="sc-paper sc-paper--back" style="--r: 4deg; --i: 1"></span>
+		<div class="sc-paper sc-paper--top" style="--r: -1.5deg; --i: 2">
+			<p class="sc-paper-heading">{t("print.heading")}</p>
+			<p class="sc-paper-meta">{t("print.stats", { count: total, countries, date })}</p>
+			{
+				group && (
+					<>
+						<p class="sc-paper-group">
+							{group.label} - {group.entries.length}
+						</p>
+						<ol class="sc-paper-list">
+							{group.entries.slice(0, 4).map((entry, index) => (
+								<li>
+									<span class="sc-paper-index">{index + 1}</span>
+									<span class="sc-paper-entry">
+										<span class="sc-paper-title">{entry.title}</span>
+										<span class="sc-paper-place">{entry.place}</span>
+										<span class="sc-bar" style="width: 70%" />
+									</span>
+								</li>
+							))}
+						</ol>
+					</>
+				)
+			}
+		</div>
+	</div>
+
+	<div class="sc-print-panel">
+		{group && <span class="sc-print-chip">{group.label} ({group.entries.length})</span>}
+		<span class="sc-print-button">
+			<Icon name="mdi:printer-outline" />
+			{t("nav.print")}
+		</span>
+	</div>
+</ShowcaseStage>

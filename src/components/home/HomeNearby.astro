@@ -1,28 +1,16 @@
 ---
-import nearbyEn from "@/assets/images/nearby-en.png";
-import nearbyRu from "@/assets/images/nearby-ru.png";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
-import { Image } from "astro:assets";
 import ButtonLink from "../ui/ButtonLink.astro";
+import MockNearby from "./showcase/MockNearby.astro";
 
-/**
- * Поиск по геолокации: обещание раздела `/nearby`.
- *
- * Материал нарисован на двух языках; тема на него больше не влияет,
- * поэтому в разметку идёт одна картинка.
- */
+/** Поиск по геолокации: обещание раздела `/nearby`. */
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-
-const image = locale === "en" ? nearbyEn : nearbyRu;
-const alt = t("home.nearby.imageAlt");
-const sizes = "(min-width: 768px) 50vw, 100vw";
-const widths = [400, 640, 768, 1200];
 ---
 
 <section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
-	<div class="order-2 space-y-6 md:order-1">
+	<div class="space-y-6 md:order-2">
 		<h2 class="text-4xl font-bold tracking-tight">{t("home.nearby.title")}</h2>
 		<p class="leading-7 text-muted-foreground">{t("home.nearby.text1")}</p>
 		<p class="leading-7 text-muted-foreground">{t("home.nearby.text2")}</p>
@@ -35,5 +23,5 @@ const widths = [400, 640, 768, 1200];
 		/>
 	</div>
 
-	<Image src={image} alt={alt} widths={widths} sizes={sizes} class="order-1 w-full rounded-card md:order-2" />
+	<MockNearby />
 </section>

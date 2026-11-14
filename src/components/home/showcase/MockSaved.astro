@@ -1,0 +1,63 @@
+---
+import LogoMark from "@/components/layout/LogoMark.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { presentCards } from "@/lib/home/showcase";
+import { Icon } from "astro-icon/components";
+import Cursor from "./Cursor.astro";
+import MiniCard from "./MiniCard.astro";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Сохранённые»: окно сайта в углу сцены, курсор жмёт закладку на
+ * карточке, закладка улетает в шапку, счётчик там растёт 2 → 3. Петля
+ * закрывается тем же жестом: второй клик убирает центр, счётчик 3 → 2.
+ *
+ * Раскладка - угловой вылет: окно с отступом сверху и слева, уходит за
+ * правый и нижний край. Всё, что нужно истории (закладка и счётчик),
+ * целиком внутри кадра; режутся только карточки-фон.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const [focus, ...rest] = await presentCards(locale, 4);
+---
+
+<ShowcaseStage scene="saved" label={t("home.saved.imageAlt")}>
+	<div class="sc-window sc-saved-window">
+		<div class="sc-site-header">
+			<LogoMark size={20} class="sc-logo" />
+			<span class="sc-bar sc-bar--strong" style="width: 3.2em"></span>
+			<span class="sc-bar sc-bar--strong" style="width: 3.8em"></span>
+			<span class="sc-saved-link">
+				<Icon name="tabler:bookmark" class="sc-saved-link-icon" />
+				<span class="sc-badge">
+					<span class="sc-badge-track">
+						<span>2</span>
+						<span>3</span>
+						<span>2</span>
+					</span>
+				</span>
+			</span>
+			<span class="sc-bar" style="width: 2.4em"></span>
+		</div>
+
+		<div class="sc-saved-grid">
+			{
+				focus && (
+					<MiniCard {...focus} class="sc-saved-focus">
+						<span slot="corner" class="sc-bookmark">
+							<Icon name="tabler:bookmark" class="sc-bookmark-off" />
+							<Icon name="tabler:bookmark-filled" class="sc-bookmark-on" />
+						</span>
+					</MiniCard>
+				)
+			}
+			{rest.map((card) => <MiniCard {...card} words={false} />)}
+		</div>
+	</div>
+
+	<span class="sc-flyer">
+		<Icon name="tabler:bookmark-filled" />
+	</span>
+	<Cursor class="sc-saved-cursor" />
+</ShowcaseStage>

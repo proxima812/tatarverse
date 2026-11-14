@@ -1,0 +1,76 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { nearbyShowcase } from "@/lib/home/showcase";
+import { Icon } from "astro-icon/components";
+import MiniCard from "./MiniCard.astro";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Центры рядом» на телефоне: страница определяет город, показывает,
+ * сколько карточек нашлось в стране, чипы городов и карточки ближайшего.
+ * Город и цифры - настоящие, из индекса `/nearby`.
+ *
+ * Раскладка - телефон, прижатый сверху: по центру, с отступом сверху,
+ * низ уходит за край сцены. Играет один раз: «Определяем…» сменяется
+ * городом, следом приезжают чипы и карточки.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const nearby = await nearbyShowcase(locale);
+const format = new Intl.NumberFormat(locale === "en" ? "en-US" : "ru-RU");
+---
+
+<ShowcaseStage scene="nearby" once label={t("home.nearby.imageAlt")}>
+	<div class="sc-phone">
+		<div class="sc-phone-screen">
+			<span class="sc-phone-island"></span>
+			<p class="sc-phone-title">{t("nearby.title")}</p>
+
+			{
+				nearby && (
+					<>
+						<p class="sc-place">
+							<Icon name="mdi:map-marker-radius-outline" class="sc-place-icon" />
+							<span class="sc-flag">{nearby.flag}</span>
+							<span class="sc-place-label">{nearby.label}, {nearby.city}</span>
+						</p>
+
+						<p class="sc-status">
+							<span class="sc-status-detecting">{t("nearby.detecting")}</span>
+							<span class="sc-status-count">
+								{t("nearby.count", { count: format.format(nearby.count) })}
+							</span>
+						</p>
+
+						<div class="sc-chips">
+							<span class="sc-chip" style="--i: 0">
+								{t("nearby.allCities")} <span class="sc-chip-count">{nearby.count}</span>
+							</span>
+							{nearby.cities.slice(0, 3).map((city, index) => (
+								<span class="sc-chip" data-active={index === 0 ? "" : undefined} style={`--i: ${index + 1}`}>
+									{city.name} <span class="sc-chip-count">{city.count}</span>
+								</span>
+							))}
+						</div>
+
+						<div class="sc-nearby-cards">
+							{nearby.cards.slice(0, 3).map((card, index) => (
+								<MiniCard
+									id={card.id}
+									title={card.title}
+									flag={card.flag}
+									city={card.city}
+									country={card.countryLabel}
+									words={index < 2}
+									class="sc-nearby-card"
+									style={`--i: ${index}`}
+								/>
+							))}
+						</div>
+					</>
+				)
+			}
+		</div>
+	</div>
+</ShowcaseStage>

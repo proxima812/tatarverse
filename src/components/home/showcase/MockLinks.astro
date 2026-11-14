@@ -1,0 +1,66 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { centerAvatarMarkup } from "@/lib/center/avatar";
+import { linksCenter } from "@/lib/home/showcase";
+import { Icon } from "astro-icon/components";
+import Cursor from "./Cursor.astro";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Ссылки, а не только адреса»: шапка карточки центра и её каналы
+ * связи - у центра, где их больше всего. Курсор стоит на первом:
+ * открыть и написать - одно нажатие.
+ *
+ * Раскладка - прижатая к низу: карточка по центру с отступами сверху и
+ * по бокам, низ списка уходит за край сцены.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const center = await linksCenter(locale);
+
+/** `https://www.instagram.com/x/` → `instagram.com/x`: в строке нужен узнаваемый адрес, не схема. */
+const bare = (href: string) =>
+	href
+		.replace(/^https?:\/\//, "")
+		.replace(/^www\./, "")
+		.replace(/\/$/, "");
+---
+
+<ShowcaseStage scene="links" once label={t("home.contacts.imageAlt")}>
+	{
+		center && (
+			<div class="sc-links-card">
+				<p class="sc-card-place">
+					<span class="sc-flag">{center.card.flag}</span>
+					<span class="sc-card-place-text">
+						{center.card.city}
+						{center.card.city && center.card.country && <span class="sc-sep">&#10625;</span>}
+						{center.card.country}
+					</span>
+				</p>
+				<div class="sc-card-title-row">
+					<center-avatar class="center-avatar sc-avatar" set:html={centerAvatarMarkup(center.card.id)} />
+					<p class="sc-card-title">{center.card.title}</p>
+				</div>
+				<ul class="sc-links">
+					{center.links.slice(0, 5).map((link, index) => (
+						<li class="sc-link" data-hover={index === 0 ? "" : undefined} style={`--i: ${index}`}>
+							<span class="sc-link-icon">
+								<Icon name={link.icon} />
+							</span>
+							<span class="sc-link-label">{link.label}</span>
+							<span class="sc-link-href">{bare(link.href)}</span>
+							<Icon name="mdi:arrow-top-right" class="sc-link-go" />
+						</li>
+					))}
+				</ul>
+			</div>
+		)
+	}
+	<Cursor class="sc-links-cursor" />
+</ShowcaseStage>
+
+<script>
+	import "@/lib/client/centerAvatars";
+</script>

@@ -1,0 +1,36 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { presentCards } from "@/lib/home/showcase";
+import MiniCard from "./MiniCard.astro";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Везде. Всегда. Для всех.»: сетка карточек каталога за все края
+ * сцены - масштаб каталога, показанный повтором. Каждая карточка из
+ * своей страны, со своим флагом и лицом; слова только на одной, в
+ * фокусе по центру - её поднимает тень.
+ *
+ * Сетка центрируется относительно сцены, поэтому на узком экране режутся
+ * края, а карточка в фокусе остаётся целой.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const COLUMNS = 5;
+const ROWS = 3;
+const cards = await presentCards(locale, COLUMNS * ROWS);
+const focusAt = COLUMNS + Math.floor(COLUMNS / 2);
+// Свежая карточка - в фокус, остальные вокруг неё.
+const [first, ...others] = cards;
+const ordered = first ? [...others.slice(0, focusAt), first, ...others.slice(focusAt)] : [];
+---
+
+<ShowcaseStage scene="catalog" label={t("home.present.imageAlt")} class="showcase--wide">
+	<div class="sc-many">
+		{
+			ordered.map((card, index) => (
+				<MiniCard {...card} words={index === focusAt} class={index === focusAt ? "sc-many-focus" : undefined} />
+			))
+		}
+	</div>
+</ShowcaseStage>
