@@ -61,7 +61,7 @@ const rel = target === "_blank" && !relProp ? "noopener noreferrer" : relProp;
 >
 	{icon ? <Icon name={icon} class="w-4 h-4" aria-hidden="true" /> : <slot name="icon" />}
 	<span>{text}</span>
-	{badge !== undefined && <span class="text-xs opacity-60 tabular-nums">({badge})</span>}
+	{badge !== undefined && <span class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-muted px-1.5 text-[11px] font-semibold leading-none tabular-nums text-subtle-foreground">{badge}</span>}
 	{
 		variant === "disabled" && (
 			<>
