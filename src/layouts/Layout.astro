@@ -184,6 +184,11 @@ const yandexMetrika = config.site.analytics.yandexMetrika;
 		</Container>
 		<Footer />
 		<BackToTop />
+		<script>
+			import { initTelegram } from "@/lib/client/telegram";
+
+			void initTelegram();
+		</script>
 		{
 			yandexMetrika.enabled && yandexMetrika.counterId && (
 				<YandexMetrika counterId={yandexMetrika.counterId} />
