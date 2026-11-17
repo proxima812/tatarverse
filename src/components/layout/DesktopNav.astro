@@ -59,7 +59,7 @@ const itemClass =
 				labelKey={item.labelKey}
 				badge={badges[item.href]}
 				aria-current={isActivePath(item.href) ? "page" : undefined}
-				class={isActivePath(item.href) ? `${activeUnderlineClass} after:inset-x-4` : ""}
+				class={`${badges[item.href] !== undefined ? "pr-8" : ""} ${isActivePath(item.href) ? `${activeUnderlineClass} after:inset-x-4` : ""}`}
 			/>
 		))
 	}
