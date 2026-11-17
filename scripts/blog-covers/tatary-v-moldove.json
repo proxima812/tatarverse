@@ -1,0 +1,13 @@
+{
+  "scatter": [
+    "airplane",
+    "map-marker-outline",
+    "mosque-outline",
+    "translate",
+    "account-group-outline",
+    "fruit-grapes-outline",
+    "glass-wine",
+    "send-outline"
+  ],
+  "art": "<g fill=\"none\" stroke=\"#2E2E2F\" stroke-width=\"4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M60 22v12\"/><path d=\"M60 26q14-14 30-6q-6 16-24 12\"/><circle cx=\"48\" cy=\"44\" r=\"8\"/><circle cx=\"64\" cy=\"44\" r=\"8\"/><circle cx=\"80\" cy=\"44\" r=\"8\"/><circle cx=\"56\" cy=\"58\" r=\"8\"/><circle cx=\"72\" cy=\"58\" r=\"8\"/><circle cx=\"48\" cy=\"72\" r=\"8\"/><circle cx=\"64\" cy=\"72\" r=\"8\"/><circle cx=\"56\" cy=\"86\" r=\"8\"/></g><g transform=\"translate(36 102)\"><rect x=\"0\" width=\"16\" height=\"8\" fill=\"#0046AE\" stroke=\"#E4E4E7\" stroke-width=\"0.5\"/><rect x=\"16\" width=\"16\" height=\"8\" fill=\"#FFD200\" stroke=\"#E4E4E7\" stroke-width=\"0.5\"/><rect x=\"32\" width=\"16\" height=\"8\" fill=\"#CC092F\" stroke=\"#E4E4E7\" stroke-width=\"0.5\"/></g>"
+}

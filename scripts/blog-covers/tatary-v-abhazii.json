@@ -1,0 +1,13 @@
+{
+  "scatter": [
+    "airplane",
+    "map-marker-outline",
+    "palm-tree",
+    "translate",
+    "account-group-outline",
+    "waves",
+    "image-filter-hdr",
+    "party-popper"
+  ],
+  "art": "<g fill=\"none\" stroke=\"#2E2E2F\" stroke-width=\"4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M8 74L32 40l12 16 10-12 20 30\"/><path d=\"M96 84V50\"/><path d=\"M96 50q-12-10-22-2M96 50q12-10 22-2M96 50q-8 4-10 14M96 50q8 4 10 14\"/><path d=\"M8 84q10-6 20 0t20 0t20 0t20 0t24 0\"/><path d=\"M20 94q10-6 20 0t20 0t20 0\"/></g><g transform=\"translate(36 102)\"><rect y=\"0.0\" width=\"48\" height=\"1.8\" fill=\"#2E8B57\"/><rect y=\"1.8\" width=\"48\" height=\"1.8\" fill=\"#FFFFFF\"/><rect y=\"3.6\" width=\"48\" height=\"1.8\" fill=\"#2E8B57\"/><rect y=\"5.4\" width=\"48\" height=\"1.8\" fill=\"#FFFFFF\"/><rect y=\"7.2\" width=\"48\" height=\"1.8\" fill=\"#2E8B57\"/></g>"
+}
