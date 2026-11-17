@@ -135,13 +135,35 @@ const column = "xl:grid xl:grid-cols-[1fr_minmax(0,720px)_1fr] xl:gap-8";
 		scroll-margin-top: 6rem;
 	}
 	.blog-body a {
+		color: var(--color-link);
+		font-weight: 500;
 		text-decoration: underline;
-		text-decoration-color: color-mix(in oklab, var(--color-foreground) 25%, transparent);
+		text-decoration-color: color-mix(in oklab, var(--color-link-decoration) 35%, transparent);
+		text-decoration-thickness: 1.5px;
 		text-underline-offset: 3px;
-		transition: text-decoration-color 150ms;
+		border-radius: 3px;
+		transition: text-decoration-color 150ms, background-color 150ms;
 	}
 	.blog-body a:hover {
-		text-decoration-color: var(--color-foreground);
+		text-decoration-color: var(--color-link-decoration);
+		background-color: color-mix(in oklab, var(--color-link-decoration) 8%, transparent);
+	}
+	.blog-body a:focus-visible {
+		outline: 2px solid var(--color-link-decoration);
+		outline-offset: 2px;
+	}
+	/* Внешние ссылки - со стрелкой, чтобы было видно, что уводят с сайта. */
+	.blog-body a[href^="http"]::after {
+		content: "↗";
+		display: inline-block;
+		margin-left: 0.125em;
+		font-size: 0.8em;
+		text-decoration: none;
+		opacity: 0.7;
+		transition: translate 150ms;
+	}
+	.blog-body a[href^="http"]:hover::after {
+		translate: 1px -1px;
 	}
 	.blog-body strong {
 		font-weight: 500;
