@@ -223,11 +223,11 @@ const column = "xl:grid xl:grid-cols-[1fr_minmax(0,720px)_1fr] xl:gap-8";
 			let current = sections[0];
 			for (const section of sections) if (section.getBoundingClientRect().top < 140) current = section;
 			for (const link of links) {
-				if (link.hash === `#${current.id}`) link.setAttribute("aria-current", "location");
+				if (decodeURIComponent(link.hash) === `#${current.id}`) link.setAttribute("aria-current", "location");
 				else link.removeAttribute("aria-current");
 			}
 			// Полоска плавно переезжает к текущему пункту.
-			const active = links.find((link) => link.hash === `#${current.id}`);
+			const active = links.find((link) => decodeURIComponent(link.hash) === `#${current.id}`);
 			if (indicator && active) {
 				indicator.style.translate = `0 ${active.offsetTop}px`;
 				indicator.style.height = `${active.offsetHeight}px`;
