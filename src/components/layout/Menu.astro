@@ -22,7 +22,7 @@ const languageItems = locales.map((locale) => ({
 	short: localeLabels[locale].short,
 	href: getSwitcherHref(locale, Astro.url),
 }));
-const materialHrefs = new Set(["/translations", "/sources"]);
+const materialHrefs = new Set(["/blog", "/translations", "/sources"]);
 const legalHrefs = new Set(["/policy"]);
 const mainLinks = [
 	{ href: "/", label: t("nav.home"), labelKey: "nav.home", target: undefined },

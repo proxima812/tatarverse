@@ -29,6 +29,15 @@ export const links: Link[] = [
 		variant: "outline",
 	},
 	{
+		label: "Блог",
+		labelKey: "nav.blog",
+		icon: "mdi:book-open-page-variant",
+		class: "sm:px-4 sm:py-2 py-1.5 px-3 text-sm",
+		href: "/blog",
+		size: "default",
+		variant: "outline",
+	},
+	{
 		label: "Переводы",
 		labelKey: "nav.translations",
 		icon: "mdi:translate",

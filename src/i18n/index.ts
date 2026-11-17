@@ -96,6 +96,8 @@ function nearestLocalizedHub(locale: AppLocale, relativePath: string): string {
 
 export function getSwitcherHref(locale: AppLocale, url: URL): string {
 	const currentPath = getLocalePathname(url.pathname);
+	// Publications have independent IDs in each language; switch to the blog hub.
+	if (currentPath.startsWith("blog/")) return getRelativeLocaleUrl(locale, "blog");
 	if (currentPath === "api") return "/api/";
 	if (currentPath === "404") {
 		return getRelativeLocaleUrl(locale, "");

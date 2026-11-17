@@ -1,0 +1,15 @@
+---
+import BlogEntry from "@/components/blog/BlogEntry.astro";
+import { getBlogEntries } from "@/lib/blog";
+import { secondaryLocales } from "@/i18n/routes";
+
+export async function getStaticPaths() {
+	const entries = await getBlogEntries();
+	return entries.filter((entry) => secondaryLocales().some((locale) => locale === entry.data.locale))
+		.map((entry) => ({ params: { locale: entry.data.locale, id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+---
+
+<BlogEntry entry={entry} />

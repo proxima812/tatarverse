@@ -1,6 +1,7 @@
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { defineCollection } from "astro:content";
+import { blogCategories, blogFormats } from "./data/blog";
 import { getMacroRegion } from "./data/geo/macroRegions";
 import { normalizeRuRegion, RUSSIA, suggestRuRegion } from "./data/geo/ruRegions";
 
@@ -114,6 +115,21 @@ const centersEn = defineCollection({
 export const collections = {
 	centers,
 	centersEn,
+	blog: defineCollection({
+		loader: glob({ pattern: ["**/*.{md,mdx}", "!**/README.md"], base: "./src/data/blog" }),
+		schema: z.object({
+			title: z.string().trim().min(1),
+			description: z.string().trim().min(1),
+			format: z.enum(blogFormats),
+			category: z.enum(blogCategories),
+			locale: z.enum(["ru", "en"]).default("ru"),
+			pubDate: z.coerce.date(),
+			updatedDate: z.coerce.date().optional(),
+			author: z.string().trim().min(1),
+			cover: z.string().optional(),
+			draft: z.boolean().default(false),
+		}),
+	}),
 };
 
 export type CenterCategory = z.infer<typeof CenterCategorySchema>;

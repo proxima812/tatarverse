@@ -1,0 +1,12 @@
+---
+import BlogEntry from "@/components/blog/BlogEntry.astro";
+import { getBlogEntries } from "@/lib/blog";
+
+export async function getStaticPaths() {
+	return (await getBlogEntries("ru")).map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+---
+
+<BlogEntry entry={entry} />
