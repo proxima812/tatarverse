@@ -2,7 +2,9 @@
 // в центре логотип и рисунок по теме материала.
 // Запуск: bun scripts/blog-cover.ts [id] - без id пересобирает все обложки из covers.
 // В frontmatter: cover: /images/blog/<id>.svg
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+// Свои обложки можно класть и отдельно: scripts/blog-covers/<id>.json с полями scatter и art
+// (в art цвет линий - #2E2E2F).
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 
 type Cover = {
@@ -42,6 +44,10 @@ const covers: Record<string, Cover> = {
 	},
 };
 
+for (const file of readdirSync("scripts/blog-covers").filter((name) => name.endsWith(".json"))) {
+	covers[file.replace(/\.json$/, "")] = JSON.parse(readFileSync(`scripts/blog-covers/${file}`, "utf8"));
+}
+
 const W = 1112;
 const H = 560;
 const mdi = JSON.parse(readFileSync("node_modules/@iconify-json/mdi/icons.json", "utf8")).icons as Record<string, { body: string }>;
@@ -53,7 +59,7 @@ const spots = [[96, 420], [210, 120], [880, 96], [990, 300], [860, 460], [130, 2
 function render({ scatter, art }: Cover) {
 	const icons = scatter.slice(0, spots.length).map((name, i) => {
 		const [x, y] = spots[i];
-		return `<g transform="translate(${x} ${y}) scale(1.5)" color="#C4C4C8" fill="#C4C4C8">${mdi[name].body}</g>`;
+		return `<g transform="translate(${x} ${y}) scale(1.5)" color="#C4C4C8" fill="#C4C4C8">${mdi[name]?.body ?? ""}</g>`;
 	}).join("");
 	const tile = (x: number, inner: string) => `<g transform="translate(${x} 200)">
 		<rect width="160" height="160" rx="44" fill="#FFFFFF" filter="url(#shadow)"/>
