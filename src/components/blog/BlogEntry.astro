@@ -14,7 +14,7 @@ const { Content } = await render(entry);
 const dateFormat = new Intl.DateTimeFormat(data.locale, { day: "numeric", month: "long", year: "numeric" });
 ---
 
-<Layout title={data.title} description={data.description} type="article" ogImage={data.cover} datePublished={data.pubDate} dateModified={data.updatedDate} alternates={[]}>
+<Layout title={data.title} description={data.description} type="article" ogImage={(data.cover ?? "/images/blog/default.svg").replace(/\.svg$/, ".png")} datePublished={data.pubDate} dateModified={data.updatedDate} alternates={[]}>
 	<main class="mx-auto max-w-3xl py-4 sm:py-8">
 		<a href={localizePath(data.locale, "/blog/")} class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"><Icon name="mdi:arrow-left" class="size-4" aria-hidden="true" />{t("blog.back")}</a>
 		<article class="mt-10">
@@ -27,7 +27,7 @@ const dateFormat = new Intl.DateTimeFormat(data.locale, { day: "numeric", month:
 				<p class="mt-5 text-lg leading-8 text-subtle-foreground">{data.description}</p>
 				<p class="mt-6 text-sm text-muted-foreground">{data.author} · <time datetime={data.pubDate.toISOString()}>{dateFormat.format(data.pubDate)}</time></p>
 				{data.updatedDate && <p class="mt-2 text-xs text-muted-foreground">{t("blog.updated")}: <time datetime={data.updatedDate.toISOString()}>{dateFormat.format(data.updatedDate)}</time></p>}
-				{data.cover && <img src={data.cover} alt="" width="1200" height="750" class="mt-8 aspect-8/5 w-full rounded-2xl object-cover" />}
+				<img src={data.cover ?? "/images/blog/default.svg"} alt="" width="1112" height="560" class="mt-8 aspect-[556/280] w-full rounded-3xl object-cover" />
 			</header>
 			<div class="prose mt-10 max-w-none wrap-anywhere border-t border-border-muted pt-8"><Content components={markdownComponents} /></div>
 		</article>

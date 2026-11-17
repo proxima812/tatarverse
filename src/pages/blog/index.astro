@@ -50,22 +50,26 @@ const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-f
 				<h2 id="blog-latest" class="text-xl font-semibold tracking-tight">{t("blog.latest")}</h2>
 				<p data-blog-count data-template={t("blog.count")} class="text-xs text-muted-foreground" role="status" aria-live="polite">{t("blog.count", { count: entries.length })}</p>
 			</div>
-			<div class="grid gap-x-8 gap-y-10 sm:grid-cols-2">
+			<ul class="grid gap-4 md:grid-cols-2 md:gap-6">
 				{entries.map((entry) => (
-					<article data-blog-entry data-category={entry.data.category} data-format={entry.data.format}>
-						<a href={localizePath(locale, `/blog/${entry.id}/`)} class="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
-							{entry.data.cover && <img src={entry.data.cover} alt="" width="800" height="500" loading="lazy" class="mb-5 aspect-8/5 w-full rounded-2xl object-cover" />}
-							<div class="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-								<span class="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 font-medium text-foreground"><Icon name={entry.data.format === "guide" ? "mdi:compass-outline" : entry.data.format === "article" ? "mdi:text-box-outline" : "mdi:note-text-outline"} class="size-3.5" aria-hidden="true" />{t(`blog.${entry.data.format}`)}</span>
-								<span>{t(`blog.${entry.data.category}`)}</span>
-							</div>
-							<h3 class="text-xl font-semibold tracking-tight text-foreground group-hover:underline decoration-accent underline-offset-4">{entry.data.title}</h3>
-							<p class="mt-3 text-sm leading-6 text-subtle-foreground">{entry.data.description}</p>
-							<p class="mt-4 text-xs text-muted-foreground">{entry.data.author} · <time datetime={entry.data.pubDate.toISOString()}>{dateFormat.format(entry.data.pubDate)}</time></p>
+					<li data-blog-entry data-category={entry.data.category} data-format={entry.data.format}>
+						<a href={localizePath(locale, `/blog/${entry.id}/`)} class="group relative flex h-full flex-col rounded-3xl bg-muted p-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+							<span class="relative block aspect-[556/280] shrink-0 overflow-hidden rounded-[20px] bg-background">
+								<img src={entry.data.cover ?? "/images/blog/default.svg"} alt="" width="1112" height="560" loading="lazy" decoding="async" class="absolute inset-0 size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02] motion-reduce:transition-none" />
+							</span>
+							<span class="flex flex-col gap-2 px-4 pt-[18px] pb-5 sm:px-5">
+								<span class="line-clamp-2 text-lg leading-[26px] font-medium text-pretty text-foreground sm:text-xl sm:leading-7">{entry.data.title}</span>
+								<span class="line-clamp-2 text-[15px] leading-[22px] text-pretty text-muted-foreground">{entry.data.description}</span>
+								<span class="flex min-w-0 items-center gap-2 pt-1.5 text-sm leading-5">
+									<img src="/favicon.svg" alt="" width="22" height="22" loading="lazy" class="size-[1.375em] shrink-0 rounded-full" />
+									<span class="truncate font-medium text-foreground">{entry.data.author}</span>
+									<time datetime={entry.data.pubDate.toISOString()} class="shrink-0 text-muted-foreground">{dateFormat.format(entry.data.pubDate)}</time>
+								</span>
+							</span>
 						</a>
-					</article>
+					</li>
 				))}
-			</div>
+			</ul>
 			<div data-blog-empty hidden={entries.length > 0} class="rounded-2xl border border-dashed border-border-muted px-6 py-16 text-center">
 				<Icon name="mdi:book-open-page-variant-outline" class="mx-auto mb-5 size-9 text-muted-foreground" aria-hidden="true" />
 				<h3 data-empty-title data-default={t("blog.empty")} data-filtered={t("blog.noResults")} class="text-lg font-medium">{t("blog.empty")}</h3>
