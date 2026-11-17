@@ -31,7 +31,7 @@ if (root) {
 	}
 
 	for (const button of categories) button.addEventListener("click", () => {
-		category = category === button.dataset.blogCategory ? "" : button.dataset.blogCategory!;
+		category = button.dataset.blogCategory ?? "";
 		update();
 	});
 	for (const button of formats) button.addEventListener("click", () => {

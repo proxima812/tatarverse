@@ -21,21 +21,20 @@ const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-f
 
 		<section class="mt-10" aria-labelledby="blog-categories">
 			<h2 id="blog-categories" class="sr-only">{t("blog.categories")}</h2>
-			<ul class="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible">
+			<div class="flex w-fit max-w-full gap-0.5 overflow-x-auto rounded-full bg-subtle p-[3px] [scrollbar-width:none]">
+				<button type="button" data-blog-category="" aria-pressed="true" class="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground transition-[color,background-color,box-shadow] hover:text-foreground aria-pressed:bg-surface aria-pressed:text-foreground aria-pressed:shadow-[0_1px_3px_#0000001f,0_1px_1px_#0000000a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none">{t("blog.allCategories")}</button>
 				{blogCategories.map((category) => {
 					const { icon, surface } = blogCategoryStyles[category];
 					return (
-						<li class="shrink-0">
-							<button type="button" data-blog-category={category} aria-pressed="false" class="flex w-full cursor-pointer items-center gap-3 rounded-xl py-2 pr-4 pl-2 text-left text-base font-medium text-foreground transition-colors hover:bg-muted aria-pressed:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none">
-								<span class={`relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-linear-to-b ${surface} text-white shadow-[inset_0_1px_0_#ffffff59,inset_0_-1px_2px_#00000026,0_1px_2px_#00000033]`}>
-									<Icon name={icon} class="size-[1.125rem] drop-shadow-sm" aria-hidden="true" />
-								</span>
-								{t(`blog.${category}`)}
-							</button>
-						</li>
+						<button type="button" data-blog-category={category} aria-pressed="false" class="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground transition-[color,background-color,box-shadow] hover:text-foreground aria-pressed:bg-surface aria-pressed:text-foreground aria-pressed:shadow-[0_1px_3px_#0000001f,0_1px_1px_#0000000a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none pl-2.5">
+							<span class={`flex size-5 shrink-0 items-center justify-center rounded-md bg-linear-to-b ${surface} text-white shadow-[inset_0_1px_0_#ffffff59,0_1px_1px_#00000026]`}>
+								<Icon name={icon} class="size-3" aria-hidden="true" />
+							</span>
+							{t(`blog.${category}`)}
+						</button>
 					);
 				})}
-			</ul>
+			</div>
 		</section>
 
 		<div class="mt-8 border-b border-border-muted pb-5">

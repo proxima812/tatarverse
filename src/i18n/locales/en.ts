@@ -4,6 +4,7 @@ const dict: Dictionary = {
 	"nav.blog": "Blog",
 	"blog.description": "Communities, language and culture: posts, articles and practical guides.",
 	"blog.heading": "Our communities. Our stories.",
+	"blog.allCategories": "All",
 	"blog.categories": "Categories",
 	"blog.all": "All publications",
 	"blog.formats": "Format",
