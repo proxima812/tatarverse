@@ -19,10 +19,9 @@ const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-f
 			<p class="mt-5 max-w-xl text-base leading-7 text-subtle-foreground sm:text-lg">{t("blog.description")}</p>
 		</header>
 
-		<div class="mt-10 grid gap-8 sm:mt-14 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12">
-		<aside aria-labelledby="blog-categories" class="lg:sticky lg:top-24 lg:self-start">
+		<section class="mt-10" aria-labelledby="blog-categories">
 			<h2 id="blog-categories" class="sr-only">{t("blog.categories")}</h2>
-			<ul class="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0">
+			<ul class="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible">
 				{blogCategories.map((category) => {
 					const { icon, surface } = blogCategoryStyles[category];
 					return (
@@ -37,10 +36,9 @@ const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-f
 					);
 				})}
 			</ul>
-		</aside>
+		</section>
 
-		<div class="min-w-0">
-		<div class="border-b border-border-muted pb-5">
+		<div class="mt-8 border-b border-border-muted pb-5">
 			<div class="flex flex-wrap gap-1" role="group" aria-label={t("blog.formats")}>
 				<button type="button" data-blog-format="all" aria-pressed="true" class={filterClass}>{t("blog.all")}</button>
 				{blogFormats.map((format) => <button type="button" data-blog-format={format} aria-pressed="false" class={filterClass}>{t(`blog.${format}`)}</button>)}
@@ -75,8 +73,6 @@ const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-f
 				<button data-blog-reset type="button" hidden class="mt-5 cursor-pointer text-sm font-medium text-accent underline underline-offset-4">{t("blog.reset")}</button>
 			</div>
 		</section>
-		</div>
-		</div>
 	</main>
 </Layout>
 
