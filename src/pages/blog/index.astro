@@ -44,11 +44,7 @@ const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-f
 			</div>
 		</div>
 
-		<section class="mt-8" aria-labelledby="blog-latest">
-			<div class="mb-6 flex items-center justify-between gap-4">
-				<h2 id="blog-latest" class="text-xl font-semibold tracking-tight">{t("blog.latest")}</h2>
-				<p data-blog-count data-template={t("blog.count")} class="text-xs text-muted-foreground" role="status" aria-live="polite">{t("blog.count", { count: entries.length })}</p>
-			</div>
+		<section class="mt-8" aria-label={t("blog.latest")}>
 			<ul class="grid gap-4 md:grid-cols-2 md:gap-6">
 				{entries.map((entry) => (
 					<li data-blog-entry data-category={entry.data.category} data-format={entry.data.format}>

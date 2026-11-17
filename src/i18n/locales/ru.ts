@@ -29,7 +29,6 @@ const dict: Dictionary = {
 	"blog.ctaCenters": "Каталог центров",
 	"blog.ctaNearby": "Кто рядом со мной",
 	"blog.back": "Все публикации",
-	"blog.count": "Найдено: {count}",
 	"blog.updated": "Обновлено",
 	"nav.centers": "Список центров",
 	"nav.toCenters": "Центры",
