@@ -1,0 +1,13 @@
+{
+ "scatter": [
+  "airplane",
+  "map-marker-outline",
+  "mosque-outline",
+  "translate",
+  "account-group-outline",
+  "train",
+  "book-open-page-variant-outline",
+  "music-note-outline"
+ ],
+ "art": "<g fill=\"none\" stroke=\"#2E2E2F\" stroke-width=\"4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M12 92h96\"/><path d=\"M14 44h92l-6-10H20z\"/><path d=\"M16 44v6h88v-6\"/><path d=\"M50 34v-6h20v6\"/><path d=\"M56 28l4-6 4 6\"/><path d=\"M20 50v42\"/><path d=\"M34 50v42\"/><path d=\"M48 50v42\"/><path d=\"M72 50v42\"/><path d=\"M86 50v42\"/><path d=\"M100 50v42\"/></g><g transform=\"translate(36 102)\"><rect width=\"48\" height=\"8\" rx=\"2\" fill=\"#2E2E2F\"/><rect y=\"2.67\" width=\"48\" height=\"2.67\" fill=\"#D93A3A\"/><rect y=\"5.33\" width=\"48\" height=\"2.67\" rx=\"1\" fill=\"#F4C430\"/></g>"
+}
