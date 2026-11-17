@@ -238,6 +238,7 @@ const dict: Dictionary = {
 	"footer.social.title": "Social media",
 	"footer.social.on": "We're on {network}",
 	"footer.social.vk": "VK",
+	"footer.social.bot": "Telegram app",
 	"footer.developers.title": "For developers",
 	"footer.developers.docs": "API documentation",
 	"footer.about.title": "About the project",
