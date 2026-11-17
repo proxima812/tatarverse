@@ -1,0 +1,3 @@
+{ "scatter": ["airplane", "map-marker-outline", "mosque-outline", "translate", "account-group-outline", "terrain", "passport", "coffee-outline"],
+  "art": "<g fill=\"none\" stroke=\"#2E2E2F\" stroke-width=\"4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M10 92L34 52l12 14 22-40 14 22 8-8 20 52z\"/><path d=\"M62 38l6-12 6 10\"/><path d=\"M26 92v-10h16v10M50 92v-14h18v14M74 92v-8h14v8\"/><path d=\"M22 82h70\" stroke-dasharray=\"4 8\"/></g><g transform=\"translate(36 102)\"><rect width=\"16\" height=\"10\" fill=\"#D91023\"/><rect x=\"16\" width=\"16\" height=\"10\" fill=\"#FFFFFF\" stroke=\"#2E2E2F\" stroke-width=\"1\"/><rect x=\"32\" width=\"16\" height=\"10\" fill=\"#D91023\"/></g>"
+}
