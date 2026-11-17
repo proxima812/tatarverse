@@ -47,6 +47,7 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 	title={detail.title}
 	description={detail.description}
 	type="article"
+	ogImage={`/og/centers/${Astro.params.id}.png`}
 	canonicalURL={detail.canonicalURL}
 	markdownURL={detail.markdownURL}
 	alternates={detail.alternates}

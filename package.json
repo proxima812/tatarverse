@@ -30,10 +30,13 @@
     "tw-glass": "^0.0.5"
   },
   "devDependencies": {
+    "@fontsource/onest": "^5.3.1",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/tabler": "^1.2.33",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/typography": "^0.5.16",
     "@vite-pwa/astro": "^1.2.0",
+    "satori": "^0.63.2",
     "typescript": "^6.0.2",
     "wrangler": "^4.92.0"
   },
