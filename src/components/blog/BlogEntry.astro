@@ -3,33 +3,207 @@ import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import { localizePath, useTranslations } from "@/i18n";
-import { markdownComponents } from "@/components/markdown/markdownComponents";
+import { getBlogEntries } from "@/lib/blog";
 import { Icon } from "astro-icon/components";
 
+// Разметка повторяет heroui.com/blog/<post>: колонка 720px, обложка 880px, оглавление справа.
 interface Props { entry: CollectionEntry<"blog"> }
 const { entry } = Astro.props;
 const { data } = entry;
 const t = useTranslations(data.locale);
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
+const toc = headings.filter((heading) => heading.depth === 2);
 const dateFormat = new Intl.DateTimeFormat(data.locale, { day: "numeric", month: "long", year: "numeric" });
+const cover = data.cover ?? "/images/blog/default.svg";
+const related = (await getBlogEntries(data.locale))
+	.filter((item) => item.id !== entry.id)
+	.sort((a, b) => Number(b.data.category === data.category) - Number(a.data.category === data.category))
+	.slice(0, 3);
+const column = "xl:grid xl:grid-cols-[1fr_minmax(0,720px)_1fr] xl:gap-8";
 ---
 
-<Layout title={data.title} description={data.description} type="article" ogImage={(data.cover ?? "/images/blog/default.svg").replace(/\.svg$/, ".png")} datePublished={data.pubDate} dateModified={data.updatedDate} alternates={[]}>
-	<main class="mx-auto max-w-3xl py-4 sm:py-8">
-		<a href={localizePath(data.locale, "/blog/")} class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"><Icon name="mdi:arrow-left" class="size-4" aria-hidden="true" />{t("blog.back")}</a>
-		<article class="mt-10">
-			<header>
-				<div class="mb-5 flex items-center gap-3 text-sm">
-					<span class="inline-flex items-center gap-1.5 rounded-md bg-muted px-2.5 py-1 font-medium"><Icon name={data.format === "guide" ? "mdi:compass-outline" : data.format === "article" ? "mdi:text-box-outline" : "mdi:note-text-outline"} class="size-4" aria-hidden="true" />{t(`blog.${data.format}`)}</span>
-					<span class="text-muted-foreground">{t(`blog.${data.category}`)}</span>
+<Layout title={data.title} description={data.description} type="article" ogImage={cover.replace(/\.svg$/, ".png")} datePublished={data.pubDate} dateModified={data.updatedDate} alternates={[]}>
+	<main class="pb-16">
+		<article>
+			<header class="pt-8 sm:pt-[72px]">
+				<div class={column}>
+					<div class="mx-auto flex max-w-[720px] flex-col gap-5 sm:gap-6 xl:col-start-2 xl:mx-0">
+						<nav aria-label={t("blog.breadcrumb")} class="flex items-center gap-2 text-sm leading-5">
+							<a href={localizePath(data.locale, "/blog/")} class="text-muted-foreground transition-colors hover:text-foreground">{t("nav.blog")}</a>
+							<Icon name="mdi:chevron-right" class="size-4 text-muted-foreground" aria-hidden="true" />
+							<span aria-current="page" class="font-medium">{t(`blog.${data.category}`)}</span>
+						</nav>
+						<h1 class="font-heading text-[34px] leading-[38px] font-medium tracking-[-0.02em] text-balance sm:text-5xl sm:leading-[54px]">{data.title}</h1>
+						<p class="text-base leading-[26px] text-pretty text-muted-foreground sm:text-lg sm:leading-[29px]">{data.description}</p>
+						<p class="flex flex-wrap items-center gap-2 text-sm leading-5">
+							<img src="/favicon.svg" alt="" width="22" height="22" class="size-[22px] shrink-0 rounded-full" />
+							<span class="font-medium">{data.author}</span>
+							<span aria-hidden="true" class="px-1 text-muted-foreground">·</span>
+							<time datetime={data.pubDate.toISOString()} class="text-muted-foreground">{dateFormat.format(data.pubDate)}</time>
+							{data.updatedDate && <span class="text-muted-foreground">({t("blog.updated").toLowerCase()} <time datetime={data.updatedDate.toISOString()}>{dateFormat.format(data.updatedDate)}</time>)</span>}
+						</p>
+					</div>
 				</div>
-				<h1 class="text-3xl font-semibold tracking-tight wrap-anywhere sm:text-5xl">{data.title}</h1>
-				<p class="mt-5 text-lg leading-8 text-subtle-foreground">{data.description}</p>
-				<p class="mt-6 text-sm text-muted-foreground">{data.author} · <time datetime={data.pubDate.toISOString()}>{dateFormat.format(data.pubDate)}</time></p>
-				{data.updatedDate && <p class="mt-2 text-xs text-muted-foreground">{t("blog.updated")}: <time datetime={data.updatedDate.toISOString()}>{dateFormat.format(data.updatedDate)}</time></p>}
-				<img src={data.cover ?? "/images/blog/default.svg"} alt="" width="1112" height="560" class="mt-8 aspect-[556/280] w-full rounded-3xl object-cover" />
+				<div class="mx-auto mt-8 max-w-[880px] rounded-[24px] bg-muted p-1 sm:mt-10 sm:rounded-[28px]">
+					<span class="relative block aspect-[872/458] overflow-hidden rounded-[20px] bg-background sm:rounded-[24px]">
+						<img src={cover} alt="" width="1112" height="560" class="absolute inset-0 size-full object-cover" />
+					</span>
+				</div>
 			</header>
-			<div class="prose mt-10 max-w-none wrap-anywhere border-t border-border-muted pt-8"><Content components={markdownComponents} /></div>
+
+			<div class={`mt-10 sm:mt-12 xl:items-start ${column}`}>
+				<div class="blog-body mx-auto flex max-w-[720px] min-w-0 flex-col gap-5 xl:col-start-2 xl:mx-0">
+					<Content />
+				</div>
+				{toc.length > 1 && (
+					<aside class="hidden xl:sticky xl:top-28 xl:col-start-3 xl:block xl:w-[184px]">
+						<nav aria-labelledby="toc-heading" class="pt-1">
+							<p id="toc-heading" class="text-[13px] leading-5 font-medium">{t("blog.toc")}</p>
+							<ul class="mt-3 max-h-[calc(100svh-18rem)] overflow-y-auto [scrollbar-width:none]">
+								{toc.map((heading) => (
+									<li><a href={`#${heading.slug}`} data-toc-link class="block border-l border-border-muted py-[5px] pl-3 text-[13px] leading-[18px] text-muted-foreground transition-colors hover:text-foreground aria-[current=location]:border-foreground aria-[current=location]:text-foreground">{heading.text}</a></li>
+								))}
+							</ul>
+						</nav>
+					</aside>
+				)}
+			</div>
 		</article>
+
+		{related.length > 0 && (
+			<section aria-labelledby="related-posts-heading" class="mt-20 sm:mt-24">
+				<div class="mx-auto max-w-[880px]">
+					<h2 id="related-posts-heading" class="font-heading text-xl leading-7 font-medium tracking-[-0.01em]">{t("blog.related")}</h2>
+					<ul class="mt-5 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+						{related.map((item) => (
+							<li>
+								<a href={localizePath(data.locale, `/blog/${item.id}/`)} class="group relative flex h-full flex-col rounded-3xl bg-muted p-1">
+									<span class="relative block aspect-[360/203] shrink-0 overflow-hidden rounded-[20px] bg-background">
+										<img src={item.data.cover ?? "/images/blog/default.svg"} alt="" width="1112" height="560" loading="lazy" decoding="async" class="absolute inset-0 size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02] motion-reduce:transition-none" />
+									</span>
+									<span class="flex flex-col gap-3 px-4 pt-4 pb-[18px]">
+										<span class="line-clamp-2 text-sm leading-5 font-medium text-pretty">{item.data.title}</span>
+										<span class="mt-auto flex min-w-0 items-center gap-2 text-[13px] leading-[18px]">
+											<img src="/favicon.svg" alt="" width="18" height="18" loading="lazy" class="size-[1.375em] shrink-0 rounded-full" />
+											<span class="truncate font-medium">{item.data.author}</span>
+											<time datetime={item.data.pubDate.toISOString()} class="shrink-0 text-muted-foreground">{dateFormat.format(item.data.pubDate)}</time>
+										</span>
+									</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			</section>
+		)}
+
+		<section aria-labelledby="cta-heading" class="flex flex-col items-center pt-24 text-center sm:pt-32">
+			<h2 id="cta-heading" class="font-heading text-4xl leading-[44px] font-medium tracking-[-0.02em] sm:text-5xl sm:leading-[54px]">
+				<span class="block">{t("blog.ctaTitle")}</span>
+				<span class="block text-muted-foreground/70">{t("blog.ctaSubtitle")}</span>
+			</h2>
+			<div class="mt-8 flex flex-wrap items-center justify-center gap-3 max-sm:w-full max-sm:flex-col max-sm:gap-2.5 sm:mt-10">
+				<a href={localizePath(data.locale, "/centers/")} class="inline-flex h-10 items-center justify-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 max-sm:w-full">{t("blog.ctaCenters")}</a>
+				<a href={localizePath(data.locale, "/nearby/")} class="inline-flex h-10 items-center justify-center rounded-full bg-muted px-5 text-sm font-medium transition-colors hover:bg-subtle max-sm:w-full">{t("blog.ctaNearby")}</a>
+			</div>
+		</section>
 	</main>
 </Layout>
+
+<style is:global>
+	.blog-body > p,
+	.blog-body li {
+		font-size: 1rem;
+		line-height: 1.75rem;
+	}
+	.blog-body > h2 {
+		margin-top: 1.75rem;
+		font-family: var(--font-heading);
+		font-size: 1.5rem;
+		line-height: 2rem;
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		scroll-margin-top: 6rem;
+	}
+	.blog-body > h3 {
+		margin-top: 0.75rem;
+		font-family: var(--font-heading);
+		font-size: 1.125rem;
+		line-height: 1.75rem;
+		font-weight: 500;
+		scroll-margin-top: 6rem;
+	}
+	.blog-body a {
+		text-decoration: underline;
+		text-decoration-color: color-mix(in oklab, var(--color-foreground) 25%, transparent);
+		text-underline-offset: 3px;
+		transition: text-decoration-color 150ms;
+	}
+	.blog-body a:hover {
+		text-decoration-color: var(--color-foreground);
+	}
+	.blog-body strong {
+		font-weight: 500;
+	}
+	.blog-body ul,
+	.blog-body ol {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	.blog-body ul > li {
+		position: relative;
+		padding-left: 1.25rem;
+	}
+	.blog-body ul > li::before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 11px;
+		width: 0.375rem;
+		height: 0.375rem;
+		border-radius: 9999px;
+		background: var(--color-subtle);
+	}
+	.blog-body ol {
+		list-style: decimal;
+		padding-left: 1.25rem;
+	}
+	.blog-body li > ul,
+	.blog-body li > ol {
+		margin-top: 0.5rem;
+	}
+	.blog-body code {
+		border: 1px solid var(--color-border-muted);
+		border-radius: 5px;
+		padding: 3px;
+		font-family: var(--font-mono, ui-monospace, monospace);
+		font-size: 0.8125em;
+	}
+	.blog-body blockquote {
+		border-left: 2px solid var(--color-border-muted);
+		padding-left: 1rem;
+		color: var(--color-muted-foreground);
+	}
+	.blog-body hr {
+		border-color: var(--color-border-muted);
+	}
+</style>
+
+<script>
+	// Подсветка текущего раздела в оглавлении, как на heroui.com.
+	const links = [...document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]")];
+	const sections = links.map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1)))).filter(Boolean) as HTMLElement[];
+	if (sections.length) {
+		const update = () => {
+			let current = sections[0];
+			for (const section of sections) if (section.getBoundingClientRect().top < 140) current = section;
+			for (const link of links) {
+				if (link.hash === `#${current.id}`) link.setAttribute("aria-current", "location");
+				else link.removeAttribute("aria-current");
+			}
+		};
+		document.addEventListener("scroll", update, { passive: true });
+		update();
+	}
+</script>
