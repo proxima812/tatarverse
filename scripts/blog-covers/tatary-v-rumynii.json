@@ -1,0 +1,13 @@
+{
+  "scatter": [
+    "airplane",
+    "map-marker-outline",
+    "mosque-outline",
+    "translate",
+    "account-group-outline",
+    "waves",
+    "ferry",
+    "music-note-outline"
+  ],
+  "art": "<g fill=\"none\" stroke=\"#2E2E2F\" stroke-width=\"4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M24 92V60h40v32\"/><path d=\"M28 60a16 16 0 0 1 32 0\"/><path d=\"M44 44v-6\"/><path d=\"M38 92V78a6 6 0 0 1 12 0v14\"/><path d=\"M76 92V30h10v62\"/><path d=\"M74 30h14M76 46h10\"/><path d=\"M81 30V18M81 18l-3 4h6z\"/><path d=\"M14 92h92\"/></g><g transform=\"translate(36 102)\"><rect width=\"16\" height=\"8\" rx=\"2\" fill=\"#002B7F\"/><rect x=\"16\" width=\"16\" height=\"8\" fill=\"#FCD116\"/><rect x=\"32\" width=\"16\" height=\"8\" rx=\"2\" fill=\"#CE1126\"/></g>"
+}

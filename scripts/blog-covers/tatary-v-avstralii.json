@@ -1,0 +1,13 @@
+{
+  "scatter": [
+    "airplane",
+    "map-marker-outline",
+    "mosque-outline",
+    "translate",
+    "account-group-outline",
+    "kangaroo",
+    "beach",
+    "weather-sunny"
+  ],
+  "art": "<g fill=\"none\" stroke=\"#2E2E2F\" stroke-width=\"4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M14 88h92\"/><path d=\"M22 88q4-34 26-44q-4 26 4 44\"/><path d=\"M46 88q6-40 32-50q-6 30 2 50\"/><path d=\"M74 88q6-30 26-36q-6 22-2 36\"/><path d=\"M10 96q10-4 20 0t20 0t20 0t20 0t20 0\"/></g><g transform=\"translate(44 102)\"><rect width=\"32\" height=\"10\" rx=\"2\" fill=\"#012169\"/><rect x=\"2\" y=\"1.5\" width=\"11\" height=\"3\" fill=\"#C8102E\"/><circle cx=\"7.5\" cy=\"8\" r=\"1.2\" fill=\"#FFFFFF\"/><circle cx=\"24\" cy=\"3\" r=\"1.2\" fill=\"#FFFFFF\"/><circle cx=\"20\" cy=\"6\" r=\"1\" fill=\"#FFFFFF\"/><circle cx=\"27\" cy=\"7\" r=\"1\" fill=\"#FFFFFF\"/></g>"
+}
