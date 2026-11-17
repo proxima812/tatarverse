@@ -53,7 +53,7 @@ const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-f
 				{entries.map((entry) => (
 					<li data-blog-entry data-category={entry.data.category} data-format={entry.data.format}>
 						<a href={localizePath(locale, `/blog/${entry.id}/`)} class="group relative flex h-full flex-col rounded-3xl bg-surface p-1 shadow-[0_0_0_1px_#0000000d,0_1px_2px_#0000000a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
-							<span class="relative block aspect-[556/280] shrink-0 overflow-hidden rounded-[20px] bg-background">
+							<span class="relative block aspect-[556/320] shrink-0 overflow-hidden rounded-[20px] bg-background">
 								<img src={entry.data.cover ?? "/images/blog/default.svg"} alt="" width="1112" height="560" loading="lazy" decoding="async" class="absolute inset-0 size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02] motion-reduce:transition-none" />
 							</span>
 							<span class="flex flex-col gap-2 px-4 pt-[18px] pb-5 sm:px-5">
