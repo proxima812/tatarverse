@@ -23,13 +23,71 @@ const localizedCenter = centerTranslations
 	: undefined;
 const newestCenterTitle = localizedCenter?.data.title ?? newestCenter?.data.title;
 
+const linkClass =
+	"hero-badge-slide flex w-fit max-w-full items-center gap-1.5 justify-self-center rounded-full bg-accent-soft px-2 py-1 text-xs text-accent-soft-foreground hover:bg-accent-soft-hover";
 ---
 
-{newestCenter && (
- <div class="hero-badge flex h-6 items-center justify-center">
-  <a class="flex w-fit max-w-full items-center gap-1.5 rounded-full bg-accent-soft px-2 py-1 text-xs text-accent-soft-foreground transition-colors hover:bg-accent-soft-hover" href={localizePath(locale, getCenterPath(centerRouteIds.get(newestCenter.id) ?? newestCenter.id))}>
-   <Icon name="mdi:layers-plus" class="size-3 shrink-0" aria-hidden="true" />
-   <span class="max-w-60 truncate sm:max-w-full">{t("home.badge.center")} - <span class="font-medium">{newestCenterTitle}</span></span>
-  </a>
- </div>
-)}
+<div class="hero-badge flex h-6 items-center justify-center">
+	<div class="grid max-w-full" data-hero-badge>
+		{
+			newestCenter && (
+				<a
+					class={linkClass}
+					href={localizePath(
+						locale,
+						getCenterPath(centerRouteIds.get(newestCenter.id) ?? newestCenter.id),
+					)}
+				>
+					<Icon name="mdi:layers-plus" class="size-3 shrink-0" aria-hidden="true" />
+					<span class="max-w-60 truncate sm:max-w-full">
+						{t("home.badge.center")} - <span class="font-medium">{newestCenterTitle}</span>
+					</span>
+				</a>
+			)
+		}
+		<a class={linkClass} href="https://t.me/tatarverse_bot?startapp" target="_blank" rel="noopener">
+			<Icon name="mdi:telegram" class="size-3 shrink-0" aria-hidden="true" />
+			<span class="max-w-60 truncate font-medium sm:max-w-full">{t("home.badge.app")}</span>
+		</a>
+		<a class={linkClass} href="#footer-social">
+			<Icon name="mdi:account-heart-outline" class="size-3 shrink-0" aria-hidden="true" />
+			<span class="max-w-60 truncate font-medium sm:max-w-full">{t("home.badge.social")}</span>
+		</a>
+	</div>
+</div>
+
+<script>
+	/*
+	 * Бейдж по очереди показывает новый центр, Mini App и соцсети. Все ссылки
+	 * лежат в одной ячейке грида, так что ширина не прыгает; на наведении и
+	 * фокусе ротация стоит, чтобы ссылка не уехала из-под курсора.
+	 */
+	const INTERVAL = 4000;
+	const badge = document.querySelector<HTMLElement>("[data-hero-badge]");
+	const slides = badge ? [...badge.querySelectorAll<HTMLAnchorElement>("a")] : [];
+
+	if (badge && slides.length > 1) {
+		let current = 0;
+		let paused = false;
+
+		const show = (index: number) => {
+			slides.forEach((slide, i) => {
+				const active = i === index;
+				slide.toggleAttribute("data-active", active);
+				slide.inert = !active;
+				slide.setAttribute("aria-hidden", String(!active));
+			});
+			current = index;
+		};
+
+		show(0);
+		setInterval(() => {
+			if (!paused && !document.hidden) show((current + 1) % slides.length);
+		}, INTERVAL);
+
+		badge.addEventListener("pointerenter", () => (paused = true));
+		badge.addEventListener("pointerleave", () => (paused = false));
+		badge.addEventListener("focusin", () => (paused = true));
+		badge.addEventListener("focusout", () => (paused = false));
+	}
+</script>

@@ -52,6 +52,8 @@ const dict: Dictionary = {
 	"home.cta.view": "Explore",
 	"home.cta.nearby": "Center nearby",
 	"home.badge.center": "New center",
+	"home.badge.app": "Open the Telegram app",
+	"home.badge.social": "Follow us on social media",
 	"home.meta.title": "Tatars, Bashkirs, and Crimean Tatars",
 	"home.meta.description":
 		"tatarverse helps people find Tatar, Bashkir, and Crimean Tatar centers around the world: for new connections, friends, relationships, language learning, cultural reconnection, and shared values.",
