@@ -31,16 +31,11 @@ const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-f
 			</div>
 		</section>
 
-		<div class="mt-10 flex flex-col gap-5 border-b border-border-muted pb-5 sm:mt-14 sm:flex-row sm:items-center sm:justify-between">
+		<div class="mt-10 border-b border-border-muted pb-5 sm:mt-14">
 			<div class="flex flex-wrap gap-1" role="group" aria-label={t("blog.formats")}>
 				<button type="button" data-blog-format="all" aria-pressed="true" class={filterClass}>{t("blog.all")}</button>
 				{blogFormats.map((format) => <button type="button" data-blog-format={format} aria-pressed="false" class={filterClass}>{t(`blog.${format}`)}</button>)}
 			</div>
-			<label class="flex items-center gap-2 rounded-full border border-border-muted px-4 py-2.5 focus-within:border-accent">
-				<Icon name="mdi:magnify" class="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-				<span class="sr-only">{t("blog.search")}</span>
-				<input data-blog-search type="search" placeholder={t("blog.searchPlaceholder")} class="w-full min-w-0 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground sm:w-40" />
-			</label>
 		</div>
 
 		<section class="mt-8" aria-labelledby="blog-latest">
@@ -50,7 +45,7 @@ const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-f
 			</div>
 			<div class="grid gap-x-8 gap-y-10 sm:grid-cols-2">
 				{entries.map((entry) => (
-					<article data-blog-entry data-category={entry.data.category} data-format={entry.data.format} data-search={`${entry.data.title} ${entry.data.description} ${entry.data.author}`}>
+					<article data-blog-entry data-category={entry.data.category} data-format={entry.data.format}>
 						<a href={localizePath(locale, `/blog/${entry.id}/`)} class="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
 							{entry.data.cover && <img src={entry.data.cover} alt="" width="800" height="500" loading="lazy" class="mb-5 aspect-8/5 w-full rounded-2xl object-cover" />}
 							<div class="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

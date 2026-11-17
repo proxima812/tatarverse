@@ -9,7 +9,7 @@ import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 const currentLocale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(currentLocale);
 
-const materialHrefs = new Set(["/blog", "/translations", "/sources", "/policy"]);
+const materialHrefs = new Set(["/translations", "/sources", "/policy"]);
 
 const topLevelLinks = links.filter(
 	(item) => !materialHrefs.has(item.href),
