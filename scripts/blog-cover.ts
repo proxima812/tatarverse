@@ -3,6 +3,7 @@
 // Запуск: bun scripts/blog-cover.ts [id] - без id пересобирает все обложки из covers.
 // В frontmatter: cover: /images/blog/<id>.svg
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 
 type Cover = {
 	// Иконки mdi для фона, по смыслу материала.
@@ -88,6 +89,6 @@ for (const id of ids) {
 	const svg = `public/images/blog/${id}.svg`;
 	writeFileSync(svg, render(covers[id]));
 	// PNG для og:image: соцсети не показывают SVG-превью. Нужен rsvg-convert (brew install librsvg).
-	Bun.spawnSync(["rsvg-convert", svg, "-o", svg.replace(/\.svg$/, ".png")]);
+	execFileSync("rsvg-convert", [svg, "-o", svg.replace(/\.svg$/, ".png")]);
 	console.log(svg);
 }
