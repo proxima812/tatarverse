@@ -1,0 +1,4 @@
+{
+  "scatter": ["airplane", "map-marker-outline", "mosque-outline", "translate", "account-group-outline", "fruit-grapes", "image-filter-hdr", "send-outline"],
+  "art": "<g fill=\"none\" stroke=\"#2E2E2F\" stroke-width=\"4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M8 92L48 30q4-5 8 0l14 20 10-12q3-3 6 0l26 54z\"/><path d=\"M40 43l6 6 6-7 6 7 5-4\"/><path d=\"M76 46l4 4 4-4\"/><path d=\"M6 92h108\"/></g><g transform=\"translate(36 102)\"><rect width=\"48\" height=\"3\" rx=\"1\" fill=\"#D90012\"/><rect y=\"3\" width=\"48\" height=\"3\" fill=\"#0033A0\"/><rect y=\"6\" width=\"48\" height=\"3\" rx=\"1\" fill=\"#F2A800\"/></g>"
+}

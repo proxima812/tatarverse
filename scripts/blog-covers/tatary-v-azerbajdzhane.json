@@ -1,0 +1,4 @@
+{
+  "scatter": ["airplane", "map-marker-outline", "fire", "translate", "account-group-outline", "tea-outline", "passport", "waves"],
+  "art": "<g fill=\"none\" stroke=\"#2E2E2F\" stroke-width=\"4\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><path d=\"M18 92q6-44 26-70q-2 30 10 70z\"/><path d=\"M48 92q6-50 24-78q0 34 6 78z\"/><path d=\"M78 92q4-40 24-62q-4 28 0 62z\"/><path d=\"M10 92h100\"/></g><g transform=\"translate(36 102)\"><rect width=\"48\" height=\"8\" rx=\"2\" fill=\"#00B5E2\"/><rect y=\"2.67\" width=\"48\" height=\"2.67\" fill=\"#EF3340\"/><rect y=\"5.33\" width=\"48\" height=\"2.67\" rx=\"1\" fill=\"#509E2F\"/></g>"
+}
