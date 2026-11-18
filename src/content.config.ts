@@ -128,11 +128,6 @@ export const collections = {
 			author: z.string().trim().min(1),
 			cover: z.string().optional(),
 			draft: z.boolean().default(false),
-			// Перепечатка: где материал вышел впервые. Выводится на карточке и в статье.
-			source: z.object({
-				name: z.string().trim().min(1),
-				url: z.url(),
-			}).optional(),
 		}),
 	}),
 };
