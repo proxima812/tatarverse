@@ -1,0 +1,99 @@
+---
+import LogoMark from "@/components/layout/LogoMark.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { blogCategoryStyles } from "@/data/blog";
+import { centerAvatarMarkup } from "@/lib/center/avatar";
+import { presentCards } from "@/lib/home/showcase";
+import { Icon } from "astro-icon/components";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Instagram»: профиль the_tatarverse на телефоне - аватар в фирменном
+ * кольце, кнопка «Подписаться» и сетка публикаций. Публикации - лица
+ * центров из каталога вперемешку с плашками категорий блога: настоящих
+ * постов на сборке нет, поэтому сетка ничего не цитирует.
+ *
+ * Раскладка - телефон, прижатый сверху, как в «Рядом». Играет один раз:
+ * плитки поднимаются по очереди, затем на первой вспыхивает сердце.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const cards = await presentCards(locale, 5);
+const surfaces = Object.values(blogCategoryStyles);
+
+const tiles = Array.from({ length: 9 }, (_, index) => {
+	const card = index % 2 === 0 ? cards[index / 2] : undefined;
+	return card
+		? { kind: "center" as const, id: card.id, flag: card.flag }
+		: { kind: "category" as const, ...surfaces[Math.floor(index / 2) % surfaces.length] };
+});
+---
+
+<ShowcaseStage scene="instagram" once label={t("home.instagram.imageAlt")}>
+	<div class="sc-phone sc-ig-phone">
+		<div class="sc-phone-screen sc-ig-screen">
+			<span class="sc-phone-island"></span>
+
+			<p class="sc-ig-handle">
+				the_tatarverse
+				<Icon name="mdi:chevron-down" class="sc-ig-handle-icon" />
+			</p>
+
+			<div class="sc-ig-profile">
+				<span class="sc-ig-ring">
+					<span class="sc-ig-avatar">
+						<LogoMark size={28} class="sc-ig-logo" />
+					</span>
+				</span>
+				<span class="sc-ig-stats">
+					{
+						[0, 1, 2].map(() => (
+							<span class="sc-ig-stat">
+								<span class="sc-bar sc-bar--strong" style="width: 1.8em" />
+								<span class="sc-bar" style="width: 3.2em" />
+							</span>
+						))
+					}
+				</span>
+			</div>
+
+			<div class="sc-ig-bio">
+				<p class="sc-ig-name">tatarverse</p>
+				<span class="sc-bar" style="width: 85%"></span>
+				<span class="sc-bar" style="width: 60%"></span>
+			</div>
+
+			<div class="sc-ig-actions">
+				<span class="sc-ig-follow">{t("home.instagram.follow")}</span>
+				<span class="sc-ig-message"><span class="sc-bar" style="width: 4em"></span></span>
+			</div>
+
+			<div class="sc-ig-grid">
+				{
+					tiles.map((tile, index) =>
+						tile.kind === "center" ? (
+							<span class="sc-ig-tile sc-ig-tile--center" style={`--i: ${index}`}>
+								<center-avatar class="center-avatar sc-ig-tile-avatar" set:html={centerAvatarMarkup(tile.id)} />
+								{tile.flag && <span class="sc-ig-tile-flag">{tile.flag}</span>}
+								{index === 0 && (
+									<span class="sc-ig-heart">
+										<Icon name="mdi:heart" />
+									</span>
+								)}
+							</span>
+						) : (
+							<span class={`sc-ig-tile bg-linear-to-b ${tile.surface}`} style={`--i: ${index}`}>
+								<Icon name={tile.icon} class="sc-ig-tile-icon" />
+							</span>
+						),
+					)
+				}
+			</div>
+		</div>
+	</div>
+</ShowcaseStage>
+
+<script>
+	import "@/lib/client/centerAvatars";
+</script>

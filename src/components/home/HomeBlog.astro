@@ -1,0 +1,42 @@
+---
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { blogShowcase } from "@/lib/home/showcase";
+import MockBlog from "./showcase/MockBlog.astro";
+
+/**
+ * Блог: сколько гидов уже написано и куда за ними идти. Блог пока только
+ * русский - на языках без публикаций секцию не показываем, чтобы не звать
+ * на пустую страницу.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const { total, entries } = await blogShowcase(locale);
+---
+
+{
+	total > 0 && (
+		<section
+			aria-labelledby="home-blog"
+			class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
+		>
+			<div class="space-y-6 md:order-2">
+				<h2 id="home-blog" class="text-4xl font-bold tracking-tight">
+					{t("home.blog.title")}
+				</h2>
+				<p class="leading-7 text-muted-foreground" set:html={t("home.blog.text1", { count: total })} />
+				<p class="leading-7 text-muted-foreground">{t("home.blog.text2")}</p>
+				<ButtonLink
+					href="/blog"
+					labelKey="home.blog.cta"
+					label="Читать блог"
+					icon="mdi:book-open-page-variant-outline"
+					variant="gradient"
+				/>
+			</div>
+
+			<MockBlog entries={entries} />
+		</section>
+	)
+}

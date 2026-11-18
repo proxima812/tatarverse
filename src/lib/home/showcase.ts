@@ -1,3 +1,4 @@
+import { getBlogEntries } from "@/lib/blog";
 import { buildPrintCatalog } from "@/lib/center/print";
 import { localizedCenters } from "@/lib/center/collection";
 import { getCenterLinks, type CenterLink } from "@/lib/center/links";
@@ -149,4 +150,17 @@ export async function searchSuggestions(
 	}
 
 	return [...values];
+}
+
+/** Свежие публикации блога для макета и общее число - для подписи в секции. */
+export async function blogShowcase(locale: AppLocale, count = 4) {
+	const entries = await getBlogEntries(locale);
+	return {
+		total: entries.length,
+		entries: entries.slice(0, count).map((entry) => ({
+			title: entry.data.title,
+			format: entry.data.format,
+			cover: entry.data.cover ?? "/images/blog/default.svg",
+		})),
+	};
 }

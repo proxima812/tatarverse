@@ -1,0 +1,35 @@
+---
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import MockInstagram from "./showcase/MockInstagram.astro";
+
+/** Instagram проекта: приглашение подписаться, тот же адрес, что в подвале. */
+
+const INSTAGRAM_URL = "https://www.instagram.com/the_tatarverse/";
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<section
+	aria-labelledby="home-instagram"
+	class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
+>
+	<div class="space-y-6">
+		<h2 id="home-instagram" class="text-4xl font-bold tracking-tight">
+			{t("home.instagram.title")}
+		</h2>
+		<p class="leading-7 text-muted-foreground">{t("home.instagram.text1")}</p>
+		<p class="leading-7 text-muted-foreground">{t("home.instagram.text2")}</p>
+		<ButtonLink
+			href={INSTAGRAM_URL}
+			labelKey="home.instagram.cta"
+			label="Открыть Instagram"
+			icon="mdi:instagram"
+			variant="gradient"
+			target="_blank"
+		/>
+	</div>
+
+	<MockInstagram />
+</section>

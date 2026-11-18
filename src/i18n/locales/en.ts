@@ -138,6 +138,23 @@ const dict: Dictionary = {
 		"The catalog helps you quickly understand where meetings, events, holidays, and educational programs take place.",
 	"home.search.imageAlt":
 		"The catalog search field with suggestions: countries, cities and regions",
+	"home.blog.title": "Blog: where to find your people",
+	"home.blog.text1":
+		"Guides in the blog: <strong>{count}</strong>. Each one covers a single country: centers by city, holidays, language, and links to catalog cards.",
+	"home.blog.text2":
+		"Planning a trip or a move? Open the guide for that country - it gathers what you would otherwise search for across a dozen sites.",
+	"home.blog.cta": "Read the blog",
+	"home.blog.imageAlt":
+		"The blog page: category switcher and guide cards with covers, the cursor hovering over the first one",
+	"home.instagram.title": "We are on Instagram",
+	"home.instagram.text1":
+		"At @the_tatarverse we share centers from the catalog and communities from different countries - in a feed you already scroll.",
+	"home.instagram.text2":
+		"Follow us and share posts with anyone looking for their people in another city or country.",
+	"home.instagram.follow": "Follow",
+	"home.instagram.cta": "Open Instagram",
+	"home.instagram.imageAlt":
+		"The tatarverse Instagram profile on a phone: avatar, the Follow button and a grid of posts",
 	"list.title": "Directory of Tatar, Bashkir, and Crimean Tatar centers",
 	"list.description":
 		"TBK directory: {count} cards about Tatars, Bashkirs, and Crimean Tatars across all countries, regions, cities, types, and categories. The database currently covers {countries} countries and {regions} regions; use search and filters to find centers and reference information.",
