@@ -42,6 +42,15 @@ const column = "xl:grid xl:grid-cols-[1fr_minmax(0,720px)_1fr] xl:gap-8";
 							<time datetime={data.pubDate.toISOString()} class="text-muted-foreground">{dateFormat.format(data.pubDate)}</time>
 							{data.updatedDate && <span class="text-muted-foreground">({t("blog.updated").toLowerCase()} <time datetime={data.updatedDate.toISOString()}>{dateFormat.format(data.updatedDate)}</time>)</span>}
 						</p>
+						{data.source && (
+							<p class="flex items-start gap-3 rounded-2xl bg-muted px-4 py-3 text-sm leading-5">
+								<Icon name="mdi:open-in-new" class="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+								<span>
+									{t("blog.sourceNote", { outlet: data.source.name })}{" "}
+									<a href={data.source.url} target="_blank" rel="noopener" class="font-medium underline underline-offset-4">{t("blog.sourceLink")} ↗</a>
+								</span>
+							</p>
+						)}
 					</div>
 				</div>
 				<div class="mx-auto mt-8 max-w-[880px] rounded-[24px] bg-muted p-1 sm:mt-10 sm:rounded-[28px]">
@@ -54,6 +63,11 @@ const column = "xl:grid xl:grid-cols-[1fr_minmax(0,720px)_1fr] xl:gap-8";
 			<div class={`mt-10 sm:mt-12 xl:items-start ${column}`}>
 				<div class="blog-body mx-auto flex max-w-[720px] min-w-0 flex-col gap-5 xl:col-start-2 xl:mx-0">
 					<Content />
+					{data.source && (
+						<p class="mt-6 border-t border-border-muted pt-5 text-sm leading-6 text-muted-foreground">
+							{t("blog.source")}: <a href={data.source.url} target="_blank" rel="noopener">{data.source.name}</a>
+						</p>
+					)}
 				</div>
 				{toc.length > 1 && (
 					<aside class="hidden xl:sticky xl:top-28 xl:col-start-3 xl:block xl:w-[184px]">
@@ -206,6 +220,21 @@ const column = "xl:grid xl:grid-cols-[1fr_minmax(0,720px)_1fr] xl:gap-8";
 	.blog-body blockquote {
 		border-left: 2px solid var(--color-border-muted);
 		padding-left: 1rem;
+		color: var(--color-muted-foreground);
+	}
+	.blog-body img {
+		width: 100%;
+		height: auto;
+		border-radius: 16px;
+	}
+	.blog-body figure {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	.blog-body figcaption {
+		font-size: 0.875rem;
+		line-height: 1.25rem;
 		color: var(--color-muted-foreground);
 	}
 	.blog-body hr {
