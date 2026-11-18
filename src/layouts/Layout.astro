@@ -105,6 +105,15 @@ const yandexMetrika = config.site.analytics.yandexMetrika;
 						return null;
 					}
 				};
+
+				// Mini App Telegram: initData приходит в hash первой страницы, дальше
+				// признак живёт в sessionStorage WebView. Подробности - lib/client/telegram.ts.
+				try {
+					if (location.hash.includes("tgWebAppData")) sessionStorage.setItem("tg-webapp", "1");
+					if (sessionStorage.getItem("tg-webapp") === "1") root.dataset.tg = "";
+				} catch {
+					if (location.hash.includes("tgWebAppData")) root.dataset.tg = "";
+				}
 				const theme = read("theme") ?? "dark";
 				const accent = read("accent") ?? "default";
 				const dark =

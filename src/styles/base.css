@@ -1,4 +1,14 @@
 @layer base {
+  /* Нижний отступ под полоску «домой». В Mini App Telegram отдаёт его своей
+     переменной: env() во встроенном WebView бывает нулевым. */
+  :root {
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  [data-tg] {
+    --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--tg-safe-area-inset-bottom, 0px));
+  }
+
   *,
   ::before,
   ::after,

@@ -17,6 +17,7 @@ type TelegramWebApp = {
 	platform: string;
 	ready(): void;
 	expand(): void;
+	disableVerticalSwipes?(): void;
 	setHeaderColor(color: string): void;
 	setBackgroundColor(color: string): void;
 	setBottomBarColor?(color: string): void;
@@ -38,29 +39,31 @@ declare global {
 }
 
 const root = document.documentElement;
+const INIT_HASH = "tgWebAppData";
 
-const readSession = () => {
-	try {
-		return sessionStorage.getItem(SESSION_KEY) === "1";
-	} catch {
-		return false;
-	}
-};
-
-const rememberSession = () => {
+/**
+ * Признак `data-tg` ставит ранний скрипт в <head> (Layout.astro), чтобы стили и
+ * скрипты страницы знали о Mini App до первой отрисовки. Здесь - запасной путь.
+ */
+const launchedFromTelegram = () => {
+	if ("tg" in root.dataset) return true;
+	if (!location.hash.includes(INIT_HASH)) return false;
 	try {
 		sessionStorage.setItem(SESSION_KEY, "1");
 	} catch {
 		// Без sessionStorage режим продержится только на первой странице.
 	}
+	return true;
 };
 
-const launchedFromTelegram = () => {
-	if (location.hash.includes("tgWebAppData")) {
-		rememberSession();
-		return true;
-	}
-	return readSession();
+/**
+ * SDK уже прочитал initData из hash и сохранил её в sessionStorage. Убираем её
+ * из адреса: иначе подпись пользователя уезжает в «Скопировать ссылку»,
+ * промпты для ИИ и аналитику, а якоря страницы не работают.
+ */
+const cleanLaunchHash = () => {
+	if (!location.hash.includes(INIT_HASH)) return;
+	history.replaceState(history.state, "", location.pathname + location.search);
 };
 
 const loadSdk = () =>
@@ -89,33 +92,78 @@ const syncColors = (tg: TelegramWebApp) => {
 		attributes: true,
 		attributeFilter: ["class", "data-accent", "data-theme"],
 	});
+	addEventListener("pageshow", (event) => {
+		if (event.persisted) apply();
+	});
 };
 
 const homePath = () => (root.dataset.language === "en" ? "/en/" : "/");
 
-/** Системная кнопка «Назад» Telegram вместо браузерной, которой в WebView нет. */
+const isHomePage = () => ["/", "/en", "/en/"].includes(location.pathname);
+
+/** Открытые меню и шторка фильтров: «Назад» сначала закрывает их. */
+const OVERLAY_CLOSE = [
+	'[data-menu-list][data-state="open"] [data-menu-close]',
+	"[data-filters-shell][data-sheet-open] [data-filters-close]",
+].join(", ");
+
+const openOverlayClose = () => document.querySelector<HTMLElement>(OVERLAY_CLOSE);
+
+/**
+ * Системная кнопка «Назад» Telegram вместо браузерной, которой в WebView нет.
+ * На Android она же - аппаратная «Назад», поэтому на главной с открытым меню
+ * кнопка тоже нужна, иначе жест закроет приложение целиком.
+ */
 const setupBackButton = (tg: TelegramWebApp) => {
 	if (!tg.isVersionAtLeast("6.1")) return;
-	const isHome = location.pathname === "/" || location.pathname === "/en/" || location.pathname === "/en";
-	if (isHome) return tg.BackButton.hide();
 
-	tg.BackButton.show();
+	const sync = () => {
+		if (isHomePage() && !openOverlayClose()) tg.BackButton.hide();
+		else tg.BackButton.show();
+	};
+
 	tg.BackButton.onClick(() => {
+		const close = openOverlayClose();
+		if (close) return close.click();
+		if (isHomePage()) return;
+
 		const cameFromSite = document.referrer.startsWith(location.origin);
 		if (cameFromSite && history.length > 1) history.back();
 		else location.href = homePath();
 	});
+
+	sync();
+	new MutationObserver(sync).observe(document.body, {
+		subtree: true,
+		attributes: true,
+		attributeFilter: ["data-state", "data-sheet-open"],
+	});
+	// Страница из bfcache: кнопку успела перенастроить другая страница.
+	addEventListener("pageshow", (event) => {
+		if (event.persisted) sync();
+	});
 };
 
-/** Внешние ссылки - в браузер, t.me - внутри Telegram, а не в этом WebView. */
+/**
+ * Внешние ссылки - в браузер, t.me - внутри Telegram, а не в этом WebView.
+ * Свои ссылки с target="_blank" WebView открыл бы во внешнем браузере или
+ * проигнорировал, поэтому они открываются здесь же.
+ */
 const setupLinks = (tg: TelegramWebApp) => {
 	document.addEventListener("click", (event) => {
 		if (event.defaultPrevented || event.button !== 0) return;
 		const link = (event.target as Element | null)?.closest?.("a[href]");
-		if (!(link instanceof HTMLAnchorElement)) return;
+		if (!(link instanceof HTMLAnchorElement) || link.hasAttribute("download")) return;
 
 		const url = new URL(link.href, location.href);
-		if (!/^https?:$/.test(url.protocol) || url.origin === location.origin) return;
+		if (!/^https?:$/.test(url.protocol)) return;
+
+		if (url.origin === location.origin) {
+			if (link.target !== "_blank") return;
+			event.preventDefault();
+			location.href = url.href;
+			return;
+		}
 
 		event.preventDefault();
 		if (url.hostname === "t.me" || url.hostname === "telegram.me") tg.openTelegramLink(url.href);
@@ -126,7 +174,7 @@ const setupLinks = (tg: TelegramWebApp) => {
 /** Ссылка вида ?startapp=tbk-1 сразу открывает карточку центра. */
 const openStartCenter = (tg: TelegramWebApp) => {
 	const param = tg.initDataUnsafe.start_param;
-	if (!param || !CENTER_PARAM.test(param) || !location.hash.includes("tgWebAppData")) return false;
+	if (!param || !CENTER_PARAM.test(param) || !location.hash.includes(INIT_HASH)) return false;
 	location.replace(`/centers/${param}`);
 	return true;
 };
@@ -139,8 +187,12 @@ export async function initTelegram() {
 	if (!tg?.initData) return;
 
 	if (openStartCenter(tg)) return;
+	cleanLaunchHash();
 	tg.ready();
 	tg.expand();
+	// Иначе на iOS и Android прокрутка вверх в шторке или меню сворачивает
+	// Mini App вместо того, чтобы листать содержимое.
+	if (tg.isVersionAtLeast("7.7")) tg.disableVerticalSwipes?.();
 	syncColors(tg);
 	setupBackButton(tg);
 	setupLinks(tg);

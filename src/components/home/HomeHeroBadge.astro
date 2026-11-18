@@ -45,7 +45,13 @@ const linkClass =
 				</a>
 			)
 		}
-		<a class={linkClass} href="https://t.me/tatarverse_bot?startapp" target="_blank" rel="noopener">
+		<a
+			class={linkClass}
+			href="https://t.me/tatarverse_bot?startapp"
+			target="_blank"
+			rel="noopener"
+			data-badge-app
+		>
 			<Icon name="mdi:telegram" class="size-3 shrink-0" aria-hidden="true" />
 			<span class="max-w-60 truncate font-medium sm:max-w-full">{t("home.badge.app")}</span>
 		</a>
@@ -64,6 +70,10 @@ const linkClass =
 	 */
 	const INTERVAL = 4000;
 	const badge = document.querySelector<HTMLElement>("[data-hero-badge]");
+	// Внутри самого Mini App звать в Mini App незачем.
+	if ("tg" in document.documentElement.dataset) {
+		badge?.querySelector("[data-badge-app]")?.remove();
+	}
 	const slides = badge ? [...badge.querySelectorAll<HTMLAnchorElement>("a")] : [];
 
 	if (badge && slides.length > 1) {
