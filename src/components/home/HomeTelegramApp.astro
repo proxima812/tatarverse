@@ -1,0 +1,40 @@
+---
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import MockTelegramApp from "./showcase/MockTelegramApp.astro";
+
+/**
+ * Mini App в Telegram (@tatarverse_bot): тот же сайт во встроенном окне.
+ * Внутри самого Mini App секция прячется (`[data-tg]` в `home.css`) -
+ * звать в приложение того, кто уже в нём, незачем.
+ */
+
+const APP_URL = "https://t.me/tatarverse_bot?startapp";
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<section
+	data-home-tg-app
+	aria-labelledby="home-tg-app"
+	class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
+>
+	<div class="space-y-6 md:order-2">
+		<h2 id="home-tg-app" class="text-4xl font-bold tracking-tight">
+			{t("home.tgApp.title")}
+		</h2>
+		<p class="leading-7 text-muted-foreground">{t("home.tgApp.text1")}</p>
+		<p class="leading-7 text-muted-foreground">{t("home.tgApp.text2")}</p>
+		<ButtonLink
+			href={APP_URL}
+			labelKey="home.tgApp.cta"
+			label="Открыть приложение"
+			icon="mdi:telegram"
+			variant="gradient"
+			target="_blank"
+		/>
+	</div>
+
+	<MockTelegramApp />
+</section>

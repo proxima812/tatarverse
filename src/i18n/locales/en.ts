@@ -155,6 +155,36 @@ const dict: Dictionary = {
 	"home.instagram.cta": "Open Instagram",
 	"home.instagram.imageAlt":
 		"The tatarverse Instagram profile on a phone: avatar, the Follow button and a grid of posts",
+	"home.tgApp.title": "The app in Telegram",
+	"home.tgApp.text1":
+		"The catalog opens right inside Telegram, with no browser and nothing to install: the same search, nearby centers, and cards with contacts.",
+	"home.tgApp.text2":
+		"Handy if you spend the day in the messenger anyway: you can find a center without leaving your chats.",
+	"home.tgApp.cta": "Open the app",
+	"home.tgApp.open": "Open",
+	"home.tgApp.close": "Close",
+	"home.tgApp.miniApp": "mini app",
+	"home.tgApp.imageAlt":
+		"A chat with the tatarverse bot on a phone, with the catalog opened on top: the search field and center cards",
+	"home.tgChannel.title": "We are on Telegram",
+	"home.tgChannel.text1":
+		"The @the_tatarverse channel carries news about the project and the catalog.",
+	"home.tgChannel.text2":
+		"Found a mistake in a card or want to improve a translation? Write there too: we collect catalog fixes in Telegram.",
+	"home.tgChannel.cta": "Open the channel",
+	"home.tgChannel.kind": "channel",
+	"home.tgChannel.join": "Join",
+	"home.tgChannel.imageAlt":
+		"The tatarverse Telegram channel window: posts with a link preview of a center card and the Join button",
+	"home.vk.title": "We are on VK",
+	"home.vk.text1":
+		"The tatarverse community on VK - for those who feel more at home there than anywhere else.",
+	"home.vk.text2":
+		"Follow it to keep up with the project, and share posts with friends and family.",
+	"home.vk.cta": "Open VK",
+	"home.vk.follow": "Follow",
+	"home.vk.imageAlt":
+		"The tatarverse community page on VK: cover, the Follow button and a post on the wall",
 	"list.title": "Directory of Tatar, Bashkir, and Crimean Tatar centers",
 	"list.description":
 		"TBK directory: {count} cards about Tatars, Bashkirs, and Crimean Tatars across all countries, regions, cities, types, and categories. The database currently covers {countries} countries and {regions} regions; use search and filters to find centers and reference information.",

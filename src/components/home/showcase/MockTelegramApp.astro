@@ -1,0 +1,66 @@
+---
+import LogoMark from "@/components/layout/LogoMark.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { presentCards } from "@/lib/home/showcase";
+import { Icon } from "astro-icon/components";
+import MiniCard from "./MiniCard.astro";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Приложение в Telegram»: чат с ботом на телефоне, поверх него выезжает
+ * шторка Mini App с каталогом - строка поиска и свежие карточки. Сверху
+ * из-под шторки виден чат: понятно, что это не браузер, а Telegram.
+ *
+ * Раскладка - телефон, прижатый сверху, как в «Рядом». Играет один раз.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const cards = await presentCards(locale, 3);
+---
+
+<ShowcaseStage scene="tg-app" once label={t("home.tgApp.imageAlt")}>
+	<div class="sc-phone">
+		<div class="sc-phone-screen sc-tga-screen">
+			<span class="sc-phone-island"></span>
+
+			<div class="sc-tga-chat">
+				<div class="sc-tga-chat-header">
+					<span class="sc-tg-avatar"><LogoMark size={14} class="sc-tg-avatar-mark" /></span>
+					<span class="sc-lines">
+						<span class="sc-tg-name">tatarverse</span>
+						<span class="sc-bar" style="width: 4em"></span>
+					</span>
+				</div>
+				<div class="sc-tga-bubble">
+					<span class="sc-bar" style="width: 90%"></span>
+					<span class="sc-bar" style="width: 65%"></span>
+					<span class="sc-tga-open">{t("home.tgApp.open")}</span>
+				</div>
+			</div>
+
+			<div class="sc-tga-sheet">
+				<div class="sc-tga-bar">
+					<span class="sc-tga-close">{t("home.tgApp.close")}</span>
+					<span class="sc-tga-title">
+						<span class="sc-tg-name">tatarverse</span>
+						<span class="sc-tga-subtitle">{t("home.tgApp.miniApp")}</span>
+					</span>
+					<Icon name="mdi:dots-horizontal" class="sc-tga-more" />
+				</div>
+
+				<div class="sc-tga-page">
+					<span class="sc-tga-search">
+						<Icon name="mdi:magnify" />
+						<span class="sc-tga-search-text">{t("list.search.placeholder")}</span>
+					</span>
+					{
+						cards.map((card, index) => (
+							<MiniCard {...card} words={index < 2} class="sc-tga-card" style={`--i: ${index}`} />
+						))
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</ShowcaseStage>

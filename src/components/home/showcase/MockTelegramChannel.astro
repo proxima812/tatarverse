@@ -1,0 +1,75 @@
+---
+import LogoMark from "@/components/layout/LogoMark.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { presentCards } from "@/lib/home/showcase";
+import { centerAvatarMarkup } from "@/lib/center/avatar";
+import { Icon } from "astro-icon/components";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Мы в Telegram»: окно канала - шапка с аватаром, лента постов на фоне
+ * чата и кнопка «Подписаться» внизу. В первом посте - превью ссылки на
+ * карточку каталога: так в канале выглядит любая ссылка на сайт. Остальные
+ * посты - плашки, слова только там, куда смотрит глаз.
+ *
+ * Раскладка - угловой вылет, как у «Сохранённых». Играет один раз: посты
+ * поднимаются по очереди.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const [card] = await presentCards(locale, 1);
+---
+
+<ShowcaseStage scene="tg-channel" once label={t("home.tgChannel.imageAlt")}>
+	<div class="sc-window sc-tgc-window">
+		<div class="sc-tgc-header">
+			<span class="sc-tg-avatar sc-tgc-avatar"><LogoMark size={18} class="sc-tg-avatar-mark" /></span>
+			<span class="sc-lines">
+				<span class="sc-tg-name">tatarverse</span>
+				<span class="sc-tgc-kind">{t("home.tgChannel.kind")}</span>
+			</span>
+			<Icon name="mdi:magnify" class="sc-tgc-icon" />
+			<Icon name="mdi:dots-vertical" class="sc-tgc-icon" />
+		</div>
+
+		<div class="sc-tgc-feed">
+			<div class="sc-tgc-post" style="--i: 0">
+				<span class="sc-bar" style="width: 95%"></span>
+				<span class="sc-bar" style="width: 70%"></span>
+				<span class="sc-bar" style="width: 82%"></span>
+				<span class="sc-tgc-meta">
+					<Icon name="mdi:eye-outline" />
+					<span class="sc-bar" style="width: 2em"></span>
+				</span>
+			</div>
+
+			<div class="sc-tgc-post" style="--i: 1">
+				<span class="sc-bar" style="width: 88%"></span>
+				<span class="sc-bar" style="width: 50%"></span>
+				{
+					card && (
+						<span class="sc-tgc-preview">
+							<span class="sc-tgc-preview-site">tatarverse.cc</span>
+							<span class="sc-tgc-preview-title">{card.title}</span>
+							<span class="sc-tgc-preview-place">
+								{card.flag} {card.city}, {card.country}
+							</span>
+							<center-avatar class="center-avatar sc-tgc-preview-avatar" set:html={centerAvatarMarkup(card.id)} />
+						</span>
+					)
+				}
+				<span class="sc-tgc-meta">
+					<Icon name="mdi:eye-outline" />
+					<span class="sc-bar" style="width: 2em"></span>
+				</span>
+			</div>
+		</div>
+
+		<div class="sc-tgc-join">{t("home.tgChannel.join")}</div>
+	</div>
+</ShowcaseStage>
+
+<script>
+	import "@/lib/client/centerAvatars";
+</script>

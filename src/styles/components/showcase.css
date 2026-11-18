@@ -1770,6 +1770,511 @@
 	}
 }
 
+/* --- Telegram: общие детали ---------------------------------------------- */
+
+.sc-tg-avatar {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+	width: 2.2em;
+	height: 2.2em;
+	border-radius: 999px;
+	background: var(--color-surface);
+	box-shadow: inset 0 0 0 1px var(--sc-line);
+}
+
+.sc-tg-avatar-mark {
+	--mark-size: 1.1em !important;
+}
+
+.sc-tg-name {
+	font-size: 0.8em;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+/* --- «Приложение в Telegram»: шторка Mini App поверх чата ----------------- */
+
+.sc-tga-screen {
+	gap: 0;
+	padding: 0;
+}
+
+.sc-tga-chat {
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	height: 100%;
+	padding: 3em 1.1em 0;
+	background: color-mix(in oklab, #3390ec 10%, var(--color-background));
+}
+
+.sc-tga-chat-header {
+	display: flex;
+	align-items: center;
+	gap: 0.6em;
+}
+
+.sc-tga-bubble {
+	display: flex;
+	flex-direction: column;
+	gap: 0.45em;
+	width: 75%;
+	padding: 0.8em;
+	border-radius: 1em 1em 1em 0.3em;
+	background: var(--color-surface);
+	box-shadow: 0 1px 1px var(--sc-line);
+}
+
+.sc-tga-open {
+	display: grid;
+	place-items: center;
+	margin-top: 0.3em;
+	height: 2.1em;
+	border-radius: 0.6em;
+	background: color-mix(in oklab, #3390ec 14%, var(--color-surface));
+	color: #3390ec;
+	font-size: 0.75em;
+	font-weight: 600;
+}
+
+.sc-tga-sheet {
+	position: absolute;
+	inset: 5.8em 0 0;
+	display: flex;
+	flex-direction: column;
+	border-radius: 1.4em 1.4em 0 0;
+	background: var(--color-background);
+	box-shadow: 0 -0.5em 2em -0.5em rgb(0 0 0 / 0.25);
+}
+
+.sc-tga-bar {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: center;
+	padding: 0.75em 1em;
+	border-radius: 1.4em 1.4em 0 0;
+	background: var(--color-surface);
+	box-shadow: 0 1px 0 var(--sc-line);
+}
+
+.sc-tga-close {
+	font-size: 0.75em;
+	color: #3390ec;
+}
+
+.sc-tga-title {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.sc-tga-subtitle {
+	font-size: 0.6em;
+	color: var(--color-muted-foreground);
+}
+
+.sc-tga-more {
+	justify-self: end;
+	width: 1.2em;
+	height: 1.2em;
+	color: #3390ec;
+}
+
+.sc-tga-page {
+	display: flex;
+	flex-direction: column;
+	gap: 0.6em;
+	padding: 0.9em 1.1em;
+
+	& .sc-card {
+		font-size: 0.92em;
+	}
+}
+
+.sc-tga-search {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	padding: 0.6em 0.9em;
+	border-radius: 999px;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--sc-line);
+	color: var(--color-muted-foreground);
+
+	& svg {
+		flex-shrink: 0;
+		width: 1.1em;
+		height: 1.1em;
+	}
+}
+
+.sc-tga-search-text {
+	overflow: hidden;
+	font-size: 0.72em;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-tga-open {
+			animation: sc-click 400ms ease-out 500ms both;
+		}
+
+		& .sc-tga-sheet {
+			animation: sc-tga-sheet 800ms var(--sc-ease) 900ms both;
+		}
+
+		& .sc-tga-card {
+			animation: sc-rise 600ms var(--sc-ease) calc(1500ms + var(--i) * 120ms) both;
+		}
+	}
+}
+
+@keyframes sc-tga-sheet {
+	from {
+		translate: 0 100%;
+	}
+}
+
+/* --- «Мы в Telegram»: окно канала ---------------------------------------- */
+
+.sc-tgc-window {
+	top: 2.5em;
+	left: 2.5em;
+	display: flex;
+	flex-direction: column;
+	width: 34em;
+	height: 22em;
+	background: color-mix(in oklab, #3390ec 10%, var(--color-background));
+}
+
+.sc-tgc-header {
+	display: flex;
+	align-items: center;
+	gap: 0.75em;
+	padding: 0.7em 1.25em;
+	background: var(--color-surface);
+	box-shadow: 0 1px 0 var(--sc-line);
+}
+
+.sc-tgc-avatar {
+	width: 2.5em;
+	height: 2.5em;
+}
+
+.sc-tgc-kind {
+	font-size: 0.65em;
+	color: var(--color-muted-foreground);
+}
+
+.sc-tgc-icon {
+	width: 1.25em;
+	height: 1.25em;
+	color: var(--color-muted-foreground);
+}
+
+.sc-tgc-feed {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: flex-end;
+	gap: 0.6em;
+	padding: 0.9em 1.25em;
+	overflow: hidden;
+}
+
+.sc-tgc-post {
+	display: flex;
+	flex-direction: column;
+	gap: 0.45em;
+	width: 21em;
+	padding: 0.75em 0.9em 0.5em;
+	border-radius: 1em 1em 1em 0.3em;
+	background: var(--color-surface);
+	box-shadow: 0 1px 1px var(--sc-line);
+}
+
+.sc-tgc-preview {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.2em;
+	margin-top: 0.25em;
+	padding: 0.5em 3.4em 0.55em 0.7em;
+	border-left: 0.2em solid #3390ec;
+	border-radius: 0.4em;
+	background: color-mix(in oklab, #3390ec 10%, var(--color-surface));
+}
+
+.sc-tgc-preview-site {
+	font-size: 0.68em;
+	font-weight: 600;
+	color: #3390ec;
+}
+
+.sc-tgc-preview-title {
+	display: -webkit-box;
+	overflow: hidden;
+	font-size: 0.72em;
+	font-weight: 600;
+	line-height: 1.3;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.sc-tgc-preview-place {
+	font-size: 0.65em;
+	color: var(--color-muted-foreground);
+}
+
+.sc-tgc-preview-avatar {
+	position: absolute;
+	top: 0.55em;
+	right: 0.6em;
+	display: block;
+	width: 2.3em;
+	height: 2.3em;
+
+	& svg {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.sc-tgc-meta {
+	display: flex;
+	align-items: center;
+	align-self: flex-end;
+	gap: 0.3em;
+	color: var(--color-muted-foreground);
+
+	& svg {
+		width: 0.9em;
+		height: 0.9em;
+	}
+
+	& .sc-bar {
+		height: 0.4em;
+	}
+}
+
+.sc-tgc-join {
+	display: grid;
+	place-items: center;
+	height: 3.2em;
+	background: var(--color-surface);
+	box-shadow: 0 -1px 0 var(--sc-line);
+	color: #3390ec;
+	font-size: 0.85em;
+	font-weight: 600;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-tgc-post {
+			animation: sc-rise 600ms var(--sc-ease) calc(300ms + var(--i) * 450ms) both;
+		}
+
+		& .sc-tgc-join {
+			animation: sc-click 400ms ease-out 1500ms both;
+		}
+	}
+}
+
+/* --- «ВКонтакте»: страница сообщества ------------------------------------ */
+
+.sc-vk-window {
+	top: 2.5em;
+	left: 2.5em;
+	width: 34em;
+	height: 27em;
+}
+
+/* Обложка и кнопка - синие, как во ВКонтакте: страницу узнают по цвету. */
+.sc-vk-cover {
+	height: 6em;
+	background:
+		radial-gradient(circle at 80% 20%, rgb(255 255 255 / 0.25), transparent 45%),
+		linear-gradient(120deg, #0077ff, #5b9bff 60%, #a6c8ff);
+}
+
+.sc-vk-profile {
+	display: flex;
+	align-items: flex-end;
+	gap: 0.9em;
+	margin-top: -2em;
+	padding: 0 1.25em 1em;
+	background: var(--color-surface);
+	box-shadow: 0 1px 0 var(--sc-line);
+}
+
+.sc-vk-avatar {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+	width: 4.4em;
+	height: 4.4em;
+	border-radius: 999px;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 0.25em var(--color-surface);
+}
+
+.sc-vk-avatar-mark {
+	--mark-size: 1.9em !important;
+}
+
+/* Окно уходит за правый край сцены, поэтому кнопка стоит сразу за названием, а не у края. */
+.sc-vk-info {
+	flex: 0 0 10em;
+	padding-bottom: 0.2em;
+}
+
+.sc-vk-name {
+	font-size: 1.05em;
+	font-weight: 700;
+}
+
+.sc-vk-follow {
+	flex-shrink: 0;
+	padding: 0.55em 1.1em;
+	border-radius: 0.6em;
+	background: #0077ff;
+	color: #fff;
+	font-size: 0.75em;
+	font-weight: 600;
+}
+
+.sc-vk-post {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	width: 24em;
+	margin: 1em 1.25em;
+	padding: 1em;
+	border-radius: 1em;
+	background: var(--color-surface);
+	box-shadow: var(--sc-shadow);
+}
+
+.sc-vk-post-head {
+	display: flex;
+	align-items: center;
+	gap: 0.6em;
+	margin-bottom: 0.2em;
+}
+
+.sc-vk-post-avatar {
+	display: grid;
+	place-items: center;
+	width: 2.2em;
+	height: 2.2em;
+	border-radius: 999px;
+	box-shadow: inset 0 0 0 1px var(--sc-line);
+
+	& .sc-vk-avatar-mark {
+		--mark-size: 1em !important;
+	}
+}
+
+.sc-vk-post-name {
+	font-size: 0.78em;
+	font-weight: 700;
+	color: #0077ff;
+}
+
+.sc-vk-media {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	grid-template-rows: 1fr 1fr;
+	gap: 0.2em;
+	height: 9em;
+	margin-top: 0.3em;
+	overflow: hidden;
+	border-radius: 0.6em;
+}
+
+.sc-vk-media-tile {
+	position: relative;
+	display: grid;
+	place-items: center;
+	background: color-mix(in oklab, var(--color-surface-foreground) 4%, var(--color-surface));
+
+	&:first-child {
+		grid-row: span 2;
+	}
+}
+
+.sc-vk-media-avatar {
+	display: block;
+	width: 2.6em;
+	height: 2.6em;
+
+	& svg {
+		width: 100%;
+		height: 100%;
+	}
+}
+
+.sc-vk-media-tile:first-child .sc-vk-media-avatar {
+	width: 4em;
+	height: 4em;
+}
+
+.sc-vk-media-flag {
+	position: absolute;
+	right: 0.45em;
+	bottom: 0.35em;
+	font-size: 0.85em;
+	line-height: 1;
+}
+
+.sc-vk-actions {
+	display: flex;
+	gap: 0.5em;
+	margin-top: 0.2em;
+}
+
+.sc-vk-action {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35em;
+	padding: 0.35em 0.7em;
+	border-radius: 999px;
+	background: var(--color-surface-muted);
+	color: var(--color-muted-foreground);
+
+	& svg {
+		width: 1em;
+		height: 1em;
+	}
+
+	& .sc-bar {
+		height: 0.4em;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-vk-cover {
+			animation: sc-fade-in 700ms ease-out 100ms both;
+		}
+
+		& .sc-vk-follow {
+			animation: sc-click 400ms ease-out 900ms both;
+		}
+
+		& .sc-vk-post {
+			animation: sc-rise 600ms var(--sc-ease) 500ms both;
+		}
+
+		& .sc-vk-media-tile {
+			animation: sc-pop 500ms var(--sc-ease) calc(900ms + var(--i, 0) * 100ms) both;
+		}
+	}
+}
+
 /* --- общие движения ------------------------------------------------------- */
 
 @keyframes sc-rise {

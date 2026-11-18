@@ -106,3 +106,8 @@
 	font-size: calc(var(--tile) * 0.7);
 	line-height: 1;
 }
+
+/* Внутри Mini App звать в Mini App незачем: секция о нём прячется. */
+[data-tg] [data-home-tg-app] {
+	display: none;
+}
