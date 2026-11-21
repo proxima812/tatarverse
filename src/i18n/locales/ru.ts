@@ -382,6 +382,17 @@ const dict: Dictionary = {
 	"copy.moreOptions": "Дополнительные действия",
 	"copy.openPageIn": "Открыть страницу в",
 	"copy.openInPlatform": "Открыть в {name}",
+	"nav.addCenter": "Добавить центр",
+	"nav.mySubmissions": "Мои заявки",
+	"tv.catalog.title": "Каталог центров (новый)",
+	"tv.catalog.intro": "Татарские, башкирские и крымскотатарские центры из нового каталога tatarverse - данные приходят прямо с сервера каталога.",
+	"tv.catalog.description": "Каталог татарских, башкирских и крымскотатарских центров: поиск по названию, городу и стране.",
+	"tv.center.title": "Центр",
+	"tv.submit.title": "Добавить центр",
+	"tv.submit.description": "Расскажите о татарском, башкирском или крымскотатарском центре, которого нет в каталоге tatarverse.",
+	"tv.edit.title": "Предложить правку",
+	"tv.my.title": "Мои заявки",
+	"tv.my.description": "Статус заявок на новые центры и правки, отправленных из этого браузера.",
 };
 
 export default dict;

@@ -10,9 +10,11 @@ const currentLocale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(currentLocale);
 
 const materialHrefs = new Set(["/translations", "/sources", "/policy"]);
+// Заявки - в выпадающее «Прочее»: в верхней строке им места нет.
+const submissionHrefs = new Set(["/submit", "/submissions"]);
 
 const topLevelLinks = links.filter(
-	(item) => !materialHrefs.has(item.href),
+	(item) => !materialHrefs.has(item.href) && !submissionHrefs.has(item.href),
 );
 const materialLinks = links.filter((item) => materialHrefs.has(item.href));
 
@@ -29,7 +31,7 @@ const printLink = {
 	labelKey: "nav.print",
 	target: undefined,
 };
-const otherDropdownItems = [printLink];
+const otherDropdownItems = [...links.filter((item) => submissionHrefs.has(item.href)), printLink];
 
 const isActivePath = (href: string) => isActiveRoute(Astro.url.pathname, href);
 

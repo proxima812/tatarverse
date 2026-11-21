@@ -9,13 +9,15 @@
     "cf:preview": "bun run build && wrangler pages dev ./dist",
     "cf:deploy": "bun run build && bun run cf:deploy:dist",
     "cf:deploy:dist": "CLOUDFLARE_ACCOUNT_ID=711d25ce64e87b4faeb50022b3e63631 wrangler pages deploy --branch main",
-    "check": "astro check"
+    "check": "astro check",
+    "api:types": "curl -sf https://api.tatarverse.cc/openapi.json -o src/lib/tvapi/openapi.json && openapi-typescript src/lib/tvapi/openapi.json -o src/lib/tvapi/schema.d.ts"
   },
   "dependencies": {
     "@astrojs/check": "0.9.12",
     "@astrojs/mdx": "8.1.4",
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "3.7.4",
+    "@astrojs/solid-js": "^7.1.6",
     "@dualmark/astro": "^0.9.0",
     "@dualmark/core": "^0.7.0",
     "@tailwindcss/vite": "^4.0.9",
@@ -26,6 +28,8 @@
     "blobatar": "2.7.0",
     "cn": "^0.2.5",
     "fuse.js": "^7.3.0",
+    "openapi-fetch": "^0.17.0",
+    "solid-js": "^1.9.13",
     "tailwindcss": "^4.0.9",
     "tw-glass": "^0.0.5"
   },
@@ -36,6 +40,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/typography": "^0.5.16",
     "@vite-pwa/astro": "^1.2.0",
+    "openapi-typescript": "^7.13.0",
     "satori": "^0.63.2",
     "typescript": "^6.0.2",
     "wrangler": "^4.92.0"

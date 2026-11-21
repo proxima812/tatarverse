@@ -1,5 +1,6 @@
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
+import solid from "@astrojs/solid-js";
 import dualmark from "@dualmark/astro";
 import tailwindcss from "@tailwindcss/vite";
 import AstroPWA from "@vite-pwa/astro";
@@ -80,11 +81,20 @@ export default defineConfig({
           "/en/nearby",
           "/centers/print",
           "/en/centers/print",
+          "/catalog",
+          "/en/catalog",
+          "/catalog/center",
+          "/en/catalog/center",
+          "/submit/edit",
+          "/en/submit/edit",
+          "/submissions",
+          "/en/submissions",
         ]);
         return !excluded.has(path);
       },
     }),
     mdx(),
+    solid(),
     icon({ uis: ["*"], iconDir: "src/assets/icons" }),
     metaTags(),
     robotsTxt(),

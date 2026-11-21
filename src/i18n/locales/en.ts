@@ -382,6 +382,17 @@ const dict: Dictionary = {
 	"copy.moreOptions": "More options",
 	"copy.openPageIn": "Open page in",
 	"copy.openInPlatform": "Open in {name}",
+	"nav.addCenter": "Add a center",
+	"nav.mySubmissions": "My submissions",
+	"tv.catalog.title": "Center catalog (new)",
+	"tv.catalog.intro": "Tatar, Bashkir and Crimean Tatar centers from the new tatarverse catalog - the data comes straight from the catalog server.",
+	"tv.catalog.description": "Catalog of Tatar, Bashkir and Crimean Tatar centers: search by name, city and country.",
+	"tv.center.title": "Center",
+	"tv.submit.title": "Add a center",
+	"tv.submit.description": "Tell us about a Tatar, Bashkir or Crimean Tatar center that is missing from the tatarverse catalog.",
+	"tv.edit.title": "Suggest an edit",
+	"tv.my.title": "My submissions",
+	"tv.my.description": "Status of center and edit submissions sent from this browser.",
 };
 
 export default dict;

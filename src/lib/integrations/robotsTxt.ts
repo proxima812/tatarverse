@@ -11,7 +11,7 @@ export interface RobotsTxtOptions {
 
 let _options: RobotsTxtOptions = {};
 
-const DEFAULT_RULES = ["User-agent: *", "Allow: /", "Disallow: /saved", "Disallow: /en/saved"].join(
+const DEFAULT_RULES = ["User-agent: *", "Allow: /", "Disallow: /saved", "Disallow: /en/saved", "Disallow: /submissions", "Disallow: /en/submissions"].join(
 	"\n",
 );
 

@@ -1,0 +1,12 @@
+---
+import SubmitForm from "@/components/tv/SubmitForm";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import Layout from "@/layouts/Layout.astro";
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<Layout title={t("tv.edit.title")} description={t("tv.submit.description")} indexRobots={false} classContainer="max-w-7xl">
+	<SubmitForm client:only="solid-js" lang={locale} />
+</Layout>

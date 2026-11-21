@@ -1,0 +1,17 @@
+---
+import CatalogApp from "@/components/tv/CatalogApp";
+import PageHero from "@/components/ui/PageHero.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import Layout from "@/layouts/Layout.astro";
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+{/* Пока каталог не перенесён в API, страница закрыта от поиска: основной каталог - /centers. */}
+<Layout title={t("tv.catalog.title")} description={t("tv.catalog.description")} indexRobots={false} classContainer="max-w-7xl">
+	<div class="flex min-w-0 flex-col gap-8">
+		<PageHero title={t("tv.catalog.title")} intro={t("tv.catalog.intro")} />
+		<CatalogApp client:only="solid-js" lang={locale} />
+	</div>
+</Layout>
