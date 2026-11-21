@@ -4,7 +4,7 @@ import { createMemo, For, Index, Show, type JSX } from "solid-js";
 import type { SetStoreFunction } from "solid-js/store";
 import { fieldError, listErrors, type CenterDraft, type TextField } from "./centerDraft";
 import type { Lang, T } from "./messages";
-import { Button, Field, Icon, inputClass, Select } from "./ui";
+import { Button, Field, FieldError, FieldHead, Icon, inputClass, Select } from "./ui";
 
 interface Props {
 	draft: CenterDraft;
@@ -20,8 +20,8 @@ interface Props {
 
 export function Section(props: { title: string; children: JSX.Element }) {
 	return (
-		<fieldset class="flex min-w-0 flex-col gap-5 rounded-card corner-squircle bg-surface card-outline p-5 text-surface-foreground sm:p-6">
-			<legend class="float-left mb-1 w-full text-lg font-semibold tracking-tight text-foreground">{props.title}</legend>
+		<fieldset class="flex min-w-0 flex-col gap-6 rounded-card corner-squircle bg-surface card-outline p-5 text-surface-foreground sm:p-7">
+			<legend class="float-left w-full text-lg font-semibold tracking-tight text-foreground">{props.title}</legend>
 			{props.children}
 		</fieldset>
 	);
@@ -106,7 +106,7 @@ export default function CenterEditor(props: Props) {
 					/>
 					{t("form.online")}
 				</label>
-				<div class="grid min-w-0 gap-5 sm:grid-cols-2">
+				<div class="grid min-w-0 gap-6 sm:grid-cols-2">
 					<Field
 						label={t("form.country")}
 						optional={props.draft.online ? t("common.optional") : undefined}
@@ -131,7 +131,7 @@ export default function CenterEditor(props: Props) {
 						</Field>
 					</Show>
 				</div>
-				<div class="grid min-w-0 gap-5 sm:grid-cols-2">
+				<div class="flex min-w-0 flex-col gap-6">
 					{LocalizedInput({ key: "region", label: t("form.region"), max: num(limits().placeMax), optional: true })}
 					{LocalizedInput({ key: "city", label: t("form.city"), max: num(limits().placeMax), optional: true })}
 					{LocalizedInput({ key: "district", label: t("form.district"), max: num(limits().placeMax), optional: true })}
@@ -144,26 +144,6 @@ export default function CenterEditor(props: Props) {
 						onInput={(event) => props.setDraft("address", event.currentTarget.value)}
 					/>
 				</Field>
-				<div class="grid min-w-0 grid-cols-2 gap-5">
-					<Field label={t("form.latitude")} optional={t("common.optional")} error={fieldError(props.errors, "latitude", "coordinates")}>
-						<input
-							class={inputClass}
-							inputMode="decimal"
-							value={props.draft.latitude}
-							placeholder="43.2389"
-							onInput={(event) => props.setDraft("latitude", event.currentTarget.value)}
-						/>
-					</Field>
-					<Field label={t("form.longitude")} optional={t("common.optional")} error={fieldError(props.errors, "longitude")}>
-						<input
-							class={inputClass}
-							inputMode="decimal"
-							value={props.draft.longitude}
-							placeholder="76.8897"
-							onInput={(event) => props.setDraft("longitude", event.currentTarget.value)}
-						/>
-					</Field>
-				</div>
 			</Section>
 
 			<Section title={t("form.section.contacts")}>
@@ -178,28 +158,26 @@ export default function CenterEditor(props: Props) {
 					onChange={(values) => props.setDraft("links", values)}
 					t={t}
 				/>
-				<div class="grid min-w-0 gap-5 sm:grid-cols-2">
-					<StringList
-						label={t("form.phones")}
-						type="tel"
-						placeholder={t("form.phonePlaceholder")}
-						values={props.draft.phones}
-						max={num(limits().phonesMax)}
-						error={listErrors(props.errors, "phones")}
-						onChange={(values) => props.setDraft("phones", values)}
-						t={t}
-					/>
-					<StringList
-						label={t("form.emails")}
-						type="email"
-						placeholder="info@example.org"
-						values={props.draft.emails}
-						max={num(limits().emailsMax)}
-						error={listErrors(props.errors, "emails")}
-						onChange={(values) => props.setDraft("emails", values)}
-						t={t}
-					/>
-				</div>
+				<StringList
+					label={t("form.phones")}
+					type="tel"
+					placeholder={t("form.phonePlaceholder")}
+					values={props.draft.phones}
+					max={num(limits().phonesMax)}
+					error={listErrors(props.errors, "phones")}
+					onChange={(values) => props.setDraft("phones", values)}
+					t={t}
+				/>
+				<StringList
+					label={t("form.emails")}
+					type="email"
+					placeholder="info@example.org"
+					values={props.draft.emails}
+					max={num(limits().emailsMax)}
+					error={listErrors(props.errors, "emails")}
+					onChange={(values) => props.setDraft("emails", values)}
+					t={t}
+				/>
 				<Field label={t("form.leader")} optional={t("common.optional")} error={fieldError(props.errors, "leader")}>
 					<input
 						class={inputClass}
@@ -260,21 +238,15 @@ function ListShell(props: {
 	children: JSX.Element;
 }) {
 	return (
-		<div class="flex min-w-0 flex-col gap-1.5" role="group" aria-label={props.label}>
-			<span class="text-sm font-medium text-foreground">{props.label}</span>
+		<div class="flex min-w-0 flex-col gap-2" role="group" aria-label={props.label}>
+			{/* Все списки карточки необязательные. */}
+			<FieldHead label={props.label} hint={props.hint} optional={props.t("common.optional")} />
 			<div class="flex min-w-0 flex-col gap-2">{props.children}</div>
+			<FieldError error={props.error} />
 			<Show when={props.canAdd}>
-				<Button variant="ghost" size="xs" icon="plus" class="hover:text-foreground" onClick={props.onAdd}>
+				<Button variant="ghost" size="xs" icon="plus" class="self-start hover:text-foreground" onClick={props.onAdd}>
 					{props.t("common.add")}
 				</Button>
-			</Show>
-			<Show when={props.error}>
-				<span class="text-xs text-destructive" role="alert">
-					{props.error}
-				</span>
-			</Show>
-			<Show when={props.hint && !props.error}>
-				<span class="text-xs text-subtle-foreground">{props.hint}</span>
 			</Show>
 		</div>
 	);
@@ -372,7 +344,7 @@ function PairList(props: {
 			<Index each={rows()}>
 				{(row, index) => (
 					<div class="flex min-w-0 items-center gap-1">
-						<div class="grid min-w-0 flex-1 gap-1 sm:grid-cols-2">
+						<div class="grid min-w-0 flex-1 gap-2 sm:grid-cols-2">
 							<input
 								class={inputClass}
 								value={row()[0]}

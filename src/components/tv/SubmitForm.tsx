@@ -5,7 +5,6 @@ import {
 	loadConfig,
 	num,
 	unwrap,
-	uploadFile,
 	type CenterFields,
 	type PublicCenterCard,
 	type PublicConfig,
@@ -29,7 +28,6 @@ interface Loaded {
 	source: DraftSource;
 	title: string;
 	baseVersion: number | null;
-	currentLogo: string | null;
 }
 
 const SUBMITTER_KEY = "tatarverse:submitter";
@@ -99,7 +97,6 @@ async function load(lang: Lang): Promise<Loaded> {
 			source: { ...base, fields: cardToFields(card, ruDistrict ?? null) },
 			title: pickText(card.name),
 			baseVersion: num(card.version),
-			currentLogo: card.logo?.thumb ?? null,
 		};
 	}
 
@@ -118,11 +115,10 @@ async function load(lang: Lang): Promise<Loaded> {
 			source: { ...base, fields: view.data ?? null },
 			title: pickText(view.name),
 			baseVersion: null,
-			currentLogo: view.logo,
 		};
 	}
 
-	return { config, mode, source: { ...base, fields: null }, title: "", baseVersion: null, currentLogo: null };
+	return { config, mode, source: { ...base, fields: null }, title: "", baseVersion: null };
 }
 
 /** «Добавить центр», «Предложить правку» и исправление своей заявки. */
@@ -131,7 +127,7 @@ export default function SubmitForm(props: { lang: Lang }) {
 	const [data, { refetch }] = createResource(() => load(props.lang));
 
 	return (
-		<div class="mx-auto flex w-full max-w-3xl min-w-0 flex-col gap-8">
+		<div class="mx-auto flex w-full max-w-2xl min-w-0 flex-col gap-8">
 			<Switch>
 				<Match when={data.error}>
 					<LoadError error={data.error} lang={props.lang} t={t} retry={refetch} />
@@ -183,9 +179,6 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 	const [submitter, setSubmitter] = createStore<Submitter>(readSubmitter());
 	const [comment, setComment] = createSignal("");
 	const [honeypot, setHoneypot] = createSignal("");
-	const [logo, setLogo] = createSignal<{ key: string; thumb: string } | null>(null);
-	const [removeLogo, setRemoveLogo] = createSignal(false);
-	const [uploading, setUploading] = createSignal(false);
 	const [errors, setErrors] = createSignal<Record<string, string>>({});
 	const [problem, setProblem] = createSignal("");
 	const [sending, setSending] = createSignal(false);
@@ -207,20 +200,6 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 				? t("form.titleFix", { id: mode.id })
 				: t("form.titleCreate");
 
-	const upload = async (file: File | undefined) => {
-		if (!file) return;
-		setUploading(true);
-		setErrors((current) => ({ ...current, logo: "" }));
-		try {
-			const uploaded = await uploadFile<Schemas["LogoUploaded"]>("/logos", file);
-			setLogo({ key: uploaded.key, thumb: uploaded.thumb });
-		} catch (error) {
-			setErrors((current) => ({ ...current, logo: errorText(error, props.lang) }));
-		} finally {
-			setUploading(false);
-		}
-	};
-
 	const submit = async (event: SubmitEvent) => {
 		event.preventDefault();
 		setErrors({});
@@ -236,8 +215,9 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 			const body: Schemas["SubmissionRequest"] = {
 				center: toFields(draft, source),
 				baseVersion: props.loaded.baseVersion,
-				logo: logo()?.key ?? null,
-				removeLogo: removeLogo(),
+				// Логотип в публичной форме не принимаем: его ставит модератор.
+				logo: null,
+				removeLogo: false,
 				submitter: { ...submitter },
 				comment: comment().trim() || null,
 				language: formLang,
@@ -307,89 +287,48 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 						errors={errors()}
 					/>
 
-					<Show when={config.logos.enabled}>
-						<Section title={t("form.logo")}>
-							<div class="flex flex-wrap items-center gap-4">
-								<Show when={props.loaded.currentLogo && !logo()}>
-									<figure class="flex flex-col items-center gap-1 text-xs text-subtle-foreground">
-										<img src={props.loaded.currentLogo!} alt="" class="size-16 rounded-full object-cover" classList={{ "opacity-40": removeLogo() }} />
-										<figcaption>{t("form.logoCurrent")}</figcaption>
-									</figure>
-								</Show>
-								<Show when={logo()}>
-									<figure class="flex flex-col items-center gap-1 text-xs text-subtle-foreground">
-										<img src={logo()!.thumb} alt="" class="size-16 rounded-full object-cover" />
-										<figcaption>{t("form.logoNew")}</figcaption>
-									</figure>
-								</Show>
-								<div class="flex flex-col gap-2">
-									<label class="inline-flex cursor-pointer">
-										<input
-											type="file"
-											accept="image/png,image/jpeg,image/webp"
-											class="sr-only"
-											onChange={(event) => upload(event.currentTarget.files?.[0])}
-										/>
-										<span class="inline-flex items-center gap-1.5 rounded-control corner-squircle bg-white px-4 py-2 text-sm font-medium text-primary/80 ring ring-primary/10 ring-inset transition hover:bg-primary/5 dark:bg-surface">
-											<Icon name={uploading() ? "loader-2" : "upload"} class={uploading() ? "animate-spin" : ""} />
-											{t("form.logoUpload")}
-										</span>
-									</label>
-									<Show when={logo()}>
-										<Button variant="ghost" size="xs" icon="trash" onClick={() => setLogo(null)}>
-											{t("form.logoRemove")}
-										</Button>
-									</Show>
-									<Show when={props.loaded.currentLogo && !logo()}>
-										<label class="inline-flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
-											<input type="checkbox" class="size-4 accent-(--color-accent)" checked={removeLogo()} onChange={(event) => setRemoveLogo(event.currentTarget.checked)} />
-											{t("form.logoRemoveCurrent")}
-										</label>
-									</Show>
-								</div>
-							</div>
-							<p class="text-xs" classList={{ "text-destructive": Boolean(errors().logo), "text-subtle-foreground": !errors().logo }}>
-								{errors().logo || t("form.logoHint", { size: Math.round(num(config.logos.maxBytes) / 1048576) })}
-							</p>
-						</Section>
-					</Show>
-
 					<Section title={t("form.section.submitter")}>
-						<div class="grid min-w-0 gap-5 sm:grid-cols-2">
-							<Field label={t("form.submitterName")} error={fieldError(errors(), "submitter.name")}>
-								<input
-									class={inputClass}
-									autocomplete="name"
-									value={submitter.name ?? ""}
-									maxLength={num(config.limits.submitterNameMax)}
-									aria-invalid={Boolean(fieldError(errors(), "submitter.name"))}
-									onInput={(event) => setSubmitter("name", event.currentTarget.value)}
-								/>
+						<Field label={t("form.submitterName")} error={fieldError(errors(), "submitter.name")}>
+							<input
+								class={inputClass}
+								autocomplete="name"
+								value={submitter.name ?? ""}
+								maxLength={num(config.limits.submitterNameMax)}
+								aria-invalid={Boolean(fieldError(errors(), "submitter.name"))}
+								onInput={(event) => setSubmitter("name", event.currentTarget.value)}
+							/>
+						</Field>
+						<Field label={t("form.role")} error={fieldError(errors(), "submitter.role")}>
+							<Select
+								value={submitter.role ?? ""}
+								placeholder={t("form.categoryPick")}
+								options={roles()}
+								aria-invalid={Boolean(fieldError(errors(), "submitter.role"))}
+								onChange={(event) => setSubmitter("role", event.currentTarget.value)}
+							/>
+						</Field>
+						{/* Любой из трёх контактов необязателен сам по себе, но хотя бы один нужен - об этом подсказка. */}
+						<div class="flex min-w-0 flex-col gap-6" role="group" aria-label={t("form.contactGroup")}>
+							<div class="flex flex-col gap-0.5">
+								<span class="text-sm font-medium text-foreground">{t("form.contactGroup")}</span>
+								<span
+									class="text-[0.8125rem] leading-5"
+									classList={{ "text-destructive": Boolean(contactError()), "text-subtle-foreground": !contactError() }}
+									role={contactError() ? "alert" : undefined}
+								>
+									{contactError() || t("form.contactHint")}
+								</span>
+							</div>
+							<Field label={t("form.phone")} optional={t("common.optional")} error={fieldError(errors(), "submitter.phone")}>
+								<input class={inputClass} type="tel" autocomplete="tel" placeholder={t("form.phonePlaceholder")} value={submitter.phone ?? ""} aria-invalid={Boolean(contactError() || fieldError(errors(), "submitter.phone"))} onInput={(event) => setSubmitter("phone", event.currentTarget.value)} />
 							</Field>
-							<Field label={t("form.role")} error={fieldError(errors(), "submitter.role")}>
-								<Select
-									value={submitter.role ?? ""}
-									placeholder={t("form.categoryPick")}
-									options={roles()}
-									aria-invalid={Boolean(fieldError(errors(), "submitter.role"))}
-									onChange={(event) => setSubmitter("role", event.currentTarget.value)}
-								/>
+							<Field label={t("form.telegram")} optional={t("common.optional")} error={fieldError(errors(), "submitter.telegram")}>
+								<input class={inputClass} placeholder="@username" value={submitter.telegram ?? ""} aria-invalid={Boolean(contactError() || fieldError(errors(), "submitter.telegram"))} onInput={(event) => setSubmitter("telegram", event.currentTarget.value)} />
+							</Field>
+							<Field label={t("form.email")} optional={t("common.optional")} error={fieldError(errors(), "submitter.email")}>
+								<input class={inputClass} type="email" autocomplete="email" placeholder="name@example.com" value={submitter.email ?? ""} aria-invalid={Boolean(contactError() || fieldError(errors(), "submitter.email"))} onInput={(event) => setSubmitter("email", event.currentTarget.value)} />
 							</Field>
 						</div>
-						<div class="grid min-w-0 gap-5 sm:grid-cols-3">
-							<Field label={t("form.phone")} error={fieldError(errors(), "submitter.phone")}>
-								<input class={inputClass} type="tel" autocomplete="tel" value={submitter.phone ?? ""} aria-invalid={Boolean(contactError())} onInput={(event) => setSubmitter("phone", event.currentTarget.value)} />
-							</Field>
-							<Field label={t("form.telegram")} error={fieldError(errors(), "submitter.telegram")}>
-								<input class={inputClass} placeholder="@username" value={submitter.telegram ?? ""} aria-invalid={Boolean(contactError())} onInput={(event) => setSubmitter("telegram", event.currentTarget.value)} />
-							</Field>
-							<Field label={t("form.email")} error={fieldError(errors(), "submitter.email")}>
-								<input class={inputClass} type="email" autocomplete="email" value={submitter.email ?? ""} aria-invalid={Boolean(contactError())} onInput={(event) => setSubmitter("email", event.currentTarget.value)} />
-							</Field>
-						</div>
-						<p class="text-xs" classList={{ "text-destructive": Boolean(contactError()), "text-subtle-foreground": !contactError() }}>
-							{contactError() || t("form.contactHint")}
-						</p>
 						<Field label={t("form.comment")} hint={t("form.commentHint")} optional={t("common.optional")} error={fieldError(errors(), "comment")}>
 							<textarea
 								class={`${inputClass} min-h-24 leading-6`}
@@ -417,7 +356,7 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 					</Show>
 
 					<div class="flex flex-col gap-3">
-						<Button type="submit" busy={sending() || uploading()} icon="check" class="self-start">
+						<Button type="submit" busy={sending()} icon="check" class="self-start">
 							{sending() ? t("form.sending") : mode.kind === "fix" ? t("form.submitFix") : t("form.submit")}
 						</Button>
 						<p class="text-xs text-subtle-foreground">

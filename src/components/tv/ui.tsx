@@ -69,28 +69,46 @@ export const inputClass =
 
 export const selectClass = cn(inputClass, "cursor-pointer appearance-none pr-9");
 
-/** Подпись, поле, подсказка и ошибка - одна разметка на все поля форм. */
+/**
+ * Подпись, подсказка, поле и ошибка - одна разметка на все поля форм.
+ * Подсказка стоит под подписью, до поля: читается сверху вниз, не нужно
+ * возвращаться взглядом под поле, чтобы понять, что в него писать.
+ */
 export function Field(
 	props: ParentProps<{ label: JSX.Element; hint?: JSX.Element; error?: string; class?: string; optional?: string }>,
 ) {
 	return (
-		<label class={cn("flex min-w-0 flex-col gap-1.5", props.class)}>
+		<label class={cn("flex min-w-0 flex-col gap-2", props.class)}>
+			<FieldHead label={props.label} hint={props.hint} optional={props.optional} />
+			{props.children}
+			<FieldError error={props.error} />
+		</label>
+	);
+}
+
+export function FieldHead(props: { label: JSX.Element; hint?: JSX.Element; optional?: string }) {
+	return (
+		<span class="flex flex-col gap-0.5">
 			<span class="text-sm font-medium text-foreground">
 				{props.label}
 				<Show when={props.optional}>
 					<span class="ml-1.5 font-normal text-subtle-foreground">· {props.optional}</span>
 				</Show>
 			</span>
-			{props.children}
-			<Show when={props.error}>
-				<span class="text-xs text-destructive" role="alert">
-					{props.error}
-				</span>
+			<Show when={props.hint}>
+				<span class="text-[0.8125rem] leading-5 text-subtle-foreground">{props.hint}</span>
 			</Show>
-			<Show when={props.hint && !props.error}>
-				<span class="text-xs text-subtle-foreground">{props.hint}</span>
-			</Show>
-		</label>
+		</span>
+	);
+}
+
+export function FieldError(props: { error?: string }) {
+	return (
+		<Show when={props.error}>
+			<span class="text-xs text-destructive" role="alert">
+				{props.error}
+			</span>
+		</Show>
 	);
 }
 
