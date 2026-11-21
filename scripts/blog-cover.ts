@@ -3,7 +3,8 @@
 // Запуск: bun scripts/blog-cover.ts [id] - без id пересобирает все обложки из covers.
 // В frontmatter: cover: /images/blog/<id>.svg
 // Свои обложки можно класть и отдельно: scripts/blog-covers/<id>.json с полями scatter и art
-// (в art цвет линий - #2E2E2F).
+// (в art цвет линий - #2E2E2F). Необязательное поле theme меняет фон под чужой бренд,
+// например в обзоре другого сайта.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 
@@ -12,6 +13,8 @@ type Cover = {
 	scatter: string[];
 	// Рисунок справа от логотипа: SVG-разметка в поле 120×120.
 	art: string;
+	// Своё оформление: цвет фона, иконок и пунктира, декор вместо пунктирных фигур.
+	theme?: { bg: string; icon: string; line: string; decor: string };
 };
 
 const ink = "#2E2E2F";
@@ -56,10 +59,11 @@ const logo = readFileSync("public/favicon.svg", "utf8").match(/<path[\s\S]*<\/pa
 // Места для фоновых иконок: по краям, чтобы не спорить с центром.
 const spots = [[96, 420], [210, 120], [880, 96], [990, 300], [860, 460], [130, 260], [700, 70], [380, 470]];
 
-function render({ scatter, art }: Cover) {
+function render({ scatter, art, theme }: Cover) {
+	const { bg, icon, line } = theme ?? { bg: "#F4F4F5", icon: "#C4C4C8", line: "#C4C4C8" };
 	const icons = scatter.slice(0, spots.length).map((name, i) => {
 		const [x, y] = spots[i];
-		return `<g transform="translate(${x} ${y}) scale(1.5)" color="#C4C4C8" fill="#C4C4C8">${mdi[name]?.body ?? ""}</g>`;
+		return `<g transform="translate(${x} ${y}) scale(1.5)" color="${icon}" fill="${icon}">${mdi[name]?.body ?? ""}</g>`;
 	}).join("");
 	const tile = (x: number, inner: string) => `<g transform="translate(${x} 200)">
 		<rect width="160" height="160" rx="44" fill="#FFFFFF" filter="url(#shadow)"/>
@@ -72,15 +76,15 @@ function render({ scatter, art }: Cover) {
 			<feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#18181B" flood-opacity="0.06"/>
 		</filter>
 	</defs>
-	<rect width="${W}" height="${H}" fill="#F4F4F5"/>
-	<g fill="none" stroke="#D4D4D8" stroke-width="2" stroke-dasharray="8 8">
+	<rect width="${W}" height="${H}" fill="${bg}"/>
+	${theme ? theme.decor : `<g fill="none" stroke="#D4D4D8" stroke-width="2" stroke-dasharray="8 8">
 		<path d="M-40 150 L120 -10 Q140 -30 160 -10 L190 20 Q210 40 190 60 L60 190 Q40 210 20 190 Z"/>
 		<path d="M150 -20 V260 Q150 290 130 310 L60 380"/>
 		<path d="M1150 330 L990 490 Q970 510 990 530 L1040 580"/>
 		<path d="M960 600 V420 Q960 390 990 370 L1150 260"/>
-	</g>
+	</g>`}
 	${icons}
-	<path d="M${W / 2 - 52} 280 H${W / 2 + 52}" stroke="#C4C4C8" stroke-width="2" stroke-dasharray="6 6"/>
+	<path d="M${W / 2 - 52} 280 H${W / 2 + 52}" stroke="${line}" stroke-width="2" stroke-dasharray="6 6"/>
 	<circle cx="${W / 2}" cy="280" r="14" fill="#FFFFFF" stroke="#D4D4D8" stroke-width="2"/>
 	<path d="M${W / 2 - 5} 280 H${W / 2 + 5} M${W / 2} 275 V285" stroke="#8E8E93" stroke-width="2" stroke-linecap="round"/>
 	${tile(W / 2 - 52 - 160, `<g transform="translate(24 24) scale(0.21875)">${logo}</g>`)}
