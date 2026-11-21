@@ -2375,6 +2375,496 @@
 	}
 }
 
+/* --- Формы: «Добавить центр», правка, «Мои заявки» ------------------------ */
+
+/* Общее у трёх сцен: страница с заголовком и полями, как в `components/tv`. */
+.sc-form-window,
+.sc-subs-window {
+	top: 2.5em;
+	left: 2.5em;
+	display: flex;
+	flex-direction: column;
+	gap: 0.7em;
+	width: 34em;
+	height: 26em;
+	padding: 1.2em 1.5em;
+}
+
+.sc-form-title {
+	margin: 0;
+	font-family: var(--font-heading);
+	font-size: 1.45em;
+	font-weight: 700;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+}
+
+.sc-form-card,
+.sc-edit-sheet {
+	display: flex;
+	flex-direction: column;
+	gap: 0.7em;
+	width: 24.5em;
+	padding: 1em 1.2em 1.1em;
+	border-radius: 1.1em;
+	corner-shape: squircle;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--sc-line);
+}
+
+.sc-form-card {
+	margin-top: 0.2em;
+}
+
+.sc-form-section {
+	margin: 0;
+	font-size: 0.85em;
+	font-weight: 700;
+}
+
+.sc-form-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35em;
+}
+
+.sc-form-label {
+	font-size: 0.68em;
+	font-weight: 600;
+}
+
+.sc-form-input {
+	display: flex;
+	align-items: center;
+	gap: 0.3em;
+	height: 1.9em;
+	padding: 0 0.75em;
+	border-radius: 0.6em;
+	background: var(--color-background);
+	box-shadow: inset 0 0 0 1px var(--sc-line);
+}
+
+.sc-form-prefix {
+	font-size: 0.68em;
+	color: var(--color-subtle-foreground);
+}
+
+.sc-form-submit {
+	display: inline-flex;
+	align-items: center;
+	align-self: flex-start;
+	gap: 0.4em;
+	margin-top: 0.15em;
+	padding: 0.6em 1em;
+	border-radius: 0.65em;
+	background: var(--color-primary);
+	color: var(--color-primary-foreground);
+	font-size: 0.72em;
+	font-weight: 600;
+
+	& svg {
+		width: 1.1em;
+		height: 1.1em;
+	}
+}
+
+.sc-form-toast {
+	position: absolute;
+	right: 1.5em;
+	bottom: 1.75em;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	gap: 0.7em;
+	width: 13.5em;
+	padding: 0.8em 0.9em;
+	border-radius: 1em;
+	corner-shape: squircle;
+	background: var(--color-surface);
+	box-shadow: var(--sc-shadow-hero);
+}
+
+.sc-form-toast-icon {
+	display: grid;
+	place-items: center;
+	flex-shrink: 0;
+	width: 2em;
+	height: 2em;
+	border-radius: 999px;
+	background: color-mix(in oklab, #17c964 16%, var(--color-surface));
+	color: #12a150;
+
+	& svg {
+		width: 1.1em;
+		height: 1.1em;
+	}
+}
+
+.sc-form-toast .sc-lines {
+	gap: 0.15em;
+}
+
+.sc-form-toast-title {
+	font-size: 0.78em;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.sc-form-toast-text {
+	font-size: 0.66em;
+	color: var(--color-muted-foreground);
+}
+
+/* Остриё - на кнопке «Отправить заявку». */
+.sc-submit-cursor {
+	top: 21.6em;
+	left: 11.6em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-form-value {
+			animation: sc-form-type 500ms steps(8, end) calc(400ms + var(--i) * 550ms) both;
+		}
+
+		& .sc-submit-cursor {
+			animation: sc-submit-cursor 700ms var(--sc-ease) 1800ms both;
+		}
+
+		& .sc-form-submit {
+			animation: sc-click 400ms ease-out 2550ms both;
+		}
+
+		& .sc-form-toast {
+			animation: sc-rise 600ms var(--sc-ease) 2850ms both;
+		}
+	}
+}
+
+/* Поле «печатается»: плашка открывается слева направо рывками. */
+@keyframes sc-form-type {
+	from {
+		clip-path: inset(0 100% 0 0);
+	}
+
+	to {
+		clip-path: inset(0);
+	}
+}
+
+@keyframes sc-submit-cursor {
+	from {
+		opacity: 0;
+		translate: 6em 3em;
+	}
+}
+
+/* --- Правка карточки ----------------------------------------------------- */
+
+.sc-edit-window {
+	top: 2.5em;
+	left: 2.5em;
+	width: 34em;
+	height: 26em;
+}
+
+.sc-edit-page {
+	display: flex;
+	flex-direction: column;
+	gap: 0.7em;
+	padding: 1.2em 1.5em;
+
+	& .sc-card-place {
+		padding-right: 0;
+	}
+}
+
+.sc-edit-avatar {
+	width: 2.8em;
+	height: 2.8em;
+}
+
+.sc-edit-title {
+	max-width: 17em;
+	font-size: 1.15em;
+}
+
+.sc-edit-open {
+	display: inline-flex;
+	align-items: center;
+	align-self: flex-start;
+	gap: 0.4em;
+	padding: 0.55em 0.95em;
+	border-radius: 0.65em;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--sc-line);
+	font-size: 0.72em;
+	font-weight: 600;
+
+	& svg {
+		width: 1.05em;
+		height: 1.05em;
+	}
+}
+
+.sc-edit-sheet {
+	position: absolute;
+	top: 10em;
+	left: 1.5em;
+	box-shadow: var(--sc-shadow-hero);
+}
+
+/* Старое значение - зачёркнутое, над новым. */
+.sc-edit-old {
+	display: flex;
+	align-items: center;
+	height: 1.1em;
+	padding: 0 0.75em;
+
+	& .sc-bar {
+		position: relative;
+		background: color-mix(in oklab, #f31260 22%, var(--color-surface));
+	}
+
+	& .sc-bar::after {
+		content: "";
+		position: absolute;
+		inset: 50% -0.25em auto;
+		height: 0.14em;
+		translate: 0 -50%;
+		border-radius: 999px;
+		background: #f31260;
+	}
+}
+
+.sc-edit-changed {
+	background: color-mix(in oklab, #17c964 8%, var(--color-surface));
+	box-shadow: inset 0 0 0 1px color-mix(in oklab, #17c964 55%, transparent);
+}
+
+.sc-edit-added::after {
+	content: "+";
+	margin-left: auto;
+	color: #12a150;
+	font-weight: 700;
+}
+
+/* Остриё - на кнопке «Предложить правку». */
+.sc-edit-cursor {
+	top: 9.95em;
+	left: 11.2em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-edit-cursor {
+			animation: sc-edit-cursor 1300ms var(--sc-ease) 200ms both;
+		}
+
+		& .sc-edit-open {
+			animation: sc-click 400ms ease-out 800ms both;
+		}
+
+		& .sc-edit-sheet {
+			animation: sc-edit-sheet 800ms var(--sc-ease) 1100ms both;
+		}
+
+		& .sc-edit-old {
+			animation: sc-fade-in 400ms ease-out 1900ms both;
+		}
+
+		& .sc-edit-changed {
+			animation: sc-edit-changed 500ms ease-out 2200ms both;
+		}
+
+		& .sc-edit-added {
+			animation-delay: 2600ms;
+		}
+	}
+}
+
+@keyframes sc-edit-cursor {
+	0% {
+		opacity: 0;
+		translate: 7em 4em;
+	}
+
+	45%,
+	70% {
+		opacity: 1;
+		translate: 0 0;
+	}
+
+	100% {
+		opacity: 0;
+		translate: 0 0;
+	}
+}
+
+@keyframes sc-edit-sheet {
+	from {
+		translate: 0 18em;
+	}
+}
+
+@keyframes sc-edit-changed {
+	from {
+		background: var(--color-background);
+		box-shadow: inset 0 0 0 1px var(--sc-line);
+	}
+}
+
+/* --- «Мои заявки» -------------------------------------------------------- */
+
+.sc-subs-window {
+	gap: 0.6em;
+}
+
+.sc-subs-window .sc-form-title {
+	margin-bottom: 0.3em;
+}
+
+.sc-subs-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.55em;
+	width: 24.5em;
+	padding: 0.9em 1em;
+	border-radius: 1em;
+	corner-shape: squircle;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--sc-line);
+}
+
+.sc-subs-meta {
+	display: flex;
+	align-items: center;
+	gap: 0.6em;
+}
+
+.sc-subs-status {
+	display: inline-grid;
+	padding: 0.3em 0.7em;
+	border-radius: 999px;
+	background: var(--color-muted);
+	color: var(--color-muted-foreground);
+	font-size: 0.62em;
+	font-weight: 600;
+	white-space: nowrap;
+
+	& > span {
+		grid-area: 1 / 1;
+	}
+}
+
+.sc-subs-status--approved,
+.sc-subs-status--roll {
+	background: color-mix(in oklab, #17c964 14%, var(--color-surface));
+	color: #12a150;
+}
+
+.sc-subs-status-pending {
+	opacity: 0;
+}
+
+.sc-subs-kind {
+	font-size: 0.62em;
+	color: var(--color-subtle-foreground);
+}
+
+.sc-subs-title {
+	overflow: hidden;
+	margin: 0;
+	font-size: 0.85em;
+	font-weight: 600;
+	line-height: 1.3;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.sc-subs-actions {
+	display: flex;
+	gap: 0.4em;
+}
+
+.sc-subs-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35em;
+	padding: 0.4em 0.75em;
+	border-radius: 0.55em;
+	box-shadow: inset 0 0 0 1px var(--sc-line);
+	font-size: 0.62em;
+	font-weight: 600;
+
+	& svg {
+		width: 1.1em;
+		height: 1.1em;
+	}
+}
+
+.sc-subs-button--ghost {
+	box-shadow: none;
+	color: var(--color-muted-foreground);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.showcase[data-armed] {
+		& .sc-subs-item {
+			animation: sc-rise 600ms var(--sc-ease) calc(200ms + var(--i, 0) * 150ms) both;
+		}
+
+		& .sc-subs-item:nth-of-type(2) {
+			--i: 1;
+		}
+
+		& .sc-subs-item:nth-of-type(3) {
+			--i: 2;
+		}
+
+		& .sc-subs-status--roll {
+			animation: sc-subs-approve 500ms ease-out 1600ms both;
+		}
+
+		& .sc-subs-status-pending {
+			animation: sc-subs-out 300ms ease-out 1600ms both;
+		}
+
+		& .sc-subs-status-approved {
+			animation: sc-subs-in 400ms var(--sc-ease) 1750ms both;
+		}
+	}
+}
+
+@keyframes sc-subs-approve {
+	from {
+		background: var(--color-muted);
+		color: var(--color-muted-foreground);
+	}
+
+	60% {
+		scale: 1.08;
+	}
+}
+
+@keyframes sc-subs-out {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+		translate: 0 -0.6em;
+	}
+}
+
+@keyframes sc-subs-in {
+	from {
+		opacity: 0;
+		translate: 0 0.6em;
+	}
+}
+
 /* --- общие движения ------------------------------------------------------- */
 
 @keyframes sc-rise {

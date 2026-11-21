@@ -170,7 +170,7 @@ const dict: Dictionary = {
 	"home.tgChannel.text1":
 		"The @the_tatarverse channel carries news about the project and the catalog.",
 	"home.tgChannel.text2":
-		"Found a mistake in a card or want to improve a translation? Write there too: we collect catalog fixes in Telegram.",
+		"Subscribe so you don't miss updates. Mistakes in cards are now fixed right on the site: every center page has a Suggest an edit button.",
 	"home.tgChannel.cta": "Open the channel",
 	"home.tgChannel.kind": "channel",
 	"home.tgChannel.join": "Join",
@@ -184,6 +184,29 @@ const dict: Dictionary = {
 	"home.vk.cta": "Open VK",
 	"home.vk.follow": "Follow",
 	"home.vk.kind": "community",
+	"home.submit.title": "Add a center to the catalog",
+	"home.submit.text1":
+		"Know a center, club or community that isn't in the catalog? Fill in the form: its name, where it is, links or contacts, and a few words about what it does.",
+	"home.submit.text2":
+		"No sign-up needed. A moderator reviews the submission, and the center appears in the catalog.",
+	"home.submit.sent": "Submission sent",
+	"home.submit.imageAlt":
+		"The Add a center form: name, city and a link get filled in, the cursor clicks Submit, and a Submission sent notice appears in the corner",
+	"home.edit.title": "Spotted a mistake? Fix it",
+	"home.edit.text1":
+		"A center moved, launched a website or changed its phone number - open its page and click Suggest an edit. The form opens with the current details: change only what's out of date.",
+	"home.edit.text2":
+		"Incomplete cards get filled in the same way: links, contacts, a description. Your edit goes straight to a moderator, no direct messages needed.",
+	"home.edit.cta": "Find a center",
+	"home.edit.imageAlt":
+		"A center page: the cursor clicks Suggest an edit, and a form slides up with the old address struck through, the new one below it, and a link added",
+	"home.submissions.title": "See where your submission stands",
+	"home.submissions.text1":
+		"New centers and edits sent from your browser are listed under My submissions. You can see which are under review, which were approved, and why one was rejected.",
+	"home.submissions.text2":
+		"While a submission is under review, you can fix or withdraw it. To open it on another device, keep its submission key.",
+	"home.submissions.imageAlt":
+		"The My submissions list: a new center's status changes from Under review to Approved, and an edit under review shows Fix and Withdraw buttons",
 	"home.vk.imageAlt":
 		"The tatarverse community page on VK: cover, the Follow button and a post on the wall",
 	"list.title": "Directory of Tatar, Bashkir, and Crimean Tatar centers",

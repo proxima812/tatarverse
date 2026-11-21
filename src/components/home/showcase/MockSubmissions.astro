@@ -1,0 +1,61 @@
+---
+import { messages } from "@/components/tv/messages";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { presentCards } from "@/lib/home/showcase";
+import { Icon } from "astro-icon/components";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Мои заявки»: список заявок, как на `/submissions`. У верхней заявки
+ * статус сменяется с «На проверке» на «Одобрена», у второй - она ещё на
+ * проверке - видны «Исправить» и «Отозвать». Название нового центра -
+ * плашка, у правок - настоящие центры из каталога.
+ *
+ * Раскладка - угловой вылет. Играет один раз.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const m = messages(locale === "en" ? "en" : "ru");
+const [first, second] = await presentCards(locale, 2);
+---
+
+<ShowcaseStage scene="submissions" once label={t("home.submissions.imageAlt")}>
+	<div class="sc-window sc-subs-window">
+		<p class="sc-form-title">{m("my.title")}</p>
+
+		<div class="sc-subs-item">
+			<div class="sc-subs-meta">
+				<span class="sc-subs-status sc-subs-status--roll">
+					<span class="sc-subs-status-pending">{m("my.status.pending")}</span>
+					<span class="sc-subs-status-approved">{m("my.status.approved")}</span>
+				</span>
+				<span class="sc-subs-kind">{m("my.kind.create")}</span>
+			</div>
+			<span class="sc-bar sc-bar--strong" style="width: 55%"></span>
+			<span class="sc-subs-actions">
+				<span class="sc-subs-button"><Icon name="tabler:arrow-up-right" />{m("my.open")}</span>
+			</span>
+		</div>
+
+		<div class="sc-subs-item">
+			<div class="sc-subs-meta">
+				<span class="sc-subs-status">{m("my.status.pending")}</span>
+				<span class="sc-subs-kind">{m("my.kind.edit")}</span>
+			</div>
+			<p class="sc-subs-title">{first?.title}</p>
+			<span class="sc-subs-actions">
+				<span class="sc-subs-button"><Icon name="tabler:pencil" />{m("my.fix")}</span>
+				<span class="sc-subs-button sc-subs-button--ghost"><Icon name="tabler:x" />{m("my.withdraw")}</span>
+			</span>
+		</div>
+
+		<div class="sc-subs-item">
+			<div class="sc-subs-meta">
+				<span class="sc-subs-status sc-subs-status--approved">{m("my.status.approved")}</span>
+				<span class="sc-subs-kind">{m("my.kind.edit")}</span>
+			</div>
+			<p class="sc-subs-title">{second?.title}</p>
+		</div>
+	</div>
+</ShowcaseStage>

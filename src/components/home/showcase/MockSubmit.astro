@@ -1,0 +1,61 @@
+---
+import { messages } from "@/components/tv/messages";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { Icon } from "astro-icon/components";
+import Cursor from "./Cursor.astro";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Добавить центр»: страница формы. Поля заполняются по очереди, курсор
+ * жмёт «Отправить заявку», в углу всплывает «Заявка отправлена - на
+ * проверке». Подписи - те же строки, что у настоящей формы (`tv/messages`);
+ * значения - плашки: выдуманный центр не должен выглядеть настоящим.
+ *
+ * Раскладка - угловой вылет, как у «Сохранённых». Играет один раз.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const m = messages(locale === "en" ? "en" : "ru");
+
+const fields = [
+	{ label: m("form.name"), width: "62%" },
+	{ label: m("form.city"), width: "34%" },
+	{ label: m("form.links"), width: "48%", prefix: "https://" },
+];
+---
+
+<ShowcaseStage scene="submit" once label={t("home.submit.imageAlt")}>
+	<div class="sc-window sc-form-window">
+		<p class="sc-form-title">{m("form.titleCreate")}</p>
+
+		<div class="sc-form-card">
+			<p class="sc-form-section">{m("form.section.main")}</p>
+			{
+				fields.map((field, i) => (
+					<div class="sc-form-field" style={`--i: ${i}`}>
+						<span class="sc-form-label">{field.label}</span>
+						<span class="sc-form-input">
+							{field.prefix && <span class="sc-form-prefix">{field.prefix}</span>}
+							<span class="sc-bar sc-bar--strong sc-form-value" style={`width: ${field.width}`} />
+						</span>
+					</div>
+				))
+			}
+			<span class="sc-form-submit">
+				<Icon name="tabler:check" />
+				{m("form.submit")}
+			</span>
+		</div>
+	</div>
+
+	<div class="sc-form-toast">
+		<span class="sc-form-toast-icon"><Icon name="tabler:check" /></span>
+		<span class="sc-lines">
+			<span class="sc-form-toast-title">{t("home.submit.sent")}</span>
+			<span class="sc-form-toast-text">{m("my.status.pending")}</span>
+		</span>
+	</div>
+
+	<Cursor class="sc-submit-cursor" />
+</ShowcaseStage>

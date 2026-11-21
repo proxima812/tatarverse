@@ -1,0 +1,36 @@
+---
+import ButtonLink from "@/components/ui/ButtonLink.astro";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import MockEdit from "./showcase/MockEdit.astro";
+
+/**
+ * Правка карточки: кнопка «Предложить правку» на странице центра открывает
+ * форму с текущими данными. Ссылки на саму форму здесь нет - ей нужен код
+ * центра, поэтому кнопка ведёт в каталог.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+---
+
+<section
+	aria-labelledby="home-edit"
+	class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
+>
+	<div class="space-y-6 md:order-2">
+		<h2 id="home-edit" class="text-4xl font-bold tracking-tight">
+			{t("home.edit.title")}
+		</h2>
+		<p class="leading-7 text-muted-foreground">{t("home.edit.text1")}</p>
+		<p class="leading-7 text-muted-foreground">{t("home.edit.text2")}</p>
+		<ButtonLink
+			href="/centers"
+			labelKey="home.edit.cta"
+			label="Найти центр"
+			icon="tabler:pencil"
+			variant="gradient"
+		/>
+	</div>
+
+	<MockEdit />
+</section>

@@ -1,0 +1,73 @@
+---
+import { messages } from "@/components/tv/messages";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { presentCards } from "@/lib/home/showcase";
+import { centerAvatarMarkup } from "@/lib/center/avatar";
+import { Icon } from "astro-icon/components";
+import Cursor from "./Cursor.astro";
+import ShowcaseStage from "./ShowcaseStage.astro";
+
+/**
+ * «Исправить карточку»: страница центра из каталога, курсор жмёт
+ * «Предложить правку», снизу выезжает форма с текущими данными. В ней
+ * видно саму правку: старый адрес зачёркнут, рядом новый, в ссылки
+ * добавлена ещё одна. Значения - плашки, адресов мы не выдумываем.
+ *
+ * Раскладка - угловой вылет. Играет один раз.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const m = messages(locale === "en" ? "en" : "ru");
+const [center] = await presentCards(locale, 1);
+---
+
+<ShowcaseStage scene="edit" once label={t("home.edit.imageAlt")}>
+	<div class="sc-window sc-edit-window">
+		<div class="sc-edit-page">
+			<p class="sc-card-place">
+				{center?.flag && <span class="sc-flag">{center.flag}</span>}
+				<span class="sc-card-place-text">
+					{center?.city}
+					{center?.city && center?.country && <span class="sc-sep">&#10625;</span>}
+					{center?.country}
+				</span>
+			</p>
+			<div class="sc-card-title-row">
+				{center && <center-avatar class="center-avatar sc-avatar sc-edit-avatar" set:html={centerAvatarMarkup(center.id)} />}
+				<p class="sc-card-title sc-edit-title">{center?.title}</p>
+			</div>
+			<span class="sc-edit-open">
+				<Icon name="tabler:pencil" />
+				{m("center.suggest")}
+			</span>
+		</div>
+
+		<div class="sc-edit-sheet">
+			<div class="sc-form-field">
+				<span class="sc-form-label">{m("form.address")}</span>
+				<span class="sc-edit-old"><span class="sc-bar" style="width: 60%"></span></span>
+				<span class="sc-form-input sc-edit-changed">
+					<span class="sc-bar sc-bar--strong" style="width: 66%"></span>
+				</span>
+			</div>
+			<div class="sc-form-field">
+				<span class="sc-form-label">{m("form.links")}</span>
+				<span class="sc-form-input">
+					<span class="sc-form-prefix">https://</span>
+					<span class="sc-bar" style="width: 40%"></span>
+				</span>
+				<span class="sc-form-input sc-edit-changed sc-edit-added">
+					<span class="sc-form-prefix">https://</span>
+					<span class="sc-bar sc-bar--strong" style="width: 46%"></span>
+				</span>
+			</div>
+		</div>
+	</div>
+
+	<Cursor class="sc-edit-cursor" />
+</ShowcaseStage>
+
+<script>
+	import "@/lib/client/centerAvatars";
+</script>
