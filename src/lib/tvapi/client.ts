@@ -8,8 +8,6 @@ import type { components, paths } from "./schema";
  * контракт - перегенерировать, и `astro check` покажет, что сломалось.
  */
 export const API_URL = "https://api.tatarverse.cc";
-export const API_DOCS_URL = `${API_URL}/docs/`;
-export const API_OPENAPI_URL = `${API_URL}/openapi.json`;
 
 export type Schemas = components["schemas"];
 export type CenterFields = Schemas["CenterFields"];

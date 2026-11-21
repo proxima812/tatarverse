@@ -2,7 +2,6 @@
 import { pressMentions } from "@/data/press";
 import { updatedAt } from "@/data/siteUpdated";
 import { externalLinkProps } from "@/lib/site/links";
-import { API_DOCS_URL, API_OPENAPI_URL } from "@/lib/tvapi/client";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { Icon } from "astro-icon/components";
 import Container from "./Container.astro";
@@ -70,8 +69,6 @@ const footerSections: FooterSection[] = [
 		id: "developers",
 		title: t("footer.developers.title"),
 		links: [
-			{ href: API_DOCS_URL, label: t("footer.developers.docs"), icon: "mdi:api", props: externalProps },
-			{ href: API_OPENAPI_URL, label: "OpenAPI (JSON)", icon: "mdi:code-json", props: externalProps },
 			{ href: "/llms.txt", label: "llms.txt", icon: "mdi:file-document-outline" },
 		],
 	},

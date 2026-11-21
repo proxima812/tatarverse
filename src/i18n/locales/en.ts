@@ -316,7 +316,6 @@ const dict: Dictionary = {
 	"footer.social.vk": "VK",
 	"footer.social.bot": "Telegram app",
 	"footer.developers.title": "For developers",
-	"footer.developers.docs": "API documentation",
 	"footer.about.title": "About the project",
 	"footer.about.press": "Article on {outlet}",
 	"footer.about.story": "The full tatarverse story on vc.ru",

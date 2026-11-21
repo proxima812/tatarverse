@@ -12,7 +12,6 @@ import {
 	locales,
 	useTranslations,
 } from "@/i18n";
-import { API_DOCS_URL } from "@/lib/tvapi/client";
 import { Icon } from "astro-icon/components";
 
 const currentLocale = getLocaleFromUrl(Astro.url);
@@ -196,9 +195,6 @@ const isActivePath = (href: string) => isActiveRoute(Astro.url.pathname, href);
 					<h2 id="mobile-menu-developer" class={sectionTitleClass}>
 						{t("menu.developer")}
 					</h2>
-					<a href={API_DOCS_URL} target="_blank" rel="noreferrer noopener" class={mobileTextLinkClass}>
-						{t("footer.developers.docs")}
-					</a>
 					<a
 						href={developerHref}
 						target="_blank"
