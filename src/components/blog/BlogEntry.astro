@@ -211,6 +211,26 @@ const column = "xl:grid xl:grid-cols-[1fr_minmax(0,720px)_1fr] xl:gap-8";
 	.blog-body hr {
 		border-color: var(--color-border-muted);
 	}
+	/* Скриншоты в тексте: светлые края не должны сливаться с фоном страницы. */
+	.blog-body img {
+		border: 1px solid var(--color-border-muted);
+		border-radius: 12px;
+	}
+	.blog-body table {
+		width: 100%;
+		font-size: 0.9375rem;
+		line-height: 1.5rem;
+	}
+	.blog-body th,
+	.blog-body td {
+		border-bottom: 1px solid var(--color-border-muted);
+		padding: 0.5rem 0.75rem 0.5rem 0;
+		text-align: left;
+		vertical-align: top;
+	}
+	.blog-body th {
+		font-weight: 500;
+	}
 </style>
 
 <script>
