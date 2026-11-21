@@ -7,3 +7,9 @@
 /api/v1/countries.json       https://api.tatarverse.cc/countries         301
 /api/v1/stats.json           https://api.tatarverse.cc/stats             301
 /api/v1/*                    https://api.tatarverse.cc/docs/             302
+
+# Клиентский каталог на API убран: /centers сам собирается из API.
+/catalog                     /centers/                                   301
+/catalog/*                   /centers/                                   301
+/en/catalog                  /en/centers/                                301
+/en/catalog/*                /en/centers/                                301

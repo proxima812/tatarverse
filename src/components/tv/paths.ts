@@ -6,8 +6,8 @@ export function pagePath(lang: Lang, path: string): string {
 }
 
 export const paths = {
-	catalog: (lang: Lang) => pagePath(lang, "/catalog/"),
-	center: (lang: Lang, code: string) => pagePath(lang, `/catalog/center/?code=${encodeURIComponent(code)}`),
+	catalog: (lang: Lang) => pagePath(lang, "/centers/"),
+	center: (lang: Lang, code: string) => pagePath(lang, `/centers/${encodeURIComponent(code)}/`),
 	add: (lang: Lang) => pagePath(lang, "/submit/"),
 	edit: (lang: Lang, code: string) => pagePath(lang, `/submit/edit/?code=${encodeURIComponent(code)}`),
 	fix: (lang: Lang, id: number) => pagePath(lang, `/submit/edit/?submission=${id}`),

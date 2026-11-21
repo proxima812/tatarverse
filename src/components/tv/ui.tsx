@@ -1,5 +1,3 @@
-import "@/lib/client/centerAvatars";
-import { centerAvatarMarkup } from "@/lib/center/avatar";
 import { buttonClass, type ButtonSize, type ButtonVariant } from "@/lib/button";
 import { cn } from "@/lib/cn";
 import { For, Show, splitProps, type JSX, type ParentProps } from "solid-js";
@@ -198,34 +196,5 @@ export function Empty(props: ParentProps<{ icon?: IconName; title: string; hint?
 			</Show>
 			{props.children}
 		</section>
-	);
-}
-
-declare module "solid-js" {
-	namespace JSX {
-		interface IntrinsicElements {
-			"center-avatar": JSX.HTMLAttributes<HTMLElement>;
-		}
-	}
-}
-
-/**
- * Лицо центра: логотип, а без него - тот же blobatar, что в статическом
- * каталоге (сид - код tbk-N, поэтому лицо совпадает на обеих версиях).
- */
-export function CenterMark(props: { code: string; logo?: string | null; class?: string }) {
-	return (
-		<Show
-			when={props.logo}
-			fallback={
-				<center-avatar
-					class={cn("center-avatar size-9 shrink-0 [&_svg]:size-full", props.class)}
-					aria-hidden="true"
-					innerHTML={centerAvatarMarkup(props.code)}
-				/>
-			}
-		>
-			<img src={props.logo!} alt="" loading="lazy" class={cn("size-9 shrink-0 rounded-full bg-muted object-cover", props.class)} />
-		</Show>
 	);
 }
