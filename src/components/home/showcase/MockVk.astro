@@ -7,11 +7,14 @@ import { Icon } from "astro-icon/components";
 import ShowcaseStage from "./ShowcaseStage.astro";
 
 /**
- * «Мы во ВКонтакте»: окно страницы сообщества - обложка, аватар, кнопка
- * «Подписаться» и запись на стене. Картинка записи - лица центров из
- * каталога: настоящих записей на сборке нет, поэтому стена ничего не цитирует.
+ * «Мы во ВКонтакте»: страница сообщества, как её рисует сам ВКонтакте, -
+ * белые блоки на сером фоне. Сверху шапка: обложка, круглый аватар
+ * поверх неё, название, «Подписаться» и «…». Ниже запись на стене:
+ * автор, текст, фото и счётчики (нравится, комментарии, репост, просмотры).
  *
- * Раскладка - угловой вылет, как у «Сохранённых». Играет один раз.
+ * Фото записи - лица центров из каталога: настоящих записей на сборке
+ * нет, поэтому стена ничего не цитирует. Раскладка - угловой вылет,
+ * как у «Сохранённых». Играет один раз.
  */
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -21,41 +24,43 @@ const cards = await presentCards(locale, 3);
 
 <ShowcaseStage scene="vk" once label={t("home.vk.imageAlt")}>
 	<div class="sc-window sc-vk-window">
-		<div class="sc-vk-cover"></div>
-
-		<div class="sc-vk-profile">
-			<span class="sc-vk-avatar"><LogoMark size={30} class="sc-vk-avatar-mark" /></span>
-			<span class="sc-lines sc-vk-info">
-				<span class="sc-vk-name">tatarverse</span>
-				<span class="sc-bar" style="width: 9em"></span>
-			</span>
-			<span class="sc-vk-follow">{t("home.vk.follow")}</span>
+		<div class="sc-vk-block sc-vk-head">
+			<div class="sc-vk-cover"></div>
+			<div class="sc-vk-profile">
+				<span class="sc-vk-avatar"><LogoMark size={30} class="sc-vk-avatar-mark" /></span>
+				<span class="sc-vk-info">
+					<span class="sc-vk-name">tatarverse</span>
+					<span class="sc-vk-kind">{t("home.vk.kind")}</span>
+				</span>
+				<span class="sc-vk-follow">{t("home.vk.follow")}</span>
+				<span class="sc-vk-more"><Icon name="tabler:dots" /></span>
+			</div>
 		</div>
 
-		<div class="sc-vk-post">
+		<div class="sc-vk-block sc-vk-post">
 			<div class="sc-vk-post-head">
 				<span class="sc-vk-post-avatar"><LogoMark size={14} class="sc-vk-avatar-mark" /></span>
 				<span class="sc-lines">
 					<span class="sc-vk-post-name">tatarverse</span>
-					<span class="sc-bar" style="width: 3.5em"></span>
+					<span class="sc-bar" style="width: 4em"></span>
 				</span>
+				<Icon name="tabler:dots" class="sc-vk-post-menu" />
 			</div>
-			<span class="sc-bar" style="width: 92%"></span>
-			<span class="sc-bar" style="width: 64%"></span>
+			<span class="sc-bar" style="width: 88%"></span>
 			<div class="sc-vk-media">
 				{
-					cards.map((card) => (
-						<span class="sc-vk-media-tile">
+					cards.map((card, i) => (
+						<span class="sc-vk-media-tile" style={`--i: ${i}`}>
 							<center-avatar class="center-avatar sc-vk-media-avatar" set:html={centerAvatarMarkup(card.id)} />
-							<span class="sc-vk-media-flag">{card.flag}</span>
 						</span>
 					))
 				}
 			</div>
 			<div class="sc-vk-actions">
-				<span class="sc-vk-action"><Icon name="mdi:heart-outline" /><span class="sc-bar" style="width: 1.4em"></span></span>
-				<span class="sc-vk-action"><Icon name="mdi:comment-outline" /><span class="sc-bar" style="width: 1em"></span></span>
-				<span class="sc-vk-action"><Icon name="mdi:share-outline" /><span class="sc-bar" style="width: 1em"></span></span>
+				<span class="sc-vk-action sc-vk-like"><Icon name="tabler:heart-filled" /><span class="sc-bar" style="width: 1.2em"></span></span>
+				<span class="sc-vk-action"><Icon name="tabler:message-circle" /><span class="sc-bar" style="width: 0.8em"></span></span>
+				<span class="sc-vk-action"><Icon name="tabler:share-3" /><span class="sc-bar" style="width: 0.8em"></span></span>
+				<span class="sc-vk-views"><Icon name="tabler:eye" /><span class="sc-bar" style="width: 1.6em"></span></span>
 			</div>
 		</div>
 	</div>

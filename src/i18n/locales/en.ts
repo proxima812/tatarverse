@@ -183,6 +183,7 @@ const dict: Dictionary = {
 		"Follow it to keep up with the project, and share posts with friends and family.",
 	"home.vk.cta": "Open VK",
 	"home.vk.follow": "Follow",
+	"home.vk.kind": "community",
 	"home.vk.imageAlt":
 		"The tatarverse community page on VK: cover, the Follow button and a post on the wall",
 	"list.title": "Directory of Tatar, Bashkir, and Crimean Tatar centers",
