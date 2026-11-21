@@ -2,14 +2,15 @@
   "name": "tatarverse",
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "bun run centers:sync && astro dev",
+    "build": "bun run centers:sync && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "cf:preview": "bun run build && wrangler pages dev ./dist",
     "cf:deploy": "bun run build && bun run cf:deploy:dist",
     "cf:deploy:dist": "CLOUDFLARE_ACCOUNT_ID=711d25ce64e87b4faeb50022b3e63631 wrangler pages deploy --branch main",
-    "check": "astro check",
+    "check": "bun run centers:sync && astro check",
+    "centers:sync": "bun scripts/sync-centers.ts",
     "api:types": "curl -sf https://api.tatarverse.cc/openapi.json -o src/lib/tvapi/openapi.json && openapi-typescript src/lib/tvapi/openapi.json -o src/lib/tvapi/schema.d.ts"
   },
   "dependencies": {

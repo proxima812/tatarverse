@@ -84,6 +84,8 @@ const CenterSchema = z
 				message: "pubDate должен быть датой в формате, понятном new Date() (напр. 2026-08-11)",
 			})
 			.optional(),
+		/** Когда карточку последний раз меняли в API (ISO 8601). */
+		updatedAt: z.string().optional(),
 		type: CenterTypeSchema.optional(),
 		category: CenterCategorySchema.optional(),
 		source: z.url().optional(),

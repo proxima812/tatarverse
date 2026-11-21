@@ -99,10 +99,14 @@ export async function buildCenterDetail({
 	const localizedCountry = country ? getCountryLabel(country, locale) : null;
 	const placeLine = [flag, localizedCountry ?? country].filter(Boolean).join(" ");
 
-	const { publishedDate, modifiedDate } = getContentDates({
+	const dates = getContentDates({
 		pubDate: rawPubDate,
 		filePath: contentEntry.filePath,
 	});
+	const publishedDate = dates.publishedDate;
+	// Правку карточки знает API; дата файла - лишь время синхронизации.
+	const updatedAt = entry.data.updatedAt ? new Date(entry.data.updatedAt) : undefined;
+	const modifiedDate = updatedAt && !Number.isNaN(updatedAt.getTime()) ? updatedAt : dates.modifiedDate;
 
 	const routeId = routeIds.get(entry.id) ?? entry.id;
 	const centerPath = getCenterPath(routeId);
