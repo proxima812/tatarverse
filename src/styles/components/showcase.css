@@ -2131,7 +2131,16 @@
 	padding: 0 1em 0.75em;
 }
 
+/*
+ * Аватар - белый круг с тёмным знаком в любой теме, как картинка
+ * сообщества. Слой выше обложки: её анимация появления иначе рисуется
+ * поверх и просвечивает синим.
+ */
 .sc-vk-avatar {
+	--logo-mark-color: #111012;
+
+	position: relative;
+	z-index: 1;
 	display: grid;
 	place-items: center;
 	flex-shrink: 0;
@@ -2139,7 +2148,7 @@
 	height: 4.2em;
 	margin-top: -1.9em;
 	border-radius: 999px;
-	background: var(--color-surface);
+	background: #fff;
 	box-shadow:
 		0 0 0 0.22em var(--color-surface),
 		inset 0 0 0 1px var(--sc-line);
@@ -2219,12 +2228,15 @@
 }
 
 .sc-vk-post-avatar {
+	--logo-mark-color: #111012;
+
 	display: grid;
 	place-items: center;
 	flex-shrink: 0;
 	width: 2.1em;
 	height: 2.1em;
 	border-radius: 999px;
+	background: #fff;
 	box-shadow: inset 0 0 0 1px var(--sc-line);
 
 	& .sc-vk-avatar-mark {
