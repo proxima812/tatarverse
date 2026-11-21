@@ -142,7 +142,7 @@ export default function CenterPage(props: { lang: Lang }) {
 
 								<div class="grid min-w-0 grid-cols-1 gap-x-8 gap-y-10 md:grid-cols-2">
 									<Show when={c.links.length || c.phones.length || c.emails.length || c.address}>
-										<Column title={t("center.links")} count={c.links.length + c.phones.length + c.emails.length}>
+										<Column title={t("center.contacts")} count={c.links.length + c.phones.length + c.emails.length + (c.address ? 1 : 0)}>
 											<For each={c.links}>
 												{(link) => (
 													<a href={link.url} target="_blank" rel="nofollow noreferrer noopener" class={rowClass}>
