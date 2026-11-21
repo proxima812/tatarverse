@@ -211,6 +211,7 @@ const dict: Dictionary = {
 	"stats.byCountry.hint":
 		"Countries are grouped by world region; the number on the right is the entry count. Select a country to open the catalog with that filter.",
 	"stats.withoutCountry": "Online projects with no country: {count}.",
+	"stats.completeness.help": "Know a center from the list? Open its card and press “Help complete it” - the edit goes to a moderator.",
 	"stats.completeness.title": "Card completeness",
 	"stats.completeness.hint": "{complete} of {total} cards are complete: they have contacts, a description, a location and sources. {incomplete} more need help - if you know a center on the list, tell us what's missing.",
 	"stats.completeness.gap.contacts": "No contacts",
@@ -289,10 +290,7 @@ const dict: Dictionary = {
 	"detail.status.completeHint": "Contacts, a description and sources are in place.",
 	"detail.status.incomplete": "Incomplete data",
 	"detail.status.missing": "Missing: {gaps}.",
-	"detail.status.help": "Know this center? Send us a link to its website or social media, contacts, or a few words about what it does, and we'll complete the card.",
-	"detail.status.telegram": "Message on Telegram",
-	"detail.status.whatsapp": "Message on WhatsApp",
-	"detail.status.message": "Hello! I’m writing about card {id} — “{title}”.\n\nLink: {url}\n\nI would like to add or correct the following information:\n\nSource:",
+	"detail.status.help": "Know this center? Add a link to its website or social media, contacts, or a few words about what it does - a moderator will review it and complete the card.",
 	"detail.status.cta": "Help complete it",
 	"detail.gap.contacts": "contacts (website, social media, phone)",
 	"detail.gap.about": "a description of its activities",
@@ -332,7 +330,7 @@ const dict: Dictionary = {
 	"link.site": "Open website: {value}",
 	"feedback.text":
 		"Found a mistake or inaccuracy, or want to fix, expand, or improve the translation? Let us know.",
-	"feedback.link": "Open Telegram",
+	"feedback.link": "Suggest an edit",
 	"print.title": "Centers list for printing",
 	"print.heading": "A catalog of Tatar, Bashkir, and Crimean Tatar centers",
 	"print.stats": "Centers: {count}. Countries: {countries}. Data as of {date}",

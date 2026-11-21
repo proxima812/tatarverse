@@ -69,16 +69,17 @@ export function localizePath(locale: AppLocale, href: string): string {
 
 	if (!href.startsWith("/")) return href;
 
-	const [pathname, hash = ""] = href.split("#");
+	// Query и hash отрезаем до локализации: иначе getRelativeLocaleUrl
+	// допишет завершающий слеш после `?code=tbk-1`.
+	const [beforeHash, hash = ""] = href.split("#");
+	const [pathname, query = ""] = beforeHash.split("?");
+	const suffix = `${query ? `?${query}` : ""}${hash ? `#${hash}` : ""}`;
 	const relativePath = getLocalePathname(pathname);
 	if (!hasLocalizedRoute(locale, relativePath)) {
-		const fallback = relativePath ? `/${relativePath}/` : "/";
-		return hash ? `${fallback}#${hash}` : fallback;
+		return `${relativePath ? `/${relativePath}/` : "/"}${suffix}`;
 	}
 
-	const localized = getRelativeLocaleUrl(locale, relativePath);
-
-	return hash ? `${localized}#${hash}` : localized;
+	return `${getRelativeLocaleUrl(locale, relativePath)}${suffix}`;
 }
 
 function nearestLocalizedHub(locale: AppLocale, relativePath: string): string {

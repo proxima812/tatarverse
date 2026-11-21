@@ -1,5 +1,4 @@
 ---
-import { config } from "@/config";
 import ButtonLink from "@/components/ui/ButtonLink.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import type { CenterCompleteness } from "@/lib/center/completeness";
@@ -11,34 +10,22 @@ import { Icon } from "astro-icon/components";
  * (getCenterCompleteness), руками не ставится.
  *
  * Неполная карточка - баннер в светлой рамке, как промо-блок на главной
- * Cloudflare: значок слева, текст, кнопки справа.
+ * Cloudflare: значок слева, текст, кнопка справа. Кнопка ведёт в форму
+ * правки: заявка уходит модератору в api.tatarverse.cc.
  */
 interface Props {
+	/** Код центра tbk-N - для формы правки. */
+	code: string;
 	completeness: CenterCompleteness;
-	centerTitle: string;
 	class?: string;
 }
 
-const { completeness, centerTitle, class: className } = Astro.props as Props;
+const { code, completeness, class: className } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
-const centerId = Astro.params.id ?? "";
-const cardUrl = new URL(Astro.url.pathname, config.site.url).href;
-const message = t("detail.status.message", { id: centerId, title: centerTitle, url: cardUrl });
-const telegramUrl = `https://t.me/mirikhan1?text=${encodeURIComponent(message)}`;
-const whatsappUrl = `https://wa.me/79172975109?text=${encodeURIComponent(message)}`;
-
-/*
- * Кнопки мессенджеров - та же акцентная схема (btn-gradient), что у
- * остальных: градиент, блик, обводка в тон, свечение - только в цветах
- * Telegram и WhatsApp. Зелёный темнее фирменного #25D366: на нём белый
- * текст не читался. Классы целиком литералами: Tailwind ищет их в исходнике.
- */
-const brandClass = "[--accent-lift:18%] [--accent-glow-amount:35%] [--color-accent-foreground:#fff]";
-const telegramClass = `${brandClass} [--color-accent:#1E8FD6]`;
-const whatsappClass = `${brandClass} [--color-accent:#1DA851]`;
-
+// ButtonLink сам добавит языковой префикс.
+const editHref = `/submit/edit?code=${encodeURIComponent(code)}`;
 const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 ---
 
@@ -67,35 +54,14 @@ const gaps = completeness.gaps.map((gap) => t(`detail.gap.${gap}`)).join(", ");
 					</h2>
 					<p class="text-subtle-foreground">{t("detail.status.help")}</p>
 				</div>
-				<div class="flex shrink-0 flex-wrap gap-2">
-					<ButtonLink
-						href="https://t.me/the_tatarverse/57"
-						target="_blank"
-						variant="gradient"
-						class={telegramClass}
-						size="xs"
-						icon="mdi:telegram"
-						label={t("detail.status.cta")}
-					/>
-					<ButtonLink
-						href={telegramUrl}
-						target="_blank"
-						variant="gradient"
-						class={telegramClass}
-						size="xs"
-						icon="mdi:telegram"
-						label={t("detail.status.telegram")}
-					/>
-					<ButtonLink
-						href={whatsappUrl}
-						target="_blank"
-						variant="gradient"
-						class={whatsappClass}
-						size="xs"
-						icon="mdi:whatsapp"
-						label={t("detail.status.whatsapp")}
-					/>
-				</div>
+				<ButtonLink
+					href={editHref}
+					variant="gradient"
+					size="xs"
+					icon="tabler:pencil"
+					label={t("detail.status.cta")}
+					class="shrink-0"
+				/>
 			</div>
 		</section>
 	)

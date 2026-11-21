@@ -1,6 +1,4 @@
 ---
-import ButtonLink from "@/components/ui/ButtonLink.astro";
-import { config } from "@/config";
 import { countryFlagsByRu, getCountryLabel } from "@/data/worldCountries";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { createCenterRouteIdMap, getCenterPath } from "@/lib/center/centers";
@@ -114,15 +112,7 @@ const countries = [...byCountry.entries()]
 		</div>
 	</details>
 
-	<div class="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-6">
-		<p class="text-sm leading-6 text-muted-foreground">{t("detail.status.help")}</p>
-		<ButtonLink
-			href={config.feedbackUrl}
-			target="_blank"
-			variant="outline"
-			size="xs"
-			icon="mdi:telegram"
-			label={t("detail.status.cta")}
-		/>
-	</div>
+	<p class="mt-8 border-t border-border pt-6 text-sm leading-6 text-muted-foreground">
+		{t("stats.completeness.help")}
+	</p>
 </section>

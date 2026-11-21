@@ -88,7 +88,7 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 			<Content components={{ ...markdownComponents, h1: SkipNode }} />
 		</div>
 
-		<CenterStatus centerTitle={detail.title} completeness={detail.completeness} />
+		<CenterStatus code={entry.id} completeness={detail.completeness} />
 
 		<CenterPagination
 			previousEntry={detail.previousEntry}
@@ -96,7 +96,7 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 			routeIds={detail.routeIds}
 		/>
 
-		<TranslationFeedbackCard />
+		<TranslationFeedbackCard code={entry.id} />
 	</article>
 	<script type="application/ld+json" is:inline set:html={JSON.stringify(detail.jsonLd)} />
 </Layout>

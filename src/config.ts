@@ -20,8 +20,6 @@ export const config = {
   indexNow: {
     key: "",
   },
-  /** Куда присылать исправления и дополнения к карточкам и переводам. */
-  feedbackUrl: "https://t.me/the_tatarverse/8",
   site: {
     url: siteUrl,
     language: "ru-RU",
@@ -142,6 +140,5 @@ export interface AppConfig {
   indexNow: {
     key: string;
   };
-  feedbackUrl: string;
   site: SiteConfig;
 }
