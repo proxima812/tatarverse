@@ -63,3 +63,6 @@ tools/vk-publish/state.json
 
 # Local research and audit artifacts
 .scratch/
+
+# версия данных центров, с которой собран сайт: пишет scripts/sync-centers.ts
+/public/centers-version.json

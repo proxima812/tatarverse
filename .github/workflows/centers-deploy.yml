@@ -1,0 +1,66 @@
+# Пересборка сайта после одобренных правок в api.tatarverse.cc.
+#
+# Каждые 10 минут сравнивает версию данных в API (GET /stats: count и
+# updatedAt) с той, с которой собран сайт (/centers-version.json, её пишет
+# scripts/sync-centers.ts). Разошлись - собирает сайт с карточками из API и
+# выкладывает на Cloudflare Pages. Совпали - ничего не делает.
+#
+# Сразу после одобрения пересборку может запустить сам API:
+#   POST https://api.github.com/repos/proxima812/tatarverse/dispatches
+#   Authorization: Bearer <токен с правом Contents: write на этот репозиторий>
+#   {"event_type": "centers-updated"}
+#
+# Секрет репозитория: CLOUDFLARE_API_TOKEN (Cloudflare Pages: Edit).
+
+name: centers-deploy
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  repository_dispatch:
+    types: [centers-updated]
+  workflow_dispatch:
+
+concurrency:
+  group: centers-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Есть ли новые данные
+        id: changed
+        run: |
+          api=$(curl -sf https://api.tatarverse.cc/stats | jq -c '{total: .data.count, updatedAt: .data.updatedAt}')
+          site=$(curl -sf https://tatarverse.cc/centers-version.json | jq -c '{total, updatedAt}' || echo '{}')
+          echo "API:  $api"
+          echo "сайт: $site"
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$api" = "$site" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.changed.outputs.run == 'true'
+        with:
+          # Даты публикации центров берутся из истории git.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        if: steps.changed.outputs.run == 'true'
+        with:
+          node-version: 22
+
+      - uses: oven-sh/setup-bun@v2
+        if: steps.changed.outputs.run == 'true'
+
+      - name: Сборка и деплой
+        if: steps.changed.outputs.run == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          bun install --frozen-lockfile
+          bun run cf:deploy
