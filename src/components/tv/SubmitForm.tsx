@@ -218,7 +218,14 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 				// Логотип в публичной форме не принимаем: его ставит модератор.
 				logo: null,
 				removeLogo: false,
-				submitter: { ...submitter },
+				// Все поля заявителя необязательные: пустые уходят как null.
+				submitter: {
+					name: submitter.name?.trim() || null,
+					role: submitter.role || null,
+					phone: submitter.phone?.trim() || null,
+					telegram: submitter.telegram?.trim() || null,
+					email: submitter.email?.trim() || null,
+				},
 				comment: comment().trim() || null,
 				language: formLang,
 				captchaToken,
@@ -288,7 +295,7 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 					/>
 
 					<Section title={t("form.section.submitter")}>
-						<Field label={t("form.submitterName")} error={fieldError(errors(), "submitter.name")}>
+						<Field label={t("form.submitterName")} optional={t("common.optional")} error={fieldError(errors(), "submitter.name")}>
 							<input
 								class={inputClass}
 								autocomplete="name"
@@ -298,7 +305,7 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 								onInput={(event) => setSubmitter("name", event.currentTarget.value)}
 							/>
 						</Field>
-						<Field label={t("form.role")} error={fieldError(errors(), "submitter.role")}>
+						<Field label={t("form.role")} optional={t("common.optional")} error={fieldError(errors(), "submitter.role")}>
 							<Select
 								value={submitter.role ?? ""}
 								placeholder={t("form.categoryPick")}
@@ -307,7 +314,7 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 								onChange={(event) => setSubmitter("role", event.currentTarget.value)}
 							/>
 						</Field>
-						{/* Любой из трёх контактов необязателен сам по себе, но хотя бы один нужен - об этом подсказка. */}
+						{/* Ошибку «нет ни одного контакта» сервер присылает в submitter.contact - показываем её вместо подсказки. */}
 						<div class="flex min-w-0 flex-col gap-6" role="group" aria-label={t("form.contactGroup")}>
 							<div class="flex flex-col gap-0.5">
 								<span class="text-sm font-medium text-foreground">{t("form.contactGroup")}</span>
