@@ -14,7 +14,7 @@ bun run build
 
 ## Structure
 
-- `src/pages/` — routes and static API endpoints
+- `src/pages/` — routes
 - `src/components/` — UI grouped by purpose
 - `src/layouts/` — shared page layouts
 - `src/lib/` — catalog logic, browser scripts, SEO and build integrations
@@ -25,4 +25,4 @@ bun run build
 - `public/` — public static assets
 
 Keep stable `tbk-*` URLs, localized routes and source references intact.
-The static catalog API is documented in [docs/API.md](docs/API.md).
+The catalog API lives at [api.tatarverse.cc](https://api.tatarverse.cc/docs/).

@@ -1,0 +1,9 @@
+# Статический API v1 убран: каталог отдаёт api.tatarverse.cc в том же формате.
+/api                         https://api.tatarverse.cc/docs/             301
+/api/                        https://api.tatarverse.cc/docs/             301
+/openapi.json                https://api.tatarverse.cc/openapi.json      301
+/api/v1/centers.json         https://api.tatarverse.cc/centers?lang=ru   301
+/api/v1/centers.en.json      https://api.tatarverse.cc/centers?lang=en   301
+/api/v1/countries.json       https://api.tatarverse.cc/countries         301
+/api/v1/stats.json           https://api.tatarverse.cc/stats             301
+/api/v1/*                    https://api.tatarverse.cc/docs/             302

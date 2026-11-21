@@ -48,8 +48,6 @@ export function isAppLocale(value: string | null | undefined): value is AppLocal
 }
 
 export function getLocaleFromUrl(url: URL): AppLocale {
-	// API documentation has one English-only route.
-	if (/^\/api\/?$/.test(url.pathname)) return "en";
 	const segment = url.pathname.split("/").filter(Boolean)[0];
 	return isAppLocale(segment) ? segment : defaultLocale;
 }
@@ -98,7 +96,6 @@ export function getSwitcherHref(locale: AppLocale, url: URL): string {
 	const currentPath = getLocalePathname(url.pathname);
 	// Publications have independent IDs in each language; switch to the blog hub.
 	if (currentPath.startsWith("blog/")) return getRelativeLocaleUrl(locale, "blog");
-	if (currentPath === "api") return "/api/";
 	if (currentPath === "404") {
 		return getRelativeLocaleUrl(locale, "");
 	}
