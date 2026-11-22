@@ -1,8 +1,8 @@
 ---
 title: "Editorial policy and privacy"
-description: "How material is published, how sources are handled, how data is updated, and how technical information is processed on this site."
+description: "How center listings are published and checked, how submissions and moderation work, and what data the site keeps and why."
 pubDate: 2026-05-12
-updateInfo: "12 May 2026"
+updateInfo: "22 November 2026"
 ---
 
 import A from "@/components/markdown/A.astro"
@@ -10,103 +10,104 @@ import Blockquote from "@/components/markdown/Blockquote.astro"
 import Strong from "@/components/markdown/Strong.astro"
 export const components = {a: A, strong: Strong, blockquote: Blockquote}
 
-This site publishes reference information about Tatar, Bashkir, Tatar-Bashkir, and Crimean Tatar cultural centers, communities, associations, and public initiatives.
-
-It gathers information on diasporas, national societies, cultural associations, youth organizations, language courses, and educational and public projects in Russia and abroad.
+The site publishes reference information about Tatar, Bashkir, Tatar-Bashkir and Crimean Tatar cultural centers, communities, associations and public initiatives in Russia and abroad.
 
 ## 1. Editorial policy
 
 ### The goal of the project
 
-The core task of the project is to make finding cultural and public organizations simpler, clearer, and more accessible.
+The project helps people find a cultural or community organization near them: a diaspora group, a national society, a youth association, language classes.
 
-The site works as a reference catalog and makes no claim to be an official register of organizations.
+The site is a reference directory, not an official register of organizations.
 
-### Sources of information
+### Where the information comes from
 
-Cards may be compiled and updated from:
+Listings are based on open data:
 
-- official websites of the organizations;
-- public pages on social networks;
-- open online sources;
-- reference material and publications;
-- information published by the organizations themselves.
+- official websites of organizations;
+- their pages on social networks and messengers;
+- publications and reference materials;
+- information organizations publish about themselves;
+- submissions sent through the form on this site.
 
-A separate page listing the sources we use is available here: [Sources](/en/sources).
+More on the [Sources](/en/sources) page.
 
-### Publishing principles
+### Submissions and moderation
 
-When publishing material, the site follows these principles:
+Any visitor can add a center or correct a listing: through the [Add a center](/en/submit) form or the edit button on a center's page.
 
-### Updates and corrections
+A submission is not published right away. A moderator checks it against open sources, clarifies details if needed, and only then approves or rejects it. The logo and the map location are set by the moderator.
 
-Information on the site is updated by hand.
+An approved edit appears on the site immediately, without waiting for the next update. You can track your submissions under [My submissions](/en/submissions).
 
-If a card is found to contain an error in the name, the region, a link, the description, or any other information, the data may be corrected after verification against the available public sources.
+### Corrections
 
-### Link rot
+Found a mistake in a name, address, link or description? Send an edit from the center's page. It is checked the same way as a new submission.
 
-Some external links may change, move, or become unavailable over time.
+External links break or move over time. We fix them as we find them.
 
-When a broken link is found, the information may be updated by hand.
+## 2. Privacy
 
-## 2. Privacy and technical data
+### Browsing the site
 
-### What data may be processed
+You don't need an account to browse the site, and it doesn't ask for your name, phone number or address.
 
-The site is not built for user registration, placing orders, or creating personal accounts.
+Standard technical data may be processed when you visit: server log entries and information about your browser, device and operating system. It is used to load pages and keep the site running.
 
-In normal use the site does not ask for a name, a phone number, an address, or any other explicitly entered personal data.
+### What is kept in your browser
 
-When you visit the site, the following may be processed automatically:
+Some data stays on your device, in your browser's local storage, and is never sent anywhere:
 
-- standard technical data from server logs;
-- information about the browser, the device, and the operating system;
-- technical data required to load pages correctly;
-- local interface settings saved in your own browser, such as the chosen language or theme.
+- your language and theme;
+- saved centers (the [Saved](/en/saved) page);
+- access keys for your submissions, which power My submissions, editing and withdrawing a submission;
+- your submitter details from the form, so you don't have to type them again.
 
-### What the technical data is used for
+Clearing the site data in your browser removes all of this. The server shows a submission key only once, so after clearing you won't be able to manage older submissions from this device.
 
-Technical information is used only for:
+### What is sent with a submission
 
-- keeping the site working correctly;
-- rendering the interface;
-- storing local user settings;
-- basic technical diagnostics and analysis of the site's stability.
+The form sends data to the catalog server at `api.tatarverse.cc`:
+
+- the center details you filled in;
+- your comment, if any;
+- optionally, your name, role and contacts (phone, Telegram or email). These fields are not required;
+- your IP address and browser information, to protect against spam and abuse.
+
+Submitter contacts let a moderator ask follow-up questions. They are never published on the site and are visible only to moderators with a separate access right.
+
+To filter out automated submissions, the form uses Google reCAPTCHA. The script loads only on the form page and is covered by [Google's privacy policy](https://policies.google.com/privacy).
+
+### Erasing submitter data
+
+You can ask us to erase your name, contacts, IP address and browser information from a submission: write to us on [Telegram](https://t.me/mirikhan1). The submission itself and the center's edit history are kept.
+
+### Telegram Mini App
+
+The site can be opened inside Telegram through the [@tatarverse_bot](https://t.me/tatarverse_bot) bot. It is the same site: it does not get your phone number from Telegram and does not store your account data.
 
 ### What the site does not do
 
-The site:
-
-- does not sell personal data;
-- does not use user data for marketing of its own;
-- does not require personal data in order to browse pages normally;
-- does not claim to collect data that the site's functionality does not actually use.
+- it does not sell personal data;
+- it does not use it for advertising or mailings;
+- it does not require personal data to view pages.
 
 ## 3. External links
 
-The site may contain links to third-party resources and external platforms.
-
-Once you follow a link to an external site, the rules and policy of that resource apply, not those of this site.
-
-The site's administration does not control the content of third-party resources reached through external links.
+The site links to many third-party resources. Once you follow a link, that resource's rules apply. The site is not responsible for their content.
 
 ## 4. Content and responsibility
 
-The information on this site is a reference, editorial, and informational resource.
-
-The project's administration aims to keep the material accurate and current, but does not guarantee absolute completeness, permanent currency, or the absence of errors in every card and section of the site.
-
-For anything important, we recommend verifying the information through the organizations' own official sources.
+The information on the site is for reference. We try to keep listings accurate and up to date, but we can't guarantee that none of them contain mistakes or outdated details. Double-check anything important through the organization's official channels.
 
 ## 5. Rights to materials
 
-All rights to the project code and materials are reserved. Use requires written permission from the rights holder.
+All rights to the project's code and materials are reserved. Use requires written permission from the rights holder.
 
-The original sources the material is based on remain the property of their authors and rights holders. The project claims no ownership of third-party material.
+Original materials from third-party sites and publications belong to their authors and rights holders. The project makes no claim to them.
 
-The name `tatarverse.cc`, the logos, the brand material, the visual identity, and the recognizable design of the site may not be reused without written permission.
+The `tatarverse.cc` name, logos, brand materials and the site's recognizable design may not be used without written permission.
 
 ## 6. Changes to this page
 
-The text of this page may be updated as the project develops, as the structure of the site changes, as new sections appear, or as the editorial principles are refined.
+This page is updated along with the site: when new sections appear, data handling changes or editorial rules are refined. The date of the last update is shown at the top.

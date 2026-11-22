@@ -1,8 +1,8 @@
 ---
 title: "About the translations"
-description: "Current status of the interface and content translations on this site."
+description: "Which languages the site has, what is translated, and how center listings get translated."
 pubDate: 2026-06-19
-updateInfo: "19 June 2026"
+updateInfo: "22 November 2026"
 ---
 
 import A from "@/components/markdown/A.astro"
@@ -15,31 +15,33 @@ export const components = {
 	blockquote: Blockquote,
 }
 
-The site currently has two active language versions: Russian and English.
+The site has two language versions: Russian and English.
 
-For both languages we have localized the navigation, the mobile menu, the filters, the buttons, the system labels, and the core service pages, including the home page, the list of centers, the sources, the policy, and this page about translations.
+Both languages cover the menus, filters, buttons, labels, service pages, the submission form and My submissions.
 
-> **A localized interface does not mean every catalog entry has been translated.**
+> **A translated interface does not mean every listing is translated.**
 
-Russian remains the primary language for catalog content. Separate English translation files already exist for a share of the centers, but the coverage is not complete yet.
+## Center listings
 
-When a particular card has no translation, the site may show the original Russian text or a partially localized version. Language versions therefore let you use the interface in the language you prefer, but they do not guarantee a full translation of every entry.
+Listings live in the catalog's shared database, and each field can have a Russian and an English version. The English center page uses the English text when there is one.
 
-Translation, editing, and fact-checking happen gradually. The priority is verifiable information about the centers: correct names, sources, and neutral descriptions.
+Names and locations are translated for most centers, while the short description and the About section are translated only for some so far. When there is no translation, the English page shows the name and contacts and leaves the description out rather than falling back to Russian text.
 
-> Information and translations may be updated and refined as the project develops.
+A translation appears on the site as soon as a moderator approves it.
 
-If you have found an error or an inaccuracy, or you would like to help translate the material, use the feedback links available on the pages of this site.
+## How to help with translation
+
+The submission form takes text in the language of the page: on the English version of the site, an edit is saved as the listing's English text. To add or fix a translation, open the center in the English version and send an edit from its page. A moderator checks it like any other submission.
 
 ## Translation license
 
-All rights to project materials are reserved. Contact the author about reuse.
+All rights to the project's materials are reserved. Contact the author about any use.
 
-The original sources the material is based on remain the property of their authors and rights holders.
+The original sources the materials are based on remain the property of their authors and rights holders.
 
 ## Available languages
 
-- **Русский** - the primary language of the interface and the catalog content
-- **English** - the interface, the service pages, and a share of the center cards
+- **Русский** - the main language of the interface and listings
+- **English** - the interface, service pages, the submission form and some center descriptions
 
-The codebase may also keep draft dictionaries for other languages, but those do not count as active language versions of the site until they are added to the list of supported locales.
+Other languages will be added once their interface and listing translations are ready.
