@@ -1,108 +1,18 @@
 ---
-import CenterColumns from "@/components/centers/CenterColumns.astro";
-import CenterHeader from "@/components/centers/CenterHeader.astro";
-import CenterPagination from "@/components/centers/CenterPagination.astro";
-import CenterStatus from "@/components/centers/CenterStatus.astro";
-import { markdownComponents } from "@/components/markdown/markdownComponents";
-import SkipNode from "@/components/markdown/SkipNode.astro";
-import ButtonLink from "@/components/ui/ButtonLink.astro";
-import CopyPageMenu from "@/components/ui/CopyPageMenu.astro";
-import TranslationFeedbackCard from "@/components/ui/TranslationFeedbackCard.astro";
-import LiveCenter from "@/components/tv/LiveCenter";
-import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
-import Layout from "@/layouts/Layout.astro";
-import { collectionFingerprint } from "@/lib/build/cacheKey";
-import { createCenterRouteIdMap } from "@/lib/center/centers";
-import { buildCenterDetail } from "@/lib/center/detail";
-import { getCollection, render, type CollectionEntry } from "astro:content";
+import CenterView from "@/components/centers/CenterView.astro";
+import { CENTER_PAGE_CACHE, loadCenterPage, notFoundResponse, unavailableResponse } from "@/lib/server/centerPage";
 
-export async function getStaticPaths() {
-	const entries = await getCollection("centers");
-	const routeIds = createCenterRouteIdMap(entries);
+/**
+ * Страница центра - одна на все центры, рендерится по запросу (Cloudflare Workers) из API каталога
+ * по коду из адреса. Нет такого центра - 404, API не ответило - 503.
+ */
+export const prerender = false;
 
-	// Страница центра читает всю коллекцию (похожие, пагинация, EN-версия),
-	// поэтому ключ общий: правка любого центра честно инвалидирует все карточки.
-	const cacheKey = collectionFingerprint([...entries, ...(await getCollection("centersEn"))]);
-
-	return entries.map((entry) => ({
-		params: { id: routeIds.get(entry.id) ?? entry.id },
-		props: { entry },
-		cacheKey,
-	}));
-}
-
-interface Props {
-	entry: CollectionEntry<"centers">;
-	localizedEntry?: CollectionEntry<"centersEn">;
-}
-
-const { entry, localizedEntry } = Astro.props as Props;
-const locale = getLocaleFromUrl(Astro.url);
-const t = useTranslations(locale);
-
-const { Content } = await render(localizedEntry ?? entry);
-const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
+const page = await loadCenterPage(Astro.params.id, "ru");
+if (page.kind === "missing") return notFoundResponse();
+if (page.kind === "redirect") return Astro.redirect(page.to, 301);
+if (page.kind === "unavailable") return unavailableResponse();
+Astro.response.headers.set("Cache-Control", CENTER_PAGE_CACHE);
 ---
 
-<Layout
-	title={detail.title}
-	description={detail.description}
-	type="article"
-	ogImage={`/og/centers/${Astro.params.id}.png`}
-	canonicalURL={detail.canonicalURL}
-	markdownURL={detail.markdownURL}
-	alternates={detail.alternates}
-	datePublished={detail.publishedDate}
-	dateModified={detail.modifiedDate}
->
-	<article class="mx-auto flex w-full max-w-5xl min-w-0 flex-col gap-10">
-		<nav class="flex w-full flex-wrap items-center justify-between gap-3">
-			<ButtonLink
-				href={localizePath(locale, "/centers")}
-				labelKey="nav.allCenters"
-				variant="outline"
-				icon="tabler:arrow-back-up"
-			/>
-			<CopyPageMenu class="max-w-full justify-self-start sm:justify-self-end" />
-		</nav>
-
-		{/* Собранная карточка; правку из API поверх неё показывает LiveCenter. */}
-		<div data-center-static class="flex min-w-0 flex-col gap-10">
-		<CenterHeader
-			id={entry.id}
-			title={detail.title}
-			summary={detail.summary}
-			badges={detail.badges}
-			place={detail.place}
-		/>
-
-		<CenterColumns
-			linkRows={detail.linkRows}
-			facts={detail.facts}
-			sourceUrl={detail.sourceUrl}
-			sourceLabel={detail.sourceLabel}
-			related={detail.related}
-			relatedTitle={detail.relatedTitle}
-			routeIds={detail.routeIds}
-		/>
-
-		{/* Раздел «Ссылки» из текста спрятан (card.css): его строки уже стоят колонкой выше. */}
-		<div class="center-prose prose mx-auto w-full max-w-3xl min-w-0">
-			<Content components={{ ...markdownComponents, h1: SkipNode }} />
-		</div>
-		</div>
-
-		<LiveCenter client:only="solid-js" lang={locale} code={entry.id} builtAt={entry.data.updatedAt} />
-
-		<CenterStatus code={entry.id} completeness={detail.completeness} />
-
-		<CenterPagination
-			previousEntry={detail.previousEntry}
-			nextEntry={detail.nextEntry}
-			routeIds={detail.routeIds}
-		/>
-
-		<TranslationFeedbackCard code={entry.id} />
-	</article>
-	<script type="application/ld+json" is:inline set:html={JSON.stringify(detail.jsonLd)} />
-</Layout>
+<CenterView card={page.card} ruCard={page.ruCard} code={page.card.id} locale="ru" related={page.related} previous={page.previous} next={page.next} />

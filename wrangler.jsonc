@@ -1,7 +1,16 @@
 {
+	// Cloudflare Workers со статикой (адаптер @astrojs/cloudflare v14 - Pages он больше не поддерживает):
+	// страницы сборки - статика, страница центра рендерится по запросу. Воркер - src/worker.ts: в нём и то,
+	// что раньше делали функции Pages (Markdown для ботов, /api/geo.json). Деплой - `bun run cf:deploy`.
 	"name": "tatarverse",
+	"main": "./src/worker.ts",
 	"compatibility_date": "2026-05-17",
-	"pages_build_output_dir": "./dist",
+	"compatibility_flags": ["nodejs_compat"],
+	"assets": {
+		"binding": "ASSETS",
+		// Воркер первым - кроме хешированных ассетов: иначе статические страницы шли бы мимо согласования форматов.
+		"run_worker_first": ["/*", "!/_astro/*"]
+	},
 	"observability": {
 		"enabled": true
 	}

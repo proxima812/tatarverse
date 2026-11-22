@@ -1,0 +1,122 @@
+---
+import A from "@/components/markdown/A.astro";
+import Blockquote from "@/components/markdown/Blockquote.astro";
+import LinkedText from "./LinkedText.astro";
+import { smartText } from "@/lib/center/autolink";
+import { CENTER_LABELS, apiItems, apiText, centerLang, centerSources, hostOf } from "@/lib/center/apiCard";
+import type { PublicCenterCard } from "@/lib/tvapi/client";
+
+/**
+ * Текст страницы центра из карточки API - те же разделы, что пишет выгрузка в тело mdx (`centerBody` в
+ * apiCard.ts), и те же компоненты, что у Markdown собранной страницы: ссылки - `A`, «Прочее» -
+ * `Blockquote`. Раздел «Ссылки» не рисуем: его строки стоят колонкой выше (`CenterColumns`), а в тексте
+ * card.css его всё равно прячет. Голые адреса в тексте - ссылками, как у GFM (`LinkedText`).
+ */
+interface Props {
+	card: PublicCenterCard;
+	lang: string;
+}
+
+const { card, lang: rawLang } = Astro.props as Props;
+const lang = centerLang(rawLang);
+const l = CENTER_LABELS[lang];
+
+/** Как id заголовков Markdown (github-slugger): «О центре» → «о-центре», «Адрес/Локация» → «адреслокация». */
+const slug = (text: string) =>
+	text.trim().toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, "").replace(/\s/g, "-");
+
+const leader = card.leader?.trim();
+const address = card.address?.trim();
+const features = apiItems(card.features, lang);
+// Английская страница без перевода «О центре» - без раздела, как у собранной.
+const about = (apiText(card.about, lang, lang !== "ru") ?? "")
+	.split(/\n{2,}/)
+	.map((paragraph) => paragraph.trim())
+	.filter(Boolean);
+const sources = centerSources(card);
+const hasContacts = Boolean(leader || card.phones.length || card.emails.length);
+---
+
+{
+	hasContacts && (
+		<>
+			<h2 id={slug(l.contacts)}>{l.contacts}</h2>
+			<ul>
+				{leader && <li>{l.leader}: <LinkedText text={leader} /></li>}
+				{card.phones.map((phone) => (
+					<li>
+						{l.phone}: <A href={`tel:${phone.replace(/[^\d+]/g, "")}`}>{phone}</A>
+					</li>
+				))}
+				{card.emails.map((email) => (
+					<li>
+						{l.email}: <A href={`mailto:${email}`}>{email}</A>
+					</li>
+				))}
+			</ul>
+		</>
+	)
+}
+
+{
+	address && (
+		<>
+			<h2 id={slug(l.address)}>{l.address}</h2>
+			<ul>
+				<li><LinkedText text={address} /></li>
+			</ul>
+		</>
+	)
+}
+
+{
+	features.length > 0 && (
+		<>
+			<h2 id={slug(l.features)}>{l.features}</h2>
+			<ul>
+				{features.map((item) => <li><LinkedText text={item} /></li>)}
+			</ul>
+		</>
+	)
+}
+
+{
+	about.length > 0 && (
+		<>
+			<h2 id={slug(l.about)}>{l.about}</h2>
+			{about.map((paragraph) => <p><LinkedText text={paragraph} /></p>)}
+		</>
+	)
+}
+
+{
+	card.facts.length > 0 && (
+		<>
+			<h2 id={slug(l.facts)}>{l.facts}</h2>
+			<Blockquote>
+				<ul>
+					{card.facts.map((fact) => (
+						<li>
+							<LinkedText text={`${fact.label}: ${fact.value}`} />
+						</li>
+					))}
+				</ul>
+			</Blockquote>
+		</>
+	)
+}
+
+{
+	sources.length > 0 && (
+		<>
+			<h2 id={slug(l.sources)}>{l.sources}</h2>
+			<ul>
+				{sources.map((item) => (
+					<li>
+						<A href={item.url}>{item.title ? smartText(item.title) : hostOf(item.url)}</A>
+					</li>
+				))}
+			</ul>
+		</>
+	)
+}
