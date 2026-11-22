@@ -6,6 +6,7 @@ import {
 	negotiateFormat,
 	toMarkdownPath,
 } from "@dualmark/core";
+import redirectsFile from "../public/_redirects?raw";
 
 /**
  * Воркер сайта на Cloudflare Workers (wrangler.jsonc → main). Всё, что раньше делали функции
@@ -16,6 +17,10 @@ import {
  * - согласование форматов по AEO Spec v1.0: ботам и клиентам с `Accept: text/markdown` - Markdown-двойник
  *   страницы (`/centers/tbk-1.md` и т. п. собирает @dualmark/astro), у прямых `.md` - заголовки, которые
  *   считаются на каждый запрос (`X-Markdown-Tokens`);
+ * - переадресации из `public/_redirects`: при `run_worker_first` запрос приходит сюда раньше, чем их
+ *   применила бы статика Cloudflare, поэтому они разбираются здесь;
+ * - файлы (путь с расширением) - сразу из статики: иначе `/og/centers/tbk-1.png` поймал бы маршрут
+ *   `[locale]/centers/[id]` (locale = «og») и ответил 404;
  * - остальное - Astro: статика сборки из ASSETS и страница центра, которая рендерится по запросу.
  *
  * Воркер запускается первым для всех адресов, кроме `/_astro/*` (`run_worker_first`), - иначе статические
@@ -75,6 +80,32 @@ function withAeoHeaders(response: Response) {
 	return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
+/** Правило `_redirects`: точный путь или префикс с `*` на конце (`/catalog/*`). */
+interface RedirectRule {
+	from: string;
+	splat: boolean;
+	to: string;
+	status: number;
+}
+
+const redirectRules: RedirectRule[] = redirectsFile
+	.split("\n")
+	.map((line) => line.trim())
+	.filter((line) => line && !line.startsWith("#"))
+	.map((line) => {
+		const [from = "", to = "", status] = line.split(/\s+/);
+		const splat = from.endsWith("*");
+		return { from: splat ? from.slice(0, -1) : from, splat, to, status: Number(status) || 302 };
+	});
+
+function redirectFor(url: URL): Response | null {
+	const rule = redirectRules.find((candidate) =>
+		candidate.splat ? url.pathname.startsWith(candidate.from) : url.pathname === candidate.from,
+	);
+	if (!rule) return null;
+	return new Response(null, { status: rule.status, headers: { Location: new URL(rule.to, url).toString() } });
+}
+
 /** «Центры рядом»: страна и город по IP. T1 (Tor) и XX (не определил) - пусто, а не случайная страна. */
 function geoResponse(request: Request) {
 	const cf = (request as Request & { cf?: Record<string, unknown> }).cf ?? {};
@@ -103,6 +134,9 @@ export default {
 		}
 		if (request.method !== "GET" && request.method !== "HEAD") return handle(request, env, context);
 
+		const redirect = redirectFor(url);
+		if (redirect) return redirect;
+
 		// Прямой запрос двойника: тело уже в статике, добиваем заголовки рантайма.
 		if (url.pathname.endsWith(".md")) {
 			const asset = await fetchAsset(env, url);
@@ -110,7 +144,10 @@ export default {
 			return handle(request, env, context);
 		}
 
-		if (!isDocumentPath(url.pathname)) return handle(request, env, context);
+		if (!isDocumentPath(url.pathname)) {
+			const asset = await env.ASSETS.fetch(request);
+			return asset.status === 404 ? handle(request, env, context) : asset;
+		}
 
 		const accept = request.headers.get("Accept");
 		const format = negotiateFormat(accept ?? "");
