@@ -2,7 +2,8 @@
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { centerAvatarMarkup } from "@/lib/center/avatar";
 import { getCenterPath } from "@/lib/center/centers";
-import type { CenterFact, RelatedCenter } from "@/lib/center/cardDetail";
+import type { CenterEntry } from "@/lib/center/collection";
+import type { CenterFact } from "@/lib/center/detail";
 import type { CenterLinkRow } from "@/lib/center/links";
 import { Icon } from "astro-icon/components";
 
@@ -18,11 +19,13 @@ interface Props {
 	facts: CenterFact[];
 	sourceUrl?: string | null;
 	sourceLabel?: string | null;
-	related: RelatedCenter[];
+	related: CenterEntry[];
 	relatedTitle: string;
+	routeIds: Map<string, string>;
 }
 
-const { linkRows, facts, sourceUrl, sourceLabel, related, relatedTitle } = Astro.props as Props;
+const { linkRows, facts, sourceUrl, sourceLabel, related, relatedTitle, routeIds } =
+	Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
@@ -103,18 +106,23 @@ const chevronClass =
 			<section class="min-w-0" aria-labelledby="center-related">
 				<h2 id="center-related" class={headingClass}>{relatedTitle}</h2>
 				<ul class={listClass}>
-					{related.slice(0, 5).map((center) => (
+					{related.slice(0, 5).map((entry) => (
 						<li>
-							<a href={localizePath(locale, getCenterPath(center.id))} class={rowClass}>
+							<a
+								href={localizePath(locale, getCenterPath(routeIds.get(entry.id) ?? entry.id))}
+								class={rowClass}
+							>
 								<center-avatar
 									class="center-avatar size-7 shrink-0 [&_svg]:size-full"
 									aria-hidden="true"
-									set:html={centerAvatarMarkup(center.id)}
+									set:html={centerAvatarMarkup(entry.id)}
 								/>
 								<span class="min-w-0 flex-1">
-									<span class="block truncate font-medium">{center.title}</span>
-									{center.city && (
-										<span class="block truncate text-xs text-subtle-foreground">{center.city}</span>
+									<span class="block truncate font-medium">{entry.data.title}</span>
+									{entry.data.location?.city && (
+										<span class="block truncate text-xs text-subtle-foreground">
+											{entry.data.location.city}
+										</span>
 									)}
 								</span>
 								<Icon name="tabler:chevron-right" class={chevronClass} aria-hidden="true" />

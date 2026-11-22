@@ -2,7 +2,6 @@ import enDict from "@/i18n/locales/en";
 import ruDict from "@/i18n/locales/ru";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import type { Dictionary } from "@/i18n/ui";
-import centersMeta from "@/data/centers.meta.json";
 
 export const allLocales = ["ru", "en"] as const;
 export const locales = ["ru", "en"] as const;
@@ -26,11 +25,14 @@ const ogLocales: Record<AppLocale, string> = {
 	en: "en_US",
 };
 
-/**
- * Центры с английской версией - из сводки выгрузки (`src/data/centers.meta.json`, scripts/sync-centers.ts).
- * Не glob по .mdx: модуль есть в воркере страницы центра, и glob утянул бы туда все карточки.
- */
-const translatedCenterIds = new Set<string>(centersMeta.translated);
+const idsFromGlob = (files: Record<string, unknown>) =>
+	new Set(
+		Object.keys(files).map((path) =>
+			path.slice(path.lastIndexOf("/") + 1).replace(/\.mdx$/, ""),
+		),
+	);
+
+const translatedCenterIds = idsFromGlob(import.meta.glob("../data/centers_i18n/en/*.mdx"));
 
 export function hasLocalizedRoute(locale: AppLocale, relativePath: string): boolean {
 	if (locale === defaultLocale) return true;

@@ -2,7 +2,8 @@
 import { isActiveRoute } from "@/lib/site/navigation";
 import ButtonLink from "../ui/ButtonLink.astro";
 import { links } from "@/data/links";
-import centersMeta from "@/data/centers.meta.json";
+import { getCenterCompleteness } from "@/lib/center/completeness";
+import { getCollection } from "astro:content";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 
 const currentLocale = getLocaleFromUrl(Astro.url);
@@ -17,12 +18,11 @@ const topLevelLinks = links.filter(
 );
 const materialLinks = links.filter((item) => materialHrefs.has(item.href));
 
-// Центры - всего карточек, статистика - сколько ждут дополнения. Числа считает выгрузка
-// (src/data/centers.meta.json): меню есть и на странице центра, которая рендерится в воркере, а
-// коллекции утянули бы туда все карточки.
+const centers = await getCollection("centers");
+// Центры - всего карточек, статистика - сколько ждут дополнения.
 const badges: Record<string, number> = {
-	"/centers": centersMeta.count,
-	"/stats": centersMeta.incomplete,
+	"/centers": centers.length,
+	"/stats": centers.filter((entry) => !getCenterCompleteness(entry).complete).length,
 };
 
 const printLink = {

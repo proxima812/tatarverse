@@ -21,28 +21,8 @@ bun run build
 - `src/data/` — catalog content and reference data
 - `src/i18n/` — Russian and English UI dictionaries
 - `src/styles/` — Tailwind v4 tokens, palettes and component styles
-- `src/worker.ts` — Cloudflare Worker entry: Markdown for bots and `Accept: text/markdown`, `/api/geo.json`, then Astro
+- `functions/` — Cloudflare Pages runtime handlers
 - `public/` — public static assets
 
 Keep stable `tbk-*` URLs, localized routes and source references intact.
 The catalog API lives at [api.tatarverse.cc](https://api.tatarverse.cc/docs/).
-
-## Center pages and hosting
-
-- One page for every center: `/centers/tbk-N/` and `/en/centers/tbk-N/` are rendered on request
-  (`export const prerender = false`) from `GET /centers/{code}` of the catalog API, so search engines get
-  ready HTML (header, links, facts, text, canonical, hreflang, JSON-LD) and new or edited centers are live
-  at once, without a rebuild. API responses are cached at the Cloudflare edge for a minute
-  (`src/lib/server/centerApi.ts`). `/centers/386/` and `/centers/TBK-386/` redirect to `/centers/tbk-386/`,
-  an unknown code is a 404, an unreachable API is a 503 with `Retry-After`.
-- Page data: `src/lib/center/cardDetail.ts`, text: `src/components/centers/CenterBody.astro` — the same
-  sections the sync writes into mdx (`centerBody` in `src/lib/center/apiCard.ts`). Neighbours and related
-  centers come from `src/data/centers.meta.json`, which `centers:sync` writes next to the snapshot.
-- Hosting is Cloudflare Workers with static assets (`@astrojs/cloudflare` v14 no longer supports Pages).
-  Every other page is still prerendered. `bun run cf:deploy` runs `wrangler deploy`.
-  The domain is attached as a Worker route `tatarverse.cc/*` (`routes` in `wrangler.jsonc`) on top of the
-  proxied DNS record that still points to the old Pages project `tatarverse`; removing the route rolls the site
-  back to Pages. A route disables `*.workers.dev`, so check changes with `bunx astro preview` before deploying.
-- Local check in the Workers runtime: `bun run build && bunx astro preview`.
-- `astro dev` uses `wrangler.dev.jsonc` — the same Worker config without `run_worker_first`, otherwise Vite's own
-  requests (`/@vite/client`, `/src/…`, files from `public/`) would go to the Worker and return 404.

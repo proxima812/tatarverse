@@ -20,8 +20,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { centerBody, centerData, type ExportCard, type ExportResponse } from "../src/lib/center/apiCard.ts";
-import { completenessOf } from "../src/lib/center/completeness.ts";
+import { apiItems as items, apiText as text, centerData, type ExportCard, type ExportResponse } from "../src/lib/center/apiCard.ts";
 
 const API = process.env.TATARVERSE_API ?? "https://api.tatarverse.cc";
 
@@ -31,6 +30,49 @@ const TARGETS = {
 } as const;
 
 type Lang = keyof typeof TARGETS;
+
+const LABELS = {
+	ru: {
+		contacts: "Контакты",
+		address: "Адрес/Локация",
+		links: "Ссылки",
+		features: "Особенности",
+		about: "О центре",
+		facts: "Прочее",
+		sources: "Источники",
+		leader: "Руководитель",
+		phone: "Телефон",
+		email: "Email",
+		website: "Сайт",
+		maps: "Карты",
+	},
+	en: {
+		contacts: "Contacts",
+		address: "Address / Location",
+		links: "Links",
+		features: "Highlights",
+		about: "About",
+		facts: "Other",
+		sources: "Sources",
+		leader: "Director",
+		phone: "Phone",
+		email: "Email",
+		website: "Website",
+		maps: "Maps",
+	},
+} as const;
+
+const PLATFORM_LABELS: Record<string, string> = {
+	instagram: "Instagram",
+	telegram: "Telegram",
+	vk: "VK",
+	youtube: "YouTube",
+	facebook: "Facebook",
+	ok: "OK",
+	tiktok: "TikTok",
+	twitter: "X",
+	whatsapp: "WhatsApp",
+};
 
 async function fetchExport(lang: Lang): Promise<ExportCard[]> {
 	const response = await fetch(`${API}/centers/export?lang=${lang}`, { headers: { Accept: "application/json" } });
@@ -44,6 +86,21 @@ async function fetchExport(lang: Lang): Promise<ExportCard[]> {
 	}
 	return body.data;
 }
+
+/** MDX читает `{…}` как выражение, а `<` как JSX: в тексте из API их экранируем. */
+const mdx = (value: string) => value.replace(/[{}<]/g, (char) => `\\${char}`);
+
+/** Подпись ссылки: квадратные скобки сломали бы markdown-ссылку. */
+const linkText = (value: string) => mdx(value).replace(/[[\]]/g, (char) => `\\${char}`);
+
+const hostOf = (url: string) => {
+	try {
+		const parsed = new URL(url);
+		return `${parsed.hostname.replace(/^www\./, "")}${parsed.pathname.replace(/\/+$/, "")}`;
+	} catch {
+		return url;
+	}
+};
 
 const yaml = (value: string) => JSON.stringify(value);
 
@@ -65,6 +122,46 @@ function frontmatter(card: ExportCard, lang: Lang): string {
 	return `---\n${lines.join("\n")}\n---\n`;
 }
 
+function body(card: ExportCard, lang: Lang): string {
+	const l = LABELS[lang];
+	const sections: [string, string][] = [];
+	const list = (rows: string[]) => rows.map((row) => `- ${row}`).join("\n");
+
+	const contacts = [
+		card.leader?.trim() ? `${l.leader}: ${mdx(card.leader.trim())}` : null,
+		...card.phones.map((phone) => `${l.phone}: [${linkText(phone)}](tel:${phone.replace(/[^\d+]/g, "")})`),
+		...card.emails.map((email) => `${l.email}: [${linkText(email)}](mailto:${email})`),
+	].filter((row): row is string => Boolean(row));
+	if (contacts.length) sections.push([l.contacts, list(contacts)]);
+
+	if (card.address?.trim()) sections.push([l.address, list([mdx(card.address.trim())])]);
+
+	if (card.links.length) {
+		const label = (link: ExportCard["links"][number]) =>
+			(link.kind && PLATFORM_LABELS[link.kind]) ||
+			(link.kind === "maps" ? l.maps : link.kind === "website" ? l.website : hostOf(link.url));
+		sections.push([l.links, list(card.links.map((link) => `[${linkText(label(link))}](${link.url})`))]);
+	}
+
+	const features = items(card.features, lang);
+	if (features.length) sections.push([l.features, list(features.map(mdx))]);
+
+	const about = text(card.about, lang, lang !== "ru");
+	if (about) sections.push([l.about, mdx(about)]);
+
+	if (card.facts.length) {
+		sections.push([l.facts, card.facts.map((fact) => `> - ${mdx(fact.label)}: ${mdx(fact.value)}`).join("\n")]);
+	}
+
+	// Основной источник уже стоит в frontmatter (`source`), без подписи его не повторяем.
+	const sources = card.sources.filter((item) => item.title || item.url !== card.source);
+	if (sources.length) {
+		sections.push([l.sources, list(sources.map((item) => `[${linkText(item.title ?? hostOf(item.url))}](${item.url})`))]);
+	}
+
+	return sections.map(([heading, content]) => `\n## ${heading}\n\n${content}\n`).join("");
+}
+
 /** Пишет только изменившиеся файлы и убирает карточки, которых в API больше нет. */
 function writeCollection(lang: Lang, cards: ExportCard[]) {
 	const dir = TARGETS[lang];
@@ -76,7 +173,7 @@ function writeCollection(lang: Lang, cards: ExportCard[]) {
 		const file = `${card.id}.mdx`;
 		wanted.add(file);
 		const target = path.join(dir, file);
-		const content = frontmatter(card, lang) + centerBody(card, lang);
+		const content = frontmatter(card, lang) + body(card, lang);
 		if (fs.existsSync(target) && fs.readFileSync(target, "utf8") === content) continue;
 		fs.writeFileSync(target, content);
 		written += 1;
@@ -92,64 +189,10 @@ function writeCollection(lang: Lang, cards: ExportCard[]) {
 	console.log(`[centers] ${lang}: ${cards.length} карточек, обновлено ${written}, удалено ${removed}`);
 }
 
-/**
- * Сводка для модулей, которые есть в воркере страницы центра: число центров и неполных (меню), центры
- * с английской версией (ссылки /en/) и все центры «от свежих» - для соседей и похожих на странице центра.
- * Коллекции утянули бы в воркер все карточки с текстами, а сводка - десятки КБ.
- * Лежит в git вместе со снимком: сборка без сети берёт прежнюю.
- */
-function writeMeta(ru: ExportCard[], en: ExportCard[]) {
-	const incomplete = ru.filter((card) => {
-		const data = centerData(card, "ru");
-		return !completenessOf({
-			body: centerBody(card, "ru"),
-			source: data.source,
-			city: data.location.city,
-			region: data.location.region,
-			online: data.type === "Онлайн",
-		}).complete;
-	}).length;
-	const byNumber = (a: string, b: string) => Number(a.slice(4)) - Number(b.slice(4));
-	// Порядок «от свежих к старым» - как byRecency (src/lib/center/order.ts): дата, затем номер.
-	const pubTime = (card: ExportCard) => (card.pubDate ? new Date(card.pubDate).getTime() : 0);
-	const english = new Map(en.map((card) => [card.id, centerData(card, "en")]));
-	const centers = [...ru]
-		.sort((a, b) => pubTime(b) - pubTime(a) || byNumber(b.id, a.id))
-		.map((card) => {
-			const data = centerData(card, "ru");
-			const translated = english.get(card.id);
-			return {
-				id: card.id,
-				title: data.title,
-				country: data.location.country ?? null,
-				category: data.category ?? null,
-				city: data.location.city ?? null,
-				titleEn: translated?.title ?? null,
-				cityEn: translated?.location.city ?? null,
-			};
-		});
-	const translated = en.map((card) => card.id).sort(byNumber);
-	const target = path.resolve("src/data/centers.meta.json");
-	// Центр - одной строкой: правка карточки в истории git - одна строка, а не десяток.
-	const content = [
-		"{",
-		`\t"count": ${ru.length},`,
-		`\t"incomplete": ${incomplete},`,
-		`\t"translated": ${JSON.stringify(translated)},`,
-		`\t"centers": [`,
-		centers.map((center) => `\t\t${JSON.stringify(center)}`).join(",\n"),
-		"\t]",
-		"}",
-		"",
-	].join("\n");
-	if (!fs.existsSync(target) || fs.readFileSync(target, "utf8") !== content) fs.writeFileSync(target, content);
-}
-
 try {
 	const [ru, en] = await Promise.all([fetchExport("ru"), fetchExport("en")]);
 	writeCollection("ru", ru);
 	writeCollection("en", en);
-	writeMeta(ru, en);
 } catch (error) {
 	const message = error instanceof Error ? error.message : String(error);
 	const hasSnapshot = fs.existsSync(TARGETS.ru) && fs.readdirSync(TARGETS.ru).some((file) => file.endsWith(".mdx"));

@@ -51,33 +51,16 @@ function hasAbout(body: string): boolean {
  * Полнота карточки центра. Считается всегда по русской записи - она источник
  * правды; английская переводится с неё и может отставать.
  */
-/** Из чего считается полнота: русский текст карточки (разделы «Контакты», «О центре», «Источники») и место. */
-export interface CompletenessParts {
-	body: string;
-	source?: string | null;
-	city?: string | null;
-	region?: string | null;
-	online: boolean;
-}
+export function getCenterCompleteness(entry: CollectionEntry<"centers">): CenterCompleteness {
+	const body = entry.body ?? "";
+	const { data } = entry;
 
-export function completenessOf({ body, source, city, region, online }: CompletenessParts): CenterCompleteness {
 	const gaps: CenterGap[] = [];
-	if (!hasContacts(body, source ?? undefined)) gaps.push("contacts");
+	if (!hasContacts(body, data.source)) gaps.push("contacts");
 	if (!hasAbout(body)) gaps.push("about");
 	// Региональной организации хватает региона: города у неё нет по смыслу.
-	if (!city && !region && !online) gaps.push("city");
+	if (!data.location?.city && !data.location?.region && data.type !== "Онлайн") gaps.push("city");
 	if (!MARKDOWN_LINK.test(section(body, "Источники"))) gaps.push("sources");
 
 	return { complete: gaps.length === 0, gaps };
-}
-
-export function getCenterCompleteness(entry: CollectionEntry<"centers">): CenterCompleteness {
-	const { data } = entry;
-	return completenessOf({
-		body: entry.body ?? "",
-		source: data.source,
-		city: data.location?.city,
-		region: data.location?.region,
-		online: data.type === "Онлайн",
-	});
 }

@@ -3,27 +3,25 @@ import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { centerAvatarMarkup } from "@/lib/center/avatar";
 import { getCenterPath } from "@/lib/center/centers";
 import { Icon } from "astro-icon/components";
+import type { CollectionEntry } from "astro:content";
 
 /**
  * Соседние центры - две белые плашки с контуром, как остальные на сайте:
  * подпись «предыдущий/следующий», лицо и полное название (в две строки).
  * «Следующий» всегда в правой колонке, даже когда предыдущего нет.
  */
-interface Neighbour {
-	id: string;
-	title: string;
-}
-
 interface Props {
-	previousEntry: Neighbour | null;
-	nextEntry: Neighbour | null;
+	previousEntry: CollectionEntry<"centers"> | null;
+	nextEntry: CollectionEntry<"centers"> | null;
+	routeIds: Map<string, string>;
 }
 
-const { previousEntry, nextEntry } = Astro.props as Props;
+const { previousEntry, nextEntry, routeIds } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
-const getEntryPath = (entry: Neighbour) => localizePath(locale, getCenterPath(entry.id));
+const getEntryPath = (entry: CollectionEntry<"centers">) =>
+	localizePath(locale, getCenterPath(routeIds.get(entry.id) ?? entry.id));
 
 const cardClass =
 	"card-outline group flex min-w-0 items-center gap-3 rounded-card corner-squircle bg-surface p-4 no-underline transition hover:bg-surface-muted";
@@ -40,7 +38,7 @@ const arrowClass =
 					<center-avatar class="center-avatar size-8 shrink-0 [&_svg]:size-full" aria-hidden="true" set:html={centerAvatarMarkup(previousEntry.id)} />
 					<span class="min-w-0">
 						<span class="block text-xs text-subtle-foreground">{t("detail.previous")}</span>
-						<span class="line-clamp-2 text-sm font-medium text-foreground">{previousEntry.title}</span>
+						<span class="line-clamp-2 text-sm font-medium text-foreground">{previousEntry.data.title}</span>
 					</span>
 				</a>
 			) : (
@@ -50,7 +48,7 @@ const arrowClass =
 				<a href={getEntryPath(nextEntry)} rel="next" class:list={[cardClass, "justify-end text-right"]}>
 					<span class="min-w-0">
 						<span class="block text-xs text-subtle-foreground">{t("detail.next")}</span>
-						<span class="line-clamp-2 text-sm font-medium text-foreground">{nextEntry.title}</span>
+						<span class="line-clamp-2 text-sm font-medium text-foreground">{nextEntry.data.title}</span>
 					</span>
 					<center-avatar class="center-avatar size-8 shrink-0 [&_svg]:size-full" aria-hidden="true" set:html={centerAvatarMarkup(nextEntry.id)} />
 					<Icon name="tabler:arrow-right" class:list={[arrowClass, "group-hover:translate-x-0.5"]} aria-hidden="true" />
