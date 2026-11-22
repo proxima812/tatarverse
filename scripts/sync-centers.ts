@@ -12,10 +12,6 @@
  * а сборка без сети работает на последнем снимке. Руками их не правят -
  * следующая синхронизация перезапишет.
  *
- * Рядом пишется `public/centers-version.json` - версия данных, с которой
- * собран сайт. По ней workflow `centers-deploy` понимает, что в API есть
- * одобренные правки и сайт пора пересобрать.
- *
  * Запуск: `bun scripts/sync-centers.ts` (входит в dev, build и check).
  * Нет сети или API отвечает ошибкой - остаются прежние файлы.
  */
@@ -23,8 +19,6 @@ import fs from "node:fs";
 import path from "node:path";
 
 const API = process.env.TATARVERSE_API ?? "https://api.tatarverse.cc";
-
-const VERSION_FILE = path.resolve("public/centers-version.json");
 
 const TARGETS = {
 	ru: path.resolve("src/data/centers_formatted"),
@@ -114,23 +108,17 @@ const PLATFORM_LABELS: Record<string, string> = {
 	whatsapp: "WhatsApp",
 };
 
-interface ExportResult {
-	cards: ExportCard[];
-	total: number;
-	updatedAt: string | null;
-}
-
-async function fetchExport(lang: Lang): Promise<ExportResult> {
+async function fetchExport(lang: Lang): Promise<ExportCard[]> {
 	const response = await fetch(`${API}/centers/export?lang=${lang}`, { headers: { Accept: "application/json" } });
 	if (!response.ok) throw new Error(`GET /centers/export?lang=${lang}: HTTP ${response.status}`);
-	const body = (await response.json()) as { total?: number; updatedAt?: string | null; data?: ExportCard[] };
+	const body = (await response.json()) as { total?: number; data?: ExportCard[] };
 	if (!Array.isArray(body.data) || body.data.length === 0) {
 		throw new Error(`GET /centers/export?lang=${lang}: пустая выгрузка`);
 	}
 	if (typeof body.total === "number" && body.total !== body.data.length) {
 		throw new Error(`GET /centers/export?lang=${lang}: ${body.data.length} из ${body.total} карточек`);
 	}
-	return { cards: body.data, total: body.data.length, updatedAt: body.updatedAt ?? null };
+	return body.data;
 }
 
 /**
@@ -259,9 +247,8 @@ function writeCollection(lang: Lang, cards: ExportCard[]) {
 
 try {
 	const [ru, en] = await Promise.all([fetchExport("ru"), fetchExport("en")]);
-	writeCollection("ru", ru.cards);
-	writeCollection("en", en.cards);
-	fs.writeFileSync(VERSION_FILE, `${JSON.stringify({ total: ru.total, updatedAt: ru.updatedAt })}\n`);
+	writeCollection("ru", ru);
+	writeCollection("en", en);
 } catch (error) {
 	const message = error instanceof Error ? error.message : String(error);
 	const hasSnapshot = fs.existsSync(TARGETS.ru) && fs.readdirSync(TARGETS.ru).some((file) => file.endsWith(".mdx"));
