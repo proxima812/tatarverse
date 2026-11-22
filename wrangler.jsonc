@@ -6,6 +6,10 @@
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-05-17",
 	"compatibility_flags": ["nodejs_compat"],
+	// Домен - маршрутом поверх проксируемой DNS-записи tatarverse.cc, которая по-прежнему ведёт на проект Pages
+	// tatarverse (прежний сайт): Custom Domain Workers потребовал бы сначала удалить запись. Откат на Pages -
+	// убрать маршрут отсюда и в панели (Workers & Pages → tatarverse → Settings → Domains & Routes).
+	"routes": [{ "pattern": "tatarverse.cc/*", "zone_name": "tatarverse.cc" }],
 	"assets": {
 		"binding": "ASSETS",
 		// Воркер первым - кроме хешированных ассетов: иначе статические страницы шли бы мимо согласования форматов.

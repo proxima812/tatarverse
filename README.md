@@ -40,9 +40,9 @@ The catalog API lives at [api.tatarverse.cc](https://api.tatarverse.cc/docs/).
   centers come from `src/data/centers.meta.json`, which `centers:sync` writes next to the snapshot.
 - Hosting is Cloudflare Workers with static assets (`@astrojs/cloudflare` v14 no longer supports Pages).
   Every other page is still prerendered. `bun run cf:deploy` runs `wrangler deploy`.
-  One-time move from Pages: the first deploy creates the `tatarverse` Worker; then move the tatarverse.cc
-  (and www) custom domain from the Pages project to the Worker (Workers & Pages → tatarverse → Settings →
-  Domains & Routes). Until then the Pages site keeps working.
+  The domain is attached as a Worker route `tatarverse.cc/*` (`routes` in `wrangler.jsonc`) on top of the
+  proxied DNS record that still points to the old Pages project `tatarverse`; removing the route rolls the site
+  back to Pages. A route disables `*.workers.dev`, so check changes with `bunx astro preview` before deploying.
 - Local check in the Workers runtime: `bun run build && bunx astro preview`.
 - `astro dev` uses `wrangler.dev.jsonc` — the same Worker config without `run_worker_first`, otherwise Vite's own
   requests (`/@vite/client`, `/src/…`, files from `public/`) would go to the Worker and return 404.
