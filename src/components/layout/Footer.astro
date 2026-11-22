@@ -216,7 +216,16 @@ const footerColumns: FooterSection[][] = [
 				&copy; tatarverse.cc {new Date().getFullYear()} · {t("footer.legalNote")}
 			</p>
 			<div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-
+				<p class="text-sm text-[var(--footer-fg-muted)]">
+					{t("footer.apiThanks")}{" "}
+					<a
+						href="https://tatarlar.kz"
+						class={`underline decoration-dotted underline-offset-4 ${baseStyle}`}
+						{...externalProps}
+					>
+						tatarlar.kz
+					</a>
+				</p>
 				<p class="text-sm text-[var(--footer-fg-muted)]">
 					{t("footer.updated", { date: updatedAtLabel })}
 				</p>
