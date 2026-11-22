@@ -1,6 +1,5 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import LiveCenter from "@/components/tv/LiveCenter";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -10,12 +9,9 @@ const title = t("notFound.title");
 
 <Layout
 	title={title}
+	classContainer="grid place-content-center"
 	description={t("notFound.description")}
 	indexRobots={false}
 >
-	<div data-center-static class="grid min-h-[50vh] w-full place-content-center">
-		<h1 class="text-5xl tracking-tight text-center self-center font-bold">{title}</h1>
-	</div>
-	{/* Центр, одобренный после сборки: страницы ещё нет, карточку берём из API. */}
-	<LiveCenter client:only="solid-js" />
+	<h1 class="text-5xl tracking-tight text-center self-center font-bold">{title}</h1>
 </Layout>
