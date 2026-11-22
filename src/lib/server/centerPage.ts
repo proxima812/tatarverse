@@ -63,8 +63,10 @@ export async function loadCenterPage(rawCode: string | undefined, locale: AppLoc
 		]);
 		if (!card) return { kind: "missing" };
 		// Английской версии нет (API отдаёт русский текст как запасной): страницы нет, как у собранных -
-		// иначе под /en/ русский текст, а canonical и hreflang врут.
-		if (locale !== defaultLocale && !apiText(card.name, locale, true)) return { kind: "missing" };
+		// иначе под /en/ русский текст, а canonical и hreflang врут. Название может совпадать на обоих
+		// языках («Montrealtatar») и храниться только по-русски, поэтому смотрим и описание, и текст.
+		const translated = [card.name, card.summary, card.about].some((text) => apiText(text, locale, true));
+		if (locale !== defaultLocale && !translated) return { kind: "missing" };
 		// Код без «tbk-», в другом регистре или адрес без «/» на конце - на постоянный адрес (301).
 		if (card.id !== raw || !pathname.endsWith("/")) return { kind: "redirect", to: centerPath(locale, card.id) };
 		// Соседи и похожие - по сводке выгрузки, как у собранных страниц; нового центра там ещё нет -
