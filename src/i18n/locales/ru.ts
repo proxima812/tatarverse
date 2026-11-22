@@ -327,7 +327,7 @@ const dict: Dictionary = {
 	"content.updated": "Обновлено",
 	"card.details": "Подробнее",
 	"footer.updated": "Обновлено {date}",
-	"footer.apiThanks": "Спасибо за API с данными центров",
+	"footer.apiThanks": "Спасибо за разработку API для tatarverse:",
 	"footer.links": "Ссылки в подвале",
 	"footer.description":
 		"Открытый каталог татарских, башкирских и крымскотатарских центров, источников и материалов.",
