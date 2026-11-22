@@ -44,3 +44,5 @@ The catalog API lives at [api.tatarverse.cc](https://api.tatarverse.cc/docs/).
   (and www) custom domain from the Pages project to the Worker (Workers & Pages → tatarverse → Settings →
   Domains & Routes). Until then the Pages site keeps working.
 - Local check in the Workers runtime: `bun run build && bunx astro preview`.
+- `astro dev` uses `wrangler.dev.jsonc` — the same Worker config without `run_worker_first`, otherwise Vite's own
+  requests (`/@vite/client`, `/src/…`, files from `public/`) would go to the Worker and return 404.

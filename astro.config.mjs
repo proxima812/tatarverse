@@ -215,7 +215,12 @@ export default defineConfig({
   output: "static",
   // Сайт статичный, кроме страницы центра: она рендерится по запросу из API каталога (prerender = false
   // в pages/centers/[id].astro) на Cloudflare Workers. Статические страницы собираются в Node, как раньше.
-  adapter: cloudflare({ prerenderEnvironment: "node", imageService: "compile" }),
+  // В `astro dev` - wrangler.dev.jsonc (без run_worker_first): иначе запросы Vite уходили бы в воркер и 404.
+  adapter: cloudflare({
+    prerenderEnvironment: "node",
+    imageService: "compile",
+    configPath: process.argv.includes("dev") ? "./wrangler.dev.jsonc" : undefined,
+  }),
   session: false,
   experimental: {
     // Пропускаем ререндер страниц, чей cacheKey и граф зависимостей не менялись.
