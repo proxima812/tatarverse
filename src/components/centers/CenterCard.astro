@@ -1,5 +1,4 @@
 ---
-import { centerAvatarMarkup } from "@/lib/center/avatar";
 import { cardDataset, cardPart } from "@/lib/site/cardAttributes";
 import { CARD_RESERVE_ATTR } from "@/lib/site/cardTemplate";
 import { normalizeCity, type CenterGeo } from "@/data/geo";
@@ -133,7 +132,7 @@ const dataset = cardDataset({
    {...cardPart("mark", template)}
    class="center-avatar catalog-card-mark"
    aria-hidden="true"
-   set:html={template ? "" : centerAvatarMarkup(id)}
+   data-avatar-seed={template ? undefined : id}
   />
 		<h2
 			{...cardPart("heading", template)}

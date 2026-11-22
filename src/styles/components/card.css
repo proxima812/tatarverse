@@ -13,6 +13,13 @@
 	@apply relative flex h-full min-w-0 flex-col gap-3 rounded-catalog corner-squircle bg-surface p-6 text-surface-foreground card-outline has-[[data-card-link]:focus-visible]:outline-2 has-[[data-card-link]:focus-visible]:outline-offset-2 has-[[data-card-link]:focus-visible]:outline-accent;
 }
 
+/* Карточки за экраном браузер не раскладывает и не рисует. `auto` запоминает
+   реальную высоту после первого показа, 240px - оценка до него. */
+.catalog-card {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 240px;
+}
+
 .catalog-card-location {
 	@apply flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-muted-foreground;
 }

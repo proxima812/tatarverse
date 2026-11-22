@@ -1,6 +1,7 @@
 import { gaze, type Gaze } from "blobatar/gaze";
 import "blobatar/motion.css";
 import "blobatar/gaze.css";
+import { centerAvatarMarkup } from "@/lib/center/avatar";
 
 const visible = new Set<CenterAvatar>();
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -14,14 +15,37 @@ const observer = new IntersectionObserver((entries) => {
  }
 });
 
+// Каталог отдаёт аватар пустым, с `data-avatar-seed`: 411 уникальных SVG
+// весили ~530 КБ HTML. Рисуем лицо заранее, за пару экранов до карточки.
+const painter = new IntersectionObserver(
+ (entries) => {
+  for (const entry of entries) {
+   if (!entry.isIntersecting) continue;
+   const avatar = entry.target as CenterAvatar;
+   painter.unobserve(avatar);
+   avatar.paint();
+  }
+ },
+ { rootMargin: "800px 0px" },
+);
+
 class CenterAvatar extends HTMLElement {
  private eyes?: Gaze;
 
  connectedCallback() {
+  if (this.dataset.avatarSeed && !this.firstElementChild) painter.observe(this);
   observer.observe(this);
  }
 
+ paint() {
+  const seed = this.dataset.avatarSeed;
+  if (!seed || this.firstElementChild) return;
+  this.innerHTML = centerAvatarMarkup(seed);
+  this.sync();
+ }
+
  disconnectedCallback() {
+  painter.unobserve(this);
   observer.unobserve(this);
   visible.delete(this);
   this.sync();
