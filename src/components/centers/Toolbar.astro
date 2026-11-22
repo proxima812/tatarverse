@@ -103,10 +103,18 @@ const GATES: Record<string, string> = {
 
 <script>
 	import { initCardsToolbar } from "@/lib/client/centersToolbar";
+	import { syncLiveCatalog } from "@/lib/client/liveCatalog";
+
+	// Сначала сверяем сетку с API: фильтры читают карточки один раз.
+	// Нет связи с API - работаем на собранных карточках.
+	const start = () =>
+		syncLiveCatalog()
+			.catch((error) => console.warn("[centers] живые карточки не загрузились", error))
+			.finally(initCardsToolbar);
 
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initCardsToolbar, { once: true });
+		document.addEventListener("DOMContentLoaded", start, { once: true });
 	} else {
-		initCardsToolbar();
+		start();
 	}
 </script>

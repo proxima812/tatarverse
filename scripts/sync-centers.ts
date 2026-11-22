@@ -12,11 +12,15 @@
  * а сборка без сети работает на последнем снимке. Руками их не правят -
  * следующая синхронизация перезапишет.
  *
+ * Правило «карточка API → поля центра» общее с живым каталогом в браузере:
+ * `src/lib/center/apiCard.ts`.
+ *
  * Запуск: `bun scripts/sync-centers.ts` (входит в dev, build и check).
  * Нет сети или API отвечает ошибкой - остаются прежние файлы.
  */
 import fs from "node:fs";
 import path from "node:path";
+import { apiItems as items, apiText as text, centerData, type ExportCard, type ExportResponse } from "../src/lib/center/apiCard.ts";
 
 const API = process.env.TATARVERSE_API ?? "https://api.tatarverse.cc";
 
@@ -26,44 +30,6 @@ const TARGETS = {
 } as const;
 
 type Lang = keyof typeof TARGETS;
-
-type Localized = Record<string, { text?: string | null } | null> | null | undefined;
-type LocalizedList = Record<string, { items?: string[] | null } | null> | null | undefined;
-
-interface ExportCard {
-	id: string;
-	name: Localized;
-	summary: Localized;
-	about: Localized;
-	typeCode: string;
-	categoryCode: string;
-	source: string | null;
-	pubDate: string | null;
-	updatedAt: string | null;
-	location: {
-		country: string | null;
-		region: Localized;
-		district: Localized;
-		city: Localized;
-	} | null;
-	address: string | null;
-	links: { url: string; kind?: string | null }[];
-	leader: string | null;
-	phones: string[];
-	emails: string[];
-	features: LocalizedList;
-	facts: { label: string; value: string }[];
-	sources: { url: string; title: string | null }[];
-}
-
-/** Тип и народ в frontmatter - русские значения из схемы коллекции на обоих языках. */
-const TYPES: Record<string, string> = { russia: "Регион РФ", abroad: "Зарубежный", online: "Онлайн" };
-const CATEGORIES: Record<string, string> = {
-	tatar: "Татарский",
-	"tatar-bashkir": "Татаро-Башкирский",
-	bashkir: "Башкирский",
-	"crimean-tatar": "Крымотатарский",
-};
 
 const LABELS = {
 	ru: {
@@ -111,7 +77,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 async function fetchExport(lang: Lang): Promise<ExportCard[]> {
 	const response = await fetch(`${API}/centers/export?lang=${lang}`, { headers: { Accept: "application/json" } });
 	if (!response.ok) throw new Error(`GET /centers/export?lang=${lang}: HTTP ${response.status}`);
-	const body = (await response.json()) as { total?: number; data?: ExportCard[] };
+	const body = (await response.json()) as ExportResponse;
 	if (!Array.isArray(body.data) || body.data.length === 0) {
 		throw new Error(`GET /centers/export?lang=${lang}: пустая выгрузка`);
 	}
@@ -119,20 +85,6 @@ async function fetchExport(lang: Lang): Promise<ExportCard[]> {
 		throw new Error(`GET /centers/export?lang=${lang}: ${body.data.length} из ${body.total} карточек`);
 	}
 	return body.data;
-}
-
-/**
- * Текст на языке файла. `strict` - только перевод: английская страница
- * без перевода «О центре» лучше без раздела, чем с русским текстом.
- */
-function text(map: Localized, lang: Lang, strict = false): string | null {
-	const own = map?.[lang]?.text?.trim();
-	if (own || strict) return own || null;
-	return Object.values(map ?? {}).find((entry) => entry?.text?.trim())?.text?.trim() ?? null;
-}
-
-function items(map: LocalizedList, lang: Lang): string[] {
-	return (map?.[lang]?.items ?? []).map((item) => item.trim()).filter(Boolean);
 }
 
 /** MDX читает `{…}` как выражение, а `<` как JSX: в тексте из API их экранируем. */
@@ -153,24 +105,16 @@ const hostOf = (url: string) => {
 const yaml = (value: string) => JSON.stringify(value);
 
 function frontmatter(card: ExportCard, lang: Lang): string {
-	const lines = [`title: ${yaml(text(card.name, lang) ?? card.id)}`];
-	const type = TYPES[card.typeCode];
-	const category = CATEGORIES[card.categoryCode];
-	if (type) lines.push(`type: ${yaml(type)}`);
-	if (category) lines.push(`category: ${yaml(category)}`);
-	if (card.source) lines.push(`source: ${yaml(card.source)}`);
-	const summary = text(card.summary, lang, lang !== "ru");
-	if (summary) lines.push(`summary: ${yaml(summary)}`);
-	if (card.pubDate) lines.push(`pubDate: ${yaml(card.pubDate)}`);
-	if (card.updatedAt) lines.push(`updatedAt: ${yaml(card.updatedAt)}`);
+	const data = centerData(card, lang);
+	const lines = [`title: ${yaml(data.title)}`];
+	for (const key of ["type", "category", "source", "summary", "pubDate", "updatedAt"] as const) {
+		const value = data[key];
+		if (value) lines.push(`${key}: ${yaml(value)}`);
+	}
 
-	const location = card.location;
-	const place = [
-		["country", location?.country?.trim() || null],
-		["region", text(location?.region, lang)],
-		["district", text(location?.district, lang)],
-		["city", text(location?.city, lang)],
-	].filter((entry): entry is [string, string] => Boolean(entry[1]));
+	const place = (["country", "region", "district", "city"] as const)
+		.map((key) => [key, data.location[key]] as const)
+		.filter((entry): entry is readonly [typeof entry[0], string] => Boolean(entry[1]));
 	if (place.length) {
 		lines.push("location:", ...place.map(([key, value]) => `  ${key}: ${yaml(value)}`));
 	}

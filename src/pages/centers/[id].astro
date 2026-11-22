@@ -8,6 +8,7 @@ import SkipNode from "@/components/markdown/SkipNode.astro";
 import ButtonLink from "@/components/ui/ButtonLink.astro";
 import CopyPageMenu from "@/components/ui/CopyPageMenu.astro";
 import TranslationFeedbackCard from "@/components/ui/TranslationFeedbackCard.astro";
+import LiveCenter from "@/components/tv/LiveCenter";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { collectionFingerprint } from "@/lib/build/cacheKey";
@@ -65,6 +66,8 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 			<CopyPageMenu class="max-w-full justify-self-start sm:justify-self-end" />
 		</nav>
 
+		{/* Собранная карточка; правку из API поверх неё показывает LiveCenter. */}
+		<div data-center-static class="flex min-w-0 flex-col gap-10">
 		<CenterHeader
 			id={entry.id}
 			title={detail.title}
@@ -87,6 +90,9 @@ const detail = await buildCenterDetail({ entry, localizedEntry, locale, t });
 		<div class="center-prose prose mx-auto w-full max-w-3xl min-w-0">
 			<Content components={{ ...markdownComponents, h1: SkipNode }} />
 		</div>
+		</div>
+
+		<LiveCenter client:only="solid-js" lang={locale} code={entry.id} builtAt={entry.data.updatedAt} />
 
 		<CenterStatus code={entry.id} completeness={detail.completeness} />
 

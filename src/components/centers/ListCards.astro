@@ -1,9 +1,11 @@
 ---
+import { catalogVersion } from "@/lib/center/apiCard";
 import { buildCenterFacets, buildFacetRecords, buildGeoIndex } from "@/lib/center/facets";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { getCollection, type CollectionEntry } from "astro:content";
 import NoResults from "../ui/NoResults.astro";
 import ActiveFilters from "./ActiveFilters.astro";
+import CenterCard from "./CenterCard.astro";
 import GridCards from "./GridCards.astro";
 import Search from "./Search.astro";
 import Toolbar from "./Toolbar.astro";
@@ -22,7 +24,10 @@ const SORT_OPTIONS = [
 	{ value: "country", labelKey: "list.sort.country" },
 ] as const;
 
-const geoById = buildGeoIndex(await getCollection("centers"));
+const sourceCards = await getCollection("centers");
+const geoById = buildGeoIndex(sourceCards);
+// С какой версией API собрана сетка - по ней браузер решает, качать ли свежие карточки.
+const version = catalogVersion(sourceCards.map((card) => card.data.updatedAt));
 const records = buildFacetRecords(cards, geoById);
 const facets = buildCenterFacets(records, locale);
 const geoByCardId = new Map(records.map((record) => [record.id, record]));
@@ -71,6 +76,9 @@ const geoByCardId = new Map(records.map((record) => [record.id, record]));
 			</div>
 			<GridCards cards={cards} geoByCardId={geoByCardId} />
 			<NoResults />
+			<div hidden data-live-catalog data-locale={locale} data-version={JSON.stringify(version)}>
+				<template><CenterCard id="" template /></template>
+			</div>
 		</div>
 	</div>
 </div>
