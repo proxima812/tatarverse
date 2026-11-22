@@ -25,6 +25,13 @@ export interface CenterLinkItem {
 
 const centers = centersMeta.centers as MetaCenter[];
 const RELATED_LIMIT = 4;
+const snapshotIds = new Set(centers.map((center) => center.id));
+
+/**
+ * Центр есть в выгрузке - значит, при сборке у него появились OG-картинка (`/og/centers/tbk-N.png`) и
+ * Markdown-двойник (`/centers/tbk-N.md`). У одобренного позже их до следующей сборки нет.
+ */
+export const inSnapshot = (code: string) => snapshotIds.has(code);
 
 const localized = (center: MetaCenter, lang: string): CenterLinkItem => ({
 	id: center.id,

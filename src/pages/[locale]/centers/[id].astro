@@ -2,7 +2,7 @@
 import CenterView from "@/components/centers/CenterView.astro";
 import type { AppLocale } from "@/i18n";
 import { secondaryLocales } from "@/i18n/routes";
-import { CENTER_PAGE_CACHE, loadCenterPage, notFoundResponse, unavailableResponse } from "@/lib/server/centerPage";
+import { loadCenterPage, notFoundResponse, setCenterHeaders, unavailableResponse } from "@/lib/server/centerPage";
 
 /** Страница центра на другом языке (/en/centers/tbk-N/) - та же, что русская, по запросу из API. */
 export const prerender = false;
@@ -10,11 +10,11 @@ export const prerender = false;
 const locale = Astro.params.locale as AppLocale;
 if (!(secondaryLocales() as readonly string[]).includes(locale)) return notFoundResponse();
 
-const page = await loadCenterPage(Astro.params.id, locale);
+const page = await loadCenterPage(Astro.params.id, locale, Astro.url.pathname);
 if (page.kind === "missing") return notFoundResponse();
 if (page.kind === "redirect") return Astro.redirect(page.to, 301);
 if (page.kind === "unavailable") return unavailableResponse();
-Astro.response.headers.set("Cache-Control", CENTER_PAGE_CACHE);
+setCenterHeaders(Astro.response.headers, locale, page.card.id);
 ---
 
 <CenterView card={page.card} ruCard={page.ruCard} code={page.card.id} locale={locale} related={page.related} previous={page.previous} next={page.next} />

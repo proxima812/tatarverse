@@ -7,11 +7,11 @@ import CenterStatus from "@/components/centers/CenterStatus.astro";
 import ButtonLink from "@/components/ui/ButtonLink.astro";
 import CopyPageMenu from "@/components/ui/CopyPageMenu.astro";
 import TranslationFeedbackCard from "@/components/ui/TranslationFeedbackCard.astro";
-import { defaultLocale, hasLocalizedRoute, localizePath, useTranslations, type AppLocale } from "@/i18n";
+import { hasLocalizedRoute, localizePath, useTranslations, type AppLocale } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
 import { cardDetail } from "@/lib/center/cardDetail";
-import { centerPath } from "@/lib/server/centerPage";
-import type { CenterLinkItem } from "@/lib/center/catalogMeta";
+import { centerMarkdownURL, centerPath } from "@/lib/server/centerPage";
+import { inSnapshot, type CenterLinkItem } from "@/lib/center/catalogMeta";
 import type { PublicCenterCard } from "@/lib/tvapi/client";
 
 /**
@@ -42,15 +42,20 @@ const alternates = [
 	...(hasEnglish ? [{ hreflang: "en", href: centerPath("en", code) }] : []),
 	{ hreflang: "x-default", href: centerPath("ru", code) },
 ];
+
+// OG-картинка и Markdown-двойник собираются из выгрузки: центру, одобренному после неё, - общая картинка
+// и без двойника, чтобы не ссылаться на 404.
+const built = inSnapshot(code);
+const markdownURL = centerMarkdownURL(locale, code);
 ---
 
 <Layout
 	title={detail.title}
 	description={detail.description}
 	type="article"
-	ogImage={`/og/centers/${code}.png`}
+	ogImage={built ? `/og/centers/${code}.png` : undefined}
 	canonicalURL={canonicalURL}
-	markdownURL={locale === defaultLocale ? `/centers/${code}.md` : undefined}
+	markdownURL={markdownURL}
 	alternates={alternates}
 	datePublished={detail.publishedDate}
 	dateModified={detail.modifiedDate}

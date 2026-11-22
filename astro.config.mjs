@@ -11,7 +11,6 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { defineConfig, fontProviders } from "astro/config";
 import { config } from "./src/config.ts";
-import { centerRedirects } from "./src/data/centerRedirects.ts";
 import aiTxt from "./src/lib/integrations/aiTxt.ts";
 import { buildHomeMarkdown } from "./src/lib/integrations/homeMarkdown.ts";
 import indexNow from "./src/lib/integrations/indexNow.ts";
@@ -52,8 +51,8 @@ const icons = usedIcons();
 
 export default defineConfig({
   site: config.site.url,
-  // Слитые дубли центров: старый tbk-N ведёт на оставшуюся карточку.
-  redirects: centerRedirects(),
+  // Слитые дубли центров (src/data/centerRedirects.ts) переадресует сама страница центра - loadCenterPage:
+  // маршрут по запросу, а переадресации Astro в воркере отвечали бы 404.
   fonts: [
     {
       provider: fontProviders.google(),

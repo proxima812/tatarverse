@@ -1,6 +1,7 @@
 import { defaultLocale, type AppLocale } from "@/i18n";
+import { mergedCenters } from "@/data/centerRedirects";
 import { apiText } from "@/lib/center/apiCard";
-import { catalogNeighbours, type CenterLinkItem } from "@/lib/center/catalogMeta";
+import { catalogNeighbours, inSnapshot, type CenterLinkItem } from "@/lib/center/catalogMeta";
 import type { PublicCenterCard } from "@/lib/tvapi/client";
 import { CatalogUnavailable, fetchCenter, fetchRelated } from "@/lib/server/centerApi";
 
@@ -32,10 +33,28 @@ export type CenterPage =
 export const centerPath = (locale: AppLocale, code: string) =>
 	locale === defaultLocale ? `/centers/${code}/` : `/${locale}/centers/${code}/`;
 
-export async function loadCenterPage(rawCode: string | undefined, locale: AppLocale): Promise<CenterPage> {
+/** Markdown-двойник страницы: только у русской и только у центра из выгрузки (его собирает сборка). */
+export const centerMarkdownURL = (locale: AppLocale, code: string) =>
+	locale === defaultLocale && inSnapshot(code) ? `/centers/${code}.md` : undefined;
+
+/**
+ * Заголовки страницы центра: кеш и `Link` на Markdown-двойник - то, что у собранных страниц ставил
+ * `_headers` (на ответы воркера он не действует).
+ */
+export function setCenterHeaders(headers: Headers, locale: AppLocale, code: string) {
+	headers.set("Cache-Control", CENTER_PAGE_CACHE);
+	const markdownURL = centerMarkdownURL(locale, code);
+	if (markdownURL) headers.set("Link", `<${markdownURL}>; rel="alternate"; type="text/markdown"`);
+}
+
+export async function loadCenterPage(rawCode: string | undefined, locale: AppLocale, pathname: string): Promise<CenterPage> {
 	const raw = (rawCode ?? "").trim();
 	const code = raw.toLowerCase();
 	if (!/^(tbk-)?\d+$/.test(code)) return { kind: "missing" };
+	// Слитый дубль: старый номер ведёт на оставшуюся карточку. Маршрут по запросу перехватывает адрес раньше
+	// переадресаций из astro.config, поэтому - здесь, до API (там дубля уже нет).
+	const merged = mergedCenters[code.startsWith("tbk-") ? code : `tbk-${code}`];
+	if (merged) return { kind: "redirect", to: centerPath(locale, merged) };
 
 	try {
 		const [card, ruCard] = await Promise.all([
@@ -43,8 +62,11 @@ export async function loadCenterPage(rawCode: string | undefined, locale: AppLoc
 			locale === defaultLocale ? null : fetchCenter(code, defaultLocale),
 		]);
 		if (!card) return { kind: "missing" };
-		// Код без «tbk-» или в другом регистре - на постоянный адрес (301).
-		if (card.id !== raw) return { kind: "redirect", to: centerPath(locale, card.id) };
+		// Английской версии нет (API отдаёт русский текст как запасной): страницы нет, как у собранных -
+		// иначе под /en/ русский текст, а canonical и hreflang врут.
+		if (locale !== defaultLocale && !apiText(card.name, locale, true)) return { kind: "missing" };
+		// Код без «tbk-», в другом регистре или адрес без «/» на конце - на постоянный адрес (301).
+		if (card.id !== raw || !pathname.endsWith("/")) return { kind: "redirect", to: centerPath(locale, card.id) };
 		// Соседи и похожие - по сводке выгрузки, как у собранных страниц; нового центра там ещё нет -
 		// похожие из API, без листалки.
 		const neighbours = catalogNeighbours(card.id, locale);

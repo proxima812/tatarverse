@@ -5,7 +5,8 @@
  * переадресует на оставшуюся. Повторно эти номера не занимать.
  *
  * Сливая дубль: перенеси все факты, ссылки и источники в оставшуюся
- * карточку (RU и EN), удали оба файла дубля и допиши строку сюда.
+ * карточку (RU и EN) в API каталога, дубль удали там же и допиши строку
+ * сюда - переадресует страница центра (src/lib/server/centerPage.ts).
  */
 export const mergedCenters: Record<string, string> = {
 	// 2026-10-02, аудит карточек: одна организация под двумя записями.
@@ -28,13 +29,3 @@ export const mergedCenters: Record<string, string> = {
 	"tbk-208": "tbk-387", // «Салават», Актау - башкирский центр
 	"tbk-196": "tbk-315", // «Булгар», Актау, Дом дружбы
 };
-
-/** Пары «старый путь → новый» для `redirects` в astro.config, обе локали. */
-export function centerRedirects(): Record<string, string> {
-	const routes: Record<string, string> = {};
-	for (const [from, to] of Object.entries(mergedCenters)) {
-		routes[`/centers/${from}`] = `/centers/${to}`;
-		routes[`/en/centers/${from}`] = `/en/centers/${to}`;
-	}
-	return routes;
-}
