@@ -123,8 +123,11 @@ export default defineConfig({
         indexNow({
           key: config.indexNow.key,
           siteUrl: config.site.url,
-          collections: ["centers"],
-          maxUrls: 500,
+          collections: ["centers", "blog", "en/centers", "en/blog", "tt/centers", "tt/blog"],
+          // Предел одного запроса IndexNow; меньше нельзя - кеш запоминает все URL, и неотправленные потерялись бы.
+          maxUrls: 10000,
+          // Отправляем только из cf:deploy: локальная сборка и cf:preview не должны дёргать поисковики.
+          enabled: process.env.INDEXNOW === "1",
         }),
       ]
       : []),

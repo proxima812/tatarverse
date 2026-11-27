@@ -15,10 +15,11 @@ export const config = {
     manifest: true,
     ai: true,
     llms: true,
-    indexNow: false,
+    indexNow: true,
   },
   indexNow: {
-    key: "",
+    // Файл ключа лежит в public/<key>.txt - по нему Яндекс и Bing проверяют сайт.
+    key: "15a2dcb09197707bc77dc658aecaaf67",
   },
   site: {
     url: siteUrl,
