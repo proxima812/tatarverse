@@ -18,6 +18,6 @@ const { from, to, class: className, ...rest } = Astro.props;
 
 <span
 	aria-hidden="true"
-	class={cn("palette-swatch inline-block shrink-0 rounded-full", className)}
+	class={cn("palette-swatch block shrink-0 rounded-full", className)}
 	style={`--swatch-from:${from};--swatch-to:${to}`}
 	{...rest}></span>
