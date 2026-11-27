@@ -138,8 +138,10 @@
 
 /**
  * Демонстрация разделов - `components/home/HomeDemo.astro`.
- * Рамка шире колонки страницы, как «Pro templates» у heroui.com: сияние
- * за окном собрано из цветов текущей палитры, сверху его гасит фон.
+ * Фон во всю ширину окна, как «Pro templates» у heroui.com: сияние за
+ * окном собрано из цветов текущей палитры, сверху его гасит фон. `100vw`
+ * шире страницы на полосу прокрутки - лишнее срезает `overflow-x-clip`
+ * у `<body>`.
  */
 
 .home-demo {
@@ -169,12 +171,11 @@
 	position: relative;
 	left: 50%;
 	display: flex;
-	width: min(calc(100vw - 1.5rem), 88rem);
+	width: 100vw;
 	translate: -50% 0;
 	flex-direction: column;
 	align-items: center;
 	overflow: hidden;
-	border-radius: 48px;
 	background: var(--color-muted);
 	padding: 3rem 1rem 0;
 	mask-image: linear-gradient(black 88%, transparent);
@@ -183,12 +184,7 @@
 		padding-top: 4rem;
 	}
 
-	@media (max-width: 1023px) {
-		border-radius: 36px;
-	}
-
 	@media (max-width: 767px) {
-		border-radius: 28px;
 		padding-top: 2.75rem;
 	}
 
