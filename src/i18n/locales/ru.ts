@@ -34,6 +34,7 @@ const dict: Dictionary = {
 	"blog.googleSourceHint": "Tatarverse будет чаще появляться у вас в Google.",
 	"nav.centers": "Список центров",
 	"nav.toCenters": "Центры",
+	"nav.cta": "Найти центр",
 	"nav.viewCenters": "Каталог",
 	"nav.soon": "cкоро...",
 	"nav.back": "Назад",

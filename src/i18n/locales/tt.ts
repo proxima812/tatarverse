@@ -34,6 +34,7 @@ const dict: Dictionary = {
 	"blog.googleSourceHint": "Tatarverse Google'да сезгә ешрак күренәчәк.",
 	"nav.centers": "Үзәкләр исемлеге",
 	"nav.toCenters": "Үзәкләр",
+	"nav.cta": "Үзәк табу",
 	"nav.viewCenters": "Каталог",
 	"nav.soon": "тиздән...",
 	"nav.back": "Кире",

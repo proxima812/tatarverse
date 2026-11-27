@@ -1,9 +1,6 @@
 ---
 import { isActiveRoute } from "@/lib/site/navigation";
-import ButtonLink from "../ui/ButtonLink.astro";
 import { links } from "@/data/links";
-import { getCenterCompleteness } from "@/lib/center/completeness";
-import { getCollection } from "astro:content";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 
 const currentLocale = getLocaleFromUrl(Astro.url);
@@ -17,13 +14,6 @@ const topLevelLinks = links.filter(
 	(item) => !materialHrefs.has(item.href) && !submissionHrefs.has(item.href),
 );
 const materialLinks = links.filter((item) => materialHrefs.has(item.href));
-
-const centers = await getCollection("centers");
-// Центры - всего карточек, статистика - сколько ждут дополнения.
-const badges: Record<string, number> = {
-	"/centers": centers.length,
-	"/stats": centers.filter((entry) => !getCenterCompleteness(entry).complete).length,
-};
 
 const printLink = {
 	href: "/centers/print",
@@ -40,29 +30,26 @@ const dropdowns = [
 	{ id: "other", labelKey: "menu.other", items: otherDropdownItems },
 ].filter((dropdown) => dropdown.items.length > 0);
 
-const triggerClass =
-	"inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-control px-3 text-sm font-medium transition-colors hover:bg-muted";
-
-const activeUnderlineClass =
-	"relative after:absolute after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-accent after:content-['']";
+// Как у heroui.com: ссылки - просто текст, приглушённый до наведения;
+// текущий раздел - в полный цвет.
+const linkClass =
+	"inline-flex h-9 cursor-pointer items-center gap-1 text-sm font-medium text-muted-foreground no-underline transition-colors hover:text-foreground aria-[current]:text-foreground";
 
 const itemClass =
 	"flex items-center gap-2 rounded-control px-3 py-2 text-sm font-medium text-subtle-foreground no-underline transition-colors hover:bg-muted hover:text-foreground aria-[current]:bg-muted aria-[current]:text-foreground ";
 ---
 
-<nav class="hidden items-center gap-1 lg:flex" aria-label={t("nav.primary")}>
+<nav class="hidden items-center gap-5 lg:flex" aria-label={t("nav.primary")}>
 	{
 		topLevelLinks.map((item) => (
-			<ButtonLink
-				variant="ghost"
-				href={item.href}
+			<a
+				href={localizePath(currentLocale, item.href)}
 				target={item.target}
-				label={item.label}
-				labelKey={item.labelKey}
-				badge={badges[item.href]}
+				class={linkClass}
 				aria-current={isActivePath(item.href) ? "page" : undefined}
-				class={`${badges[item.href] !== undefined ? "pr-8" : ""} ${isActivePath(item.href) ? `${activeUnderlineClass} after:inset-x-4` : ""}`}
-			/>
+			>
+				{t(item.labelKey, undefined, item.label)}
+			</a>
 		))
 	}
 
@@ -75,7 +62,7 @@ const itemClass =
 					<button
 						type="button"
 						data-dropdown-trigger
-						class={`${triggerClass} text-foreground ${isActive ? `${activeUnderlineClass} after:inset-x-3` : ""}`}
+						class={`${linkClass} ${isActive ? "text-foreground" : ""}`}
 						aria-haspopup="true"
 						aria-expanded="false"
 						aria-controls={`${dropdown.id}-dropdown`}

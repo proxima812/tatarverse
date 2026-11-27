@@ -34,6 +34,7 @@ const dict: Dictionary = {
 	"blog.googleSourceHint": "See more from Tatarverse in your Google results.",
 	"nav.centers": "Centers",
 	"nav.toCenters": "Centers",
+	"nav.cta": "Find a center",
 	"nav.viewCenters": "Catalog",
 	"nav.soon": "soon...",
 	"nav.back": "Back",

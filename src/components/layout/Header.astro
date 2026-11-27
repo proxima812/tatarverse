@@ -1,37 +1,61 @@
 ---
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import AppearanceMenu from "./AppearanceMenu.astro";
 import DesktopNav from "./DesktopNav.astro";
 import LanguageToggle from "./LanguageToggle.astro";
 import Logotype from "./Logotype.astro";
 import Menu from "./Menu.astro";
 import SavedLink from "./SavedLink.astro";
+
+/**
+ * Шапка по образцу heroui.com: во всю ширину и без подложки, три колонки -
+ * марка, ссылки по центру, справа настройки и главная кнопка. Когда страница
+ * уехала вверх, под шапкой проступает затемнение из цвета фона (`header.css`).
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
 ---
 
-<header class="sticky top-3 z-[88] isolate w-full px-3 md:top-4">
+<header
+	data-site-header
+	class="site-header sticky top-0 z-[88] isolate flex w-full justify-center px-6 py-4 max-md:bg-background max-md:px-4 max-md:py-1"
+>
+	<div aria-hidden="true" class="site-header-fade pointer-events-none absolute inset-x-0 top-0 -z-10 max-md:hidden"></div>
 	<div
-		class="site-header-bar glass glass-strength-20 glass-chromatic-5 glass-blur-4 glass-saturation-180 glass-brightness-110 mx-auto w-full max-w-[780px] rounded-full py-2 pr-2 pl-5"
+		class="flex w-full max-w-5xl items-center justify-between gap-4 max-md:h-12 lg:grid lg:grid-cols-[1fr_auto_1fr]"
 	>
-		<div class="flex items-center justify-between gap-4">
-			<div class="flex min-w-0 shrink-0 items-center gap-4 lg:flex-1">
-				<Logotype />
+		<div class="flex shrink-0 items-center justify-self-start">
+			<Logotype />
+		</div>
+
+		<DesktopNav />
+
+		<div class="flex h-9 shrink-0 items-center gap-2 justify-self-end">
+			<div class="hidden items-center gap-0.5 lg:inline-flex">
+				<SavedLink bare />
+				<AppearanceMenu bare />
+				<LanguageToggle bare />
 			</div>
 
-			<DesktopNav />
+			<a
+				href={localizePath(locale, "/centers")}
+				class="inline-flex h-9 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-medium text-accent-foreground no-underline transition-[filter] hover:brightness-110 max-md:px-3"
+			>
+				{t("nav.cta")}
+			</a>
 
-			<div class="flex shrink-0 items-center gap-4 lg:flex-1 lg:justify-end">
-				<div
-					class="hidden h-10 items-center rounded-full border border-border-muted px-1 lg:inline-flex"
-				>
-					<SavedLink bare />
-					<span aria-hidden="true" class="mx-1 h-5 w-px shrink-0 bg-border-muted"></span>
-					<AppearanceMenu bare />
-					<span aria-hidden="true" class="mx-1 h-5 w-px shrink-0 bg-border-muted"></span>
-					<LanguageToggle bare />
-				</div>
-
-				<Menu />
-			</div>
+			<Menu />
 		</div>
 	</div>
 </header>
 
+<script>
+	const header = document.querySelector<HTMLElement>("[data-site-header]");
+
+	if (header) {
+		const sync = () => header.toggleAttribute("data-scrolled", scrollY > 8);
+		sync();
+		addEventListener("scroll", sync, { passive: true });
+	}
+</script>
