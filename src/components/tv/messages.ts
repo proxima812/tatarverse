@@ -1,4 +1,5 @@
 import { ApiError } from "@/lib/tvapi/client";
+import { ttMessages } from "./messagesTt";
 
 /**
  * Строки островов на Solid. Словари `src/i18n/locales` живут на сборке, а
@@ -271,11 +272,13 @@ const en: Record<Key, string> = {
 	"role.other": "I just know about it",
 };
 
-export type Lang = "ru" | "en";
+const tt = ttMessages as Record<Key, string>;
+
+export type Lang = "ru" | "en" | "tt";
 export type T = (key: Key, values?: Record<string, string | number>) => string;
 
 export function messages(lang: Lang): T {
-	const dict = lang === "en" ? en : ru;
+	const dict = lang === "en" ? en : lang === "tt" ? tt : ru;
 	return (key, values) => {
 		const template = dict[key] ?? ru[key] ?? key;
 		return values
@@ -286,7 +289,7 @@ export function messages(lang: Lang): T {
 
 /**
  * Текст ошибки для человека. `detail` сервер пишет по-русски - на русской
- * странице его и показываем, на английской - свои строки по коду.
+ * странице его и показываем, на остальных - свои строки по коду.
  */
 export function errorText(error: unknown, lang: Lang): string {
 	const t = messages(lang);

@@ -18,7 +18,7 @@ import ShowcaseStage from "./ShowcaseStage.astro";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const m = messages(locale === "en" ? "en" : "ru");
+const m = messages(locale);
 const [center] = await presentCards(locale, 1);
 ---
 

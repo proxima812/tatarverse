@@ -1,5 +1,5 @@
-export const allLanguages = ["ru", "en"] as const;
-export const languages = ["ru", "en"] as const;
+export const allLanguages = ["ru", "en", "tt"] as const;
+export const languages = ["ru", "en", "tt"] as const;
 
 export type Language = (typeof allLanguages)[number];
 export type ActiveLanguage = (typeof languages)[number];

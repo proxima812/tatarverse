@@ -19,7 +19,8 @@ export function initSavedPage() {
 
 	// Локаль страницы, а не «ru»: на /en/saved по-русски выводились и даты, и
 	// названия стран, хотя в localStorage лежит канон, а не подпись.
-	const locale = document.documentElement.lang === "en" ? "en" : "ru";
+	const lang = document.documentElement.lang;
+	const locale = lang === "en" || lang === "tt" ? lang : "ru";
 
 	/**
 	 * Адрес карточки строит браузер: список приезжает из localStorage, где
@@ -36,7 +37,7 @@ export function initSavedPage() {
 		const path = href.endsWith("/") ? href : `${href}/`;
 		const routeId = path.split("/").filter(Boolean).pop() ?? "";
 
-		return locale === "en" && !untranslated.has(routeId) ? `/en${path}` : path;
+		return locale !== "ru" && !untranslated.has(routeId) ? `/${locale}${path}` : path;
 	};
 
 	const strings = {

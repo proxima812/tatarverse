@@ -27,7 +27,7 @@ export default defineConfig({
       cssVariable: "--font-onest",
       weights: ["400 700"],
       styles: ["normal"],
-      subsets: ["latin", "cyrillic"],
+      subsets: ["latin", "cyrillic", "cyrillic-ext"],
       display: "swap",
     },
     {
@@ -64,7 +64,7 @@ export default defineConfig({
     },
   ],
   i18n: {
-    locales: ["ru", "en"],
+    locales: ["ru", "en", "tt"],
     defaultLocale: "ru",
     routing: {
       prefixDefaultLocale: false,
@@ -74,18 +74,11 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         const path = new URL(page).pathname.replace(/\/$/, "");
-        const excluded = new Set([
-          "/saved",
-          "/en/saved",
-          "/nearby",
-          "/en/nearby",
-          "/centers/print",
-          "/en/centers/print",
-          "/submit/edit",
-          "/en/submit/edit",
-          "/submissions",
-          "/en/submissions",
-        ]);
+        const excluded = new Set(
+          ["/saved", "/nearby", "/centers/print", "/submit/edit", "/submissions"].flatMap(
+            (route) => [route, `/en${route}`, `/tt${route}`],
+          ),
+        );
         return !excluded.has(path);
       },
     }),

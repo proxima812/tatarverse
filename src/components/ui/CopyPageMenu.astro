@@ -111,7 +111,7 @@ const aiPlatforms = [
 </div>
 
 <script>
-	// Обе версии обращаются к модели, а не к читателю. В английской подлежащее
+	// Все версии обращаются к модели, а не к читателю. В английской подлежащее
 	// раньше уезжало («It can also help you find...»), и просьба поискать
 	// превращалась в обещание сервиса.
 	const PROMPT_TEXT: Record<string, (url: string) => string> = {
@@ -119,6 +119,8 @@ const aiPlatforms = [
 			`Я смотрю эту страницу: ${url}. Помоги мне разобраться в ней. Будь готов объяснять концепции, приводить примеры или отвечать на любые вопросы о ней. Также можешь найти дополнительную информацию в интернете и других источниках.`,
 		en: (url: string) =>
 			`I'm looking at this page: ${url}. Help me understand it. Be ready to explain concepts, give examples, or answer any questions about it. You can also look up additional information on the web and in other sources.`,
+		tt: (url: string) =>
+			`Мин бу битне карыйм: ${url}. Аны аңларга ярдәм ит. Төшенчәләрне аңлатырга, мисаллар китерергә яки бит турында теләсә нинди сорауга җавап бирергә әзер бул. Интернеттан һәм башка чыганаклардан өстәмә мәгълүмат та эзләп таба аласың.`,
 	};
 
 	function getPromptUrl(base: string, url: string, locale: string) {

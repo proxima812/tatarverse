@@ -1,3 +1,4 @@
+import { getCountryLabel } from "@/data/worldCountries";
 import type { PublicConfig } from "@/lib/tvapi/client";
 import { num } from "@/lib/tvapi/client";
 import { createMemo, For, Index, Show, type JSX } from "solid-js";
@@ -34,7 +35,9 @@ export default function CenterEditor(props: Props) {
 	const multi = () => props.langs.length > 1;
 
 	const countries = createMemo(() => {
-		const label = (country: PublicConfig["countries"][number]) => (props.lang === "en" ? country.en : country.ru);
+		// API знает русские и английские названия; татарские берём из своего справочника.
+		const label = (country: PublicConfig["countries"][number]) =>
+			props.lang === "en" ? country.en : props.lang === "tt" ? getCountryLabel(country.ru, "tt") : country.ru;
 		return [...props.config.countries]
 			.sort((a, b) => (a.code === "RU" ? -1 : b.code === "RU" ? 1 : label(a).localeCompare(label(b), props.lang)))
 			.map((country) => ({ value: country.code, label: `${country.flag ? `${country.flag} ` : ""}${label(country)}` }));

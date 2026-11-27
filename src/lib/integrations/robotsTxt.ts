@@ -11,9 +11,13 @@ export interface RobotsTxtOptions {
 
 let _options: RobotsTxtOptions = {};
 
-const DEFAULT_RULES = ["User-agent: *", "Allow: /", "Disallow: /saved", "Disallow: /en/saved", "Disallow: /submissions", "Disallow: /en/submissions"].join(
-	"\n",
-);
+const DEFAULT_RULES = [
+	"User-agent: *",
+	"Allow: /",
+	...["/saved", "/submissions"].flatMap((route) =>
+		["", "/en", "/tt"].map((prefix) => `Disallow: ${prefix}${route}`),
+	),
+].join("\n");
 
 const getRobotsTxt = (site: URL) => {
 	const sitemap = _options.sitemap ?? new URL("sitemap-index.xml", site).href;

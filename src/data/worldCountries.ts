@@ -1,4 +1,5 @@
 import type { AppLocale } from "@/i18n";
+import { worldCountriesTt } from "@/data/worldCountriesTt";
 
 export const worldCountriesRu: string[] = [
 	"Россия",
@@ -195,6 +196,7 @@ export const worldCountriesEn: string[] = [
 export const worldCountriesByLocale = {
 	ru: worldCountriesRu,
 	en: worldCountriesEn,
+	tt: worldCountriesTt,
 } satisfies Record<AppLocale, string[]>;
 
 for (const [locale, values] of Object.entries(worldCountriesByLocale)) {
@@ -209,7 +211,11 @@ for (const [locale, values] of Object.entries(worldCountriesByLocale)) {
 const countryLabelsByRu = new Map(
 	worldCountriesRu.map((country, index) => [
 		country,
-		{ ru: country, en: worldCountriesEn[index] ?? country } satisfies Record<AppLocale, string>,
+		{
+			ru: country,
+			en: worldCountriesEn[index] ?? country,
+			tt: worldCountriesTt[index] ?? country,
+		} satisfies Record<AppLocale, string>,
 	]),
 );
 

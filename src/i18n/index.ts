@@ -1,10 +1,11 @@
 import enDict from "@/i18n/locales/en";
 import ruDict from "@/i18n/locales/ru";
+import ttDict from "@/i18n/locales/tt";
 import { getRelativeLocaleUrl } from "astro:i18n";
 import type { Dictionary } from "@/i18n/ui";
 
-export const allLocales = ["ru", "en"] as const;
-export const locales = ["ru", "en"] as const;
+export const allLocales = ["ru", "en", "tt"] as const;
+export const locales = ["ru", "en", "tt"] as const;
 export type AppLocale = (typeof allLocales)[number];
 export type ActiveLocale = (typeof locales)[number];
 
@@ -13,17 +14,31 @@ export const defaultLocale: ActiveLocale = "ru";
 export const localeLabels: Record<AppLocale, { label: string; short: Uppercase<AppLocale> }> = {
 	ru: { label: "Русский", short: "RU" },
 	en: { label: "English", short: "EN" },
+	tt: { label: "Татарча", short: "TT" },
 };
 
 const dictionaries: Record<AppLocale, Dictionary> = {
 	ru: ruDict,
 	en: enDict,
+	tt: ttDict,
 };
 
 const ogLocales: Record<AppLocale, string> = {
 	ru: "ru_RU",
 	en: "en_US",
+	tt: "tt_RU",
 };
+
+// Теги для Intl: у татарского в ICU свои месяцы («17 август 2026»).
+const intlLocales: Record<AppLocale, string> = {
+	ru: "ru-RU",
+	en: "en-US",
+	tt: "tt",
+};
+
+export function getIntlLocale(locale: AppLocale): string {
+	return intlLocales[locale] ?? intlLocales[defaultLocale];
+}
 
 const idsFromGlob = (files: Record<string, unknown>) =>
 	new Set(
@@ -32,13 +47,18 @@ const idsFromGlob = (files: Record<string, unknown>) =>
 		),
 	);
 
-const translatedCenterIds = idsFromGlob(import.meta.glob("../data/centers_i18n/en/*.mdx"));
+// Карточки центров переведены не на все языки: на татарский их не переводят,
+// ссылки с татарских страниц ведут на русскую карточку.
+const translatedCenterIds: Partial<Record<AppLocale, Set<string>>> = {
+	en: idsFromGlob(import.meta.glob("../data/centers_i18n/en/*.mdx")),
+	tt: new Set(),
+};
 
 export function hasLocalizedRoute(locale: AppLocale, relativePath: string): boolean {
 	if (locale === defaultLocale) return true;
 
 	const centerId = relativePath.match(/^centers\/([^/.]+)$/)?.[1];
-	if (centerId && !translatedCenterIds.has(centerId)) return false;
+	if (centerId && !translatedCenterIds[locale]?.has(centerId)) return false;
 
 	return true;
 }

@@ -23,6 +23,7 @@ const ELLIPSIS = "...";
 const SUFFIX: Record<AppLocale, string> = {
 	ru: ". Контакты и проверенные источники: tatarverse.",
 	en: ". Contacts and verified sources: tatarverse.",
+	tt: ". Элемтә һәм тикшерелгән чыганаклар: tatarverse.",
 };
 
 export interface DescriptionParts {

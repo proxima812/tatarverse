@@ -90,6 +90,9 @@ export async function syncLiveCatalog(): Promise<void> {
 	if (!root || !grid || !template) return;
 
 	const locale = root.dataset.locale ?? "ru";
+	// Карточки переведены только на английский: татарский каталог показывает
+	// русский текст карточек и ведёт на русские страницы центров.
+	const cardLocale = locale === "en" ? "en" : "ru";
 	const built = JSON.parse(root.dataset.version ?? "{}") as CatalogVersion;
 
 	const stats = await getJson<{ data?: { count?: number; updatedAt?: string | null } }>(
@@ -101,7 +104,7 @@ export async function syncLiveCatalog(): Promise<void> {
 
 	const [source, shown] = await Promise.all([
 		fetchCards("ru"),
-		locale === "ru" ? Promise.resolve(null) : fetchCards(locale),
+		cardLocale === "ru" ? Promise.resolve(null) : fetchCards(cardLocale),
 	]);
 	const shownById = new Map((shown ?? []).map((card) => [card.id, card]));
 
@@ -115,7 +118,7 @@ export async function syncLiveCatalog(): Promise<void> {
 	// Новые карточки - в начало: сетка собрана от свежих к старым.
 	const fresh: HTMLElement[] = [];
 	for (const card of source) {
-		const fields = cardFields(card, shownById.get(card.id) ?? card, locale);
+		const fields = cardFields(card, shownById.get(card.id) ?? card, cardLocale);
 		const current = existing.get(card.id);
 		existing.delete(card.id);
 		if (current && sameFields(readCard(current), fields)) continue;
@@ -123,7 +126,7 @@ export async function syncLiveCatalog(): Promise<void> {
 		// Ссылку собранной карточки не трогаем: под /en/ страница есть только у переведённых.
 		const linkHref =
 			current?.querySelector(`[${CARD_PART.link}]`)?.getAttribute("href") ??
-			`${locale === "ru" || !shownById.get(card.id)?.name?.[locale]?.text ? "" : `/${locale}`}${fields.href}/`;
+			`${cardLocale === "ru" || !shownById.get(card.id)?.name?.[cardLocale]?.text ? "" : `/${cardLocale}`}${fields.href}/`;
 		const article = renderCard(template, fields, locale, linkHref);
 		if (!article) continue;
 		if (current) current.replaceWith(article);

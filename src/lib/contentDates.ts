@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import type { AppLocale } from "@/i18n";
+import { getIntlLocale, type AppLocale } from "@/i18n";
 
 type DateInput = Date | string | null | undefined;
 
@@ -170,7 +170,7 @@ export function formatContentDateTime(date: DateInput, locale: AppLocale) {
 	const parsedDate = toDate(date);
 	if (!parsedDate) return "";
 
-	const dateParts = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "ru-RU", {
+	const dateParts = new Intl.DateTimeFormat(getIntlLocale(locale), {
 		day: "numeric",
 		month: "long",
 		year: "numeric",

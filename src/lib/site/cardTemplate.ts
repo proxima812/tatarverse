@@ -1,5 +1,6 @@
 import { centerAvatarMarkup } from "@/lib/center/avatar";
 import { CARD_ATTR, CARD_PART, cardDataset, type CardFields } from "@/lib/site/cardAttributes";
+import { getCenterValueLabel } from "@/data/centerLabels";
 
 /**
  * Операция «данные карточки + заготовка → готовый узел» - единственное
@@ -76,8 +77,8 @@ export function fillCard(
 	fillPart(node, "city", fields.city);
 	fillPart(node, "country", fields.country);
 	fillPart(node, "summary", fields.summary);
-	fillPart(node, "category", fields.category);
-	fillPart(node, "type", fields.type);
+	fillPart(node, "category", getCenterValueLabel(fields.category, options.locale));
+	fillPart(node, "type", getCenterValueLabel(fields.type, options.locale));
 
 	const separator = article.querySelector<HTMLElement>(`[${CARD_PART.separator}]`);
 	if (separator) separator.hidden = !(fields.city && fields.country);

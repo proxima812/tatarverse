@@ -2,6 +2,7 @@
 import { cardDataset, cardPart } from "@/lib/site/cardAttributes";
 import { CARD_RESERVE_ATTR } from "@/lib/site/cardTemplate";
 import { normalizeCity, type CenterGeo } from "@/data/geo";
+import { getCenterValueLabel } from "@/data/centerLabels";
 import { countryFlagsByRu, getCountryLabel } from "@/data/worldCountries";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { getCenterPath } from "@/lib/center/centers";
@@ -160,13 +161,13 @@ const dataset = cardDataset({
 			{(template || category) && (
 				<span class="catalog-card-chip">
 					<Icon name="mdi:tag-multiple-outline" class="size-3.5 shrink-0" aria-hidden="true" />
-					<span {...cardPart("category", template)}>{category}</span>
+					<span {...cardPart("category", template)}>{category && getCenterValueLabel(category, locale)}</span>
 				</span>
 			)}
 			{(template || type) && (
 				<span class="catalog-card-chip">
 					<Icon name="mdi:tag-multiple-outline" class="size-3.5 shrink-0" aria-hidden="true" />
-					<span {...cardPart("type", template)}>{type}</span>
+					<span {...cardPart("type", template)}>{type && getCenterValueLabel(type, locale)}</span>
 				</span>
 			)}
 		</div>

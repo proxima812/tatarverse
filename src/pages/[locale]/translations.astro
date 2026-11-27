@@ -1,7 +1,10 @@
 ---
 import MDX from "@/layouts/MDX.astro";
-import Content, { file, frontmatter } from "@/data/pages_i18n/en/translations.mdx";
+import * as en from "@/data/pages_i18n/en/translations.mdx";
+import * as tt from "@/data/pages_i18n/tt/translations.mdx";
 export { secondaryLocalePaths as getStaticPaths } from "@/i18n/routes";
+
+const { Content, file, frontmatter } = Astro.params.locale === "tt" ? tt : en;
 ---
 
 <MDX frontmatter={frontmatter} file={file}>

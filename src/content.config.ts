@@ -2,6 +2,7 @@ import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { defineCollection } from "astro:content";
 import { blogCategories, blogFormats } from "./data/blog";
+import { languages } from "./i18n/ui";
 import { getMacroRegion } from "./data/geo/macroRegions";
 import { normalizeRuRegion, RUSSIA, suggestRuRegion } from "./data/geo/ruRegions";
 
@@ -124,7 +125,7 @@ export const collections = {
 			description: z.string().trim().min(1),
 			format: z.enum(blogFormats),
 			category: z.enum(blogCategories),
-			locale: z.enum(["ru", "en"]).default("ru"),
+			locale: z.enum(languages).default("ru"),
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			author: z.string().trim().min(1),

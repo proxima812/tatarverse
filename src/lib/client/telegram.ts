@@ -97,9 +97,16 @@ const syncColors = (tg: TelegramWebApp) => {
 	});
 };
 
-const homePath = () => (root.dataset.language === "en" ? "/en/" : "/");
+const SECONDARY_LOCALES = ["en", "tt"];
 
-const isHomePage = () => ["/", "/en", "/en/"].includes(location.pathname);
+const homePath = () => {
+	const language = root.dataset.language ?? "";
+	return SECONDARY_LOCALES.includes(language) ? `/${language}/` : "/";
+};
+
+const isHomePage = () =>
+	location.pathname === "/" ||
+	SECONDARY_LOCALES.some((locale) => [`/${locale}`, `/${locale}/`].includes(location.pathname));
 
 /** Открытые меню и шторка фильтров: «Назад» сначала закрывает их. */
 const OVERLAY_CLOSE = [

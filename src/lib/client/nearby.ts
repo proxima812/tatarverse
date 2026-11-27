@@ -56,7 +56,8 @@ export function initNearby() {
 
 	// Определиться можно и в стране, которой нет в каталоге: в списке её тогда
 	// нет, а назвать посетителю его страну всё равно надо.
-	const locale = document.documentElement.lang === "en" ? "en" : "ru";
+	const lang = document.documentElement.lang;
+	const locale = lang === "en" || lang === "tt" ? lang : "ru";
 	const optionFor = (value: string) =>
 		[...countrySelect.options].find((option) => option.value === value);
 

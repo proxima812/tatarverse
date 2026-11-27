@@ -17,7 +17,7 @@ import { createStore } from "solid-js/store";
 import { createDraft, fieldError, toFields, type DraftSource } from "./centerDraft";
 import CenterEditor, { Section } from "./CenterEditor";
 import { errorText, messages, type Lang, type T } from "./messages";
-import { paths } from "./paths";
+import { cardLang, paths } from "./paths";
 import { Button, Empty, Field, Icon, inputClass, LinkButton, Loading, Notice, Select } from "./ui";
 
 type Mode = { kind: "create" } | { kind: "edit"; code: string } | { kind: "fix"; id: number };
@@ -188,7 +188,8 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 	let captcha: Captcha | undefined;
 	onMount(() => {
 		if (!config.submissionsOpen) return;
-		createCaptcha(captchaElement, config.captcha.siteKey, props.lang)
+		// У reCAPTCHA нет татарского интерфейса.
+		createCaptcha(captchaElement, config.captcha.siteKey, cardLang(props.lang))
 			.then((instance) => (captcha = instance))
 			.catch(() => setProblem(errorText(new ApiError(503, { errorCode: "captcha_unavailable" }), props.lang)));
 	});
@@ -262,7 +263,17 @@ function FormBody(props: { loaded: Loaded; lang: Lang; t: T }) {
 		}
 	};
 
-	const roles = () => config.roles.map((role) => ({ value: role.code, label: props.lang === "en" ? role.en : role.ru }));
+	// Подписи ролей приходят из API на русском и английском; татарские - из своих строк.
+	const roleLabel = (role: PublicConfig["roles"][number]) => {
+		if (props.lang === "en") return role.en;
+		if (props.lang === "tt") {
+			const key = `role.${role.code}` as Parameters<T>[0];
+			const label = t(key);
+			if (label !== key) return label;
+		}
+		return role.ru;
+	};
+	const roles = () => config.roles.map((role) => ({ value: role.code, label: roleLabel(role) }));
 	const contactError = () => fieldError(errors(), "submitter.contact");
 
 	return (

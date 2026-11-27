@@ -1,5 +1,5 @@
 ---
-import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { getIntlLocale, getLocaleFromUrl, useTranslations } from "@/i18n";
 import { printShowcase } from "@/lib/home/showcase";
 import { Icon } from "astro-icon/components";
 import ShowcaseStage from "./ShowcaseStage.astro";
@@ -16,7 +16,7 @@ import ShowcaseStage from "./ShowcaseStage.astro";
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const { group, total, countries } = await printShowcase(locale, Astro.site?.toString() ?? "");
-const date = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "ru-RU", {
+const date = new Intl.DateTimeFormat(getIntlLocale(locale), {
 	day: "numeric",
 	month: "long",
 	year: "numeric",

@@ -5,7 +5,7 @@ import { formatDate, pickItems, pickText, textLang } from "@/lib/tvapi/text";
 import { createEffect, createResource, For, Match, Show, Switch, type JSX } from "solid-js";
 import type { IconName } from "./icons";
 import { messages, type Lang } from "./messages";
-import { paths } from "./paths";
+import { cardLang, paths } from "./paths";
 import { Empty, Icon, LinkButton, Loading } from "./ui";
 
 /**
@@ -21,7 +21,7 @@ import { Empty, Icon, LinkButton, Loading } from "./ui";
  * `/centers/tbk-N/`: так открывается центр, одобренный после сборки.
  */
 
-const CENTER_PATH = /^\/(?:(en)\/)?centers\/(tbk-\d+)\/?$/;
+const CENTER_PATH = /^\/(?:(en|tt)\/)?centers\/(tbk-\d+)\/?$/;
 
 const linkIcons: Record<string, IconName> = {
 	instagram: "brand-instagram",
@@ -67,7 +67,7 @@ export default function LiveCenter(props: { lang?: Lang; code?: string; builtAt?
 
 	const [card] = createResource(
 		() => code || false,
-		(value) => unwrap(api.GET("/centers/{code}", { params: { path: { code: value }, query: { lang } } })),
+		(value) => unwrap(api.GET("/centers/{code}", { params: { path: { code: value }, query: { lang: cardLang(lang) } } })),
 	);
 
 	// `card()` бросает, если запрос упал: читаем только готовый ответ.
@@ -136,7 +136,8 @@ function CenterView(props: { center: PublicCenterCard; lang: Lang }) {
 	const region = pickText(c.location?.region);
 	const district = pickText(c.location?.district);
 	const placeText = [city || region, c.location?.country].filter(Boolean).join(", ");
-	const translationMissing = props.lang !== "ru" && textLang(c.name) === "ru";
+	// Татарских карточек нет вовсе - предупреждать о переводе там незачем.
+	const translationMissing = props.lang === "en" && textLang(c.name) === "ru";
 	const facts: [string, string][] = [
 		...((region ? [[t("form.region"), region]] : []) as [string, string][]),
 		...((district ? [[t("form.district"), district]] : []) as [string, string][]),

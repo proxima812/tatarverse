@@ -6,6 +6,7 @@ import {
   type CenterGeo,
   type CenterScope,
 } from "@/data/geo";
+import { getCenterValueLabel } from "@/data/centerLabels";
 import { countryFlagsByRu, getCountryLabel } from "@/data/worldCountries";
 import type { AppLocale } from "@/i18n";
 import type { CollectionEntry } from "astro:content";
@@ -192,7 +193,7 @@ export function buildCenterFacets(
       options: toOptions(
         countBy(records, (record) => record.category),
         CATEGORY_ORDER,
-        (value) => value,
+        (value) => getCenterValueLabel(value, locale),
       ),
     },
   ];

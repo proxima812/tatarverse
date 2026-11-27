@@ -1,5 +1,5 @@
 ---
-import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { getIntlLocale, getLocaleFromUrl, useTranslations } from "@/i18n";
 
 /**
  * Сколько нас: три числа по народам, по центру страницы.
@@ -25,7 +25,7 @@ const STATS = [
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const format = new Intl.NumberFormat(locale === "en" ? "en-US" : "ru-RU");
+const format = new Intl.NumberFormat(getIntlLocale(locale));
 ---
 
 <section class="py-4 text-center md:py-8" aria-labelledby="home-people-stats">

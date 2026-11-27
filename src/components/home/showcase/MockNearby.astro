@@ -1,5 +1,5 @@
 ---
-import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { getIntlLocale, getLocaleFromUrl, useTranslations } from "@/i18n";
 import { nearbyShowcase } from "@/lib/home/showcase";
 import { Icon } from "astro-icon/components";
 import MiniCard from "./MiniCard.astro";
@@ -18,7 +18,7 @@ import ShowcaseStage from "./ShowcaseStage.astro";
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const nearby = await nearbyShowcase(locale);
-const format = new Intl.NumberFormat(locale === "en" ? "en-US" : "ru-RU");
+const format = new Intl.NumberFormat(getIntlLocale(locale));
 ---
 
 <ShowcaseStage scene="nearby" once label={t("home.nearby.imageAlt")}>

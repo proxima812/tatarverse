@@ -1,7 +1,7 @@
 ---
 import BackButton from "@/components/navigation/BackButton.astro";
 import Container from "@/components/layout/Container.astro";
-import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { getLocaleFromUrl, useTranslations, type AppLocale } from "@/i18n";
 import { formatContentDateTime, getContentDates } from "@/lib/contentDates";
 import Layout from "./Layout.astro";
 
@@ -25,6 +25,12 @@ const { publishedDate, modifiedDate } = getContentDates({
 });
 const publishedLabel = formatContentDateTime(publishedDate, locale);
 const modifiedLabel = formatContentDateTime(modifiedDate, locale);
+// Дата редакции страницы: предлог и порядок слов у каждого языка свои.
+const updateInfoLabel: Record<AppLocale, (date: string) => string> = {
+	ru: (date) => `от ${date}`,
+	en: (date) => `As of ${date}`,
+	tt: (date) => `${date} көненә`,
+};
 ---
 
 <Layout
@@ -37,7 +43,7 @@ const modifiedLabel = formatContentDateTime(modifiedDate, locale);
 			<BackButton href="/" variant="outline" label="Назад" labelKey="nav.back" />
 			<div class="my-12 min-w-0 pl-0 sm:pl-6">
 				<span class="text-xs text-primary/40 mb-4 block">
-					от {frontmatter.updateInfo}
+					{updateInfoLabel[locale](String(frontmatter.updateInfo))}
 				</span>
 				<h1 class="text-3xl font-bold tracking-tight wrap-anywhere sm:text-4xl">
 					{frontmatter.title}
