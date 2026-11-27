@@ -8,6 +8,9 @@
 @import "./palettes/violet.css";
 @import "./palettes/red.css";
 @import "./palettes/pink.css";
+@import "./palettes/orange.css";
+@import "./palettes/amber.css";
+@import "./palettes/teal.css";
 
 @plugin "@tailwindcss/typography";
 @plugin "@toolwind/corner-shape";

@@ -149,39 +149,41 @@
 .dark {
   color-scheme: dark;
 
-
-
-
-  --color-background: #111012;
-  --color-muted: #181719;
-  --color-surface: #222123;
-  --color-subtle: #333234;
+  /* Тёмная тема по heroui.com: почти чёрный фон, поверхности цинка, мягкий
+     серый вторичный текст. Палитры подкрашивают фон и поверхности в свой
+     оттенок (`palettes/*.css`), здесь - нейтраль для «Дефолта». Оттенки
+     посчитаны заранее в hex, а не через color-mix: Telegram принимает цвет
+     фона только так (lib/client/telegram.ts). */
+  --color-background: #060607;
+  --color-muted: #0F0F11;
+  --color-surface: #18181B;
+  --color-subtle: #27272A;
   --color-catalog: color-mix(in oklab, var(--color-muted) 70%, var(--color-surface));
-  --color-ring: #545355;
+  --color-ring: #3F3F46;
 
   --color-outline: color-mix(in oklab, var(--color-lift) 9%, transparent);
   --color-outline-strong: color-mix(in oklab, var(--color-lift) 13%, transparent);
   --color-well: var(--color-muted);
 
 
-  --color-foreground: #EDEBEF;
-  --color-surface-foreground: #EDEBEF;
-  --color-primary: #EDEBEF;
-  --color-primary-foreground: #111012;
+  --color-foreground: #FCFCFC;
+  --color-surface-foreground: #FCFCFC;
+  --color-primary: #FCFCFC;
+  --color-primary-foreground: #060607;
 
   --color-link: #9FC1FF;
-  --color-muted-foreground: #A8A7A9;
-  --color-subtle-foreground: #939294;
+  --color-muted-foreground: #9F9FA9;
+  --color-subtle-foreground: #8A8A94;
 
   --color-link-decoration: #6B97E8;
 
 
-  --color-depth-200: #3F3E40;
-  --color-depth-300: #494849;
-  --color-depth-400: #555456;
-  --color-depth-500: #787779;
-  --color-depth-600: #9D9C9F;
-  --color-depth-700: #C0BFC2;
+  --color-depth-200: #27272A;
+  --color-depth-300: #3F3F46;
+  --color-depth-400: #52525B;
+  --color-depth-500: #71717A;
+  --color-depth-600: #A1A1AA;
+  --color-depth-700: #D4D4D8;
 
   --color-destructive: #F18A76;
 
@@ -189,7 +191,7 @@
   --color-favorite: #F87580;
 
   --color-accent: hsl(142 58% 52%);
-  --color-accent-foreground: #111012;
+  --color-accent-foreground: #060607;
   --color-accent-vivid: hsl(142 62% 52%);
   --color-accent-glow: hsl(142 70% 70%);
 
@@ -197,4 +199,3 @@
   --color-accent-soft: color-mix(in oklab, var(--color-accent) 18%, var(--color-background));
   --color-accent-soft-hover: color-mix(in oklab, var(--color-accent) 28%, var(--color-background));
 }
-

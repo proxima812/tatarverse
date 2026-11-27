@@ -4,13 +4,7 @@ import { APPEARANCE_SPECS } from "@/lib/site/appearance";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Icon } from "astro-icon/components";
-import { Image } from "astro:assets";
-import blueSwatch from "@/assets/images/palettes/blue.png";
-import defaultSwatch from "@/assets/images/palettes/default.png";
-import greenSwatch from "@/assets/images/palettes/green.png";
-import pinkSwatch from "@/assets/images/palettes/pink.png";
-import purpleSwatch from "@/assets/images/palettes/purple.png";
-import redSwatch from "@/assets/images/palettes/red.png";
+import PaletteSwatch from "./PaletteSwatch.astro";
 
 interface Props {
 	class?: string;
@@ -24,19 +18,6 @@ const accents = APPEARANCE_SPECS.accent.options;
 const groupLabelClass =
 	"px-2 pb-1 text-xs font-medium uppercase tracking-wide text-subtle-foreground";
 
-
-
-
-// Палитра показывается картинкой шара, а не плоским кружком: подпись не нужна,
-// цвет сам себя называет.
-const SWATCH_IMAGES: Record<string, ImageMetadata> = {
-	default: defaultSwatch,
-	green: greenSwatch,
-	blue: blueSwatch,
-	violet: purpleSwatch,
-	red: redSwatch,
-	pink: pinkSwatch,
-};
 
 const optionClass =
 	"flex w-full cursor-pointer items-center gap-2.5 rounded-control px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground aria-checked:bg-muted aria-checked:font-medium aria-checked:text-foreground";
@@ -62,14 +43,7 @@ const t = useTranslations(locale);
 		<span class="appearance-dot size-5" aria-hidden="true">
 			{
 				accents.map((item) => (
-					<Image
-						src={SWATCH_IMAGES[item.value]}
-						alt=""
-						widths={[40, 80]}
-						sizes="20px"
-						class="size-5 rounded-full"
-						data-accent-image={item.value}
-					/>
+					<PaletteSwatch {...item.swatch!} class="size-5" data-accent-image={item.value} />
 				))
 			}
 		</span>
@@ -121,7 +95,7 @@ const t = useTranslations(locale);
 			{t("appearance.palette")}
 		</p>
 		<div
-			class="flex items-center justify-between gap-1 px-1 pt-1"
+			class="grid grid-cols-5 justify-items-center gap-1 px-1 pt-1"
 			role="radiogroup"
 			aria-labelledby="appearance-accent-label"
 		>
@@ -140,14 +114,7 @@ const t = useTranslations(locale);
 							aria-checked="false"
 							tabindex="-1"
 						>
-							<Image
-								src={SWATCH_IMAGES[item.value]}
-								alt=""
-								widths={[64, 128]}
-								sizes="32px"
-								class="size-8 rounded-full"
-								aria-hidden="true"
-							/>
+							<PaletteSwatch {...item.swatch!} class="size-8" />
 						</button>
 					);
 				})

@@ -1,0 +1,23 @@
+---
+import { cn } from "@/lib/cn";
+
+/**
+ * Кружок палитры: свет сверху слева, второй тон снизу справа. Нарисован
+ * градиентами из `ACCENT_PRESETS`, а не картинкой: новая палитра получает
+ * значок без отдельного файла.
+ */
+interface Props {
+	from: string;
+	to: string;
+	class?: string;
+	[key: `data-${string}`]: string | undefined;
+}
+
+const { from, to, class: className, ...rest } = Astro.props;
+---
+
+<span
+	aria-hidden="true"
+	class={cn("palette-swatch inline-block shrink-0 rounded-full", className)}
+	style={`--swatch-from:${from};--swatch-to:${to}`}
+	{...rest}></span>

@@ -7,7 +7,12 @@
 
 :root.dark[data-accent="blue"] {
   --color-accent: #7A9FFF;
-  --color-accent-foreground: #111012;
+  --color-accent-foreground: #060607;
   --color-accent-vivid: #83A6FF;
   --color-accent-glow: #B2C9FF;
+
+  --color-background: #04060A;
+  --color-muted: #0C0F15;
+  --color-surface: #141920;
+  --color-subtle: #222830;
 }

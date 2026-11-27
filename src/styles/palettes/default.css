@@ -1,5 +1,5 @@
 :root[data-accent="default"] {
-  --color-accent: #111012;
+  --color-accent: #060607;
   --color-accent-foreground: #FCFCFC;
   --color-accent-vivid: #292929;
   --color-accent-glow: #4A4A4C;
@@ -10,7 +10,7 @@
 
 :root.dark[data-accent="default"] {
   --color-accent: #FDFBFF;
-  --color-accent-foreground: #111012;
+  --color-accent-foreground: #060607;
   --color-accent-vivid: #F7F4FA;
   --color-accent-glow: #FAF7FD;
 }

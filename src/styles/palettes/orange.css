@@ -1,0 +1,18 @@
+:root[data-accent="orange"] {
+  --color-accent: #E2560C;
+  --color-accent-foreground: #FFFAF7;
+  --color-accent-vivid: #FF7A1A;
+  --color-accent-glow: #FFB27A;
+}
+
+:root.dark[data-accent="orange"] {
+  --color-accent: #FF9A5C;
+  --color-accent-foreground: #060607;
+  --color-accent-vivid: #FFA46A;
+  --color-accent-glow: #FFC9A3;
+
+  --color-background: #0A0503;
+  --color-muted: #140E0A;
+  --color-surface: #1F1612;
+  --color-subtle: #2F2520;
+}

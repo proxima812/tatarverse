@@ -4,6 +4,7 @@ import { APPEARANCE_SPECS } from "@/lib/site/appearance";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { Icon } from "astro-icon/components";
+import PaletteSwatch from "./PaletteSwatch.astro";
 
 /**
  * Компактная пилюля-переключатель оформления.
@@ -57,11 +58,7 @@ const swatchButtonClass =
 					tabindex="-1"
 				>
 					{option.swatch ? (
-						<span
-							class="size-4 rounded-full ring-1 ring-inset ring-shade/20"
-							style={`background-image:linear-gradient(135deg, ${option.swatch.from}, ${option.swatch.to})`}
-							aria-hidden="true"
-						/>
+						<PaletteSwatch {...option.swatch} class="size-4" />
 					) : (
 						<Icon name={option.icon ?? ""} class="size-4" aria-hidden="true" />
 					)}
