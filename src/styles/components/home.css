@@ -82,19 +82,19 @@
 	/* Четвёртая и пятая - маленькие плитки, выглядывают сзади нижней пары. */
 	& > :nth-child(4),
 	& > :nth-child(5) {
-		--tile: 0.3em;
+		--tile: 0.34em;
 		z-index: -1;
-		top: calc(0.46em * 0.5);
+		top: calc(0.46em * 0.22);
 	}
 
 	& > :nth-child(4) {
-		left: calc(0.46em * -0.3);
-		rotate: -18deg;
+		left: calc(0.46em * -0.12);
+		rotate: -14deg;
 	}
 
 	& > :nth-child(5) {
-		right: calc(0.46em * -0.3);
-		rotate: 18deg;
+		right: calc(0.46em * -0.12);
+		rotate: 14deg;
 	}
 }
 
