@@ -118,10 +118,12 @@ const dict: Dictionary = {
 	"home.people.title": "Без күренгәннән күбрәк",
 	"home.people.text":
 		"Китеп барганда без юкка чыкмыйбыз: тел, җырлар һәм бәйрәмнәр безнең белән бергә күчә. Каталог аларны кайда яшәтүләрен күрсәтә.",
-	"home.people.tatars": "Россиядәге татарлар",
-	"home.people.bashkirs": "Россиядәге башкортлар",
-	"home.people.crimean": "Россиядәге Кырым татарлары",
-	"home.people.note": "{year},",
+	"home.people.tatars": "Дөньядагы татарлар",
+	"home.people.bashkirs": "Дөньядагы башкортлар",
+	"home.people.crimean": "Дөньядагы Кырым татарлары",
+	"home.people.inRussia": "шуларның Россиядә - {count}",
+	"home.people.worldNote": "Дөнья - бәяләү:",
+	"home.people.note": "Россия - {year},",
 	"home.people.source": "Бөтенроссия халык санын алу",
 	"home.saved.title": "Сакланган үзәкләр кул астында",
 	"home.saved.text1":

@@ -2,13 +2,14 @@
 import { getIntlLocale, getLocaleFromUrl, useTranslations } from "@/i18n";
 
 /**
- * Сколько нас: три числа по народам, по центру страницы.
+ * Сколько нас: три народа - сколько в мире и сколько из них в России.
  *
- * Числа - не оценка и не округление, а строки таблицы 5 Всероссийской
- * переписи населения 2020 года (проведена в 2021-м, Росстат, том 5
- * «Национальный состав и владение языками»). Поэтому и подписи говорят
- * «в России», а не «в мире»: за пределами страны перепись не считает
- * никого, мировые оценки заметно выше и у каждой свой источник.
+ * Крупно - мировая оценка Joshua Project («Population All Countries»):
+ * единственный источник, который считает все три народа одним способом по
+ * всем странам. Это оценка, поэтому показываем её округлённой, со знаком
+ * «≈». Мелко под ней - точное число 5-й Всероссийской переписи 2020 года
+ * (проведена в 2021-м, Росстат, том 5 «Национальный состав и владение
+ * языками»).
  *
  * Меняешь число - меняй и ссылку под секцией. Цифра без источника с этой
  * страницы уходит: правило проекта, а не вкус.
@@ -16,16 +17,23 @@ import { getIntlLocale, getLocaleFromUrl, useTranslations } from "@/i18n";
 
 const CENSUS_YEAR = 2021;
 const CENSUS_HREF = "https://rosstat.gov.ru/vpn/2020/Tom5_Nacionalnyj_sostav_i_vladenie_yazykami";
+const WORLD_HREF = "https://joshuaproject.net/";
 
+// world - Joshua Project на ноябрь 2026, russia - перепись 2021.
 const STATS = [
-	{ key: "tatars", value: 4_713_669 },
-	{ key: "bashkirs", value: 1_571_879 },
-	{ key: "crimean", value: 257_592 },
+	{ key: "tatars", world: 5_651_200, russia: 4_713_669, href: "https://joshuaproject.net/people_groups/15284" },
+	{ key: "bashkirs", world: 1_640_000, russia: 1_571_879, href: "https://joshuaproject.net/people_groups/10705" },
+	{ key: "crimean", world: 642_400, russia: 257_592, href: "https://joshuaproject.net/people_groups/11434" },
 ];
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 const format = new Intl.NumberFormat(getIntlLocale(locale));
+// Оценку не выдаём за точный счёт: «5,7 млн», а не «5 651 200».
+const formatWorld = new Intl.NumberFormat(getIntlLocale(locale), {
+	notation: "compact",
+	maximumSignificantDigits: 2,
+});
 ---
 
 <section class="py-4 text-center md:py-8" aria-labelledby="home-people-stats">
@@ -42,15 +50,23 @@ const format = new Intl.NumberFormat(getIntlLocale(locale));
 	>
 		{
 			STATS.map((stat) => (
-				<div class="space-y-2">
+				<div class="flex flex-col gap-2">
 					<dt class="text-xs uppercase tracking-wide text-muted-foreground">
 						{t(`home.people.${stat.key}`)}
 					</dt>
-					<dd
-						class="text-4xl font-bold tabular-nums tracking-tight text-accent md:text-5xl"
-						data-count-to={stat.value}
-					>
-						{format.format(stat.value)}
+					<dd class="order-last text-sm text-muted-foreground">
+						{t("home.people.inRussia", { count: format.format(stat.russia) })}
+					</dd>
+					<dd class="text-4xl font-bold tabular-nums tracking-tight text-accent md:text-5xl">
+						<a
+							href={stat.href}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="no-underline"
+							title={format.format(stat.world)}
+						>
+							<span aria-hidden="true">≈&#8239;</span><span data-count-to={stat.world}>{formatWorld.format(stat.world)}</span>
+						</a>
 					</dd>
 				</div>
 			))
@@ -58,6 +74,16 @@ const format = new Intl.NumberFormat(getIntlLocale(locale));
 	</dl>
 
 	<p class="mt-10 text-xs text-muted-foreground">
+		{t("home.people.worldNote")}{" "}
+		<a
+			href={WORLD_HREF}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="underline decoration-link-decoration underline-offset-2 hover:text-foreground"
+		>
+			Joshua Project
+		</a>
+		{" · "}
 		{t("home.people.note", { year: CENSUS_YEAR })}{" "}
 		<a
 			href={CENSUS_HREF}
@@ -82,7 +108,10 @@ const format = new Intl.NumberFormat(getIntlLocale(locale));
 
 	if (list && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
 		const cells = [...list.querySelectorAll<HTMLElement>("[data-count-to]")];
-		const format = new Intl.NumberFormat(document.documentElement.lang || "ru");
+		const format = new Intl.NumberFormat(document.documentElement.lang || "ru", {
+			notation: "compact",
+			maximumSignificantDigits: 2,
+		});
 		const DURATION = 1400;
 
 		const write = (progress: number) => {

@@ -118,10 +118,12 @@ const dict: Dictionary = {
 	"home.people.title": "Нас больше, чем кажется",
 	"home.people.text":
 		"Мы не исчезаем, когда уезжаем: язык, песни и праздники едут вместе с нами. Каталог показывает, где их держат живыми.",
-	"home.people.tatars": "Татар в России",
-	"home.people.bashkirs": "Башкир в России",
-	"home.people.crimean": "Крымскихтатар в России",
-	"home.people.note": "{year},",
+	"home.people.tatars": "Татар в мире",
+	"home.people.bashkirs": "Башкир в мире",
+	"home.people.crimean": "Крымских татар в мире",
+	"home.people.inRussia": "из них в России - {count}",
+	"home.people.worldNote": "Мир - оценка",
+	"home.people.note": "Россия - {year},",
 	"home.people.source": "Всероссийская перепись населения",
 	"home.saved.title": "Сохраненные центры под рукой",
 	"home.saved.text1":
