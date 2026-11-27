@@ -11,6 +11,7 @@
 @import "./palettes/orange.css";
 @import "./palettes/amber.css";
 @import "./palettes/teal.css";
+@import "./palettes/ink.css";
 
 @plugin "@tailwindcss/typography";
 @plugin "@toolwind/corner-shape";

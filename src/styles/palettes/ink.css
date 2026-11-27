@@ -1,0 +1,20 @@
+/**
+ * Текст в тёмной теме цветных палитр - не чистые чёрный и белый, а оттенки
+ * акцента: на кнопке глубокий тон того же цвета, в тексте страницы - белый
+ * с лёгким оттенком, вторичный текст - приглушённый серый того же тона.
+ * Считается из `--color-accent` палитры, поэтому новые палитры получают
+ * это сами. «Дефолт» остаётся нейтральным. Без относительных цветов в
+ * браузере остаются чёрный и белый из `tokens.css`.
+ */
+
+@supports (color: oklch(from red l c h)) {
+  :root.dark[data-accent]:not([data-accent="default"]) {
+    --color-accent-foreground: oklch(from var(--color-accent) 0.25 calc(c * 0.6) h);
+    --color-foreground: oklch(from var(--color-accent) 0.97 0.012 h);
+    --color-surface-foreground: var(--color-foreground);
+    --color-primary: var(--color-foreground);
+    --color-primary-foreground: var(--color-background);
+    --color-muted-foreground: oklch(from var(--color-accent) 0.72 0.022 h);
+    --color-subtle-foreground: oklch(from var(--color-accent) 0.65 0.02 h);
+  }
+}
