@@ -8,5 +8,10 @@ export async function getBlogEntries(locale?: AppLocale) {
 	)).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 }
 
+const blogPrefix = (locale: AppLocale) => `${locale === defaultLocale ? "" : `/${locale}`}/blog`;
+
 /** Путь к RSS блога. Не через localizePath: тот дописывает слеш, а лента - файл. */
-export const blogRssPath = (locale: AppLocale) => `${locale === defaultLocale ? "" : `/${locale}`}/blog/rss.xml`;
+export const blogRssPath = (locale: AppLocale) => `${blogPrefix(locale)}/rss.xml`;
+
+/** Markdown-двойник материала для ИИ-ассистентов (AEO), как у карточек центров. */
+export const blogMarkdownPath = (locale: AppLocale, id: string) => `${blogPrefix(locale)}/${id}.md`;

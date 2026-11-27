@@ -5,6 +5,7 @@ import {
 	negotiateFormat,
 	toMarkdownPath,
 } from "@dualmark/core";
+import { catalogLocale, unconditional, withLiveCatalog } from "../src/lib/server/catalogPage.ts";
 
 /**
  * Согласование форматов по AEO Spec v1.0 на стороне Cloudflare Pages.
@@ -138,6 +139,13 @@ export async function onRequest(context) {
 			});
 		}
 		// Двойника у страницы нет — молча отдаём HTML.
+	}
+
+	// Каталог центров собирается из статики и свежей выгрузки API.
+	const locale = catalogLocale(pathname);
+	if (locale) {
+		const page = withAeoHeaders(await next(unconditional(request)));
+		return withLiveCatalog(page, locale, (promise) => context.waitUntil(promise));
 	}
 
 	return withAeoHeaders(await next());

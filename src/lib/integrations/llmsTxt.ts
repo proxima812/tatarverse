@@ -138,13 +138,27 @@ function renderSection(title: string, entries: LlmsEntry[]) {
 	];
 }
 
+// Статьи блога ведут на markdown-двойники: ассистенту не нужно разбирать HTML,
+// а канонический адрес страницы указан в шапке каждого файла.
+// Импорт динамический: этот файл грузит ещё astro.config, где astro:i18n нет.
+async function getBlogPostEntries(site: URL): Promise<LlmsEntry[]> {
+	const { localeLabels } = await import("@/i18n");
+	const { blogMarkdownPath, getBlogEntries } = await import("@/lib/blog");
+	return (await getBlogEntries()).map(({ id, data }) => ({
+		title: data.title,
+		description: data.description,
+		section: `Blog posts (${localeLabels[data.locale].label})`,
+		url: new URL(blogMarkdownPath(data.locale, id).slice(1), site).href,
+	}));
+}
+
 async function getMarkdownEntries(site: URL): Promise<LlmsEntry[]> {
  return [{ title: "Центры tatarverse", description: "Каталог центров в markdown", section: "Markdown", url: new URL("centers.md", site).href }];
 }
 
 async function getLlmsTxt(site: URL) {
 	const baseSite = withTrailingSlash(site);
-	const entries = await getPageEntries(baseSite);
+	const entries = [...(await getPageEntries(baseSite)), ...(await getBlogPostEntries(baseSite))];
 	const markdownEntries = await getMarkdownEntries(baseSite);
 
 	const grouped = entries.reduce<Record<string, LlmsEntry[]>>((acc, entry) => {

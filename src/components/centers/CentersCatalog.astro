@@ -4,15 +4,14 @@ import ListHeroTitle from "@/components/centers/ListHeroTitle.astro";
 import { catalogStats } from "@/lib/center/stats";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import Layout from "@/layouts/Layout.astro";
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
 interface Props {
-	cards: CollectionEntry<"centers" | "centersEn">[];
 	rssURL?: string;
 	markdownURL?: string;
 }
 
-const { cards, rssURL, markdownURL } = Astro.props as Props;
+const { rssURL, markdownURL } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
@@ -42,5 +41,5 @@ const seoStats = catalogStats(await getCollection("centers"));
 	]}
 >
 	<ListHeroTitle />
-	<ListCards cards={cards} />
+	<ListCards />
 </Layout>

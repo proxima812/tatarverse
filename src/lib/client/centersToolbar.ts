@@ -1,5 +1,11 @@
-import { CARD_ATTR, isFacetField, readCard } from "@/lib/site/cardAttributes";
+import { getCountryLabel } from "@/data/worldCountries";
+import type { AppLocale } from "@/i18n";
+import { facetRecords, type CatalogCard, type CatalogPayload } from "@/lib/center/catalogCards";
+import { buildCenterFacets, type Facet } from "@/lib/center/facets";
+import { CARD_ATTR, CARD_PART, isFacetField, readCard, type CardField } from "@/lib/site/cardAttributes";
+import { fillCard } from "@/lib/site/cardTemplate";
 import { normalizeSearchText, uniqueTerms } from "@/lib/center/searchText";
+import { syncSavedCenters } from "@/lib/client/savedCentersUi";
 import { createCatalogFilter } from "@/lib/catalog/filterState";
 import { readCatalogQuery, writeCatalogQuery, type CatalogSort } from "@/lib/catalog/query";
 import { createCenterSearch } from "@/lib/catalog/search";
@@ -13,7 +19,13 @@ import type {
 } from "@/lib/types";
 
 /**
- * Вид каталога: читает разметку, слушает события, показывает результат.
+ * Вид каталога: рисует чипы и карточки из каталога, слушает события,
+ * показывает результат.
+ *
+ * Карточки приходят данными (`CatalogPayload`), а не разметкой: в HTML
+ * только первая порция, остальное сетка дорисовывает по прокрутке, пока
+ * в хвосте висят скелетоны. Чипы фильтров тоже собираются из каталога -
+ * новая страна или город появляются в тулбаре без пересборки.
  *
  * Решения принимаются не здесь. Что показать - считает `filterState`, в каком
  * порядке - `search`, что положить в адрес - `query`, как вести себя списку
@@ -26,18 +38,70 @@ const SUGGESTION_BLUR_DELAY_MS = 120;
 const MIN_SUGGESTION_QUERY = 2;
 const MAX_SUGGESTIONS = 6;
 const SUGGESTION_SOURCE_LIMIT = 8;
+/** Сколько карточек дорисовываем за раз. */
+const BATCH_SIZE = 24;
+/** За сколько до хвоста сетки начинаем дорисовывать. */
+const PRELOAD_MARGIN = "800px 0px";
 
 const TOKEN_CLASS =
 	"group inline-flex max-w-full items-center gap-1.5 rounded-full bg-primary px-2.5 py-1 text-sm font-medium text-primary-foreground transition hover:bg-primary/85";
 
-export function initCardsToolbar() {
+const CARD_FIELDS = Object.keys(CARD_ATTR) as CardField[];
+
+/** Собранная карточка совпадает с каталогом - узел можно оставить. */
+function sameCard(element: HTMLElement, card: CatalogCard) {
+	const fields = readCard(element);
+	const href = element.querySelector(`[${CARD_PART.link}]`)?.getAttribute("href");
+	return href === card.linkHref && CARD_FIELDS.every((field) => fields[field] === card[field]);
+}
+
+function renderCard(template: HTMLTemplateElement, card: CatalogCard, locale: string) {
+	// На карточке страна подписана на языке страницы, без «Прочее»;
+	// в атрибуте остаётся русский ключ фильтра.
+	const shownCountry = card.country === "Прочее" ? "" : getCountryLabel(card.country, locale as AppLocale);
+	const node = fillCard(template, { ...card, country: shownCountry }, { locale, linkHref: card.linkHref });
+	const article = node?.querySelector<HTMLElement>(`[${CARD_ATTR.id}]`);
+	article?.setAttribute(CARD_ATTR.country, card.country);
+	return article ?? null;
+}
+
+/** Чипы секции - из свежих фасетов, кнопка «Все» остаётся из разметки. */
+function renderChips(group: HTMLElement, facet: Facet, template: HTMLTemplateElement) {
+	const chips = facet.options.flatMap((option) => {
+		const chip = (template.content.cloneNode(true) as DocumentFragment)
+			.querySelector<HTMLButtonElement>("[data-filter-chip]");
+		if (!chip) return [];
+
+		chip.dataset.filterChip = facet.key;
+		chip.dataset.filterValue = option.value;
+		const flag = chip.querySelector<HTMLElement>("[data-chip-flag]");
+		if (option.flag && flag) flag.textContent = option.flag;
+		else flag?.remove();
+		const label = chip.querySelector<HTMLElement>("[data-chip-label]");
+		if (label) label.textContent = option.label;
+		const count = chip.querySelector<HTMLElement>("[data-chip-count]");
+		if (count) count.textContent = String(option.count);
+		return [chip];
+	});
+
+	for (const old of group.querySelectorAll("[data-filter-chip]")) old.remove();
+	group.append(...chips);
+}
+
+export function initCardsToolbar(catalog: CatalogPayload) {
 	const gridElement = document.getElementById("cards-grid");
 	const noResultsElement = document.getElementById("no-results");
-	if (!gridElement || !noResultsElement) return;
+	const liveRoot = document.querySelector<HTMLElement>("[data-live-catalog]");
+	const cardTemplateElement = liveRoot?.querySelector<HTMLTemplateElement>("template[data-card-template]");
+	if (!gridElement || !noResultsElement || !cardTemplateElement) return;
 
 	// Связываем после проверки: внутрь замыканий сужение типа не проходит.
 	const cardsGrid = gridElement;
 	const noResults = noResultsElement;
+	const cardTemplate = cardTemplateElement;
+	const moreElement = document.querySelector<HTMLElement>("[data-catalog-more]");
+	const chipTemplate = liveRoot?.querySelector<HTMLTemplateElement>("template[data-chip-template]");
+	const locale = liveRoot?.dataset.locale ?? document.documentElement.lang ?? "ru";
 
 	const searchForm = document.querySelector<HTMLFormElement>("[data-search-form]");
 	const searchInput = document.querySelector<HTMLInputElement>("[data-toolbar-search]");
@@ -71,24 +135,31 @@ export function initCardsToolbar() {
 	);
 	const scopeAllButton = document.querySelector<HTMLButtonElement>("[data-scope-all]");
 
+	// --- каталог -> чипы ----------------------------------------------------
+
+	if (chipTemplate) {
+		const facets = buildCenterFacets(facetRecords(catalog.cards), locale as AppLocale);
+		for (const facet of facets.facets) {
+			const group = groupElements.find((element) => element.dataset.filterGroup === facet.key);
+			if (group) renderChips(group, facet, chipTemplate);
+		}
+	}
+
 	const facetKeys: FacetKey[] = groupElements
 		.map((group) => group.dataset.filterGroup ?? "")
 		.filter(Boolean);
 
-	// --- разметка -> модель -------------------------------------------------
+	// --- каталог -> модель --------------------------------------------------
 
-	const cards: CardIndexItem[] = Array.from(
-		cardsGrid.querySelectorAll<HTMLElement>(`:scope > [${CARD_ATTR.id}]`),
-	).map((element, order) => {
-		const fields = readCard(element);
-		const { country, type, category, region, title, summary, city } = fields;
+	const cards: CardIndexItem[] = catalog.cards.map((card, order) => {
+		const { country, type, category, region, title, summary, city, district, localTerms } = card;
 		const facets: Record<FacetKey, string> = {};
-		for (const key of facetKeys) facets[key] = isFacetField(key) ? fields[key] : "";
+		for (const key of facetKeys) facets[key] = isFacetField(key) ? card[key] : "";
 
 		return {
-			id: fields.id || String(order),
-			element,
-			scope: fields.scope as CenterScope,
+			id: card.id,
+			card,
+			scope: card.scope as CenterScope,
 			facets,
 			country,
 			type,
@@ -98,15 +169,34 @@ export function initCardsToolbar() {
 			summary,
 			city,
 			order,
-			terms: uniqueTerms([title, city, country, region, category]),
+			terms: uniqueTerms([title, city, country, region, district, category, ...localTerms]),
 			searchText: normalizeSearchText(
-				`${title} ${summary} ${city} ${country} ${type} ${category} ${region}`,
+				[title, summary, city, country, type, category, region, district, ...localTerms].join(" "),
 			),
 		};
 	});
 
+	// Узлы карточек создаём, только когда до них долистали. Собранные на
+	// сервере оставляем, если они совпадают с каталогом: без мигания.
+	const elements = new Map<string, HTMLElement>();
+	const cardById = new Map(catalog.cards.map((card) => [card.id, card]));
+	for (const element of cardsGrid.querySelectorAll<HTMLElement>(`:scope > [${CARD_ATTR.id}]`)) {
+		const id = element.getAttribute(CARD_ATTR.id) ?? "";
+		const card = cardById.get(id);
+		if (card && sameCard(element, card)) elements.set(id, element);
+	}
+
+	function elementFor(item: CardIndexItem): HTMLElement | null {
+		let element = elements.get(item.id);
+		if (!element) {
+			element = renderCard(cardTemplate, item.card, locale) ?? undefined;
+			if (element) elements.set(item.id, element);
+		}
+		return element ?? null;
+	}
+
 	const filter = createCatalogFilter(cards, facetKeys);
-	const search = createCenterSearch(cards, searchForm?.dataset.searchIndexUrl);
+	const search = createCenterSearch(cards);
 
 	let searchQuery = "";
 	let searchTimer = 0;
@@ -149,7 +239,7 @@ export function initCardsToolbar() {
 				count: element.querySelector<HTMLElement>("[data-chip-count]"),
 				label: label.trim(),
 				searchLabel: normalizeSearchText(label),
-				flag: element.querySelector<HTMLElement>(".leading-none")?.textContent?.trim() ?? "",
+				flag: element.querySelector<HTMLElement>("[data-chip-flag]")?.textContent?.trim() ?? "",
 			};
 		});
 		return [key, {
@@ -187,6 +277,60 @@ export function initCardsToolbar() {
 		}
 		const pressed = String(active);
 		if (element.getAttribute("aria-pressed") !== pressed) element.setAttribute("aria-pressed", pressed);
+	}
+
+	// --- сетка: порции по прокрутке ---------------------------------------
+
+	/** Карточки текущей выдачи по порядку и сколько из них уже в сетке. */
+	let visibleItems: CardIndexItem[] = [];
+	let renderedCount = 0;
+
+	/** Привести сетку к списку узлов, не трогая тех, что уже на месте. */
+	function placeCards(nodes: HTMLElement[]) {
+		let next = cardsGrid.firstElementChild;
+		for (const node of nodes) {
+			if (node === next) next = next.nextElementSibling;
+			else cardsGrid.insertBefore(node, next);
+		}
+		while (next) {
+			const after = next.nextElementSibling;
+			next.remove();
+			next = after;
+		}
+	}
+
+	function renderGrid(count: number) {
+		renderedCount = Math.min(count, visibleItems.length);
+		placeCards(
+			visibleItems
+				.slice(0, renderedCount)
+				.map(elementFor)
+				.filter((element): element is HTMLElement => Boolean(element)),
+		);
+		if (moreElement) setHidden(moreElement, renderedCount >= visibleItems.length);
+		// Кнопки «сохранить» новых карточек ещё не знают, что лежит в закладках.
+		syncSavedCenters();
+		watchTail();
+	}
+
+	const tailObserver =
+		moreElement &&
+		new IntersectionObserver(
+			(entries) => {
+				if (!entries.some((entry) => entry.isIntersecting)) return;
+				if (renderedCount < visibleItems.length) renderGrid(renderedCount + BATCH_SIZE);
+			},
+			{ rootMargin: PRELOAD_MARGIN },
+		);
+
+	/**
+	 * Переподписка заново сообщает, виден ли хвост: на высоком экране он
+	 * остаётся в зоне после порции, и без этого следующая бы не пришла.
+	 */
+	function watchTail() {
+		if (!tailObserver || !moreElement) return;
+		tailObserver.unobserve(moreElement);
+		if (renderedCount < visibleItems.length) tailObserver.observe(moreElement);
 	}
 
 	// --- рендер -------------------------------------------------------------
@@ -484,22 +628,17 @@ export function initCardsToolbar() {
 				: sortedCards();
 			orderedQuery = query;
 			orderedSort = effectiveSort;
-
-			// Уже стоящие на своём месте узлы не трогаем, сохраняя и их lifecycle.
-			let next = cardsGrid.firstElementChild;
-			for (const item of orderedCards) {
-				if (item.element === next) next = next.nextElementSibling;
-				else cardsGrid.insertBefore(item.element, next);
-			}
 		}
 
 		if (sortSelect) sortSelect.disabled = Boolean(query);
-		let visible = 0;
-		for (const item of orderedCards) {
-			const show = filter.matches(item);
-			setHidden(item.element, !show);
-			if (show) visible += 1;
-		}
+		const nextItems = orderedCards.filter((item) => filter.matches(item));
+		// Выдача не изменилась - дорисованное по прокрутке не сворачиваем.
+		const sameItems =
+			nextItems.length === visibleItems.length &&
+			nextItems.every((item, index) => item === visibleItems[index]);
+		visibleItems = nextItems;
+		const visible = visibleItems.length;
+		renderGrid(sameItems ? Math.max(renderedCount, BATCH_SIZE) : BATCH_SIZE);
 
 		renderFacets();
 		setHidden(noResults, visible > 0);

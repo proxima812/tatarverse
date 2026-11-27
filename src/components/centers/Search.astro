@@ -1,18 +1,13 @@
 ---
-import { defaultLocale, getLocaleFromUrl, useTranslations } from "@/i18n";
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { Icon } from "astro-icon/components";
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const searchIndexUrl =
-	locale === defaultLocale
-		? "/centers/search-index.json"
-		: `/${locale}/centers/search-index.json`;
 ---
 
 <form
 	data-search-form
-	data-search-index-url={searchIndexUrl}
 	role="search"
 	class="field-well relative z-40 rounded-catalog corner-squircle p-1 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent"
 >

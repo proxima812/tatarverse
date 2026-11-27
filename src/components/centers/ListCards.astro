@@ -1,20 +1,19 @@
 ---
-import { catalogVersion } from "@/lib/center/apiCard";
-import { buildCenterFacets, buildFacetRecords, buildGeoIndex } from "@/lib/center/facets";
+import { facetRecords, payloadScript } from "@/lib/center/catalogCards";
+import { catalogSnapshot } from "@/lib/center/catalogSnapshot";
+import { buildCenterFacets } from "@/lib/center/facets";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
-import { getCollection, type CollectionEntry } from "astro:content";
 import NoResults from "../ui/NoResults.astro";
 import ActiveFilters from "./ActiveFilters.astro";
 import CenterCard from "./CenterCard.astro";
+import FilterChip from "./FilterChip.astro";
 import GridCards from "./GridCards.astro";
 import Search from "./Search.astro";
 import Toolbar from "./Toolbar.astro";
 
-interface Props {
-	cards: CollectionEntry<"centers" | "centersEn">[];
-}
+/** Сколько карточек в HTML: первый экран и ссылки для поисковиков без JS. */
+const FIRST_BATCH = 24;
 
-const { cards } = Astro.props as Props;
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 
@@ -24,13 +23,10 @@ const SORT_OPTIONS = [
 	{ value: "country", labelKey: "list.sort.country" },
 ] as const;
 
-const sourceCards = await getCollection("centers");
-const geoById = buildGeoIndex(sourceCards);
-// С какой версией API собрана сетка - по ней браузер решает, качать ли свежие карточки.
-const version = catalogVersion(sourceCards.map((card) => card.data.updatedAt));
-const records = buildFacetRecords(cards, geoById);
-const facets = buildCenterFacets(records, locale);
-const geoByCardId = new Map(records.map((record) => [record.id, record]));
+// Снимок сборки. На проде функция Pages подменяет его свежей выгрузкой API
+// прямо в HTML (`functions/_middleware.js`), и браузер рендерит из неё.
+const catalog = await catalogSnapshot(locale);
+const facets = buildCenterFacets(facetRecords(catalog.cards), locale);
 ---
 
 <div class="not-container bg-catalog px-5 pt-4 pb-12 sm:px-8 lg:px-12 lg:pt-8">
@@ -57,7 +53,7 @@ const geoByCardId = new Map(records.map((record) => [record.id, record]));
 					role="status"
 					class="shrink-0 text-sm font-medium text-muted-foreground tabular-nums"
 				>
-					{t("list.results", { count: String(cards.length) })}
+					{t("list.results", { count: String(catalog.cards.length) })}
 				</span>
 				<label class="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
 					<span class="sr-only">{t("list.sort.label")}</span>
@@ -74,10 +70,12 @@ const geoByCardId = new Map(records.map((record) => [record.id, record]));
 					</select>
 				</label>
 			</div>
-			<GridCards cards={cards} geoByCardId={geoByCardId} />
+			<GridCards cards={catalog.cards.slice(0, FIRST_BATCH)} total={catalog.cards.length} />
 			<NoResults />
-			<div hidden data-live-catalog data-locale={locale} data-version={JSON.stringify(version)}>
-				<template><CenterCard id="" template /></template>
+			<div hidden data-live-catalog data-locale={locale}>
+				<script is:inline type="application/json" data-catalog-payload set:html={payloadScript(catalog)} />
+				<template data-card-template><CenterCard id="" template /></template>
+				<template data-chip-template><FilterChip group="" label="" value="" count={0} template /></template>
 			</div>
 		</div>
 	</div>

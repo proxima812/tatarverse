@@ -1,23 +1,10 @@
 ---
 import CentersCatalog from "@/components/centers/CentersCatalog.astro";
-import { localizedCenters, type CenterEntry } from "@/lib/center/collection";
-import { byRecency } from "@/lib/center/order";
 import { secondaryLocales } from "@/i18n/routes";
 
-export async function getStaticPaths() {
-	return await Promise.all(
-		secondaryLocales().map(async (locale) => ({
-			params: { locale },
-			props: { cards: byRecency(await localizedCenters(locale)) },
-		})),
-	);
+export function getStaticPaths() {
+	return secondaryLocales().map((locale) => ({ params: { locale } }));
 }
-
-interface Props {
-	cards: CenterEntry[];
-}
-
-const { cards } = Astro.props as Props;
 ---
 
-<CentersCatalog cards={cards} />
+<CentersCatalog />

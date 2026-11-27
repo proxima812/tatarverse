@@ -1,0 +1,24 @@
+---
+/**
+ * Заглушка карточки центра на время догрузки. Повторяет каркас
+ * `CenterCard.astro`: строка места, аватар с заголовком, описание и чипы -
+ * чтобы сетка не прыгала, когда вместо неё встаёт настоящая карточка.
+ */
+---
+
+<div class="catalog-card catalog-skeleton" aria-hidden="true">
+	<span class="catalog-skeleton-line w-28"></span>
+	<div class="catalog-card-title-row">
+		<span class="catalog-card-mark catalog-skeleton-block rounded-full"></span>
+		<span class="catalog-skeleton-line h-5 w-3/5"></span>
+	</div>
+	<div class="space-y-2">
+		<span class="catalog-skeleton-line w-full"></span>
+		<span class="catalog-skeleton-line w-4/5"></span>
+	</div>
+	<div class="catalog-card-meta">
+		<span class="catalog-skeleton-line w-20"></span>
+		<span class="catalog-skeleton-line w-24"></span>
+		<span class="catalog-skeleton-block ml-auto h-7 w-24 rounded-full"></span>
+	</div>
+</div>

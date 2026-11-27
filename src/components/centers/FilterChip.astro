@@ -7,9 +7,11 @@ interface Props {
 	count?: number;
 	flag?: string;
 	all?: boolean;
+	/** Заготовка для `<template>`: чипы каталога браузер собирает из свежих данных. */
+	template?: boolean;
 }
 
-const { group, label, value, count, flag, all = false } = Astro.props as Props;
+const { group, label, value, count, flag, all = false, template = false } = Astro.props as Props;
 
 ---
 
@@ -22,7 +24,7 @@ const { group, label, value, count, flag, all = false } = Astro.props as Props;
 	aria-pressed={all ? "true" : "false"}
 	class="catalog-filter-chip group"
 >
-	{flag && <span class="shrink-0 text-sm leading-none">{flag}</span>}
+	{(flag || template) && <span class="shrink-0 text-sm leading-none" data-chip-flag>{flag}</span>}
 	<span class="min-w-0 truncate" data-chip-label>{label}</span>
 	{
 		count !== undefined && (

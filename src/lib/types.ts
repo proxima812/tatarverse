@@ -1,3 +1,5 @@
+import type { CatalogCard } from "@/lib/center/catalogCards";
+
 /**
  * Общие типы проекта: каталог, поиск и «центры рядом».
  *
@@ -45,9 +47,12 @@ export interface SearchIndexItem {
 	order: number;
 }
 
-/** Карточка каталога: запись фильтра + поисковые поля + узел в DOM. */
+/**
+ * Карточка каталога: запись фильтра + поисковые поля + исходная карточка.
+ * Узла в DOM здесь нет: сетка рисует карточки порциями, по прокрутке.
+ */
 export interface CardIndexItem extends FilterRecord, SearchIndexItem {
-	element: HTMLElement;
+	card: CatalogCard;
 }
 
 export interface SearchResult {

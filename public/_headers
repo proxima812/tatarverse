@@ -64,9 +64,6 @@
 /centers/rss.xml
   ! Link
 
-/centers/search-index.json
-  ! Link
-
 
 /ai.txt
   ! Cache-Control

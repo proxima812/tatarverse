@@ -26,6 +26,8 @@ interface Props {
 	region?: string;
 	geo?: CenterGeo;
 	pubDate?: string;
+	/** Адрес ссылки, если он не выводится из локали страницы (см. `CatalogCard.linkHref`). */
+	linkHref?: string;
 	/**
 	 * Режим заготовки для `<template>` на `/saved`: все необязательные блоки
 	 * рендерятся пустыми, чтобы клиенту было куда подставить значения.
@@ -53,6 +55,7 @@ const {
 	region,
 	geo,
 	pubDate,
+	linkHref,
 	template = false,
 	templateAction = "bookmark",
 } = Astro.props as Props;
@@ -141,7 +144,7 @@ const dataset = cardDataset({
 		>
 			<a
 				data-card-link
-				href={template ? "#" : localizePath(locale, centerPath)}
+				href={template ? "#" : (linkHref ?? localizePath(locale, centerPath))}
 				class="catalog-card-link"
 			>
 				{displayTitle}
