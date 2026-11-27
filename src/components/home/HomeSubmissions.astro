@@ -1,5 +1,6 @@
 ---
 import ButtonLink from "@/components/ui/ButtonLink.astro";
+import HomeSectionHeading from "@/components/home/HomeSectionHeading.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import MockSubmissions from "./showcase/MockSubmissions.astro";
 
@@ -9,24 +10,23 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section
-	aria-labelledby="home-submissions"
-	class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
->
-	<div class="space-y-6">
-		<h2 id="home-submissions" class="text-4xl font-bold tracking-tight">
-			{t("home.submissions.title")}
-		</h2>
-		<p class="leading-7 text-muted-foreground">{t("home.submissions.text1")}</p>
-		<p class="leading-7 text-muted-foreground">{t("home.submissions.text2")}</p>
-		<ButtonLink
-			href="/submissions"
-			labelKey="nav.mySubmissions"
-			label="Мои заявки"
-			icon="tabler:clipboard-list"
-			variant="gradient"
-		/>
+<section aria-labelledby="home-submissions" class="home-section">
+	<div class="home-section-head">
+		<HomeSectionHeading id="home-submissions" section="submissions" />
+		<div class="space-y-4">
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.submissions.text1")}</p>
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.submissions.text2")}</p>
+			<ButtonLink
+				href="/submissions"
+				labelKey="nav.mySubmissions"
+				label="Мои заявки"
+				icon="tabler:clipboard-list"
+				variant="gradient"
+			/>
+		</div>
 	</div>
 
-	<MockSubmissions />
+	<div class="home-section-stage">
+		<MockSubmissions />
+	</div>
 </section>

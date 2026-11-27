@@ -1,5 +1,6 @@
 ---
 import ButtonLink from "@/components/ui/ButtonLink.astro";
+import HomeSectionHeading from "@/components/home/HomeSectionHeading.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import MockTelegramChannel from "./showcase/MockTelegramChannel.astro";
 
@@ -11,25 +12,24 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section
-	aria-labelledby="home-tg-channel"
-	class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
->
-	<div class="space-y-6">
-		<h2 id="home-tg-channel" class="text-4xl font-bold tracking-tight">
-			{t("home.tgChannel.title")}
-		</h2>
-		<p class="leading-7 text-muted-foreground">{t("home.tgChannel.text1")}</p>
-		<p class="leading-7 text-muted-foreground">{t("home.tgChannel.text2")}</p>
-		<ButtonLink
-			href={CHANNEL_URL}
-			labelKey="home.tgChannel.cta"
-			label="Открыть канал"
-			icon="mdi:telegram"
-			variant="gradient"
-			target="_blank"
-		/>
+<section aria-labelledby="home-tg-channel" class="home-section">
+	<div class="home-section-head">
+		<HomeSectionHeading id="home-tg-channel" section="tgChannel" />
+		<div class="space-y-4">
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.tgChannel.text1")}</p>
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.tgChannel.text2")}</p>
+			<ButtonLink
+				href={CHANNEL_URL}
+				labelKey="home.tgChannel.cta"
+				label="Открыть канал"
+				icon="mdi:telegram"
+				variant="gradient"
+				target="_blank"
+			/>
+		</div>
 	</div>
 
-	<MockTelegramChannel />
+	<div class="home-section-stage">
+		<MockTelegramChannel />
+	</div>
 </section>

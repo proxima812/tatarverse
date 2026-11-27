@@ -1,5 +1,6 @@
 ---
 import ButtonLink from "@/components/ui/ButtonLink.astro";
+import HomeSectionHeading from "@/components/home/HomeSectionHeading.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import MockSubmit from "./showcase/MockSubmit.astro";
 
@@ -9,24 +10,23 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section
-	aria-labelledby="home-submit"
-	class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
->
-	<div class="space-y-6">
-		<h2 id="home-submit" class="text-4xl font-bold tracking-tight">
-			{t("home.submit.title")}
-		</h2>
-		<p class="leading-7 text-muted-foreground">{t("home.submit.text1")}</p>
-		<p class="leading-7 text-muted-foreground">{t("home.submit.text2")}</p>
-		<ButtonLink
-			href="/submit"
-			labelKey="nav.addCenter"
-			label="Добавить центр"
-			icon="tabler:plus"
-			variant="gradient"
-		/>
+<section aria-labelledby="home-submit" class="home-section">
+	<div class="home-section-head">
+		<HomeSectionHeading id="home-submit" section="submit" />
+		<div class="space-y-4">
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.submit.text1")}</p>
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.submit.text2")}</p>
+			<ButtonLink
+				href="/submit"
+				labelKey="nav.addCenter"
+				label="Добавить центр"
+				icon="tabler:plus"
+				variant="gradient"
+			/>
+		</div>
 	</div>
 
-	<MockSubmit />
+	<div class="home-section-stage">
+		<MockSubmit />
+	</div>
 </section>

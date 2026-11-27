@@ -1,5 +1,6 @@
 ---
 import ButtonLink from "@/components/ui/ButtonLink.astro";
+import HomeSectionHeading from "@/components/home/HomeSectionHeading.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import MockSaved from "./showcase/MockSaved.astro";
 
@@ -9,19 +10,23 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
-	<div class="space-y-6">
-		<h2 class="text-4xl font-bold tracking-tight">{t("home.saved.title")}</h2>
-		<p class="leading-7 text-muted-foreground">{t("home.saved.text1")}</p>
-		<p class="leading-7 text-muted-foreground">{t("home.saved.text2")}</p>
-		<ButtonLink
-			href="/saved"
-			labelKey="saved.title"
-			label="Сохраненные"
-			icon="tabler:bookmark"
-			variant="gradient"
-		/>
+<section aria-labelledby="home-saved" class="home-section">
+	<div class="home-section-head">
+		<HomeSectionHeading id="home-saved" section="saved" />
+		<div class="space-y-4">
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.saved.text1")}</p>
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.saved.text2")}</p>
+			<ButtonLink
+				href="/saved"
+				labelKey="saved.title"
+				label="Сохраненные"
+				icon="tabler:bookmark"
+				variant="gradient"
+			/>
+		</div>
 	</div>
 
-	<MockSaved />
+	<div class="home-section-stage">
+		<MockSaved />
+	</div>
 </section>

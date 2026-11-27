@@ -94,28 +94,36 @@ const dict: Dictionary = {
 		"tatarverse helps people find Tatar, Bashkir, and Crimean Tatar centers around the world: for new connections, friends, relationships, language learning, cultural reconnection, and shared values.",
 	"home.present.imageAlt":
 		"A grid of center cards from different countries, the newest one in focus",
-	"home.present.title": "Everywhere. Always. For everyone.",
+	"home.present.eyebrow": "Catalog",
+	"home.present.title": "Everywhere. Always.",
+	"home.present.subtitle": "For everyone.",
 	"home.present.caption":
 		"<strong>{centers}</strong> points on the map: centers, communities, and initiatives across <strong>{countries}</strong> countries and <strong>{regions}</strong> regions.",
 	"home.present.text1":
 		"Wherever you are, your people are already somewhere close - a neighborhood away, or a couple of messages away. Language, songs, and memory are held not by archives but by people who found each other.",
 	"home.present.text2":
 		"Find the ones nearby - or the ones far away. With kindness. With love. With acceptance.",
-	"home.contacts.title": "Links, not just addresses",
+	"home.contacts.eyebrow": "Contacts",
+	"home.contacts.title": "Links, not just addresses.",
+	"home.contacts.subtitle": "Message a center directly.",
 	"home.contacts.text":
 		"Links in the cards: <strong>{links}</strong> - websites, social profiles, and channels where communities actually reply.",
 	"home.contacts.imageAlt":
 		"A center card listing its channels: social networks, messengers, website",
 	"home.contacts.text2":
 		"No need to hunt for contacts online - open a card and write directly.",
-	"home.nearby.title": "Search by geolocation",
+	"home.nearby.eyebrow": "Nearby",
+	"home.nearby.title": "Search by geolocation.",
+	"home.nearby.subtitle": "Closest centers first.",
 	"home.nearby.text1":
 		"Allow the browser to detect your location, and the catalog will sort centers by distance - nearest first.",
 	"home.nearby.text2":
 		"Your coordinates stay in the browser: the page computes distances on your device and sends them nowhere.",
 	"home.nearby.imageAlt":
 		"The “Centers nearby” page on a phone: the detected city, city chips and the nearest center cards",
-	"home.people.title": "There are more of us than it seems",
+	"home.people.eyebrow": "How many of us",
+	"home.people.title": "There are more of us",
+	"home.people.subtitle": "than it seems.",
 	"home.people.text":
 		"We do not disappear when we leave: the language, the songs, and the holidays travel with us. The catalog shows where they are kept alive.",
 	"home.people.tatars": "Tatars worldwide",
@@ -125,21 +133,27 @@ const dict: Dictionary = {
 	"home.people.worldNote": "World: estimate by",
 	"home.people.note": "Russia: {year},",
 	"home.people.source": "Russian census",
-	"home.saved.title": "Saved centers within reach",
+	"home.saved.eyebrow": "Saved",
+	"home.saved.title": "Saved centers within reach.",
+	"home.saved.subtitle": "No need to search again.",
 	"home.saved.text1":
 		"A center you liked stays in your own list - no need to hunt for it in the catalog again.",
 	"home.saved.text2":
 		"A handy way to gather your own: the ones you are meeting this week and the ones waiting in another city.",
 	"home.saved.imageAlt":
 		"A cursor clicks the bookmark on a center card and the saved counter in the header goes up",
-	"home.print.title": "The catalog on paper",
+	"home.print.eyebrow": "Print",
+	"home.print.title": "The catalog on paper.",
+	"home.print.subtitle": "For places without internet.",
 	"home.print.text1":
 		"Pick the countries and print the list of centers with cities and links - or save it as a PDF in one click.",
 	"home.print.text2":
 		"Useful where there is no internet: at a meetup, on the road, or on the desk of someone who prefers paper.",
 	"home.print.imageAlt":
 		"A stack of printed pages listing centers and a panel with the chosen country and the print button",
-	"home.search.title": "Communities on the world map",
+	"home.search.eyebrow": "Map",
+	"home.search.title": "Communities on the world map.",
+	"home.search.subtitle": "By country, city or region.",
 	"home.search.text1":
 		"Choose a country, city, or region and find nearby cultural centers, public associations, youth initiatives, language clubs, and local communities.",
 	"home.search.text2":
@@ -160,7 +174,9 @@ const dict: Dictionary = {
 	"home.blog.title": "From the blog.",
 	"home.blog.subtitle": "Country guides and updates.",
 	"home.blog.all": "All posts",
-	"home.instagram.title": "We are on Instagram",
+	"home.instagram.eyebrow": "Instagram",
+	"home.instagram.title": "We are on Instagram.",
+	"home.instagram.subtitle": "Centers and communities in your feed.",
 	"home.instagram.text1":
 		"At @the_tatarverse we share centers from the catalog and communities from different countries - in a feed you already scroll.",
 	"home.instagram.text2":
@@ -169,7 +185,9 @@ const dict: Dictionary = {
 	"home.instagram.cta": "Open Instagram",
 	"home.instagram.imageAlt":
 		"The tatarverse Instagram profile on a phone: avatar, the Follow button and a grid of posts",
-	"home.tgApp.title": "The app in Telegram",
+	"home.tgApp.eyebrow": "Telegram",
+	"home.tgApp.title": "The app in Telegram.",
+	"home.tgApp.subtitle": "The catalog without leaving your chats.",
 	"home.tgApp.text1":
 		"The catalog opens right inside Telegram, with no browser and nothing to install: the same search, nearby centers, and cards with contacts.",
 	"home.tgApp.text2":
@@ -180,7 +198,9 @@ const dict: Dictionary = {
 	"home.tgApp.miniApp": "mini app",
 	"home.tgApp.imageAlt":
 		"A chat with the tatarverse bot on a phone, with the catalog opened on top: the search field and center cards",
-	"home.tgChannel.title": "We are on Telegram",
+	"home.tgChannel.eyebrow": "Telegram",
+	"home.tgChannel.title": "We are on Telegram.",
+	"home.tgChannel.subtitle": "Project and catalog news.",
 	"home.tgChannel.text1":
 		"The @the_tatarverse channel carries news about the project and the catalog.",
 	"home.tgChannel.text2":
@@ -190,7 +210,9 @@ const dict: Dictionary = {
 	"home.tgChannel.join": "Join",
 	"home.tgChannel.imageAlt":
 		"The tatarverse Telegram channel window: posts with a link preview of a center card and the Join button",
-	"home.vk.title": "We are on VK",
+	"home.vk.eyebrow": "VK",
+	"home.vk.title": "We are on VK.",
+	"home.vk.subtitle": "For those who prefer it.",
 	"home.vk.text1":
 		"The tatarverse community on VK - for those who feel more at home there than anywhere else.",
 	"home.vk.text2":
@@ -198,7 +220,9 @@ const dict: Dictionary = {
 	"home.vk.cta": "Open VK",
 	"home.vk.follow": "Follow",
 	"home.vk.kind": "community",
-	"home.submit.title": "Add a center to the catalog",
+	"home.submit.eyebrow": "Submit",
+	"home.submit.title": "Add a center to the catalog.",
+	"home.submit.subtitle": "No sign-up needed.",
 	"home.submit.text1":
 		"Know a center, club or community that isn't in the catalog? Fill in the form: its name, where it is, links or contacts, and a few words about what it does.",
 	"home.submit.text2":
@@ -206,7 +230,9 @@ const dict: Dictionary = {
 	"home.submit.sent": "Submission sent",
 	"home.submit.imageAlt":
 		"The Add a center form: name, city and a link get filled in, the cursor clicks Submit, and a Submission sent notice appears in the corner",
-	"home.edit.title": "Spotted a mistake? Fix it",
+	"home.edit.eyebrow": "Edit",
+	"home.edit.title": "Spotted a mistake?",
+	"home.edit.subtitle": "Fix it yourself.",
 	"home.edit.text1":
 		"A center moved, launched a website or changed its phone number - open its page and click Suggest an edit. The form opens with the current details: change only what's out of date.",
 	"home.edit.text2":
@@ -214,7 +240,9 @@ const dict: Dictionary = {
 	"home.edit.cta": "Find a center",
 	"home.edit.imageAlt":
 		"A center page: the cursor clicks Suggest an edit, and a form slides up with the old address struck through, the new one below it, and a link added",
-	"home.submissions.title": "See where your submission stands",
+	"home.submissions.eyebrow": "My submissions",
+	"home.submissions.title": "See where your submission stands.",
+	"home.submissions.subtitle": "Pending, approved or declined.",
 	"home.submissions.text1":
 		"New centers and edits sent from your browser are listed under My submissions. You can see which are under review, which were approved, and why one was rejected.",
 	"home.submissions.text2":

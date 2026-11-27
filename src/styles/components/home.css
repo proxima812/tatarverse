@@ -329,3 +329,29 @@
 		transform: scaleX(1);
 	}
 }
+
+/**
+ * Секции главной - `components/home/Home*.astro` в `HomeSections.astro`.
+ * Как у heroui.com: сначала заголовок (`HomeSectionHeading`) и описание
+ * прямо на фоне страницы, под ними - иллюстрация в карточке.
+ */
+
+.home-section {
+	@apply flex flex-col gap-8 md:gap-12;
+}
+
+.home-section-head {
+	@apply grid grid-cols-1 gap-6 md:grid-cols-2 md:items-end md:gap-12;
+}
+
+.home-section-stage {
+	@apply rounded-catalog bg-white p-3 card-outline sm:p-6 md:p-12 dark:bg-surface;
+}
+
+/*
+ * Сцены 6:5 масштабируются от ширины: во всю карточку они вырастают выше
+ * экрана, поэтому стоят по центру. Широкая сцена каталога - во всю ширину.
+ */
+.home-section-stage > .showcase:not(.showcase--wide) {
+	@apply mx-auto max-w-xl;
+}

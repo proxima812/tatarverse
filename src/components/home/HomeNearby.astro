@@ -1,4 +1,5 @@
 ---
+import HomeSectionHeading from "@/components/home/HomeSectionHeading.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import ButtonLink from "../ui/ButtonLink.astro";
 import MockNearby from "./showcase/MockNearby.astro";
@@ -9,19 +10,23 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
-	<div class="space-y-6 md:order-2">
-		<h2 class="text-4xl font-bold tracking-tight">{t("home.nearby.title")}</h2>
-		<p class="leading-7 text-muted-foreground">{t("home.nearby.text1")}</p>
-		<p class="leading-7 text-muted-foreground">{t("home.nearby.text2")}</p>
-		<ButtonLink
-			href="/nearby"
-			labelKey="nav.nearby"
-			label="Центры рядом"
-			icon="mdi:map-marker-radius-outline"
-			variant="gradient"
-		/>
+<section aria-labelledby="home-nearby" class="home-section">
+	<div class="home-section-head">
+		<HomeSectionHeading id="home-nearby" section="nearby" />
+		<div class="space-y-4">
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.nearby.text1")}</p>
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.nearby.text2")}</p>
+			<ButtonLink
+				href="/nearby"
+				labelKey="nav.nearby"
+				label="Центры рядом"
+				icon="mdi:map-marker-radius-outline"
+				variant="gradient"
+			/>
+		</div>
 	</div>
 
-	<MockNearby />
+	<div class="home-section-stage">
+		<MockNearby />
+	</div>
 </section>

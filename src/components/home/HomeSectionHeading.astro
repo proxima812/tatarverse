@@ -1,0 +1,37 @@
+---
+import { getLocaleFromUrl, useTranslations } from "@/i18n";
+import { cn } from "@/lib/cn";
+
+/**
+ * Заголовок секции главной по образцу heroui.com: надзаголовок цветом
+ * акцента, затем заголовок в две строки - первая в полный цвет, вторая
+ * приглушена. Тексты - ключи `home.<section>.eyebrow|title|subtitle`.
+ */
+
+interface Props {
+	id: string;
+	section: string;
+	align?: "start" | "center";
+	class?: string;
+}
+
+const { id, section, align = "start", class: className } = Astro.props;
+const t = useTranslations(getLocaleFromUrl(Astro.url));
+---
+
+<div
+	class={cn(
+		"flex flex-col gap-4 sm:gap-5",
+		align === "center" && "items-center text-center",
+		className,
+	)}
+>
+	<p class="text-[15px] font-medium text-accent md:text-base">{t(`home.${section}.eyebrow`)}</p>
+	<h2
+		id={id}
+		class="font-heading text-[34px] leading-[38px] font-medium tracking-[-0.02em] text-balance md:text-5xl md:leading-[1.1]"
+	>
+		<span class="block">{t(`home.${section}.title`)}</span>
+		<span class="block text-muted-foreground/60">{t(`home.${section}.subtitle`)}</span>
+	</h2>
+</div>

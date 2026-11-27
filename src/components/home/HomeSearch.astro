@@ -1,4 +1,5 @@
 ---
+import HomeSectionHeading from "@/components/home/HomeSectionHeading.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import MockSearch from "./showcase/MockSearch.astro";
 
@@ -6,19 +7,20 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12">
-	<div class="space-y-6">
-		<h2 class="text-4xl font-bold tracking-tight">
-			{t("home.search.title")}
-		</h2>
-
-		<p class="leading-7 text-muted-foreground">
-			{t("home.search.text1")}
-		</p>
-
-		<p class="leading-7 text-muted-foreground">
-			{t("home.search.text2")}
-		</p>
+<section aria-labelledby="home-search" class="home-section">
+	<div class="home-section-head">
+		<HomeSectionHeading id="home-search" section="search" />
+		<div class="space-y-4">
+			<p class="leading-7 text-pretty text-muted-foreground">
+				{t("home.search.text1")}
+			</p>
+			<p class="leading-7 text-pretty text-muted-foreground">
+				{t("home.search.text2")}
+			</p>
+		</div>
 	</div>
-	<MockSearch />
+
+	<div class="home-section-stage">
+		<MockSearch />
+	</div>
 </section>

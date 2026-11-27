@@ -1,5 +1,6 @@
 ---
 import ButtonLink from "@/components/ui/ButtonLink.astro";
+import HomeSectionHeading from "@/components/home/HomeSectionHeading.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import MockInstagram from "./showcase/MockInstagram.astro";
 
@@ -11,25 +12,24 @@ const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
 ---
 
-<section
-	aria-labelledby="home-instagram"
-	class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
->
-	<div class="space-y-6">
-		<h2 id="home-instagram" class="text-4xl font-bold tracking-tight">
-			{t("home.instagram.title")}
-		</h2>
-		<p class="leading-7 text-muted-foreground">{t("home.instagram.text1")}</p>
-		<p class="leading-7 text-muted-foreground">{t("home.instagram.text2")}</p>
-		<ButtonLink
-			href={INSTAGRAM_URL}
-			labelKey="home.instagram.cta"
-			label="Открыть Instagram"
-			icon="mdi:instagram"
-			variant="gradient"
-			target="_blank"
-		/>
+<section aria-labelledby="home-instagram" class="home-section">
+	<div class="home-section-head">
+		<HomeSectionHeading id="home-instagram" section="instagram" />
+		<div class="space-y-4">
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.instagram.text1")}</p>
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.instagram.text2")}</p>
+			<ButtonLink
+				href={INSTAGRAM_URL}
+				labelKey="home.instagram.cta"
+				label="Открыть Instagram"
+				icon="mdi:instagram"
+				variant="gradient"
+				target="_blank"
+			/>
+		</div>
 	</div>
 
-	<MockInstagram />
+	<div class="home-section-stage">
+		<MockInstagram />
+	</div>
 </section>

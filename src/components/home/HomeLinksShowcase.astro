@@ -1,4 +1,5 @@
 ---
+import HomeSectionHeading from "@/components/home/HomeSectionHeading.astro";
 import { getLocaleFromUrl, useTranslations } from "@/i18n";
 import { getCenterLinks } from "@/lib/center/links";
 import { getCollection } from "astro:content";
@@ -20,24 +21,23 @@ for (const center of await getCollection("centers")) {
 }
 ---
 
-<section
-	aria-labelledby="home-links-showcase"
-	class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
->
-	<div class="space-y-6">
-		<h2 id="home-links-showcase" class="text-4xl font-bold tracking-tight">
-			{t("home.contacts.title")}
-		</h2>
-		<p class="leading-7 text-muted-foreground" set:html={t("home.contacts.text", { links })} />
-		<p class="leading-7 text-muted-foreground">{t("home.contacts.text2")}</p>
-		<ButtonLink
-			href="/centers"
-			labelKey="nav.viewCenters"
-			label="Посмотреть центры"
-			icon="mdi:link-variant"
-			variant="gradient"
-		/>
+<section aria-labelledby="home-links-showcase" class="home-section">
+	<div class="home-section-head">
+		<HomeSectionHeading id="home-links-showcase" section="contacts" />
+		<div class="space-y-4">
+			<p class="leading-7 text-pretty text-muted-foreground" set:html={t("home.contacts.text", { links })} />
+			<p class="leading-7 text-pretty text-muted-foreground">{t("home.contacts.text2")}</p>
+			<ButtonLink
+				href="/centers"
+				labelKey="nav.viewCenters"
+				label="Посмотреть центры"
+				icon="mdi:link-variant"
+				variant="gradient"
+			/>
+		</div>
 	</div>
 
-	<MockLinks />
+	<div class="home-section-stage">
+		<MockLinks />
+	</div>
 </section>

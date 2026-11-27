@@ -94,28 +94,36 @@ const dict: Dictionary = {
 		"tatarverse помогает найти татарские, башкирские и крымскотатарские центры по всему миру: для новых знакомств, друзей, отношений, изучения языка, восстановления связи с культурой и поддержки общих ценностей.",
 	"home.present.imageAlt":
 		"Сетка карточек центров из разных стран, в центре - самый новый",
-	"home.present.title": "Везде. Всегда. Для всех.",
+	"home.present.eyebrow": "Каталог",
+	"home.present.title": "Везде. Всегда.",
+	"home.present.subtitle": "Для всех.",
 	"home.present.caption":
 		"Точек на карте: <strong>{centers}</strong> - центры, сообщества и инициативы в <strong>{countries}</strong> странах и <strong>{regions}</strong> регионах.",
 	"home.present.text1":
 		"Где бы вы ни оказались, свои уже где-то рядом - в соседнем районе или в паре сообщений от вас. Язык, песни и память держатся не архивами, а людьми, которые нашли друг друга.",
 	"home.present.text2":
 		"Найдите ближайших - или тех, кто далеко. С добротой. С любовью. С принятием.",
-	"home.contacts.title": "Ссылки, а не только адреса",
+	"home.contacts.eyebrow": "Контакты",
+	"home.contacts.title": "Ссылки, а не только адреса.",
+	"home.contacts.subtitle": "Пишите центру напрямую.",
 	"home.contacts.text":
 		"Ссылок в карточках: <strong>{links}</strong> - сайты, соцсети и каналы центров, где сообщества отвечают.",
 	"home.contacts.imageAlt":
 		"Карточка центра со списком его каналов связи: соцсети, мессенджеры, сайт",
 	"home.contacts.text2":
 		"Не нужно искать контакты по интернету: откройте карточку и пишите напрямую.",
-	"home.nearby.title": "Поиск по геолокации",
+	"home.nearby.eyebrow": "Рядом",
+	"home.nearby.title": "Поиск по геолокации.",
+	"home.nearby.subtitle": "Сначала - ближайшие центры.",
 	"home.nearby.text1":
 		"Разрешите браузеру определить местоположение - и каталог покажет центры по расстоянию от вас, от ближайшего к дальним.",
 	"home.nearby.text2":
 		"Координаты остаются в браузере: страница считает расстояния на устройстве и никуда их не отправляет.",
 	"home.nearby.imageAlt":
 		"Страница «Центры рядом» на телефоне: определенный город, чипы городов и карточки ближайших центров",
-	"home.people.title": "Нас больше, чем кажется",
+	"home.people.eyebrow": "Сколько нас",
+	"home.people.title": "Нас больше,",
+	"home.people.subtitle": "чем кажется.",
 	"home.people.text":
 		"Мы не исчезаем, когда уезжаем: язык, песни и праздники едут вместе с нами. Каталог показывает, где их держат живыми.",
 	"home.people.tatars": "Татар в мире",
@@ -125,21 +133,27 @@ const dict: Dictionary = {
 	"home.people.worldNote": "Мир - оценка",
 	"home.people.note": "Россия - {year},",
 	"home.people.source": "Всероссийская перепись населения",
-	"home.saved.title": "Сохраненные центры под рукой",
+	"home.saved.eyebrow": "Закладки",
+	"home.saved.title": "Сохраненные центры под рукой.",
+	"home.saved.subtitle": "Искать заново не придется.",
 	"home.saved.text1":
 		"Понравившийся центр остается в личном списке - не придется искать его по каталогу заново.",
 	"home.saved.text2":
 		"Удобно собрать своих: и тех, к кому пойдете на встречу на неделе, и тех, кого хотите навестить в другом городе.",
 	"home.saved.imageAlt":
 		"Курсор нажимает закладку на карточке центра, и счетчик сохраненных в шапке растет",
-	"home.print.title": "Каталог на бумаге",
+	"home.print.eyebrow": "Печать",
+	"home.print.title": "Каталог на бумаге.",
+	"home.print.subtitle": "Там, где нет интернета.",
 	"home.print.text1":
 		"Выберите страны и распечатайте список центров с городами и ссылками - или сохраните его в PDF одной кнопкой.",
 	"home.print.text2":
 		"Пригодится там, где интернета нет: на встрече, в поездке или на столе у тех, кому проще с листом в руках.",
 	"home.print.imageAlt":
 		"Стопка листов со списком центров для печати и панель с выбранной страной и кнопкой печати",
-	"home.search.title": "Сообщества на карте мира",
+	"home.search.eyebrow": "Карта",
+	"home.search.title": "Сообщества на карте мира.",
+	"home.search.subtitle": "Страна, город или регион.",
 	"home.search.text1":
 		"Выберите страну, город или регион и найдите ближайшие культурные центры, общественные объединения, молодежные инициативы, языковые клубы и локальные сообщества.",
 	"home.search.text2":
@@ -160,7 +174,9 @@ const dict: Dictionary = {
 	"home.blog.title": "Из блога.",
 	"home.blog.subtitle": "Гиды по странам и новости.",
 	"home.blog.all": "Все статьи",
-	"home.instagram.title": "Мы в Instagram",
+	"home.instagram.eyebrow": "Instagram",
+	"home.instagram.title": "Мы в Instagram.",
+	"home.instagram.subtitle": "Центры и сообщества в ленте.",
 	"home.instagram.text1":
 		"В профиле @the_tatarverse рассказываем о центрах из каталога и сообществах из разных стран - в ленте, которую вы и так листаете.",
 	"home.instagram.text2":
@@ -169,7 +185,9 @@ const dict: Dictionary = {
 	"home.instagram.cta": "Открыть Instagram",
 	"home.instagram.imageAlt":
 		"Профиль tatarverse в Instagram на телефоне: аватар, кнопка «Подписаться» и сетка публикаций",
-	"home.tgApp.title": "Приложение в Telegram",
+	"home.tgApp.eyebrow": "Telegram",
+	"home.tgApp.title": "Приложение в Telegram.",
+	"home.tgApp.subtitle": "Каталог, не выходя из чатов.",
 	"home.tgApp.text1":
 		"Каталог открывается прямо в Telegram, без браузера и установки: тот же поиск, центры рядом и карточки с контактами.",
 	"home.tgApp.text2":
@@ -180,7 +198,9 @@ const dict: Dictionary = {
 	"home.tgApp.miniApp": "мини-приложение",
 	"home.tgApp.imageAlt":
 		"Чат с ботом tatarverse на телефоне, поверх него открыт каталог: строка поиска и карточки центров",
-	"home.tgChannel.title": "Мы в Telegram",
+	"home.tgChannel.eyebrow": "Telegram",
+	"home.tgChannel.title": "Мы в Telegram.",
+	"home.tgChannel.subtitle": "Новости проекта и каталога.",
 	"home.tgChannel.text1":
 		"В канале @the_tatarverse - новости проекта и каталога.",
 	"home.tgChannel.text2":
@@ -190,7 +210,9 @@ const dict: Dictionary = {
 	"home.tgChannel.join": "Подписаться",
 	"home.tgChannel.imageAlt":
 		"Окно Telegram-канала tatarverse: посты с превью ссылки на карточку центра и кнопка «Подписаться»",
-	"home.vk.title": "Мы во ВКонтакте",
+	"home.vk.eyebrow": "ВКонтакте",
+	"home.vk.title": "Мы во ВКонтакте.",
+	"home.vk.subtitle": "Для тех, кому так привычнее.",
 	"home.vk.text1":
 		"Сообщество tatarverse во ВКонтакте - для тех, кому эта соцсеть привычнее остальных.",
 	"home.vk.text2":
@@ -198,7 +220,9 @@ const dict: Dictionary = {
 	"home.vk.cta": "Открыть ВКонтакте",
 	"home.vk.follow": "Подписаться",
 	"home.vk.kind": "сообщество",
-	"home.submit.title": "Добавьте центр в каталог",
+	"home.submit.eyebrow": "Заявка",
+	"home.submit.title": "Добавьте центр в каталог.",
+	"home.submit.subtitle": "Без регистрации.",
 	"home.submit.text1":
 		"Знаете центр, клуб или сообщество, которого нет в каталоге? Заполните форму: название, где находится, ссылки или контакты и пару слов о том, чем он занимается.",
 	"home.submit.text2":
@@ -206,7 +230,9 @@ const dict: Dictionary = {
 	"home.submit.sent": "Заявка отправлена",
 	"home.submit.imageAlt":
 		"Форма «Добавить центр»: заполняются название, город и ссылка, курсор нажимает «Отправить заявку», в углу появляется «Заявка отправлена»",
-	"home.edit.title": "Ошибка в карточке? Исправьте",
+	"home.edit.eyebrow": "Правка",
+	"home.edit.title": "Ошибка в карточке?",
+	"home.edit.subtitle": "Исправьте ее сами.",
 	"home.edit.text1":
 		"Центр переехал, завел сайт или сменил телефон - откройте его страницу и нажмите «Предложить правку». Форма откроется с текущими данными: поменяйте только то, что устарело.",
 	"home.edit.text2":
@@ -214,7 +240,9 @@ const dict: Dictionary = {
 	"home.edit.cta": "Найти центр",
 	"home.edit.imageAlt":
 		"Страница центра: курсор нажимает «Предложить правку», снизу выезжает форма, где старый адрес зачеркнут, рядом новый, и добавлена ссылка",
-	"home.submissions.title": "Видно, что с заявкой",
+	"home.submissions.eyebrow": "Мои заявки",
+	"home.submissions.title": "Видно, что с заявкой.",
+	"home.submissions.subtitle": "На проверке, одобрена или нет.",
 	"home.submissions.text1":
 		"Новые центры и правки, отправленные из вашего браузера, собраны в «Моих заявках». Там видно, какая заявка на проверке, какую одобрили, а если отклонили - то почему.",
 	"home.submissions.text2":
