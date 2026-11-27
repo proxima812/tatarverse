@@ -135,3 +135,201 @@
 [data-tg] [data-home-tg-app] {
 	display: none;
 }
+
+/**
+ * Демонстрация разделов - `components/home/HomeDemo.astro`.
+ * Рамка шире колонки страницы, как «Pro templates» у heroui.com: сияние
+ * за окном собрано из цветов текущей палитры, сверху его гасит фон.
+ */
+
+.home-demo {
+	--aurora-1: var(--color-accent-vivid);
+	--aurora-2: var(--color-accent-glow);
+	--aurora-3: var(--color-accent-vivid);
+
+	position: relative;
+}
+
+/* Второй и третий тон сияния - соседние оттенки акцента по кругу. */
+@supports (color: oklch(from red l c h)) {
+	.home-demo {
+		--aurora-2: oklch(from var(--color-accent-vivid) calc(l - 0.12) c calc(h + 55));
+		--aurora-3: oklch(from var(--color-accent-vivid) calc(l - 0.2) calc(c * 0.9) calc(h - 50));
+	}
+}
+
+/* У «Дефолта» акцент без цвета - сияние берём как у heroui: малина и индиго. */
+:root[data-accent="default"] .home-demo {
+	--aurora-1: #c2417f;
+	--aurora-2: #4c3fd1;
+	--aurora-3: #2b2a8f;
+}
+
+.home-demo-frame {
+	position: relative;
+	left: 50%;
+	display: flex;
+	width: min(calc(100vw - 1.5rem), 88rem);
+	translate: -50% 0;
+	flex-direction: column;
+	align-items: center;
+	overflow: hidden;
+	border-radius: 48px;
+	background: var(--color-muted);
+	padding: 3rem 1rem 0;
+	mask-image: linear-gradient(black 88%, transparent);
+
+	@media (min-width: 640px) {
+		padding-top: 4rem;
+	}
+
+	@media (max-width: 1023px) {
+		border-radius: 36px;
+	}
+
+	@media (max-width: 767px) {
+		border-radius: 28px;
+		padding-top: 2.75rem;
+	}
+
+	/* На телефоне окно целиком: под ним текст раздела и ссылка. */
+	@media (max-width: 639px) {
+		padding-bottom: 1rem;
+		mask-image: none;
+	}
+}
+
+.home-aurora {
+	position: absolute;
+	inset: 0;
+	background:
+		radial-gradient(55% 65% at 12% 78%, color-mix(in oklab, var(--aurora-1) 75%, transparent), transparent 72%),
+		radial-gradient(45% 55% at 88% 38%, color-mix(in oklab, var(--aurora-2) 70%, transparent), transparent 70%),
+		radial-gradient(60% 50% at 55% 105%, color-mix(in oklab, var(--aurora-3) 80%, transparent), transparent 72%),
+		radial-gradient(30% 40% at 30% 20%, color-mix(in oklab, var(--aurora-2) 35%, transparent), transparent 70%);
+	filter: saturate(1.15);
+
+	/* Сверху сияние уходит в фон страницы, как у heroui. */
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to bottom, var(--color-background), transparent 40%);
+	}
+}
+
+:root:not(.dark) .home-aurora {
+	opacity: 0.55;
+}
+
+.home-demo-tabs {
+	position: relative;
+	gap: 2px;
+	background: color-mix(in oklab, var(--color-surface) 58%, transparent);
+	box-shadow:
+		inset 0 1px 0 color-mix(in oklab, var(--color-lift) 12%, transparent),
+		inset 0 0 0 1px color-mix(in oklab, var(--color-lift) 7%, transparent);
+	backdrop-filter: blur(40px) saturate(1.5);
+
+	& [aria-selected="true"] {
+		background: color-mix(in oklab, var(--color-lift) 12%, transparent);
+		box-shadow:
+			0 2px 4px rgb(0 0 0 / 0.04),
+			0 1px 2px rgb(0 0 0 / 0.06);
+	}
+}
+
+:root:not(.dark) .home-demo-tabs {
+	background: rgb(255 255 255 / 0.5);
+	box-shadow:
+		inset 0 1px 0 rgb(255 255 255 / 0.7),
+		inset 0 0 0 1px rgb(0 0 0 / 0.05);
+
+	& [aria-selected="true"] {
+		background: #fff;
+	}
+}
+
+.home-demo-window {
+	overflow: hidden;
+	border-radius: 28px;
+	background: color-mix(in oklab, var(--color-surface) 92%, transparent);
+	box-shadow:
+		0 0 0 1px var(--color-outline),
+		0 1px 2px rgb(0 0 0 / 0.04),
+		0 40px 80px color-mix(in oklab, var(--aurora-3) 22%, rgb(0 0 0 / 0.3));
+	backdrop-filter: blur(24px);
+
+	@media (max-width: 1023px) {
+		border-radius: 20px;
+	}
+}
+
+/* Низ рамки растворяется в фоне: окно будто уходит под следующий блок. */
+.home-demo-fade {
+	position: absolute;
+	inset: auto 0 0;
+	height: 200px;
+	background: linear-gradient(
+		to top,
+		var(--color-background) 20%,
+		color-mix(in oklab, var(--color-background) 70%, transparent) 55%,
+		transparent
+	);
+	pointer-events: none;
+
+	@media (max-width: 639px) {
+		display: none;
+	}
+}
+
+.home-demo-dot {
+	position: relative;
+	width: 6px;
+	height: 6px;
+	overflow: hidden;
+	border-radius: 9999px;
+	background: var(--color-border);
+	cursor: pointer;
+	transition: width 300ms ease;
+
+	&[data-active] {
+		width: 32px;
+	}
+}
+
+.home-demo-progress {
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--color-foreground);
+	transform: scaleX(0);
+	transform-origin: left;
+}
+
+/* Без автолистания (или после выбора посетителя) активная точка просто залита. */
+.home-demo-dot[data-active] .home-demo-progress {
+	transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	[data-home-demo]:not([data-manual]) .home-demo-dot[data-active] .home-demo-progress {
+		background: linear-gradient(90deg, var(--color-accent) 30%, var(--color-foreground));
+		animation: home-demo-progress 9s linear forwards;
+		animation-play-state: paused;
+	}
+
+	[data-home-demo][data-visible]:not([data-manual]) .home-demo-dot[data-active] .home-demo-progress {
+		animation-play-state: running;
+	}
+}
+
+@keyframes home-demo-progress {
+	from {
+		transform: scaleX(0);
+	}
+
+	to {
+		transform: scaleX(1);
+	}
+}

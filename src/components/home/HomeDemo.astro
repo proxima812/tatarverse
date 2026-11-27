@@ -1,0 +1,216 @@
+---
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import MockNearby from "./showcase/MockNearby.astro";
+import MockPrint from "./showcase/MockPrint.astro";
+import MockSaved from "./showcase/MockSaved.astro";
+import MockSearch from "./showcase/MockSearch.astro";
+import MockSubmit from "./showcase/MockSubmit.astro";
+
+/**
+ * Демонстрация разделов по образцу блока «Pro templates» на heroui.com:
+ * сияние в цветах палитры, вкладки-сегменты и окно браузера с живым
+ * макетом раздела. Вкладки листаются сами, пока посетитель не выберет
+ * свою; при reduced motion и без JS открыта первая.
+ */
+
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+
+const tabs = [
+	{ id: "nearby", href: "/nearby", Mock: MockNearby },
+	{ id: "search", href: "/centers", Mock: MockSearch },
+	{ id: "saved", href: "/saved", Mock: MockSaved },
+	{ id: "print", href: "/centers/print", Mock: MockPrint },
+	{ id: "submit", href: "/submit", Mock: MockSubmit },
+];
+---
+
+<section aria-labelledby="home-demo-heading" class="home-demo" data-home-demo>
+	<div class="home-demo-frame">
+		<div class="home-aurora" aria-hidden="true"></div>
+
+		<div class="relative flex flex-col items-center text-center">
+			<p class="text-[15px] font-medium text-accent md:text-base">{t("home.demo.eyebrow")}</p>
+			<h2
+				id="home-demo-heading"
+				class="mt-3 font-heading text-[30px] leading-[34px] font-medium tracking-[-0.02em] text-balance sm:text-4xl md:text-5xl md:leading-[1.1]"
+			>
+				{t("home.demo.title")}
+			</h2>
+			<p
+				class="mt-3 max-w-2xl text-[15px] leading-[22px] text-pretty text-muted-foreground sm:text-base sm:leading-6"
+			>
+				{t("home.demo.text")}
+			</p>
+		</div>
+
+		<div class="relative mt-6 flex max-w-full justify-center sm:mt-8">
+			<div
+				role="tablist"
+				aria-label={t("home.demo.tabs")}
+				class="home-demo-tabs flex max-w-full overflow-x-auto rounded-full p-1 [scrollbar-width:none]"
+			>
+				{
+					tabs.map((tab, index) => (
+						<button
+							type="button"
+							role="tab"
+							id={`home-demo-tab-${tab.id}`}
+							aria-controls={`home-demo-panel-${tab.id}`}
+							aria-selected={index === 0 ? "true" : "false"}
+							tabindex={index === 0 ? 0 : -1}
+							data-demo-tab
+							class="h-[30px] shrink-0 cursor-pointer rounded-full px-[9px] text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground aria-selected:text-foreground sm:h-8 sm:px-4 sm:text-sm"
+						>
+							{t(`home.demo.tab.${tab.id}`)}
+						</button>
+					))
+				}
+			</div>
+		</div>
+
+		<div class="home-demo-window relative mt-8 w-full max-w-[1000px] sm:mt-10">
+			<div class="flex h-11 items-center gap-1.5 px-4" aria-hidden="true">
+				<span class="size-3 rounded-full bg-subtle"></span>
+				<span class="size-3 rounded-full bg-subtle"></span>
+				<span class="size-3 rounded-full bg-subtle"></span>
+				<span class="mx-auto flex h-7 min-w-0 items-center rounded-full bg-muted px-4 text-xs text-muted-foreground">
+					{
+						tabs.map((tab, index) => (
+							<span class="truncate" data-demo-url={tab.id} hidden={index !== 0}>
+								tatarverse.cc{localizePath(locale, tab.href)}
+							</span>
+						))
+					}
+				</span>
+				<span class="w-[42px]"></span>
+			</div>
+
+			{
+				tabs.map(({ id, href, Mock }, index) => (
+					<div
+						role="tabpanel"
+						id={`home-demo-panel-${id}`}
+						aria-labelledby={`home-demo-tab-${id}`}
+						data-demo-panel={id}
+						hidden={index !== 0}
+						class="grid grid-cols-1 items-center gap-6 p-3 pt-0 sm:p-4 sm:pt-0 md:grid-cols-[1.15fr_1fr] md:gap-10 md:p-6 md:pt-0"
+					>
+						<Mock />
+						<div class="flex flex-col items-start gap-4 px-2 pb-3 text-left md:px-0 md:pb-0">
+							<h3 class="font-heading text-2xl leading-8 font-medium tracking-[-0.01em]">
+								{t(`home.${id}.title`)}
+							</h3>
+							<p class="leading-7 text-muted-foreground">{t(`home.${id}.text1`)}</p>
+							<a
+								href={localizePath(locale, href)}
+								class="group inline-flex items-center gap-1.5 text-[15px] font-medium text-foreground no-underline"
+							>
+								{t("home.demo.open")}
+								<span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">
+									→
+								</span>
+							</a>
+						</div>
+					</div>
+				))
+			}
+		</div>
+
+		<div class="home-demo-fade" aria-hidden="true"></div>
+	</div>
+
+	<div class="relative mt-6 flex justify-center gap-1.5 sm:-mt-14" aria-hidden="true">
+		{
+			tabs.map((tab, index) => (
+				<button
+					type="button"
+					tabindex="-1"
+					data-demo-dot={tab.id}
+					data-active={index === 0 ? "" : undefined}
+					class="home-demo-dot"
+				>
+					<span class="home-demo-progress"></span>
+				</button>
+			))
+		}
+	</div>
+</section>
+
+<script>
+	/**
+	 * Вкладки демонстрации: стрелки по WAI-ARIA, клик по точке-индикатору и
+	 * автолистание. Шаг автолистания - конец анимации полоски в активной
+	 * точке, поэтому полоска и смена вкладки не расходятся. Первый же
+	 * выбор посетителя автолистание выключает.
+	 */
+	for (const root of document.querySelectorAll<HTMLElement>("[data-home-demo]")) {
+		const tabs = [...root.querySelectorAll<HTMLButtonElement>("[data-demo-tab]")];
+		const panels = [...root.querySelectorAll<HTMLElement>("[data-demo-panel]")];
+		const urls = [...root.querySelectorAll<HTMLElement>("[data-demo-url]")];
+		const dots = [...root.querySelectorAll<HTMLButtonElement>("[data-demo-dot]")];
+		let current = 0;
+
+		const replay = (panel: HTMLElement) => {
+			const scene = panel.querySelector<HTMLElement>("[data-showcase][data-armed]");
+			if (!scene) return;
+			// Перезапуск анимаций сцены: снять атрибуты, дать кадр, вернуть.
+			scene.removeAttribute("data-armed");
+			scene.removeAttribute("data-play");
+			void scene.offsetWidth;
+			scene.setAttribute("data-armed", "");
+			scene.setAttribute("data-play", "");
+		};
+
+		const select = (index: number, focus = false) => {
+			current = (index + tabs.length) % tabs.length;
+			tabs.forEach((tab, i) => {
+				const active = i === current;
+				tab.setAttribute("aria-selected", String(active));
+				tab.tabIndex = active ? 0 : -1;
+				panels[i].hidden = !active;
+				urls[i].hidden = !active;
+				dots[i].toggleAttribute("data-active", active);
+			});
+			replay(panels[current]);
+			if (focus) tabs[current].focus();
+		};
+
+		const stopAutoplay = () => root.setAttribute("data-manual", "");
+
+		tabs.forEach((tab, index) => {
+			tab.addEventListener("click", () => {
+				stopAutoplay();
+				select(index);
+			});
+			tab.addEventListener("keydown", (event) => {
+				const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+				if (event.key === "Home" || event.key === "End") {
+					event.preventDefault();
+					stopAutoplay();
+					select(event.key === "Home" ? 0 : tabs.length - 1, true);
+				} else if (step) {
+					event.preventDefault();
+					stopAutoplay();
+					select(current + step, true);
+				}
+			});
+		});
+
+		dots.forEach((dot, index) => {
+			dot.addEventListener("click", () => {
+				stopAutoplay();
+				select(index);
+			});
+			dot.addEventListener("animationend", () => {
+				if (!root.hasAttribute("data-manual") && index === current) select(current + 1);
+			});
+		});
+
+		// За экраном полоска стоит: вкладки не листаются впустую.
+		new IntersectionObserver(
+			([entry]) => root.toggleAttribute("data-visible", entry.isIntersecting),
+			{ threshold: 0.35 },
+		).observe(root);
+	}
+</script>

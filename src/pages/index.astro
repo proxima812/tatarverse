@@ -1,4 +1,5 @@
 ---
+import HomeDemo from "@/components/home/HomeDemo.astro";
 import HomeHeroBadge from "@/components/home/HomeHeroBadge.astro";
 import HomeHeroTitle from "@/components/home/HomeHeroTitle.astro";
 import HomeLinks from "@/components/home/HomeLinks.astro";
@@ -47,6 +48,10 @@ const t = useTranslations(locale);
 		</div>
 		<div class="!mt-10">
 			<HomeLinks />
+		</div>
+
+		<div class="!mt-20 md:!mt-28">
+			<HomeDemo />
 		</div>
 
 		<HomeSections />

@@ -144,6 +144,16 @@ const dict: Dictionary = {
 		"The catalog helps you quickly understand where meetings, events, holidays, and educational programs take place.",
 	"home.search.imageAlt":
 		"The catalog search field with suggestions: countries, cities and regions",
+	"home.demo.eyebrow": "Features",
+	"home.demo.title": "Your people, a few clicks away.",
+	"home.demo.text": "Centers nearby, a world map, bookmarks and a printable list. Switch tabs to see how each section works.",
+	"home.demo.tabs": "Catalog sections",
+	"home.demo.open": "Open",
+	"home.demo.tab.nearby": "Nearby",
+	"home.demo.tab.search": "Map",
+	"home.demo.tab.saved": "Saved",
+	"home.demo.tab.print": "Print",
+	"home.demo.tab.submit": "Submit",
 	"home.blog.title": "Blog: where to find your people",
 	"home.blog.text1":
 		"Guides in the blog: <strong>{count}</strong>. Each one covers a single country: centers by city, holidays, language, and links to catalog cards.",
