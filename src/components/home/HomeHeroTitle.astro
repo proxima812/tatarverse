@@ -19,7 +19,8 @@ const rows: Cell[][] = [
 /** Стопки плиток справа от слов второй строки: знаки народов, флаги стран диаспоры, лица. */
 const signs = ["bs", "qt", "tt"];
 // Флаги эмодзи: Казахстан, Украина, Россия.
-const flags = ["🇰🇿", "🇺🇦", "🇷🇺"];
+// "tt" - флаг Татарстана: эмодзи для него нет, полосы рисует CSS. Последние две плитки - маленькие, сзади.
+const flags = ["🇰🇿", "🇺🇦", "tt", "🇺🇿", "🇹🇷"];
 const faces = ["😀", "😊", "😎"];
 
 const label = `${t("home.hero.1")} ${t("home.hero.2")} ${t("home.hero.3")}. ${t("home.hero.5")} ${t("home.hero.6")} ${t("home.hero.7")}`;
@@ -68,9 +69,13 @@ const heroSizeClass: Record<AppLocale, string> = {
 								))}
 							{stack === "flags" &&
 								flags.map((flag) => (
-									<span class="hero-tile hero-tile--emoji">
-										<span>{flag}</span>
-									</span>
+									flag === "tt" ? (
+										<span class="hero-tile hero-tile--tatarstan" />
+									) : (
+										<span class="hero-tile hero-tile--emoji">
+											<span>{flag}</span>
+										</span>
+									)
 								))}
 							{stack === "faces" &&
 								faces.map((face) => (

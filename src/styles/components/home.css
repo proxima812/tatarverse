@@ -57,6 +57,7 @@
 .hero-stack {
 	--tile: 0.46em;
 	position: relative;
+	isolation: isolate;
 	flex-shrink: 0;
 	width: calc(var(--tile) * 1.84);
 	height: calc(var(--tile) * 1.72);
@@ -76,6 +77,24 @@
 		bottom: 0;
 		left: 0;
 		rotate: -8deg;
+	}
+
+	/* Четвёртая и пятая - маленькие плитки, выглядывают сзади нижней пары. */
+	& > :nth-child(4),
+	& > :nth-child(5) {
+		--tile: 0.3em;
+		z-index: -1;
+		top: calc(0.46em * 0.5);
+	}
+
+	& > :nth-child(4) {
+		left: calc(0.46em * -0.3);
+		rotate: -18deg;
+	}
+
+	& > :nth-child(5) {
+		right: calc(0.46em * -0.3);
+		rotate: 18deg;
 	}
 }
 
@@ -100,6 +119,11 @@
 /* Размер эмодзи - на вложенном span: --tile задан в em и пересчитался бы от font-size самой плитки. */
 .hero-tile--emoji {
 	background: #e4e4e7;
+}
+
+/* Флаг Татарстана: зелёная, белая и красная полосы в пропорции 7:1:7. */
+.hero-tile--tatarstan {
+	background: linear-gradient(#1a9a49 0 46.7%, #fff 46.7% 53.3%, #e2232a 53.3%);
 }
 
 .hero-tile--emoji > span {
