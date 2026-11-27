@@ -1,42 +1,76 @@
 ---
-import ButtonLink from "@/components/ui/ButtonLink.astro";
-import { getLocaleFromUrl, useTranslations } from "@/i18n";
-import { blogShowcase } from "@/lib/home/showcase";
-import MockBlog from "./showcase/MockBlog.astro";
+import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
+import { getBlogEntries } from "@/lib/blog";
 
 /**
- * Блог: сколько гидов уже написано и куда за ними идти. Блог пока только
- * русский - на языках без публикаций секцию не показываем, чтобы не звать
+ * Свежие материалы блога - блок «From the blog» с heroui.com: заголовок в
+ * две строки, ссылка на весь блог и три карточки с обложкой и датой. Блог
+ * пока только русский: на языках без публикаций секции нет, чтобы не звать
  * на пустую страницу.
  */
 
 const locale = getLocaleFromUrl(Astro.url);
 const t = useTranslations(locale);
-const { total, entries } = await blogShowcase(locale);
+const entries = (await getBlogEntries(locale)).slice(0, 3);
+const dateFormat = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric" });
 ---
 
 {
-	total > 0 && (
-		<section
-			aria-labelledby="home-blog"
-			class="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-12"
-		>
-			<div class="space-y-6 md:order-2">
-				<h2 id="home-blog" class="text-4xl font-bold tracking-tight">
-					{t("home.blog.title")}
-				</h2>
-				<p class="leading-7 text-muted-foreground" set:html={t("home.blog.text1", { count: total })} />
-				<p class="leading-7 text-muted-foreground">{t("home.blog.text2")}</p>
-				<ButtonLink
-					href="/blog"
-					labelKey="home.blog.cta"
-					label="Читать блог"
-					icon="mdi:book-open-page-variant-outline"
-					variant="gradient"
-				/>
+	entries.length > 0 && (
+		<section aria-labelledby="home-blog" class="flex flex-col max-sm:gap-0">
+			<div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-12">
+				<div class="flex flex-col gap-4 sm:gap-5">
+					<p class="text-[15px] font-medium text-accent md:text-base">{t("home.blog.eyebrow")}</p>
+					<h2
+						id="home-blog"
+						class="font-heading text-[34px] leading-[38px] font-medium tracking-[-0.02em] text-balance md:text-5xl md:leading-[1.1]"
+					>
+						<span class="block">{t("home.blog.title")}</span>
+						<span class="block text-muted-foreground/60">{t("home.blog.subtitle")}</span>
+					</h2>
+				</div>
+				<a
+					href={localizePath(locale, "/blog")}
+					class="group inline-flex items-center gap-1.5 self-start text-[15px] font-medium text-foreground no-underline md:self-auto md:pb-1.5"
+				>
+					{t("home.blog.all")}
+					<span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+				</a>
 			</div>
 
-			<MockBlog entries={entries} />
+			<ul class="mt-7 grid gap-4 sm:mt-12 sm:grid-cols-2 md:grid-cols-3">
+				{entries.map((entry) => (
+					<li>
+						<a
+							href={localizePath(locale, `/blog/${entry.id}/`)}
+							class="group block h-full rounded-3xl bg-surface p-1 no-underline card-outline dark:shadow-none"
+						>
+							<span class="relative block aspect-[360/203] overflow-hidden rounded-[20px] bg-background">
+								<img
+									src={entry.data.cover ?? "/images/blog/default.svg"}
+									alt=""
+									width="1112"
+									height="560"
+									loading="lazy"
+									decoding="async"
+									class="absolute inset-0 size-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02] motion-reduce:transition-none"
+								/>
+							</span>
+							<span class="block px-3.5 pt-4 pb-[18px] sm:px-4">
+								<span class="block text-base leading-[22px] font-medium text-pretty text-foreground sm:text-sm sm:leading-5">
+									{entry.data.title}
+								</span>
+								<time
+									datetime={entry.data.pubDate.toISOString()}
+									class="mt-2 block text-[13px] leading-[18px] text-muted-foreground"
+								>
+									{dateFormat.format(entry.data.pubDate)}
+								</time>
+							</span>
+						</a>
+					</li>
+				))}
+			</ul>
 		</section>
 	)
 }

@@ -154,14 +154,10 @@ const dict: Dictionary = {
 	"home.demo.tab.saved": "Saved",
 	"home.demo.tab.print": "Print",
 	"home.demo.tab.submit": "Submit",
-	"home.blog.title": "Blog: where to find your people",
-	"home.blog.text1":
-		"Guides in the blog: <strong>{count}</strong>. Each one covers a single country: centers by city, holidays, language, and links to catalog cards.",
-	"home.blog.text2":
-		"Planning a trip or a move? Open the guide for that country - it gathers what you would otherwise search for across a dozen sites.",
-	"home.blog.cta": "Read the blog",
-	"home.blog.imageAlt":
-		"The blog page: category switcher and guide cards with covers, the cursor hovering over the first one",
+	"home.blog.eyebrow": "Blog",
+	"home.blog.title": "From the blog.",
+	"home.blog.subtitle": "Country guides and updates.",
+	"home.blog.all": "All posts",
 	"home.instagram.title": "We are on Instagram",
 	"home.instagram.text1":
 		"At @the_tatarverse we share centers from the catalog and communities from different countries - in a feed you already scroll.",
