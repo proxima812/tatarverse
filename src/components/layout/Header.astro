@@ -8,8 +8,9 @@ import Menu from "./Menu.astro";
 import SavedLink from "./SavedLink.astro";
 
 /**
- * Шапка по образцу heroui.com: во всю ширину и без подложки - марка, ссылки
- * и справа настройки с главной кнопкой, промежутки между группами равные.
+ * Шапка по образцу heroui.com: во всю ширину и без подложки. Четыре группы
+ * с равными промежутками: марка, ссылки, настройки (закладки, палитра,
+ * язык) и отдельно главная кнопка.
  * Когда страница уехала вверх, строка сжимается в плавающую «пилюлю» с
  * размытием, а под ней проступает затемнение из цвета фона (`header.css`).
  */
@@ -30,13 +31,13 @@ const t = useTranslations(locale);
 
 		<DesktopNav />
 
-		<div class="flex h-9 shrink-0 items-center gap-2">
-			<div class="hidden items-center gap-0.5 lg:inline-flex">
-				<SavedLink bare />
-				<AppearanceMenu bare />
-				<LanguageToggle bare />
-			</div>
+		<div class="hidden h-9 shrink-0 items-center gap-0.5 lg:inline-flex">
+			<SavedLink bare />
+			<AppearanceMenu bare />
+			<LanguageToggle bare />
+		</div>
 
+		<div class="flex h-9 shrink-0 items-center gap-2">
 			<a
 				href={localizePath(locale, "/centers")}
 				class="inline-flex h-9 shrink-0 items-center rounded-full bg-accent px-4 text-sm font-medium text-accent-foreground no-underline transition-[filter] hover:brightness-110 max-md:px-3"
