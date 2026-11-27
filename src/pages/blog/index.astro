@@ -2,7 +2,7 @@
 import Layout from "@/layouts/Layout.astro";
 import { getLocaleFromUrl, localizePath, useTranslations } from "@/i18n";
 import { blogCategories, blogCategoryStyles, blogFormats } from "@/data/blog";
-import { getBlogEntries } from "@/lib/blog";
+import { blogRssPath, getBlogEntries } from "@/lib/blog";
 import { Icon } from "astro-icon/components";
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -12,7 +12,7 @@ const dateFormat = new Intl.DateTimeFormat(locale, { day: "numeric", month: "lon
 const filterClass = "cursor-pointer rounded-full px-4 py-2 text-sm text-subtle-foreground transition-colors hover:bg-muted aria-pressed:bg-foreground aria-pressed:text-background focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none";
 ---
 
-<Layout title={t("nav.blog")} description={t("blog.description")}>
+<Layout title={t("nav.blog")} description={t("blog.description")} rssURL={blogRssPath(locale)}>
 	<main data-blog class="py-4 sm:py-8">
 		<header class="max-w-2xl">
 			<h1 class="text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">{t("blog.heading")}</h1>

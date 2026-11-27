@@ -3,7 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import { localizePath, useTranslations } from "@/i18n";
-import { getBlogEntries } from "@/lib/blog";
+import { blogRssPath, getBlogEntries } from "@/lib/blog";
 import { Icon } from "astro-icon/components";
 
 // Разметка повторяет heroui.com/blog/<post>: колонка 720px, обложка 880px, оглавление справа.
@@ -22,7 +22,7 @@ const related = (await getBlogEntries(data.locale))
 const column = "xl:grid xl:grid-cols-[1fr_minmax(0,720px)_1fr] xl:gap-8";
 ---
 
-<Layout title={data.title} description={data.description} type="article" ogImage={cover.replace(/\.svg$/, ".png")} datePublished={data.pubDate} dateModified={data.updatedDate} alternates={[]}>
+<Layout title={data.title} description={data.description} type="article" ogImage={cover.replace(/\.svg$/, ".png")} datePublished={data.pubDate} dateModified={data.updatedDate} alternates={[]} rssURL={blogRssPath(data.locale)}>
 	<main class="pb-16">
 		<article>
 			<header class="pt-8 sm:pt-[72px]">

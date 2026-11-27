@@ -1,5 +1,5 @@
 import { getCollection } from "astro:content";
-import type { AppLocale } from "@/i18n";
+import { defaultLocale, type AppLocale } from "@/i18n";
 
 export async function getBlogEntries(locale?: AppLocale) {
 	const now = Date.now();
@@ -7,3 +7,6 @@ export async function getBlogEntries(locale?: AppLocale) {
 		!data.draft && data.pubDate.getTime() <= now && (!locale || data.locale === locale),
 	)).sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 }
+
+/** Путь к RSS блога. Не через localizePath: тот дописывает слеш, а лента - файл. */
+export const blogRssPath = (locale: AppLocale) => `${locale === defaultLocale ? "" : `/${locale}`}/blog/rss.xml`;
