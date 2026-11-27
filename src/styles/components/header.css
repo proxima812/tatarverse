@@ -1,7 +1,8 @@
 /**
  * Липкая шапка - `components/layout/Header.astro`.
  * Своей подложки нет, как у heroui.com: после прокрутки под ней проявляется
- * градиент из цвета фона, и текст страницы уходит под шапку плавно.
+ * градиент из цвета фона, и текст страницы уходит под шапку плавно, а сама
+ * строка сжимается в плавающую «пилюлю» с размытием.
  */
 
 .site-header {
@@ -24,8 +25,31 @@
 	opacity: 1;
 }
 
+/*
+ * Вертикальный отступ у строки есть и до прокрутки, только без подложки:
+ * высота шапки не меняется, и страница под ней не прыгает.
+ */
+@media (min-width: 48rem) {
+	.site-header-bar {
+		padding: 0.75rem 0;
+		border-radius: 9999px;
+		transition-property: max-width, padding, background-color, box-shadow, backdrop-filter;
+		transition-duration: 300ms;
+		transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.site-header[data-scrolled] .site-header-bar {
+		max-width: 56rem;
+		padding: 0.75rem 1rem 0.75rem 1.5rem;
+		background: color-mix(in oklab, var(--color-surface) 80%, transparent);
+		box-shadow: inset 0 0 0 1px var(--color-border-muted);
+		backdrop-filter: blur(16px);
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.site-header-fade {
+	.site-header-fade,
+	.site-header-bar {
 		transition: none;
 	}
 }

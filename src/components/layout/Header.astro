@@ -8,9 +8,10 @@ import Menu from "./Menu.astro";
 import SavedLink from "./SavedLink.astro";
 
 /**
- * Шапка по образцу heroui.com: во всю ширину и без подложки, три колонки -
- * марка, ссылки по центру, справа настройки и главная кнопка. Когда страница
- * уехала вверх, под шапкой проступает затемнение из цвета фона (`header.css`).
+ * Шапка по образцу heroui.com: во всю ширину и без подложки - марка, ссылки
+ * и справа настройки с главной кнопкой, промежутки между группами равные.
+ * Когда страница уехала вверх, строка сжимается в плавающую «пилюлю» с
+ * размытием, а под ней проступает затемнение из цвета фона (`header.css`).
  */
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -19,19 +20,17 @@ const t = useTranslations(locale);
 
 <header
 	data-site-header
-	class="site-header sticky top-0 z-[88] isolate flex w-full justify-center px-6 py-4 max-md:bg-background max-md:px-4 max-md:py-1"
+	class="site-header sticky top-0 z-[88] isolate flex w-full justify-center px-6 py-2 max-md:bg-background max-md:px-4 max-md:py-1"
 >
 	<div aria-hidden="true" class="site-header-fade pointer-events-none absolute inset-x-0 top-0 -z-10 max-md:hidden"></div>
-	<div
-		class="flex w-full max-w-5xl items-center justify-between gap-4 max-md:h-12 lg:grid lg:grid-cols-[1fr_auto_1fr]"
-	>
-		<div class="flex shrink-0 items-center justify-self-start">
+	<div class="site-header-bar flex w-full max-w-5xl items-center justify-between gap-4 max-md:h-12">
+		<div class="flex shrink-0 items-center">
 			<Logotype />
 		</div>
 
 		<DesktopNav />
 
-		<div class="flex h-9 shrink-0 items-center gap-2 justify-self-end">
+		<div class="flex h-9 shrink-0 items-center gap-2">
 			<div class="hidden items-center gap-0.5 lg:inline-flex">
 				<SavedLink bare />
 				<AppearanceMenu bare />
