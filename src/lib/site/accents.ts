@@ -9,7 +9,7 @@ export interface AccentPreset {
 
 export const ACCENT_PRESETS: AccentPreset[] = [
 	{ value: "default", labelKey: "accent.default", label: "Дефолт", from: "#29262C", to: "#4A474D" },
-	{ value: "green", labelKey: "accent.green", label: "Җаным Яшел", from: "#1C9A57", to: "#8EDBAA" },
+	{ value: "green", labelKey: "accent.green", label: "Җаным Яшел", from: "#3BB273", to: "#A3E4BC" },
 	{ value: "blue", labelKey: "accent.blue", label: "Кадерле Зәнгәр", from: "#4A8BF8", to: "#9CC0FF" },
 	{ value: "violet", labelKey: "accent.violet", label: "Яна Шәмәха", from: "#8A4CF0", to: "#B48BF8" },
 	{ value: "red", labelKey: "accent.red", label: "Утлы Кызыл", from: "#FF3B45", to: "#FF948C" },
